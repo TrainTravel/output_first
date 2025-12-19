@@ -1,6 +1,7 @@
 import { useJournal } from '@/hooks/useJournal';
 import { HomeScreen } from './HomeScreen';
 import { WriteScreen } from './WriteScreen';
+import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
 import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
@@ -8,6 +9,7 @@ import { ProgressScreen } from './ProgressScreen';
 export function JournalApp() {
   const {
     currentStep,
+    currentEntry,
     hasJournaledToday,
     streak,
     totalDays,
@@ -15,6 +17,8 @@ export function JournalApp() {
     getGratitudePrompt,
     startJournal,
     saveContent,
+    skipFeedback,
+    continuePastFeedback,
     saveEmotion,
     saveGratitude,
     skipToComplete,
@@ -37,6 +41,14 @@ export function JournalApp() {
           prompt={getDailyPrompt()}
           onSave={saveContent}
           onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'feedback' && (
+        <FeedbackScreen
+          journalContent={currentEntry.content || ''}
+          onContinue={continuePastFeedback}
+          onSkip={skipFeedback}
         />
       )}
 
