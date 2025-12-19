@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Check } from 'lucide-react';
+import { BilingualPrompt } from '@/types/journal';
 
 interface GratitudeScreenProps {
-  prompt: string;
+  prompt: BilingualPrompt;
   onSave: (gratitude?: string) => void;
   onSkip: () => void;
   onBack: () => void;
@@ -26,16 +27,19 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">Back</span>
+          <span className="text-sm">Retour / Back</span>
         </button>
 
         {/* Header */}
         <div className="mb-8 space-y-3">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed">
-            {prompt}
+            {prompt.fr}
           </h2>
-          <p className="text-muted-foreground text-sm">
-            This is optional. Skip if nothing comes to mind.
+          <p className="text-muted-foreground italic">
+            {prompt.en}
+          </p>
+          <p className="text-muted-foreground text-sm mt-2">
+            C'est optionnel. Passez si rien ne vous vient. / This is optional. Skip if nothing comes to mind.
           </p>
         </div>
 
@@ -44,7 +48,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           <Textarea
             value={gratitude}
             onChange={(e) => setGratitude(e.target.value)}
-            placeholder="Something small is perfect..."
+            placeholder="Quelque chose de petit suffit... / Something small is perfect..."
             className="min-h-[150px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
         </div>
@@ -57,7 +61,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
             onClick={handleSave}
           >
             <Check className="w-5 h-5 mr-2" />
-            Complete journal
+            Terminer le journal / Complete journal
           </Button>
           
           <Button
@@ -65,7 +69,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
             size="full"
             onClick={onSkip}
           >
-            Skip and finish
+            Passer et terminer / Skip and finish
           </Button>
         </div>
       </div>

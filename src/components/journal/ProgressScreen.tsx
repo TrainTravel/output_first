@@ -26,10 +26,13 @@ export function ProgressScreen({
               <Feather className="w-8 h-8 text-primary" />
             </div>
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              You showed up today
+              Vous êtes venu(e) aujourd'hui
             </h1>
-            <p className="text-muted-foreground">
-              That's what matters most.
+            <p className="text-muted-foreground italic">
+              You showed up today
+            </p>
+            <p className="text-muted-foreground text-sm">
+              C'est ce qui compte le plus. / That's what matters most.
             </p>
           </div>
         )}
@@ -37,8 +40,11 @@ export function ProgressScreen({
         {!hasJournaledToday && (
           <div className="text-center space-y-4">
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              Your Progress
+              Vos progrès
             </h1>
+            <p className="text-muted-foreground italic">
+              Your Progress
+            </p>
           </div>
         )}
 
@@ -51,7 +57,8 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{streak}</p>
-            <p className="text-muted-foreground text-sm">day streak</p>
+            <p className="text-muted-foreground text-sm">jours de suite</p>
+            <p className="text-muted-foreground/60 text-xs">day streak</p>
           </div>
 
           <div className="bg-card rounded-2xl p-6 text-center shadow-gentle border border-border">
@@ -61,13 +68,17 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{totalDays}</p>
-            <p className="text-muted-foreground text-sm">days journaled</p>
+            <p className="text-muted-foreground text-sm">jours d'écriture</p>
+            <p className="text-muted-foreground/60 text-xs">days journaled</p>
           </div>
         </div>
 
         {/* Affirmation */}
         <div className="bg-primary/5 rounded-2xl p-6 text-center border border-primary/10">
-          <p className="text-foreground font-serif text-lg italic">
+          <p className="text-foreground font-serif text-lg">
+            « Se montrer, c'est déjà réussir. »
+          </p>
+          <p className="text-muted-foreground text-sm italic mt-2">
             "Showing up counts."
           </p>
         </div>
@@ -81,7 +92,7 @@ export function ProgressScreen({
               onClick={onStartJournal}
             >
               <Feather className="w-5 h-5 mr-2" />
-              Write today's journal
+              Écrire aujourd'hui / Write today
             </Button>
           )}
           
@@ -91,7 +102,7 @@ export function ProgressScreen({
             onClick={onGoHome}
           >
             <Home className="w-5 h-5 mr-2" />
-            Return home
+            Retour à l'accueil / Return home
           </Button>
         </div>
       </div>

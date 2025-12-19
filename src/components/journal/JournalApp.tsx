@@ -52,7 +52,7 @@ export function JournalApp() {
           prompt={getGratitudePrompt()}
           onSave={saveGratitude}
           onSkip={skipToComplete}
-          onBack={() => saveEmotion(undefined)}
+          onBack={() => saveEmotion(undefined, undefined)}
         />
       )}
 
