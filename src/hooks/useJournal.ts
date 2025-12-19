@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS } from '@/types/journal';
+import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt } from '@/types/journal';
 
 const STORAGE_KEY = 'outputfirst_entries';
 
@@ -44,15 +44,11 @@ export function useJournal() {
     const checkDate = new Date();
     
     for (const dateStr of sortedDates) {
-      const entryDate = new Date(dateStr);
       const checkDateStr = checkDate.toISOString().split('T')[0];
       
       if (dateStr === checkDateStr) {
         streak++;
         checkDate.setDate(checkDate.getDate() - 1);
-      } else if (dateStr === new Date(checkDate.setDate(checkDate.getDate())).toISOString().split('T')[0]) {
-        // Allow for checking yesterday if today not yet journaled
-        continue;
       } else {
         break;
       }
@@ -64,13 +60,13 @@ export function useJournal() {
   const streak = calculateStreak();
   const totalDays = new Set(entries.map(e => e.date)).size;
 
-  // Get random prompt
-  const getDailyPrompt = () => {
+  // Get random prompt - returns BilingualPrompt
+  const getDailyPrompt = (): BilingualPrompt => {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     return DAILY_PROMPTS[dayOfYear % DAILY_PROMPTS.length];
   };
 
-  const getGratitudePrompt = () => {
+  const getGratitudePrompt = (): BilingualPrompt => {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     return GRATITUDE_PROMPTS[dayOfYear % GRATITUDE_PROMPTS.length];
   };
@@ -85,8 +81,8 @@ export function useJournal() {
     setCurrentStep('emotions');
   };
 
-  const saveEmotion = (emotion?: string) => {
-    setCurrentEntry(prev => ({ ...prev, emotion }));
+  const saveEmotion = (emotion?: string, emotionFr?: string) => {
+    setCurrentEntry(prev => ({ ...prev, emotion, emotionFr }));
     setCurrentStep('gratitude');
   };
 
@@ -96,6 +92,7 @@ export function useJournal() {
       date: today,
       content: currentEntry.content || '',
       emotion: currentEntry.emotion,
+      emotionFr: currentEntry.emotionFr,
       gratitude: gratitude,
       createdAt: new Date(),
     };
@@ -110,6 +107,7 @@ export function useJournal() {
       date: today,
       content: currentEntry.content || '',
       emotion: currentEntry.emotion,
+      emotionFr: currentEntry.emotionFr,
       createdAt: new Date(),
     };
 

@@ -9,10 +9,15 @@ interface HomeScreenProps {
 
 export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }: HomeScreenProps) {
   const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
+  const formattedDateEn = today.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
+  });
+  const formattedDateFr = today.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
   });
 
   return (
@@ -20,12 +25,18 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
         {/* Date */}
         <div className="text-center space-y-2">
-          <p className="text-muted-foreground text-sm tracking-wide uppercase">
-            {formattedDate}
+          <p className="text-foreground/80 text-sm tracking-wide capitalize">
+            {formattedDateFr}
           </p>
-          <h1 className="font-serif text-4xl md:text-5xl text-foreground">
+          <p className="text-muted-foreground text-xs tracking-wide">
+            {formattedDateEn}
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl text-foreground mt-4">
             OutputFirst
           </h1>
+          <p className="text-muted-foreground text-sm italic">
+            Journaling en français
+          </p>
         </div>
 
         {/* Status */}
@@ -40,12 +51,12 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
             {hasJournaledToday ? (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Completed today</span>
+                <span className="text-sm font-medium">Terminé / Completed</span>
               </>
             ) : (
               <>
                 <Feather className="w-4 h-4" />
-                <span className="text-sm font-medium">Not started</span>
+                <span className="text-sm font-medium">Pas encore / Not started</span>
               </>
             )}
           </div>
@@ -60,11 +71,11 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
             className="animate-breathe"
           >
             <Feather className="w-5 h-5 mr-2" />
-            {hasJournaledToday ? "Write another entry" : "Write today's journal"}
+            {hasJournaledToday ? "Écrire encore / Write another" : "Écrire aujourd'hui / Write today"}
           </Button>
 
           <p className="text-center text-muted-foreground text-sm">
-            One or two sentences is enough.
+            Une ou deux phrases suffisent. / One or two sentences is enough.
           </p>
         </div>
 
@@ -76,7 +87,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
             className="text-muted-foreground hover:text-foreground"
           >
             <BarChart3 className="w-4 h-4 mr-2" />
-            View your progress
+            Voir vos progrès / View progress
           </Button>
         </div>
       </div>
