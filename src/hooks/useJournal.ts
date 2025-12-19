@@ -78,6 +78,14 @@ export function useJournal() {
 
   const saveContent = (content: string) => {
     setCurrentEntry(prev => ({ ...prev, content }));
+    setCurrentStep('feedback');
+  };
+
+  const skipFeedback = () => {
+    setCurrentStep('emotions');
+  };
+
+  const continuePastFeedback = () => {
     setCurrentStep('emotions');
   };
 
@@ -134,6 +142,8 @@ export function useJournal() {
     getGratitudePrompt,
     startJournal,
     saveContent,
+    skipFeedback,
+    continuePastFeedback,
     saveEmotion,
     saveGratitude,
     skipToComplete,
