@@ -64,6 +64,24 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           throw new Error(data.error);
         }
 
+        // If response came back as raw (wrapped in markdown), parse it
+        if (data?.raw) {
+          const rawContent = data.raw;
+          // Strip markdown code blocks if present
+          const jsonMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+          if (jsonMatch) {
+            try {
+              const parsed = JSON.parse(jsonMatch[1].trim());
+              setFeedback(parsed);
+              return;
+            } catch {
+              // If parsing fails, show raw content
+              setFeedback(data);
+              return;
+            }
+          }
+        }
+
         setFeedback(data);
       } catch (err) {
         console.error('Feedback error:', err);
