@@ -3,16 +3,33 @@ import { Button } from '@/components/ui/button';
 import { EMOTION_SUGGESTIONS, EmotionWord } from '@/types/journal';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 
+const MAX_EMOTIONS = 3;
+
 interface EmotionsScreenProps {
   onSave: (emotion?: string, emotionFr?: string) => void;
   onBack: () => void;
 }
 
 export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
-  const [selectedEmotion, setSelectedEmotion] = useState<EmotionWord | null>(null);
+  const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
+
+  const toggleEmotion = (emotion: EmotionWord) => {
+    const isSelected = selectedEmotions.some(e => e.en === emotion.en);
+    if (isSelected) {
+      setSelectedEmotions(selectedEmotions.filter(e => e.en !== emotion.en));
+    } else if (selectedEmotions.length < MAX_EMOTIONS) {
+      setSelectedEmotions([...selectedEmotions, emotion]);
+    }
+  };
 
   const handleContinue = () => {
-    onSave(selectedEmotion?.en, selectedEmotion?.fr);
+    if (selectedEmotions.length === 0) {
+      onSave(undefined, undefined);
+    } else {
+      const emotionsEn = selectedEmotions.map(e => e.en).join(', ');
+      const emotionsFr = selectedEmotions.map(e => e.fr).join(', ');
+      onSave(emotionsEn, emotionsFr);
+    }
   };
 
   const handleSkip = () => {
@@ -40,7 +57,10 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             A word for how you feel
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            Choisissez un mot qui décrit votre état. / Choose a word that describes your state.
+            Choisissez jusqu'à {MAX_EMOTIONS} mots. / Choose up to {MAX_EMOTIONS} words.
+            {selectedEmotions.length > 0 && (
+              <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
+            )}
           </p>
         </div>
 
@@ -52,24 +72,29 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
                 {group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span>
               </p>
               <div className="flex flex-wrap gap-2">
-                {group.emotions.map((emotion) => (
-                  <button
-                    key={emotion.en}
-                    onClick={() => setSelectedEmotion(
-                      selectedEmotion?.en === emotion.en ? null : emotion
-                    )}
-                    className={`
-                      px-4 py-2 rounded-full text-sm transition-all duration-200
-                      ${selectedEmotion?.en === emotion.en
-                        ? 'bg-primary text-primary-foreground shadow-gentle'
-                        : 'bg-card border border-border text-foreground hover:bg-muted'
-                      }
-                    `}
-                  >
-                    <span className="font-medium">{emotion.fr}</span>
-                    <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                  </button>
-                ))}
+                {group.emotions.map((emotion) => {
+                  const isSelected = selectedEmotions.some(e => e.en === emotion.en);
+                  const isDisabled = !isSelected && selectedEmotions.length >= MAX_EMOTIONS;
+                  return (
+                    <button
+                      key={emotion.en}
+                      onClick={() => toggleEmotion(emotion)}
+                      disabled={isDisabled}
+                      className={`
+                        px-4 py-2 rounded-full text-sm transition-all duration-200
+                        ${isSelected
+                          ? 'bg-primary text-primary-foreground shadow-gentle'
+                          : isDisabled
+                            ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
+                            : 'bg-card border border-border text-foreground hover:bg-muted'
+                        }
+                      `}
+                    >
+                      <span className="font-medium">{emotion.fr}</span>
+                      <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
