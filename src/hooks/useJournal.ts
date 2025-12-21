@@ -132,6 +132,10 @@ export function useJournal() {
     setCurrentStep('complete');
   };
 
+  const openChat = () => {
+    setCurrentStep('chat');
+  };
+
   return {
     currentStep,
     currentEntry,
@@ -149,5 +153,6 @@ export function useJournal() {
     skipToComplete,
     goHome,
     viewProgress,
+    openChat,
   };
 }
