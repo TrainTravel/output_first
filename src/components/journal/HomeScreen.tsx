@@ -1,13 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3 } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle } from 'lucide-react';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
   onStartJournal: () => void;
   onViewProgress: () => void;
+  onOpenChat: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat }: HomeScreenProps) {
   const today = new Date();
   const formattedDateEn = today.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -62,8 +63,8 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
           </div>
         </div>
 
-        {/* Main Action */}
-        <div className="space-y-4">
+        {/* Main Actions */}
+        <div className="space-y-3">
           <Button
             variant="default"
             size="full"
@@ -74,7 +75,16 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress }
             {hasJournaledToday ? "Écrire encore / Write another" : "Écrire aujourd'hui / Write today"}
           </Button>
 
-          <p className="text-center text-muted-foreground text-sm">
+          <Button
+            variant="outline"
+            size="full"
+            onClick={onOpenChat}
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Pratiquer en conversation / Practice conversation
+          </Button>
+
+          <p className="text-center text-muted-foreground text-sm pt-2">
             Une ou deux phrases suffisent. / One or two sentences is enough.
           </p>
         </div>

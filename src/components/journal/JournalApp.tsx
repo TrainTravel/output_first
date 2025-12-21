@@ -5,6 +5,7 @@ import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
 import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
+import { ChatScreen } from './ChatScreen';
 
 export function JournalApp() {
   const {
@@ -24,6 +25,7 @@ export function JournalApp() {
     skipToComplete,
     goHome,
     viewProgress,
+    openChat,
   } = useJournal();
 
   return (
@@ -33,6 +35,7 @@ export function JournalApp() {
           hasJournaledToday={hasJournaledToday}
           onStartJournal={startJournal}
           onViewProgress={viewProgress}
+          onOpenChat={openChat}
         />
       )}
 
@@ -76,6 +79,10 @@ export function JournalApp() {
           onGoHome={goHome}
           onStartJournal={startJournal}
         />
+      )}
+
+      {currentStep === 'chat' && (
+        <ChatScreen onBack={goHome} />
       )}
     </div>
   );
