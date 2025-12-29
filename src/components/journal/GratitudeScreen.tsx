@@ -30,21 +30,8 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           <span className="text-sm">Retour / Back</span>
         </button>
 
-        {/* Gentle Bridge */}
-        <div className="mb-6 p-4 bg-muted/30 rounded-xl border border-border/50">
-          <p className="text-foreground/90 text-sm leading-relaxed">
-            Merci d'avoir partagé ce que vous ressentez. C'est courageux.
-          </p>
-          <p className="text-muted-foreground text-sm mt-1 italic">
-            Thank you for sharing how you feel. That takes courage.
-          </p>
-        </div>
-
         {/* Header */}
         <div className="mb-8 space-y-3">
-          <p className="text-muted-foreground text-sm">
-            Avant de terminer, une petite pause... / Before we finish, a small pause...
-          </p>
           <h2 className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed">
             {prompt.fr}
           </h2>
