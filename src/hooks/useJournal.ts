@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt } from '@/types/journal';
+import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
 
 const STORAGE_KEY = 'outputfirst_entries';
 
@@ -7,7 +7,8 @@ export function useJournal() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentStep, setCurrentStep] = useState<JournalStep>('home');
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({});
-
+  const [currentCycle, setCurrentCycle] = useState(0);
+  const [reflectionCycles, setReflectionCycles] = useState<ReflectionCycle[]>([]);
   // Load entries from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -74,6 +75,8 @@ export function useJournal() {
   const startJournal = () => {
     setCurrentEntry({ date: today });
     setCurrentStep('write');
+    setCurrentCycle(0);
+    setReflectionCycles([]);
   };
 
   const saveContent = (content: string) => {
@@ -94,10 +97,31 @@ export function useJournal() {
     setCurrentStep('reflection');
   };
 
-  const continueFromReflection = (reflectionResponse?: string) => {
-    // We could store reflectionResponse if needed in the future
-    setCurrentStep('gratitude');
+  const continueFromReflection = (reflectionResponse?: string, moveToGratitude?: boolean) => {
+    // Save this cycle's data
+    const cycleData: ReflectionCycle = {
+      emotion: currentEntry.emotion,
+      emotionFr: currentEntry.emotionFr,
+      reflectionResponse,
+    };
+    
+    const updatedCycles = [...reflectionCycles, cycleData];
+    setReflectionCycles(updatedCycles);
+    
+    const nextCycle = currentCycle + 1;
+    setCurrentCycle(nextCycle);
+    
+    // If user chose to move to gratitude (after min cycles) or reached max cycles
+    if (moveToGratitude || nextCycle >= MAX_CYCLES) {
+      setCurrentEntry(prev => ({ ...prev, reflectionCycles: updatedCycles }));
+      setCurrentStep('gratitude');
+    } else {
+      // Continue to next cycle - go back to feedback
+      setCurrentStep('feedback');
+    }
   };
+
+  const canMoveToGratitude = currentCycle >= MIN_CYCLES - 1; // -1 because we check before incrementing
 
   const saveGratitude = (gratitude?: string) => {
     const newEntry: JournalEntry = {
@@ -131,6 +155,8 @@ export function useJournal() {
   const goHome = () => {
     setCurrentStep('home');
     setCurrentEntry({});
+    setCurrentCycle(0);
+    setReflectionCycles([]);
   };
 
   const viewProgress = () => {
@@ -147,6 +173,8 @@ export function useJournal() {
     hasJournaledToday,
     streak,
     totalDays,
+    currentCycle,
+    canMoveToGratitude,
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,

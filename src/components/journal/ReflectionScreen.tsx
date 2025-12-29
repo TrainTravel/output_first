@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Heart } from 'lucide-react';
+import { MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
 
 interface ReflectionScreenProps {
   journalContent: string;
   emotions?: string;
   emotionsFr?: string;
-  onContinue: (reflectionResponse?: string) => void;
+  currentCycle: number;
+  canMoveToGratitude: boolean;
+  onContinue: (reflectionResponse?: string, moveToGratitude?: boolean) => void;
   onBack: () => void;
 }
 
@@ -20,6 +23,8 @@ export function ReflectionScreen({
   journalContent, 
   emotions,
   emotionsFr,
+  currentCycle,
+  canMoveToGratitude,
   onContinue, 
   onBack 
 }: ReflectionScreenProps) {
@@ -66,25 +71,45 @@ export function ReflectionScreen({
     }
   };
 
-  const handleContinue = () => {
-    onContinue(response.trim() || undefined);
+  const handleContinueExploring = () => {
+    onContinue(response.trim() || undefined, false);
+  };
+
+  const handleMoveToGratitude = () => {
+    onContinue(response.trim() || undefined, true);
   };
 
   const handleSkip = () => {
-    onContinue(undefined);
+    onContinue(undefined, false);
   };
+
+  const isLastCycle = currentCycle >= MAX_CYCLES - 1;
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
       <div className="w-full max-w-lg mx-auto flex-1 flex flex-col animate-fade-in-up">
-        {/* Back Button */}
-        <button
-          onClick={onBack}
-          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">Retour / Back</span>
-        </button>
+        {/* Header with cycle indicator */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm">Retour / Back</span>
+          </button>
+          
+          {/* Cycle dots */}
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: MAX_CYCLES }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i <= currentCycle ? 'bg-primary' : 'bg-muted-foreground/30'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* Loading State */}
         {isLoading && (
@@ -143,22 +168,56 @@ export function ReflectionScreen({
 
             {/* Actions */}
             <div className="mt-8 space-y-3">
-              <Button
-                variant="default"
-                size="full"
-                onClick={handleContinue}
-              >
-                <ArrowRight className="w-5 h-5 mr-2" />
-                Continuer / Continue
-              </Button>
-              
-              <Button
-                variant="skip"
-                size="full"
-                onClick={handleSkip}
-              >
-                Passer / Skip
-              </Button>
+              {isLastCycle ? (
+                // Last cycle - only option is to move to gratitude
+                <Button
+                  variant="default"
+                  size="full"
+                  onClick={handleMoveToGratitude}
+                >
+                  <Heart className="w-5 h-5 mr-2" />
+                  Terminer avec la gratitude / Finish with gratitude
+                </Button>
+              ) : canMoveToGratitude ? (
+                // After min cycles - offer both options
+                <>
+                  <Button
+                    variant="default"
+                    size="full"
+                    onClick={handleContinueExploring}
+                  >
+                    <ArrowRight className="w-5 h-5 mr-2" />
+                    Continuer à explorer / Continue exploring
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="full"
+                    onClick={handleMoveToGratitude}
+                  >
+                    <Heart className="w-5 h-5 mr-2" />
+                    Passer à la gratitude / Move to gratitude
+                  </Button>
+                </>
+              ) : (
+                // Before min cycles - continue exploring
+                <>
+                  <Button
+                    variant="default"
+                    size="full"
+                    onClick={handleContinueExploring}
+                  >
+                    <ArrowRight className="w-5 h-5 mr-2" />
+                    Continuer / Continue
+                  </Button>
+                  <Button
+                    variant="skip"
+                    size="full"
+                    onClick={handleSkip}
+                  >
+                    Passer / Skip
+                  </Button>
+                </>
+              )}
             </div>
           </>
         )}

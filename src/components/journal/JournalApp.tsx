@@ -15,6 +15,8 @@ export function JournalApp() {
     hasJournaledToday,
     streak,
     totalDays,
+    currentCycle,
+    canMoveToGratitude,
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
@@ -69,6 +71,8 @@ export function JournalApp() {
           journalContent={currentEntry.content || ''}
           emotions={currentEntry.emotion}
           emotionsFr={currentEntry.emotionFr}
+          currentCycle={currentCycle}
+          canMoveToGratitude={canMoveToGratitude}
           onContinue={continueFromReflection}
           onBack={() => saveEmotion(currentEntry.emotion, currentEntry.emotionFr)}
         />
