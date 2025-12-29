@@ -1,0 +1,118 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const systemPrompt = `You are a warm, gentle guide helping someone explore their feelings — like a kind therapist who listens with curiosity, not judgment.
+
+YOUR ROLE:
+- You've just read their journal entry and know how they're feeling
+- Offer a brief, compassionate reflection that helps them feel seen
+- Ask ONE gentle, curious question that invites them to explore a bit more
+- Your tone is soft, supportive, and genuinely interested
+
+IMPORTANT GUIDELINES:
+- Keep your response to 2-3 sentences maximum
+- Write primarily in French with English translation in parentheses
+- Never diagnose, analyze root causes, or suggest solutions
+- Never dispute or correct their feelings — all emotions are valid
+- Don't ask "why" they feel something — ask "what" or "how" questions instead
+- Focus on awareness and expression, not fixing
+
+EXAMPLES OF GOOD QUESTIONS:
+- "Qu'est-ce qui vous vient quand vous pensez à ça?" (What comes up when you think about that?)
+- "Comment ça se manifeste dans votre corps?" (How does that show up in your body?)
+- "Y a-t-il autre chose que vous ressentez en même temps?" (Is there something else you're feeling alongside this?)
+
+AVOID:
+- "Why do you think you feel this way?"
+- Giving advice or solutions
+- Making interpretations about their psychology
+- Being overly enthusiastic or using exclamation marks
+
+Respond in this JSON format:
+{
+  "reflection": "Your brief compassionate observation in French (English translation)",
+  "question": "Your gentle curious question in French (English translation)"
+}`;
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { journalContent, emotions } = await req.json();
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    console.log("Generating reflection for emotions:", emotions);
+
+    const userMessage = `Journal entry: "${journalContent}"
+    
+Emotions they chose: ${emotions || "none selected"}
+
+Please provide a brief, compassionate reflection and one gentle question.`;
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Usage limit reached. Please add credits." }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
+      return new Response(JSON.stringify({ error: "AI service error" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    let content = data.choices?.[0]?.message?.content || "";
+    
+    // Strip markdown code blocks if present
+    content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    
+    console.log("Reflection response:", content);
+
+    return new Response(content, {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error in reflection function:", error);
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});

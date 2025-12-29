@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.french-chat]
 verify_jwt = false
+
+[functions.reflection]
+verify_jwt = false

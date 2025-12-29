@@ -8,7 +8,7 @@ export interface JournalEntry {
   createdAt: Date;
 }
 
-export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'gratitude' | 'complete' | 'chat';
+export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete' | 'chat';
 
 export interface BilingualPrompt {
   en: string;

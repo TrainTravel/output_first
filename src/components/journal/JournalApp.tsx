@@ -3,6 +3,7 @@ import { HomeScreen } from './HomeScreen';
 import { WriteScreen } from './WriteScreen';
 import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
+import { ReflectionScreen } from './ReflectionScreen';
 import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
 import { ChatScreen } from './ChatScreen';
@@ -21,6 +22,7 @@ export function JournalApp() {
     skipFeedback,
     continuePastFeedback,
     saveEmotion,
+    continueFromReflection,
     saveGratitude,
     skipToComplete,
     goHome,
@@ -62,12 +64,22 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'reflection' && (
+        <ReflectionScreen
+          journalContent={currentEntry.content || ''}
+          emotions={currentEntry.emotion}
+          emotionsFr={currentEntry.emotionFr}
+          onContinue={continueFromReflection}
+          onBack={() => saveEmotion(currentEntry.emotion, currentEntry.emotionFr)}
+        />
+      )}
+
       {currentStep === 'gratitude' && (
         <GratitudeScreen
           prompt={getGratitudePrompt()}
           onSave={saveGratitude}
           onSkip={skipToComplete}
-          onBack={() => saveEmotion(undefined, undefined)}
+          onBack={() => continueFromReflection()}
         />
       )}
 

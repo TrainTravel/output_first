@@ -91,6 +91,11 @@ export function useJournal() {
 
   const saveEmotion = (emotion?: string, emotionFr?: string) => {
     setCurrentEntry(prev => ({ ...prev, emotion, emotionFr }));
+    setCurrentStep('reflection');
+  };
+
+  const continueFromReflection = (reflectionResponse?: string) => {
+    // We could store reflectionResponse if needed in the future
     setCurrentStep('gratitude');
   };
 
@@ -149,6 +154,7 @@ export function useJournal() {
     skipFeedback,
     continuePastFeedback,
     saveEmotion,
+    continueFromReflection,
     saveGratitude,
     skipToComplete,
     goHome,
