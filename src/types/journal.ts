@@ -1,14 +1,24 @@
+export interface ReflectionCycle {
+  emotion?: string;
+  emotionFr?: string;
+  reflectionResponse?: string;
+}
+
 export interface JournalEntry {
   id: string;
   date: string;
   content: string;
   emotion?: string;
   emotionFr?: string;
+  reflectionCycles?: ReflectionCycle[];
   gratitude?: string;
   createdAt: Date;
 }
 
 export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete' | 'chat';
+
+export const MIN_CYCLES = 3;
+export const MAX_CYCLES = 5;
 
 export interface BilingualPrompt {
   en: string;
