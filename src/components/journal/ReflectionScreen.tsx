@@ -166,57 +166,57 @@ export function ReflectionScreen({
               </p>
             </div>
 
-            {/* Actions */}
-            <div className="mt-8 space-y-3">
+            {/* Choice: Continue exploring or move to gratitude */}
+            <div className="mt-8">
               {isLastCycle ? (
                 // Last cycle - only option is to move to gratitude
-                <Button
-                  variant="default"
-                  size="full"
-                  onClick={handleMoveToGratitude}
-                >
-                  <Heart className="w-5 h-5 mr-2" />
-                  Terminer avec la gratitude / Finish with gratitude
-                </Button>
-              ) : canMoveToGratitude ? (
-                // After min cycles - offer both options
-                <>
+                <div className="space-y-3">
+                  <p className="text-center text-muted-foreground text-sm mb-4">
+                    Vous avez beaucoup exploré. Terminons avec de la gratitude.
+                    <br />
+                    <span className="text-xs">You've explored a lot. Let's finish with gratitude.</span>
+                  </p>
                   <Button
                     variant="default"
-                    size="full"
-                    onClick={handleContinueExploring}
-                  >
-                    <ArrowRight className="w-5 h-5 mr-2" />
-                    Continuer à explorer / Continue exploring
-                  </Button>
-                  <Button
-                    variant="outline"
                     size="full"
                     onClick={handleMoveToGratitude}
                   >
                     <Heart className="w-5 h-5 mr-2" />
-                    Passer à la gratitude / Move to gratitude
+                    Terminer avec la gratitude / Finish with gratitude
                   </Button>
-                </>
+                </div>
               ) : (
-                // Before min cycles - continue exploring
-                <>
-                  <Button
-                    variant="default"
-                    size="full"
-                    onClick={handleContinueExploring}
-                  >
-                    <ArrowRight className="w-5 h-5 mr-2" />
-                    Continuer / Continue
-                  </Button>
-                  <Button
-                    variant="skip"
-                    size="full"
-                    onClick={handleSkip}
-                  >
-                    Passer / Skip
-                  </Button>
-                </>
+                // Offer choice to continue or move to gratitude
+                <div className="space-y-4">
+                  <p className="text-center text-foreground font-medium">
+                    Souhaitez-vous continuer à explorer ?
+                    <br />
+                    <span className="text-sm text-muted-foreground">Would you like to continue exploring?</span>
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="flex-col h-auto py-4 gap-2"
+                      onClick={handleContinueExploring}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                      <span className="text-sm">Oui, explorer plus</span>
+                      <span className="text-xs text-muted-foreground">Yes, explore more</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="flex-col h-auto py-4 gap-2"
+                      onClick={handleMoveToGratitude}
+                    >
+                      <Heart className="w-5 h-5" />
+                      <span className="text-sm">Non, gratitude</span>
+                      <span className="text-xs text-muted-foreground">No, move to gratitude</span>
+                    </Button>
+                  </div>
+                </div>
               )}
             </div>
           </>
