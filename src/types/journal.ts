@@ -17,7 +17,7 @@ export interface JournalEntry {
 
 export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete' | 'chat';
 
-export const MIN_CYCLES = 3;
+export const MIN_CYCLES = 1; // Users can choose to stop after first cycle
 export const MAX_CYCLES = 5;
 
 export interface BilingualPrompt {
