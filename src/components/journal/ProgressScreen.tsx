@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Home, Feather, Flame, Calendar } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProgressScreenProps {
   streak: number;
@@ -16,6 +17,8 @@ export function ProgressScreen({
   onGoHome,
   onStartJournal,
 }: ProgressScreenProps) {
+  const { t, bilingual, isFr } = useLanguage();
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
@@ -26,13 +29,13 @@ export function ProgressScreen({
               <Feather className="w-8 h-8 text-primary" />
             </div>
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              Vous êtes venu(e) aujourd'hui
+              {isFr ? 'Vous êtes venu(e) aujourd\'hui' : 'You showed up today'}
             </h1>
             <p className="text-muted-foreground italic">
-              You showed up today
+              {isFr ? 'You showed up today' : 'Vous êtes venu(e) aujourd\'hui'}
             </p>
             <p className="text-muted-foreground text-sm">
-              C'est ce qui compte le plus. / That's what matters most.
+              {bilingual("C'est ce qui compte le plus.", "That's what matters most.")}
             </p>
           </div>
         )}
@@ -40,10 +43,10 @@ export function ProgressScreen({
         {!hasJournaledToday && (
           <div className="text-center space-y-4">
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              Vos progrès
+              {isFr ? 'Vos progrès' : 'Your Progress'}
             </h1>
             <p className="text-muted-foreground italic">
-              Your Progress
+              {isFr ? 'Your Progress' : 'Vos progrès'}
             </p>
           </div>
         )}
@@ -57,8 +60,8 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{streak}</p>
-            <p className="text-muted-foreground text-sm">jours de suite</p>
-            <p className="text-muted-foreground/60 text-xs">day streak</p>
+            <p className="text-muted-foreground text-sm">{isFr ? 'jours de suite' : 'day streak'}</p>
+            <p className="text-muted-foreground/60 text-xs">{isFr ? 'day streak' : 'jours de suite'}</p>
           </div>
 
           <div className="bg-card rounded-2xl p-6 text-center shadow-gentle border border-border">
@@ -68,41 +71,33 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{totalDays}</p>
-            <p className="text-muted-foreground text-sm">jours d'écriture</p>
-            <p className="text-muted-foreground/60 text-xs">days journaled</p>
+            <p className="text-muted-foreground text-sm">{isFr ? "jours d'écriture" : 'days journaled'}</p>
+            <p className="text-muted-foreground/60 text-xs">{isFr ? 'days journaled' : "jours d'écriture"}</p>
           </div>
         </div>
 
         {/* Affirmation */}
         <div className="bg-primary/5 rounded-2xl p-6 text-center border border-primary/10">
           <p className="text-foreground font-serif text-lg">
-            « Se montrer, c'est déjà réussir. »
+            {isFr ? '« Se montrer, c\'est déjà réussir. »' : '"Showing up counts."'}
           </p>
           <p className="text-muted-foreground text-sm italic mt-2">
-            "Showing up counts."
+            {isFr ? '"Showing up counts."' : '« Se montrer, c\'est déjà réussir. »'}
           </p>
         </div>
 
         {/* Actions */}
         <div className="space-y-3">
           {!hasJournaledToday && (
-            <Button
-              variant="default"
-              size="full"
-              onClick={onStartJournal}
-            >
+            <Button variant="default" size="full" onClick={onStartJournal}>
               <Feather className="w-5 h-5 mr-2" />
-              Écrire aujourd'hui / Write today
+              {bilingual('Écrire aujourd\'hui', 'Write today')}
             </Button>
           )}
           
-          <Button
-            variant="gentle"
-            size="full"
-            onClick={onGoHome}
-          >
+          <Button variant="gentle" size="full" onClick={onGoHome}>
             <Home className="w-5 h-5 mr-2" />
-            Retour à l'accueil / Return home
+            {bilingual("Retour à l'accueil", 'Return home')}
           </Button>
         </div>
       </div>

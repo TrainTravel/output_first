@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Send, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -22,6 +23,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { bilingual, isFr } = useLanguage();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,7 +57,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
       console.error('Error starting conversation:', error);
       toast({
         variant: 'destructive',
-        title: 'Connection error',
+        title: isFr ? 'Erreur de connexion' : 'Connection error',
         description: error instanceof Error ? error.message : 'Could not connect to chat',
       });
       setHasStarted(false);
@@ -72,7 +74,6 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
     let textBuffer = '';
     let assistantContent = '';
 
-    // Add initial assistant message
     setMessages([...currentMessages, { role: 'assistant', content: '' }]);
 
     while (true) {
@@ -108,7 +109,6 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
             });
           }
         } catch {
-          // Incomplete JSON, put it back
           textBuffer = line + '\n' + textBuffer;
           break;
         }
@@ -145,7 +145,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
       console.error('Error sending message:', error);
       toast({
         variant: 'destructive',
-        title: 'Error',
+        title: isFr ? 'Erreur' : 'Error',
         description: error instanceof Error ? error.message : 'Could not send message',
       });
     } finally {
@@ -170,7 +170,9 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
           </Button>
           <div className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-primary" />
-            <h1 className="text-xl font-medium">Conversation Practice</h1>
+            <h1 className="text-xl font-medium">
+              {isFr ? 'Conversation Practice' : 'Conversation Practice'}
+            </h1>
           </div>
         </div>
       </header>
@@ -183,14 +185,17 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
-              <h2 className="text-2xl mb-3">Practice French Conversation</h2>
+              <h2 className="text-2xl mb-3">
+                {isFr ? 'Practice French Conversation' : 'Practice French Conversation'}
+              </h2>
               <p className="text-muted-foreground mb-8 max-w-md">
-                Chat with a supportive AI partner who helps you express yourself in French
-                while building emotional awareness.
+                {isFr
+                  ? 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'
+                  : 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'}
               </p>
               <Button onClick={startConversation} size="lg" className="gap-2">
                 <MessageCircle className="h-5 w-5" />
-                Start Conversation
+                {isFr ? 'Start Conversation' : 'Start Conversation'}
               </Button>
             </div>
           ) : (
@@ -217,14 +222,8 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
                   <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
                     <div className="flex gap-1">
                       <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-gentle-pulse" />
-                      <span
-                        className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-gentle-pulse"
-                        style={{ animationDelay: '0.2s' }}
-                      />
-                      <span
-                        className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-gentle-pulse"
-                        style={{ animationDelay: '0.4s' }}
-                      />
+                      <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-gentle-pulse" style={{ animationDelay: '0.2s' }} />
+                      <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-gentle-pulse" style={{ animationDelay: '0.4s' }} />
                     </div>
                   </div>
                 </div>
@@ -243,7 +242,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Write in French..."
+              placeholder={isFr ? 'Write in French...' : 'Write in French...'}
               className="resize-none min-h-[48px] max-h-32"
               rows={1}
               disabled={isLoading}
