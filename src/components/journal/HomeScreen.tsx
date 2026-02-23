@@ -42,7 +42,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             OutputFirst
           </h1>
           <p className="text-muted-foreground text-sm italic">
-            {isFr ? 'Journaling en français' : 'Journaling in French'}
+            {bilingual('Journaling en français', 'French journaling practice')}
           </p>
         </div>
 
