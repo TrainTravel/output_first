@@ -50,7 +50,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={bilingual('Écrivez en français...', 'Write in French...')}
+            placeholder={bilingual('Écrivez ici...', 'Write here...')}
             className="flex-1 min-h-[200px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
 
