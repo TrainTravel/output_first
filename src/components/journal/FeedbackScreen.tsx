@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Heart, Loader2, Sparkles, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface EmotionAlternative {
   fr: string;
@@ -20,7 +21,6 @@ interface FeedbackResponse {
     improved: string;
     note: { fr: string; en: string };
   } | null;
-  // Legacy fields for backwards compatibility
   encouragement?: { fr: string; en: string };
   suggestions?: Array<{
     original: string;
@@ -45,6 +45,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, bilingual, isFr } = useLanguage();
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -56,18 +57,11 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           body: { text: journalContent, type: 'feedback' },
         });
 
-        if (fnError) {
-          throw new Error(fnError.message);
-        }
+        if (fnError) throw new Error(fnError.message);
+        if (data?.error) throw new Error(data.error);
 
-        if (data?.error) {
-          throw new Error(data.error);
-        }
-
-        // If response came back as raw (wrapped in markdown), parse it
         if (data?.raw) {
           const rawContent = data.raw;
-          // Strip markdown code blocks if present
           const jsonMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)```/);
           if (jsonMatch) {
             try {
@@ -75,7 +69,6 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
               setFeedback(parsed);
               return;
             } catch {
-              // If parsing fails, show raw content
               setFeedback(data);
               return;
             }
@@ -91,14 +84,14 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
       }
     };
 
-    if (journalContent) {
-      fetchFeedback();
-    }
+    if (journalContent) fetchFeedback();
   }, [journalContent]);
 
   const acknowledgment = feedback?.acknowledgment || feedback?.encouragement;
   const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected && 
     feedback?.emotionalGranularity?.alternatives?.length > 0;
+
+  const headerText = t('Un moment de clarté', 'A moment of clarity');
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
@@ -108,11 +101,11 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           <div className="flex items-center gap-2">
             <Heart className="w-6 h-6 text-primary" />
             <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-              Un moment de clarté
+              {headerText.primary}
             </h2>
           </div>
           <p className="text-muted-foreground italic">
-            A moment of clarity
+            {headerText.secondary}
           </p>
         </div>
 
@@ -122,7 +115,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
             <div className="flex flex-col items-center justify-center py-12 space-y-4">
               <Loader2 className="w-8 h-8 text-primary animate-spin" />
               <p className="text-muted-foreground">
-                Reading what you wrote...
+                {isFr ? 'Reading what you wrote...' : 'Reading what you wrote...'}
               </p>
             </div>
           )}
@@ -131,7 +124,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 text-center">
               <p className="text-destructive">{error}</p>
               <p className="text-muted-foreground text-sm mt-2">
-                You can skip this step and continue.
+                {isFr ? 'You can skip this step and continue.' : 'You can skip this step and continue.'}
               </p>
             </div>
           )}
@@ -142,21 +135,21 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
               {acknowledgment && (
                 <div className="bg-primary/5 border border-primary/10 rounded-xl p-5">
                   <p className="text-foreground">
-                    {acknowledgment.fr}
+                    {isFr ? acknowledgment.fr : acknowledgment.en}
                   </p>
                   <p className="text-muted-foreground text-sm italic mt-2">
-                    {acknowledgment.en}
+                    {isFr ? acknowledgment.en : acknowledgment.fr}
                   </p>
                 </div>
               )}
 
-              {/* Emotional Granularity - Primary Focus */}
+              {/* Emotional Granularity */}
               {hasEmotionalGranularity && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-foreground">
                     <Sparkles className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      Nommer avec précision / Naming with precision
+                      {bilingual('Nommer avec précision', 'Naming with precision')}
                     </span>
                   </div>
                   
@@ -168,34 +161,29 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                     
                     <div className="space-y-3">
                       {feedback.emotionalGranularity!.alternatives.map((alt, index) => (
-                        <div 
-                          key={index} 
-                          className="bg-background/50 rounded-lg p-3 border border-border/50"
-                        >
+                        <div key={index} className="bg-background/50 rounded-lg p-3 border border-border/50">
                           <div className="flex items-baseline gap-2">
-                            <span className="text-foreground font-medium">{alt.fr}</span>
-                            <span className="text-muted-foreground text-sm">({alt.en})</span>
+                            <span className="text-foreground font-medium">{isFr ? alt.fr : alt.en}</span>
+                            <span className="text-muted-foreground text-sm">({isFr ? alt.en : alt.fr})</span>
                           </div>
-                          <p className="text-muted-foreground/80 text-xs mt-1 italic">
-                            {alt.nuance}
-                          </p>
+                          <p className="text-muted-foreground/80 text-xs mt-1 italic">{alt.nuance}</p>
                         </div>
                       ))}
                     </div>
                     
                     <p className="text-muted-foreground/60 text-xs pt-2 border-t border-border/30">
-                      Does one of these resonate? You can use it next time.
+                      {isFr ? 'Does one of these resonate? You can use it next time.' : 'Does one of these resonate? You can use it next time.'}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Language Note - Secondary, Optional */}
+              {/* Language Note */}
               {feedback.languageNote && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">Une petite note / A small note</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note')}</span>
                   </div>
                   <div className="bg-card border border-border rounded-xl p-4 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
@@ -204,10 +192,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                       <span className="text-foreground">{feedback.languageNote.improved}</span>
                     </div>
                     <p className="text-muted-foreground/70 text-xs">
-                      {feedback.languageNote.note.fr}
+                      {isFr ? feedback.languageNote.note.fr : feedback.languageNote.note.en}
                     </p>
                     <p className="text-muted-foreground/50 text-xs italic">
-                      {feedback.languageNote.note.en}
+                      {isFr ? feedback.languageNote.note.en : feedback.languageNote.note.fr}
                     </p>
                   </div>
                 </div>
@@ -218,7 +206,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">Une petite note / A small note</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note')}</span>
                   </div>
                   {feedback.suggestions.slice(0, 1).map((suggestion, index) => (
                     <div key={index} className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -228,10 +216,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                         <span className="text-foreground">{suggestion.improved}</span>
                       </div>
                       <p className="text-muted-foreground/70 text-xs">
-                        {suggestion.explanation.fr}
+                        {isFr ? suggestion.explanation.fr : suggestion.explanation.en}
                       </p>
                       <p className="text-muted-foreground/50 text-xs italic">
-                        {suggestion.explanation.en}
+                        {isFr ? suggestion.explanation.en : suggestion.explanation.fr}
                       </p>
                     </div>
                   ))}
@@ -250,22 +238,14 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
 
         {/* Actions */}
         <div className="mt-8 space-y-3">
-          <Button
-            variant="default"
-            size="full"
-            onClick={onContinue}
-          >
-            Continuer / Continue
+          <Button variant="default" size="full" onClick={onContinue}>
+            {bilingual('Continuer', 'Continue')}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           
           {isLoading && (
-            <Button
-              variant="skip"
-              size="full"
-              onClick={onSkip}
-            >
-              Passer / Skip
+            <Button variant="skip" size="full" onClick={onSkip}>
+              {bilingual('Passer', 'Skip')}
             </Button>
           )}
         </div>

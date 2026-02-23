@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowRight, ArrowLeft, Loader2, Heart } from 'lucide-react';
-import { MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
+import { MAX_CYCLES } from '@/types/journal';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ReflectionScreenProps {
   journalContent: string;
@@ -32,6 +33,7 @@ export function ReflectionScreen({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState('');
+  const { bilingual, isFr } = useLanguage();
 
   useEffect(() => {
     generateReflection();
@@ -57,31 +59,23 @@ export function ReflectionScreen({
         }
       );
 
-      if (!res.ok) {
-        throw new Error('Failed to generate reflection');
-      }
+      if (!res.ok) throw new Error('Failed to generate reflection');
 
       const data = await res.json();
       setReflectionData(data);
     } catch (err) {
       console.error('Error generating reflection:', err);
-      setError('Unable to generate reflection. You can continue to the next step.');
+      setError(isFr
+        ? 'Unable to generate reflection. You can continue to the next step.'
+        : 'Unable to generate reflection. You can continue to the next step.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleContinueExploring = () => {
-    onContinue(response.trim() || undefined, false);
-  };
-
-  const handleMoveToGratitude = () => {
-    onContinue(response.trim() || undefined, true);
-  };
-
-  const handleSkip = () => {
-    onContinue(undefined, false);
-  };
+  const handleContinueExploring = () => onContinue(response.trim() || undefined, false);
+  const handleMoveToGratitude = () => onContinue(response.trim() || undefined, true);
+  const handleSkip = () => onContinue(undefined, false);
 
   const isLastCycle = currentCycle >= MAX_CYCLES - 1;
 
@@ -95,7 +89,7 @@ export function ReflectionScreen({
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span className="text-sm">Retour / Back</span>
+            <span className="text-sm">{bilingual('Retour', 'Back')}</span>
           </button>
           
           {/* Cycle dots */}
@@ -116,7 +110,7 @@ export function ReflectionScreen({
           <div className="flex-1 flex flex-col items-center justify-center space-y-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary/60" />
             <p className="text-muted-foreground text-sm">
-              Prenant un moment pour réfléchir... / Taking a moment to reflect...
+              {bilingual('Prenant un moment pour réfléchir...', 'Taking a moment to reflect...')}
             </p>
           </div>
         )}
@@ -130,7 +124,7 @@ export function ReflectionScreen({
             <div className="mt-auto">
               <Button variant="default" size="full" onClick={handleSkip}>
                 <ArrowRight className="w-5 h-5 mr-2" />
-                Continuer / Continue
+                {bilingual('Continuer', 'Continue')}
               </Button>
             </div>
           </div>
@@ -158,40 +152,38 @@ export function ReflectionScreen({
               <Textarea
                 value={response}
                 onChange={(e) => setResponse(e.target.value)}
-                placeholder="Prenez votre temps... / Take your time..."
+                placeholder={bilingual('Prenez votre temps...', 'Take your time...')}
                 className="min-h-[120px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
               />
               <p className="text-muted-foreground text-xs mt-2">
-                C'est optionnel. Passez si vous préférez. / This is optional. Skip if you prefer.
+                {bilingual("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.')}
               </p>
             </div>
 
             {/* Choice: Continue exploring or move to gratitude */}
             <div className="mt-8">
               {isLastCycle ? (
-                // Last cycle - only option is to move to gratitude
                 <div className="space-y-3">
                   <p className="text-center text-muted-foreground text-sm mb-4">
-                    Vous avez beaucoup exploré. Terminons avec de la gratitude.
+                    {isFr ? "Vous avez beaucoup exploré. Terminons avec de la gratitude." : "You've explored a lot. Let's finish with gratitude."}
                     <br />
-                    <span className="text-xs">You've explored a lot. Let's finish with gratitude.</span>
+                    <span className="text-xs">
+                      {isFr ? "You've explored a lot. Let's finish with gratitude." : "Vous avez beaucoup exploré. Terminons avec de la gratitude."}
+                    </span>
                   </p>
-                  <Button
-                    variant="default"
-                    size="full"
-                    onClick={handleMoveToGratitude}
-                  >
+                  <Button variant="default" size="full" onClick={handleMoveToGratitude}>
                     <Heart className="w-5 h-5 mr-2" />
-                    Terminer avec la gratitude / Finish with gratitude
+                    {bilingual('Terminer avec la gratitude', 'Finish with gratitude')}
                   </Button>
                 </div>
               ) : (
-                // Offer choice to continue or move to gratitude
                 <div className="space-y-4">
                   <p className="text-center text-foreground font-medium">
-                    Souhaitez-vous continuer à explorer ?
+                    {isFr ? 'Souhaitez-vous continuer à explorer ?' : 'Would you like to continue exploring?'}
                     <br />
-                    <span className="text-sm text-muted-foreground">Would you like to continue exploring?</span>
+                    <span className="text-sm text-muted-foreground">
+                      {isFr ? 'Would you like to continue exploring?' : 'Souhaitez-vous continuer à explorer ?'}
+                    </span>
                   </p>
                   
                   <div className="grid grid-cols-2 gap-3">
@@ -202,8 +194,8 @@ export function ReflectionScreen({
                       onClick={handleContinueExploring}
                     >
                       <ArrowRight className="w-5 h-5" />
-                      <span className="text-sm">Oui, explorer plus</span>
-                      <span className="text-xs text-muted-foreground">Yes, explore more</span>
+                      <span className="text-sm">{isFr ? 'Oui, explorer plus' : 'Yes, explore more'}</span>
+                      <span className="text-xs text-muted-foreground">{isFr ? 'Yes, explore more' : 'Oui, explorer plus'}</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -212,8 +204,8 @@ export function ReflectionScreen({
                       onClick={handleMoveToGratitude}
                     >
                       <Heart className="w-5 h-5" />
-                      <span className="text-sm">Non, gratitude</span>
-                      <span className="text-xs text-muted-foreground">No, move to gratitude</span>
+                      <span className="text-sm">{isFr ? 'Non, gratitude' : 'No, gratitude'}</span>
+                      <span className="text-xs text-muted-foreground">{isFr ? 'No, move to gratitude' : 'Non, passer à la gratitude'}</span>
                     </Button>
                   </div>
                 </div>

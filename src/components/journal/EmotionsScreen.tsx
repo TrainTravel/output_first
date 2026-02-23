@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { EMOTION_SUGGESTIONS, EmotionWord } from '@/types/journal';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MAX_EMOTIONS = 3;
 
@@ -12,6 +13,7 @@ interface EmotionsScreenProps {
 
 export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
+  const { t, bilingual, isFr } = useLanguage();
 
   const toggleEmotion = (emotion: EmotionWord) => {
     const isSelected = selectedEmotions.some(e => e.en === emotion.en);
@@ -36,6 +38,8 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
     onSave(undefined, undefined);
   };
 
+  const header = t('Un mot pour ce que vous ressentez', 'A word for how you feel');
+
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
       <div className="w-full max-w-lg mx-auto flex-1 flex flex-col animate-fade-in-up">
@@ -45,19 +49,19 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">Retour / Back</span>
+          <span className="text-sm">{bilingual('Retour', 'Back')}</span>
         </button>
 
         {/* Header */}
         <div className="mb-8 space-y-3">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-            Un mot pour ce que vous ressentez
+            {header.primary}
           </h2>
           <p className="text-muted-foreground italic">
-            A word for how you feel
+            {header.secondary}
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            Choisissez jusqu'à {MAX_EMOTIONS} mots. / Choose up to {MAX_EMOTIONS} words.
+            {bilingual(`Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, `Choose up to ${MAX_EMOTIONS} words.`)}
             {selectedEmotions.length > 0 && (
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
@@ -69,7 +73,10 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
           {EMOTION_SUGGESTIONS.map((group) => (
             <div key={group.category} className="space-y-3">
               <p className="text-sm text-muted-foreground font-medium tracking-wide">
-                {group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span>
+                {isFr 
+                  ? <>{group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span></>
+                  : <>{group.category} <span className="text-muted-foreground/60">/ {group.categoryFr}</span></>
+                }
               </p>
               <div className="flex flex-wrap gap-2">
                 {group.emotions.map((emotion) => {
@@ -90,8 +97,17 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
                         }
                       `}
                     >
-                      <span className="font-medium">{emotion.fr}</span>
-                      <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                      {isFr ? (
+                        <>
+                          <span className="font-medium">{emotion.fr}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium">{emotion.en}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
+                        </>
+                      )}
                     </button>
                   );
                 })}
@@ -107,7 +123,7 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             size="full"
             onClick={handleContinue}
           >
-            Continuer / Continue
+            {bilingual('Continuer', 'Continue')}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           
@@ -116,7 +132,7 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             size="full"
             onClick={handleSkip}
           >
-            Passer cette étape / Skip this step
+            {bilingual('Passer cette étape', 'Skip this step')}
           </Button>
         </div>
       </div>
