@@ -14,7 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cluster_thoughts: {
+        Row: {
+          added_at: string
+          cluster_id: string
+          id: string
+          thought_id: string
+        }
+        Insert: {
+          added_at?: string
+          cluster_id: string
+          id?: string
+          thought_id: string
+        }
+        Update: {
+          added_at?: string
+          cluster_id?: string
+          id?: string
+          thought_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cluster_thoughts_cluster_id_fkey"
+            columns: ["cluster_id"]
+            isOneToOne: false
+            referencedRelation: "clusters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cluster_thoughts_thought_id_fkey"
+            columns: ["thought_id"]
+            isOneToOne: false
+            referencedRelation: "thoughts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clusters: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          user_anonymous_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_anonymous_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_anonymous_id?: string
+        }
+        Relationships: []
+      }
+      proposals: {
+        Row: {
+          cluster_id: string
+          content_native: string
+          content_target_language: string
+          generated_at: string
+          id: string
+          target_language_code: string
+        }
+        Insert: {
+          cluster_id: string
+          content_native: string
+          content_target_language: string
+          generated_at?: string
+          id?: string
+          target_language_code?: string
+        }
+        Update: {
+          cluster_id?: string
+          content_native?: string
+          content_target_language?: string
+          generated_at?: string
+          id?: string
+          target_language_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_cluster_id_fkey"
+            columns: ["cluster_id"]
+            isOneToOne: false
+            referencedRelation: "clusters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      thoughts: {
+        Row: {
+          ai_theme: string | null
+          archived: boolean
+          composted: boolean
+          content: string
+          created_at: string
+          id: string
+          user_anonymous_id: string
+        }
+        Insert: {
+          ai_theme?: string | null
+          archived?: boolean
+          composted?: boolean
+          content: string
+          created_at?: string
+          id?: string
+          user_anonymous_id: string
+        }
+        Update: {
+          ai_theme?: string | null
+          archived?: boolean
+          composted?: boolean
+          content?: string
+          created_at?: string
+          id?: string
+          user_anonymous_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
