@@ -36,7 +36,7 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 
 export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
   const { bilingual, isFr } = useLanguage();
-  const { thoughts, loading, archiveThought, retagUntagged } = useThoughts();
+  const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
@@ -44,10 +44,10 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
 
   const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
 
-  const handleRetag = async () => {
+  const handleRetag = async (all: boolean) => {
     setRetagging(true);
     try {
-      const count = await retagUntagged();
+      const count = all ? await retagAll() : await retagUntagged();
       toast.success(bilingual(`${count} pensées étiquetées`, `${count} thoughts tagged`));
     } catch {
       toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed'));
@@ -119,23 +119,37 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             </span>
           )}
         </p>
-        {untaggedCount > 0 && !loading && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-3"
-            onClick={handleRetag}
-            disabled={retagging}
-          >
-            {retagging ? (
-              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4 mr-1.5" />
+        {!loading && thoughts.length > 0 && (
+          <div className="flex gap-2 mt-3 flex-wrap justify-center">
+            {untaggedCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleRetag(false)}
+                disabled={retagging}
+              >
+                {retagging ? (
+                  <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4 mr-1.5" />
+                )}
+                {bilingual(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`)}
+              </Button>
             )}
-            {retagging
-              ? bilingual('Étiquetage…', 'Tagging…')
-              : bilingual(`Étiqueter ${untaggedCount} pensées`, `Tag ${untaggedCount} thoughts`)}
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleRetag(true)}
+              disabled={retagging}
+            >
+              {retagging ? (
+                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4 mr-1.5" />
+              )}
+              {bilingual('Tout ré-étiqueter', 'Re-tag all')}
+            </Button>
+          </div>
         )}
       </div>
 
