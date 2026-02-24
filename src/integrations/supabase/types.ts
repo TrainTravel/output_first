@@ -122,6 +122,7 @@ export type Database = {
           composted: boolean
           content: string
           created_at: string
+          embedding: string | null
           id: string
           user_anonymous_id: string
         }
@@ -131,6 +132,7 @@ export type Database = {
           composted?: boolean
           content: string
           created_at?: string
+          embedding?: string | null
           id?: string
           user_anonymous_id: string
         }
@@ -140,6 +142,7 @@ export type Database = {
           composted?: boolean
           content?: string
           created_at?: string
+          embedding?: string | null
           id?: string
           user_anonymous_id?: string
         }
@@ -150,7 +153,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_thoughts: {
+        Args: {
+          match_count?: number
+          p_user_anonymous_id?: string
+          query_embedding: string
+          similarity_threshold?: number
+        }
+        Returns: {
+          ai_theme: string
+          archived: boolean
+          composted: boolean
+          content: string
+          created_at: string
+          id: string
+          similarity: number
+          user_anonymous_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
