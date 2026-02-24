@@ -41,22 +41,20 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: `You are a thought categorizer. Given a short personal thought, assign it to ONE of these predefined categories. You MUST pick from this list — do NOT invent new categories:
+              content: `You are a thought categorizer. Given a short personal thought, assign it to ONE of these 6 high-level categories. You MUST pick from this exact list — do NOT invent new categories or use the thought's own words:
 
-- Self & Identity
-- Emotions & Feelings
-- Relationships
-- Work & Career
-- Health & Body
-- Money & Finances
-- Learning & Growth
-- Creativity & Ideas
-- Daily Life
-- Goals & Plans
-- Gratitude & Joy
-- Worries & Fears
+- Professional Development (work, career, skills, projects, ambitions)
+- Personal Wellbeing (health, emotions, self-care, energy, stress)
+- Relationships & Social (family, friends, love, social life, communication)
+- Creative & Intellectual (ideas, learning, curiosity, hobbies, inspiration)
+- Practical & Administrative (errands, finances, logistics, planning, daily tasks)
+- Values & Aspirations (identity, purpose, gratitude, fears, life goals)
 
-Pick the single best fit. Call the assign_theme function with the exact category name from the list above.`,
+Rules:
+1. Pick the SINGLE best fit from the 6 categories above.
+2. Use the EXACT category name — do not paraphrase or shorten it.
+3. NEVER use the thought content itself as the category.
+4. Call the assign_theme function with the chosen category name.`,
             },
             {
               role: "user",
