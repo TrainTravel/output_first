@@ -15,7 +15,7 @@ export interface JournalEntry {
   createdAt: Date;
 }
 
-export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete' | 'chat' | 'braindump' | 'thoughtgarden';
+export type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete' | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters';
 
 export const MIN_CYCLES = 1; // Users can choose to stop after first cycle
 export const MAX_CYCLES = 5;
