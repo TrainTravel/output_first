@@ -88,11 +88,9 @@ export function useThoughts() {
     setThoughts(prev => prev.filter(t => t.id !== id));
   };
 
-  const retagUntagged = async (): Promise<number> => {
-    const untagged = thoughts.filter(t => !t.aiTheme);
+  const retagList = async (list: Thought[]): Promise<number> => {
     let tagged = 0;
-
-    for (const t of untagged) {
+    for (const t of list) {
       try {
         const { data, error } = await supabase.functions.invoke('generate-embedding', {
           body: { thoughtId: t.id, content: t.content },
@@ -106,12 +104,18 @@ export function useThoughts() {
       } catch (e) {
         console.warn('Retag failed for', t.id, e);
       }
-      // Small delay to avoid rate limiting
       await new Promise(r => setTimeout(r, 500));
     }
-
     return tagged;
   };
 
-  return { thoughts, loading, addThought, archiveThought, retagUntagged, refetch: fetchThoughts };
+  const retagUntagged = async (): Promise<number> => {
+    return retagList(thoughts.filter(t => !t.aiTheme));
+  };
+
+  const retagAll = async (): Promise<number> => {
+    return retagList(thoughts);
+  };
+
+  return { thoughts, loading, addThought, archiveThought, retagUntagged, retagAll, refetch: fetchThoughts };
 }
