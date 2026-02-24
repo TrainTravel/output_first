@@ -71,6 +71,14 @@ export function useThoughts() {
       composted: data.composted,
     };
     setThoughts(prev => [thought, ...prev]);
+
+    // Fire-and-forget: generate embedding for the new thought
+    supabase.functions.invoke('generate-embedding', {
+      body: { thoughtId: data.id, content: data.content },
+    }).then(({ error: embedErr }) => {
+      if (embedErr) console.warn('Embedding generation failed:', embedErr);
+    });
+
     return thought;
   };
 
