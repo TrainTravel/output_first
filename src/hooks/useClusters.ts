@@ -1,16 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
-const ANON_ID_KEY = 'outputfirst_anon_id';
-
-function getAnonId(): string {
-  let id = localStorage.getItem(ANON_ID_KEY);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(ANON_ID_KEY, id);
-  }
-  return id;
-}
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface Cluster {
   id: string;
@@ -32,16 +22,17 @@ export interface ClusterThought {
 export function useClusters() {
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState(true);
-  const anonId = getAnonId();
+  const { user } = useAuth();
+  const userId = user?.id;
 
   const fetchClusters = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
 
-    // Fetch clusters with thought counts
     const { data, error } = await supabase
       .from('clusters')
       .select('*, cluster_thoughts(thought_id)')
-      .eq('user_anonymous_id', anonId)
+      .eq('user_anonymous_id', userId)
       .order('updated_at', { ascending: false });
 
     if (!error && data) {
@@ -56,7 +47,7 @@ export function useClusters() {
       })));
     }
     setLoading(false);
-  }, [anonId]);
+  }, [userId]);
 
   useEffect(() => {
     fetchClusters();
@@ -82,9 +73,10 @@ export function useClusters() {
   };
 
   const createCluster = async (title: string, description?: string): Promise<Cluster | null> => {
+    if (!userId) return null;
     const { data, error } = await supabase
       .from('clusters')
-      .insert({ title, description: description || '', user_anonymous_id: anonId })
+      .insert({ title, description: description || '', user_anonymous_id: userId })
       .select()
       .single();
 
