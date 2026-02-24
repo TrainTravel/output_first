@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -8,9 +8,10 @@ interface HomeScreenProps {
   onStartJournal: () => void;
   onViewProgress: () => void;
   onOpenChat: () => void;
+  onOpenBrainDump: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump }: HomeScreenProps) {
   const { t, bilingual, isFr } = useLanguage();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
@@ -91,6 +92,15 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           >
             <MessageCircle className="w-5 h-5 mr-2" />
             {bilingual('Pratiquer en conversation', 'Practice conversation')}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="full"
+            onClick={onOpenBrainDump}
+          >
+            <Zap className="w-5 h-5 mr-2" />
+            {bilingual('Vide-tête', 'Brain Dump')}
           </Button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
