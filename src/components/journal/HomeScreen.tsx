@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers, LogOut } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
@@ -14,7 +15,8 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
-  const { t, bilingual, isFr } = useLanguage();
+  const { bilingual, isFr } = useLanguage();
+  const { signOut } = useAuth();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
     weekday: 'long',
@@ -29,7 +31,11 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
         {/* Language Toggle */}
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center">
+          <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
+            <LogOut className="w-4 h-4 mr-1" />
+            {bilingual('Déconnexion', 'Sign out')}
+          </Button>
           <LanguageToggle />
         </div>
 

@@ -1,17 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-
-const ANON_ID_KEY = 'outputfirst_anon_id';
-
-function getAnonId(): string {
-  let id = localStorage.getItem(ANON_ID_KEY);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(ANON_ID_KEY, id);
-  }
-  return id;
-}
 
 export interface Thought {
   id: string;
@@ -25,14 +15,16 @@ export interface Thought {
 export function useThoughts() {
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [loading, setLoading] = useState(true);
-  const anonId = getAnonId();
+  const { user } = useAuth();
+  const userId = user?.id;
 
   const fetchThoughts = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
     const { data, error } = await supabase
       .from('thoughts')
       .select('*')
-      .eq('user_anonymous_id', anonId)
+      .eq('user_anonymous_id', userId)
       .eq('archived', false)
       .eq('composted', false)
       .order('created_at', { ascending: false });
@@ -48,16 +40,17 @@ export function useThoughts() {
       })));
     }
     setLoading(false);
-  }, [anonId]);
+  }, [userId]);
 
   useEffect(() => {
     fetchThoughts();
   }, [fetchThoughts]);
 
   const addThought = async (content: string): Promise<Thought | null> => {
+    if (!userId) return null;
     const { data, error } = await supabase
       .from('thoughts')
-      .insert({ content, user_anonymous_id: anonId })
+      .insert({ content, user_anonymous_id: userId })
       .select()
       .single();
 
