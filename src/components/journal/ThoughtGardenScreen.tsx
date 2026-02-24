@@ -238,12 +238,14 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             {clusters.map((cluster, idx) => (
               <div key={idx} className="animate-fade-in-up">
                 {clusters.length > 1 && (
-                  <h3 className="text-sm font-medium text-primary uppercase tracking-wider mb-3">
-                    {cluster.label}
-                    <span className="text-muted-foreground ml-2 lowercase font-normal">
-                      ({cluster.thoughts.length})
-                    </span>
-                  </h3>
+                  <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4">
+                    <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
+                      {cluster.label}
+                      <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">
+                        ({cluster.thoughts.length})
+                      </span>
+                    </h3>
+                  </div>
                 )}
                 <div className="space-y-2">
                   {cluster.thoughts.map(t => (
