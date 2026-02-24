@@ -27,7 +27,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Use chat completions with tool calling to generate a semantic embedding vector
+    // Use AI to generate a short thematic tag for this thought
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
@@ -37,39 +37,38 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-lite",
+          model: "google/gemini-3-flash-preview",
           messages: [
             {
               role: "system",
-              content: `You are an embedding generator. Given a piece of text, produce a 768-dimensional numeric vector that captures its semantic meaning. Each value should be a float between -1 and 1. Call the store_embedding function with the vector.`,
+              content: `You are a thought categorizer. Given a short personal thought or note, assign it a concise thematic label (1-3 words max). The label should capture the core topic or emotion. Examples: "Self-doubt", "Career goals", "Gratitude", "Creative ideas", "Health & energy", "Relationships", "Money worries", "Learning", "Daily routine". Always use title case. Call the assign_theme function with your chosen label.`,
             },
             {
               role: "user",
-              content: `Generate a semantic embedding vector for the following text:\n\n"${content}"`,
+              content: content,
             },
           ],
           tools: [
             {
               type: "function",
               function: {
-                name: "store_embedding",
-                description: "Store a 768-dimensional semantic embedding vector for a thought.",
+                name: "assign_theme",
+                description: "Assign a short thematic label to a thought.",
                 parameters: {
                   type: "object",
                   properties: {
-                    embedding: {
-                      type: "array",
-                      items: { type: "number" },
-                      description: "A 768-dimensional vector of floats between -1 and 1 representing the semantic meaning of the text.",
+                    theme: {
+                      type: "string",
+                      description: "A concise 1-3 word thematic label in title case.",
                     },
                   },
-                  required: ["embedding"],
+                  required: ["theme"],
                   additionalProperties: false,
                 },
               },
             },
           ],
-          tool_choice: { type: "function", function: { name: "store_embedding" } },
+          tool_choice: { type: "function", function: { name: "assign_theme" } },
         }),
       }
     );
@@ -97,45 +96,35 @@ serve(async (req) => {
     const data = await response.json();
     const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
 
-    if (!toolCall || toolCall.function.name !== "store_embedding") {
+    if (!toolCall || toolCall.function.name !== "assign_theme") {
       console.error("Unexpected response:", JSON.stringify(data));
-      throw new Error("Model did not return embedding via tool call");
+      throw new Error("Model did not return theme via tool call");
     }
 
     const args = JSON.parse(toolCall.function.arguments);
-    let embedding = args.embedding;
+    const theme = args.theme;
 
-    if (!embedding || !Array.isArray(embedding)) {
-      throw new Error("Invalid embedding in tool call response");
+    if (!theme || typeof theme !== "string") {
+      throw new Error("Invalid theme in tool call response");
     }
 
-    // Ensure exactly 768 dimensions - pad or truncate if needed
-    if (embedding.length < 768) {
-      embedding = [...embedding, ...new Array(768 - embedding.length).fill(0)];
-    } else if (embedding.length > 768) {
-      embedding = embedding.slice(0, 768);
-    }
-
-    // Normalize: clamp values to [-1, 1]
-    embedding = embedding.map((v: number) => Math.max(-1, Math.min(1, Number(v) || 0)));
-
-    // Store embedding in the thoughts table
+    // Store theme in the thoughts table
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { error: updateError } = await supabase
       .from("thoughts")
-      .update({ embedding: JSON.stringify(embedding) })
+      .update({ ai_theme: theme.trim() })
       .eq("id", thoughtId);
 
     if (updateError) {
       console.error("DB update error:", updateError);
-      throw new Error(`Failed to store embedding: ${updateError.message}`);
+      throw new Error(`Failed to store theme: ${updateError.message}`);
     }
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({ success: true, theme: theme.trim() }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
