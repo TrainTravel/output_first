@@ -8,6 +8,7 @@ import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
 import { ChatScreen } from './ChatScreen';
 import { BrainDumpScreen } from './BrainDumpScreen';
+import { ThoughtGardenScreen } from './ThoughtGardenScreen';
 
 export function JournalApp() {
   const {
@@ -32,6 +33,7 @@ export function JournalApp() {
     viewProgress,
     openChat,
     openBrainDump,
+    openThoughtGarden,
   } = useJournal();
 
   return (
@@ -43,6 +45,7 @@ export function JournalApp() {
           onViewProgress={viewProgress}
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
+          onOpenThoughtGarden={openThoughtGarden}
         />
       )}
 
@@ -106,6 +109,10 @@ export function JournalApp() {
 
       {currentStep === 'braindump' && (
         <BrainDumpScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'thoughtgarden' && (
+        <ThoughtGardenScreen onBack={goHome} />
       )}
     </div>
   );

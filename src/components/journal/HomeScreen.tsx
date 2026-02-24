@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -9,9 +9,10 @@ interface HomeScreenProps {
   onViewProgress: () => void;
   onOpenChat: () => void;
   onOpenBrainDump: () => void;
+  onOpenThoughtGarden: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden }: HomeScreenProps) {
   const { t, bilingual, isFr } = useLanguage();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
@@ -101,6 +102,15 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           >
             <Zap className="w-5 h-5 mr-2" />
             {bilingual('Vide-tête', 'Brain Dump')}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="full"
+            onClick={onOpenThoughtGarden}
+          >
+            <Sprout className="w-5 h-5 mr-2" />
+            {bilingual('Jardin de pensées', 'Thought Garden')}
           </Button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
