@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -10,9 +10,10 @@ interface HomeScreenProps {
   onOpenChat: () => void;
   onOpenBrainDump: () => void;
   onOpenThoughtGarden: () => void;
+  onOpenClusters: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
   const { t, bilingual, isFr } = useLanguage();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
@@ -111,6 +112,15 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           >
             <Sprout className="w-5 h-5 mr-2" />
             {bilingual('Jardin de pensées', 'Thought Garden')}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="full"
+            onClick={onOpenClusters}
+          >
+            <Layers className="w-5 h-5 mr-2" />
+            {bilingual('Mes Clusters', 'My Clusters')}
           </Button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">

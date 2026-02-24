@@ -1,0 +1,151 @@
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, Plus, Layers, X } from 'lucide-react';
+import { useClusters, Cluster } from '@/hooks/useClusters';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface ClustersScreenProps {
+  onBack: () => void;
+  onOpenCluster: (clusterId: string) => void;
+}
+
+export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
+  const { bilingual, isFr } = useLanguage();
+  const { clusters, loading, createCluster } = useClusters();
+  const [showCreate, setShowCreate] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [creating, setCreating] = useState(false);
+
+  const handleCreate = async () => {
+    const trimmed = newTitle.trim();
+    if (!trimmed || creating) return;
+    setCreating(true);
+    await createCluster(trimmed);
+    setCreating(false);
+    setNewTitle('');
+    setShowCreate(false);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col px-6 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <Button variant="ghost" size="sm" onClick={onBack}>
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          {bilingual('Retour', 'Back')}
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowCreate(s => !s)}
+        >
+          {showCreate ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+        </Button>
+      </div>
+
+      {/* Title */}
+      <div className="text-center mb-6">
+        <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
+          <Layers className="w-7 h-7 text-primary" />
+          {bilingual('Mes Clusters', 'My Clusters')}
+        </h2>
+        <p className="text-muted-foreground text-sm mt-1">
+          {bilingual(
+            'Regroupez vos pensées librement.',
+            'Group your thoughts freely.'
+          )}
+        </p>
+      </div>
+
+      {/* Create new cluster */}
+      {showCreate && (
+        <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
+          <div className="flex gap-2">
+            <Input
+              placeholder={bilingual('Nom du cluster…', 'Cluster name…')}
+              value={newTitle}
+              onChange={e => setNewTitle(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleCreate()}
+              autoFocus
+            />
+            <Button onClick={handleCreate} disabled={!newTitle.trim() || creating} size="sm">
+              {creating ? '…' : bilingual('Créer', 'Create')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Cluster list */}
+      <div className="flex-1 max-w-lg mx-auto w-full">
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <p className="text-muted-foreground animate-gentle-pulse">
+              {bilingual('Chargement…', 'Loading…')}
+            </p>
+          </div>
+        ) : clusters.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Layers className="w-12 h-12 text-muted-foreground/30 mb-4" />
+            <p className="text-muted-foreground">
+              {bilingual(
+                'Pas encore de clusters. Créez-en un pour regrouper vos pensées.',
+                'No clusters yet. Create one to group your thoughts.'
+              )}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {clusters.map(cluster => (
+              <ClusterCard
+                key={cluster.id}
+                cluster={cluster}
+                onClick={() => onOpenCluster(cluster.id)}
+                isFr={isFr}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ClusterCard({
+  cluster,
+  onClick,
+  isFr,
+}: {
+  cluster: Cluster;
+  onClick: () => void;
+  isFr: boolean;
+}) {
+  const formatted = new Date(cluster.updatedAt).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+
+  return (
+    <div
+      onClick={onClick}
+      className="group bg-card border border-border rounded-xl px-5 py-4 cursor-pointer transition-all hover:border-primary/30 hover:shadow-[var(--gentle-shadow)] animate-fade-in-up"
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-serif text-lg text-foreground truncate">{cluster.title}</h3>
+          {cluster.description && (
+            <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{cluster.description}</p>
+          )}
+        </div>
+        <Layers className="w-4 h-4 text-muted-foreground/40 mt-1 flex-shrink-0 ml-3" />
+      </div>
+      <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+        <span>
+          {cluster.thoughtCount ?? 0} {isFr ? 'pensées' : 'thoughts'}
+        </span>
+        <span>·</span>
+        <span>{formatted}</span>
+      </div>
+    </div>
+  );
+}
