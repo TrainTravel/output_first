@@ -41,7 +41,22 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: `You are a thought categorizer. Given a short personal thought or note, assign it a concise thematic label (1-3 words max). The label should capture the core topic or emotion. Examples: "Self-doubt", "Career goals", "Gratitude", "Creative ideas", "Health & energy", "Relationships", "Money worries", "Learning", "Daily routine". Always use title case. Call the assign_theme function with your chosen label.`,
+              content: `You are a thought categorizer. Given a short personal thought, assign it to ONE of these predefined categories. You MUST pick from this list — do NOT invent new categories:
+
+- Self & Identity
+- Emotions & Feelings
+- Relationships
+- Work & Career
+- Health & Body
+- Money & Finances
+- Learning & Growth
+- Creativity & Ideas
+- Daily Life
+- Goals & Plans
+- Gratitude & Joy
+- Worries & Fears
+
+Pick the single best fit. Call the assign_theme function with the exact category name from the list above.`,
             },
             {
               role: "user",
