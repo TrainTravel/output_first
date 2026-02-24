@@ -9,6 +9,8 @@ import { ProgressScreen } from './ProgressScreen';
 import { ChatScreen } from './ChatScreen';
 import { BrainDumpScreen } from './BrainDumpScreen';
 import { ThoughtGardenScreen } from './ThoughtGardenScreen';
+import { ClustersScreen } from './ClustersScreen';
+import { ClusterDetailScreen } from './ClusterDetailScreen';
 
 export function JournalApp() {
   const {
@@ -34,6 +36,9 @@ export function JournalApp() {
     openChat,
     openBrainDump,
     openThoughtGarden,
+    openClusters,
+    openClusterDetail,
+    activeClusterId,
   } = useJournal();
 
   return (
@@ -46,6 +51,7 @@ export function JournalApp() {
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
+          onOpenClusters={openClusters}
         />
       )}
 
@@ -113,6 +119,14 @@ export function JournalApp() {
 
       {currentStep === 'thoughtgarden' && (
         <ThoughtGardenScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'clusters' && (
+        <ClustersScreen onBack={goHome} onOpenCluster={openClusterDetail} />
+      )}
+
+      {currentStep === 'clusterdetail' && activeClusterId && (
+        <ClusterDetailScreen clusterId={activeClusterId} onBack={openClusters} />
       )}
     </div>
   );

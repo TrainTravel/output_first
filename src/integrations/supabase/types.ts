@@ -153,6 +153,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      compost_and_fetch_thoughts: {
+        Args: { p_user_anonymous_id: string }
+        Returns: {
+          ai_theme: string | null
+          archived: boolean
+          composted: boolean
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          user_anonymous_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "thoughts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       match_thoughts: {
         Args: {
           match_count?: number

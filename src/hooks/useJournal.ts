@@ -9,6 +9,7 @@ export function useJournal() {
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({});
   const [currentCycle, setCurrentCycle] = useState(0);
   const [reflectionCycles, setReflectionCycles] = useState<ReflectionCycle[]>([]);
+  const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
   // Load entries from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -190,5 +191,8 @@ export function useJournal() {
     openChat,
     openBrainDump: () => setCurrentStep('braindump'),
     openThoughtGarden: () => setCurrentStep('thoughtgarden'),
+    openClusters: () => setCurrentStep('clusters'),
+    openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
+    activeClusterId,
   };
 }
