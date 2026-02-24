@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Sprout, Archive, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2 } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from 'sonner';
 
 interface ThoughtGardenScreenProps {
   onBack: () => void;
@@ -35,10 +36,24 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 
 export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
   const { bilingual, isFr } = useLanguage();
-  const { thoughts, loading, archiveThought } = useThoughts();
+  const { thoughts, loading, archiveThought, retagUntagged } = useThoughts();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
+  const [retagging, setRetagging] = useState(false);
+
+  const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
+
+  const handleRetag = async () => {
+    setRetagging(true);
+    try {
+      const count = await retagUntagged();
+      toast.success(bilingual(`${count} pensées étiquetées`, `${count} thoughts tagged`));
+    } catch {
+      toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed'));
+    }
+    setRetagging(false);
+  };
 
   const filtered = useMemo(() => {
     if (!search.trim()) return thoughts;
@@ -104,6 +119,24 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             </span>
           )}
         </p>
+        {untaggedCount > 0 && !loading && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={handleRetag}
+            disabled={retagging}
+          >
+            {retagging ? (
+              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4 mr-1.5" />
+            )}
+            {retagging
+              ? bilingual('Étiquetage…', 'Tagging…')
+              : bilingual(`Étiqueter ${untaggedCount} pensées`, `Tag ${untaggedCount} thoughts`)}
+          </Button>
+        )}
       </div>
 
       {/* Search */}
