@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const ANON_ID_KEY = 'outputfirst_anon_id';
 
@@ -87,5 +88,30 @@ export function useThoughts() {
     setThoughts(prev => prev.filter(t => t.id !== id));
   };
 
-  return { thoughts, loading, addThought, archiveThought, refetch: fetchThoughts };
+  const retagUntagged = async (): Promise<number> => {
+    const untagged = thoughts.filter(t => !t.aiTheme);
+    let tagged = 0;
+
+    for (const t of untagged) {
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-embedding', {
+          body: { thoughtId: t.id, content: t.content },
+        });
+        if (!error && data?.theme) {
+          setThoughts(prev =>
+            prev.map(th => th.id === t.id ? { ...th, aiTheme: data.theme } : th)
+          );
+          tagged++;
+        }
+      } catch (e) {
+        console.warn('Retag failed for', t.id, e);
+      }
+      // Small delay to avoid rate limiting
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    return tagged;
+  };
+
+  return { thoughts, loading, addThought, archiveThought, retagUntagged, refetch: fetchThoughts };
 }
