@@ -1,61 +1,36 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Search, Sprout, Archive, Trash2, X } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ThoughtGardenScreenProps {
   onBack: () => void;
 }
 
-interface SemanticCluster {
+interface ThemeGroup {
   label: string;
-  thoughts: (Thought & { similarity?: number })[];
+  thoughts: Thought[];
 }
 
-function clusterThoughtsSemantically(
-  thoughts: Thought[],
-  similarityMap: Map<string, Map<string, number>>,
-  threshold = 0.65
-): SemanticCluster[] {
-  const assigned = new Set<string>();
-  const clusters: SemanticCluster[] = [];
+function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
+  const map = new Map<string, Thought[]>();
 
-  // Sort thoughts by how many similar neighbors they have (hubs first)
-  const sorted = [...thoughts].sort((a, b) => {
-    const aNeighbors = similarityMap.get(a.id)?.size ?? 0;
-    const bNeighbors = similarityMap.get(b.id)?.size ?? 0;
-    return bNeighbors - aNeighbors;
-  });
-
-  for (const thought of sorted) {
-    if (assigned.has(thought.id)) continue;
-
-    const neighbors = similarityMap.get(thought.id);
-    const cluster: Thought[] = [thought];
-    assigned.add(thought.id);
-
-    if (neighbors) {
-      for (const [neighborId, sim] of neighbors) {
-        if (!assigned.has(neighborId) && sim >= threshold) {
-          const neighbor = thoughts.find(t => t.id === neighborId);
-          if (neighbor) {
-            cluster.push(neighbor);
-            assigned.add(neighborId);
-          }
-        }
-      }
-    }
-
-    clusters.push({
-      label: thought.aiTheme || thought.content.slice(0, 40) + (thought.content.length > 40 ? '…' : ''),
-      thoughts: cluster,
-    });
+  for (const t of thoughts) {
+    const key = t.aiTheme || 'Uncategorized';
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(t);
   }
 
-  return clusters;
+  // Sort groups: largest first, "Uncategorized" last
+  return [...map.entries()]
+    .sort(([a, aList], [b, bList]) => {
+      if (a === 'Uncategorized') return 1;
+      if (b === 'Uncategorized') return -1;
+      return bList.length - aList.length;
+    })
+    .map(([label, thoughts]) => ({ label, thoughts }));
 }
 
 export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
@@ -64,70 +39,6 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
-  const [similarityMap, setSimilarityMap] = useState<Map<string, Map<string, number>>>(new Map());
-  const [clusteringDone, setClusteringDone] = useState(false);
-
-  // Build similarity map by querying match_thoughts for each thought with an embedding
-  const buildSimilarityMap = useCallback(async () => {
-    if (thoughts.length === 0) {
-      setClusteringDone(true);
-      return;
-    }
-
-    const map = new Map<string, Map<string, number>>();
-    const anonId = localStorage.getItem('outputfirst_anon_id') || '';
-
-    // For each thought, find its similar neighbors
-    // We batch by picking a representative subset to avoid too many RPC calls
-    const thoughtsToQuery = thoughts.slice(0, 50); // limit to 50 for perf
-
-    for (const thought of thoughtsToQuery) {
-      try {
-        // Get the embedding for this thought first
-        const { data: thoughtData } = await supabase
-          .from('thoughts')
-          .select('embedding')
-          .eq('id', thought.id)
-          .single();
-
-        if (!thoughtData?.embedding) continue;
-
-        const { data: matches, error } = await supabase.rpc('match_thoughts', {
-          query_embedding: thoughtData.embedding,
-          similarity_threshold: 0.5,
-          match_count: 10,
-          p_user_anonymous_id: anonId,
-        });
-
-        if (error || !matches) continue;
-
-        const neighbors = new Map<string, number>();
-        for (const match of matches) {
-          if (match.id !== thought.id) {
-            neighbors.set(match.id, match.similarity);
-
-            // Also add reverse mapping
-            if (!map.has(match.id)) map.set(match.id, new Map());
-            map.get(match.id)!.set(thought.id, match.similarity);
-          }
-        }
-        map.set(thought.id, neighbors);
-      } catch (e) {
-        console.warn('Similarity query failed for thought', thought.id, e);
-      }
-    }
-
-    setSimilarityMap(map);
-    setClusteringDone(true);
-  }, [thoughts]);
-
-  useEffect(() => {
-    if (!loading && thoughts.length > 0) {
-      buildSimilarityMap();
-    } else if (!loading) {
-      setClusteringDone(true);
-    }
-  }, [loading, thoughts.length, buildSimilarityMap]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return thoughts;
@@ -137,11 +48,7 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
     );
   }, [thoughts, search]);
 
-  // Semantic clusters
-  const clusters = useMemo(() => {
-    if (!clusteringDone || filtered.length === 0) return [];
-    return clusterThoughtsSemantically(filtered, similarityMap);
-  }, [filtered, similarityMap, clusteringDone]);
+  const groups = useMemo(() => groupByTheme(filtered), [filtered]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -191,9 +98,9 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             `${thoughts.length} pensées capturées`,
             `${thoughts.length} thoughts captured`
           )}
-          {clusteringDone && clusters.length > 1 && (
+          {groups.length > 1 && (
             <span className="ml-1">
-              · {clusters.length} {bilingual('groupes', 'clusters')}
+              · {groups.length} {bilingual('thèmes', 'themes')}
             </span>
           )}
         </p>
@@ -213,12 +120,10 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
 
       {/* Content */}
       <div className="flex-1 max-w-lg mx-auto w-full">
-        {loading || !clusteringDone ? (
+        {loading ? (
           <div className="flex items-center justify-center py-16">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {!clusteringDone && !loading
-                ? bilingual('Regroupement en cours…', 'Clustering thoughts…')
-                : bilingual('Chargement…', 'Loading…')}
+              {bilingual('Chargement…', 'Loading…')}
             </p>
           </div>
         ) : filtered.length === 0 ? (
@@ -235,20 +140,20 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
           </div>
         ) : (
           <div className="space-y-8">
-            {clusters.map((cluster, idx) => (
+            {groups.map((group, idx) => (
               <div key={idx} className="animate-fade-in-up">
-                {clusters.length > 1 && (
+                {groups.length > 1 && (
                   <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4">
                     <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
-                      {cluster.label}
+                      {group.label}
                       <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">
-                        ({cluster.thoughts.length})
+                        ({group.thoughts.length})
                       </span>
                     </h3>
                   </div>
                 )}
                 <div className="space-y-2">
-                  {cluster.thoughts.map(t => (
+                  {group.thoughts.map(t => (
                     <ThoughtCard
                       key={t.id}
                       content={t.content}
