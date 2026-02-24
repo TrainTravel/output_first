@@ -7,6 +7,7 @@ import { ReflectionScreen } from './ReflectionScreen';
 import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
 import { ChatScreen } from './ChatScreen';
+import { BrainDumpScreen } from './BrainDumpScreen';
 
 export function JournalApp() {
   const {
@@ -30,6 +31,7 @@ export function JournalApp() {
     goHome,
     viewProgress,
     openChat,
+    openBrainDump,
   } = useJournal();
 
   return (
@@ -40,6 +42,7 @@ export function JournalApp() {
           onStartJournal={startJournal}
           onViewProgress={viewProgress}
           onOpenChat={openChat}
+          onOpenBrainDump={openBrainDump}
         />
       )}
 
@@ -99,6 +102,10 @@ export function JournalApp() {
 
       {currentStep === 'chat' && (
         <ChatScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'braindump' && (
+        <BrainDumpScreen onBack={goHome} />
       )}
     </div>
   );

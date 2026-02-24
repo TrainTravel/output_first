@@ -188,5 +188,6 @@ export function useJournal() {
     goHome,
     viewProgress,
     openChat,
+    openBrainDump: () => setCurrentStep('braindump'),
   };
 }
