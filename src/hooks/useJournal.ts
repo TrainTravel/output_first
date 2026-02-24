@@ -190,6 +190,5 @@ export function useJournal() {
     openChat,
     openBrainDump: () => setCurrentStep('braindump'),
     openThoughtGarden: () => setCurrentStep('thoughtgarden'),
-    openClusters: () => setCurrentStep('clusters'),
   };
 }

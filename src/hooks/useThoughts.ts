@@ -28,13 +28,16 @@ export function useThoughts() {
 
   const fetchThoughts = useCallback(async () => {
     setLoading(true);
-    // Use compost_and_fetch_thoughts RPC which auto-composts old unlinked thoughts
-    const { data, error } = await supabase.rpc('compost_and_fetch_thoughts', {
-      p_user_anonymous_id: anonId,
-    });
+    const { data, error } = await supabase
+      .from('thoughts')
+      .select('*')
+      .eq('user_anonymous_id', anonId)
+      .eq('archived', false)
+      .eq('composted', false)
+      .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setThoughts((data as any[]).map(t => ({
+      setThoughts(data.map(t => ({
         id: t.id,
         content: t.content,
         createdAt: t.created_at,
