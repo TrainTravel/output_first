@@ -18,6 +18,30 @@
 
 ---
 
+### Thought-Aware AI Chat
+
+**Feature:** Chat with AI while it has context of your grouped thoughts.
+
+- **Discuss all thoughts** — Button in Thought Garden header opens chat with your whole garden
+- **Discuss a theme** — Chat icon on each theme group focuses conversation on that topic
+- **Discuss a cluster** — Button in cluster detail explores connections between grouped thoughts
+
+**How it works:**
+- AI receives up to 20 of your thoughts (truncated for context)
+- System prompt adapts based on mode:
+  - *All*: AI picks emotionally significant thoughts to explore
+  - *Theme*: AI focuses on the specific theme you selected
+  - *Cluster*: AI helps articulate connections between thoughts you grouped
+- Chat header shows context label and thought count badge
+
+**ADHD-Friendly:**
+- No need to re-explain your thoughts — AI already has context
+- Focused conversations prevent scattered tangents
+- Visual badge confirms AI knows what you're discussing
+- One-tap entry from wherever you are in the app
+
+---
+
 ## [2026-02-24]
 
 ### Authentication & Data Security
