@@ -75,9 +75,13 @@ export function useJournal() {
 
   const startJournal = () => {
     setCurrentEntry({ date: today });
-    setCurrentStep('write');
+    setCurrentStep('breathe');
     setCurrentCycle(0);
     setReflectionCycles([]);
+  };
+
+  const finishBreathe = () => {
+    setCurrentStep('write');
   };
 
   const saveContent = (content: string) => {
@@ -179,6 +183,7 @@ export function useJournal() {
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
+    finishBreathe,
     saveContent,
     skipFeedback,
     continuePastFeedback,
