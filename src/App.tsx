@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -13,8 +13,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+function AuthRedirect({ children }: { children: React.ReactNode }) {
+  const { loading } = useAuth();
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -22,7 +22,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  if (!user) return <Navigate to="/auth" replace />;
   return <>{children}</>;
 }
 
@@ -38,7 +37,7 @@ const App = () => (
               <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                <Route path="/" element={<AuthRedirect><Index /></AuthRedirect>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
