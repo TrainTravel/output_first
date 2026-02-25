@@ -1,5 +1,6 @@
 import { useJournal } from '@/hooks/useJournal';
 import { HomeScreen } from './HomeScreen';
+import { BreatheScreen } from './BreatheScreen';
 import { WriteScreen } from './WriteScreen';
 import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
@@ -11,6 +12,17 @@ import { BrainDumpScreen } from './BrainDumpScreen';
 import { ThoughtGardenScreen } from './ThoughtGardenScreen';
 import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
+
+const STEP_BG_CLASS: Record<string, string> = {
+  home: 'journal-step-home',
+  breathe: 'journal-step-breathe',
+  write: 'journal-step-write',
+  feedback: 'journal-step-feedback',
+  emotions: 'journal-step-emotions',
+  reflection: 'journal-step-reflection',
+  gratitude: 'journal-step-gratitude',
+  complete: 'journal-step-complete',
+};
 
 export function JournalApp() {
   const {
@@ -24,6 +36,7 @@ export function JournalApp() {
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
+    finishBreathe,
     saveContent,
     skipFeedback,
     continuePastFeedback,
@@ -41,8 +54,10 @@ export function JournalApp() {
     activeClusterId,
   } = useJournal();
 
+  const bgClass = STEP_BG_CLASS[currentStep] || '';
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`min-h-screen bg-background transition-all duration-1000 ${bgClass}`}>
       {currentStep === 'home' && (
         <HomeScreen
           hasJournaledToday={hasJournaledToday}
@@ -52,6 +67,13 @@ export function JournalApp() {
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenClusters={openClusters}
+        />
+      )}
+
+      {currentStep === 'breathe' && (
+        <BreatheScreen
+          onReady={finishBreathe}
+          onBack={goHome}
         />
       )}
 
