@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers, LogOut } from 'lucide-react';
+import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers, LogOut, UserPlus } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { SignUpPrompt } from './SignUpPrompt';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
@@ -16,7 +18,10 @@ interface HomeScreenProps {
 
 export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
+  const isGuest = !user;
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [signUpFeature, setSignUpFeature] = useState<string | undefined>();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
     weekday: 'long',
@@ -27,15 +32,31 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
     ...(isFr ? { month: 'long', day: 'numeric' } : { day: 'numeric', month: 'long' }),
   });
 
+  const requireAuth = (featureName: string, callback: () => void) => {
+    if (isGuest) {
+      setSignUpFeature(featureName);
+      setShowSignUp(true);
+    } else {
+      callback();
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
         {/* Language Toggle */}
         <div className="flex justify-between items-center">
-          <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
-            <LogOut className="w-4 h-4 mr-1" />
-            {t('Déconnexion', 'Sign out').primary}
-          </Button>
+          {isGuest ? (
+            <Button variant="calm" size="sm" onClick={() => setShowSignUp(true)}>
+              <UserPlus className="w-4 h-4 mr-1" />
+              {t("S'inscrire", 'Sign Up').primary}
+            </Button>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
+              <LogOut className="w-4 h-4 mr-1" />
+              {t('Déconnexion', 'Sign out').primary}
+            </Button>
+          )}
           <LanguageToggle />
         </div>
 
@@ -96,7 +117,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           <Button
             variant="outline"
             size="full"
-            onClick={onOpenChat}
+            onClick={() => requireAuth('Conversation', onOpenChat)}
           >
             <MessageCircle className="w-5 h-5 mr-2" />
             {bilingual('Conversation', 'Conversation')}
@@ -105,7 +126,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           <Button
             variant="outline"
             size="full"
-            onClick={onOpenBrainDump}
+            onClick={() => requireAuth('Brain Dump', onOpenBrainDump)}
           >
             <Zap className="w-5 h-5 mr-2" />
             {bilingual('Vide-tête', 'Brain Dump')}
@@ -114,7 +135,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           <Button
             variant="outline"
             size="full"
-            onClick={onOpenThoughtGarden}
+            onClick={() => requireAuth('Thought Garden', onOpenThoughtGarden)}
           >
             <Sprout className="w-5 h-5 mr-2" />
             {bilingual('Jardin de pensées', 'Thought Garden')}
@@ -123,7 +144,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           <Button
             variant="outline"
             size="full"
-            onClick={onOpenClusters}
+            onClick={() => requireAuth('Clusters', onOpenClusters)}
           >
             <Layers className="w-5 h-5 mr-2" />
             {bilingual('Mes Clusters', 'My Clusters')}
@@ -146,6 +167,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           </Button>
         </div>
       </div>
+      <SignUpPrompt open={showSignUp} onOpenChange={setShowSignUp} featureName={signUpFeature} />
     </div>
   );
 }
