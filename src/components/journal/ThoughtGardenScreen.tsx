@@ -1,13 +1,15 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
+import { ThoughtContext } from '@/types/chat';
 
 interface ThoughtGardenScreenProps {
   onBack: () => void;
+  onOpenChatWithContext: (context: ThoughtContext) => void;
 }
 
 interface ThemeGroup {
@@ -34,7 +36,7 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
     .map(([label, thoughts]) => ({ label, thoughts }));
 }
 
-export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
+export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGardenScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
   const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
   const [search, setSearch] = useState('');
@@ -43,6 +45,32 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
   const [retagging, setRetagging] = useState(false);
 
   const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
+
+  const handleChatAllThoughts = () => {
+    const context: ThoughtContext = {
+      mode: 'all',
+      label: bilingual('Mon jardin', 'My garden'),
+      thoughts: thoughts.slice(0, 20).map(th => ({
+        content: th.content,
+        createdAt: th.createdAt,
+        aiTheme: th.aiTheme,
+      })),
+    };
+    onOpenChatWithContext(context);
+  };
+
+  const handleChatTheme = (group: ThemeGroup) => {
+    const context: ThoughtContext = {
+      mode: 'theme',
+      label: group.label,
+      thoughts: group.thoughts.slice(0, 20).map(th => ({
+        content: th.content,
+        createdAt: th.createdAt,
+        aiTheme: th.aiTheme,
+      })),
+    };
+    onOpenChatWithContext(context);
+  };
 
   const handleRetag = async (all: boolean) => {
     setRetagging(true);
@@ -121,6 +149,14 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
         </p>
         {!loading && thoughts.length > 0 && (
           <div className="flex gap-2 mt-3 flex-wrap justify-center">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleChatAllThoughts}
+            >
+              <MessageCircle className="w-4 h-4 mr-1.5" />
+              {bilingual('Discuter', 'Discuss')}
+            </Button>
             {untaggedCount > 0 && (
               <Button
                 variant="outline"
@@ -190,13 +226,20 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             {groups.map((group, idx) => (
               <div key={idx} className="animate-fade-in-up">
                 {groups.length > 1 && (
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4">
+                  <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4 flex items-center justify-between">
                     <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
                       {group.label}
                       <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">
                         ({group.thoughts.length})
                       </span>
                     </h3>
+                    <button
+                      onClick={() => handleChatTheme(group)}
+                      className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
+                      title={bilingual('Discuter ce thème', 'Discuss this theme')}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
                   </div>
                 )}
                 <div className="space-y-2">

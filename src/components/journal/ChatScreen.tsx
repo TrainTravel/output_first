@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Send, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Sprout, Layers } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { ThoughtContext } from '@/types/chat';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,11 +14,12 @@ interface Message {
 
 interface ChatScreenProps {
   onBack: () => void;
+  context?: ThoughtContext | null;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/french-chat`;
 
-export function ChatScreen({ onBack }: ChatScreenProps) {
+export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +50,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ messages: [] }),
+        body: JSON.stringify({ messages: [], thoughtContext: context }),
       });
 
       if (!resp.ok) {
@@ -139,7 +141,7 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, thoughtContext: context }),
       });
 
       if (!resp.ok) {
@@ -175,12 +177,20 @@ export function ChatScreen({ onBack }: ChatScreenProps) {
           <Button variant="ghost" size="icon" onClick={onBack}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-primary" />
-            <h1 className="text-xl font-medium">
-              {isFr ? 'Conversation Practice' : 'Conversation Practice'}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <MessageCircle className="h-5 w-5 text-primary flex-shrink-0" />
+            <h1 className="text-xl font-medium truncate">
+              {context ? context.label : (isFr ? 'Conversation' : 'Conversation')}
             </h1>
           </div>
+          {context && (
+            <div className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full flex-shrink-0">
+              {context.mode === 'all' && <Sprout className="w-3 h-3" />}
+              {context.mode === 'theme' && <Sprout className="w-3 h-3" />}
+              {context.mode === 'cluster' && <Layers className="w-3 h-3" />}
+              <span>{context.thoughts.length}</span>
+            </div>
+          )}
         </div>
       </header>
 

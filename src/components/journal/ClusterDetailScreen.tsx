@@ -1,21 +1,37 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Layers, FileText } from 'lucide-react';
+import { ArrowLeft, Layers, FileText, MessageCircle } from 'lucide-react';
 import { useClusters, ClusterThought } from '@/hooks/useClusters';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ThoughtContext } from '@/types/chat';
 
 interface ClusterDetailScreenProps {
   clusterId: string;
   onBack: () => void;
+  onOpenChatWithContext: (context: ThoughtContext) => void;
 }
 
-export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenProps) {
+export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }: ClusterDetailScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
   const { clusters, fetchClusterThoughts } = useClusters();
   const [thoughts, setThoughts] = useState<ClusterThought[]>([]);
   const [loading, setLoading] = useState(true);
 
   const cluster = clusters.find(c => c.id === clusterId);
+
+  const handleChatCluster = () => {
+    const context: ThoughtContext = {
+      mode: 'cluster',
+      label: cluster?.title ?? bilingual('Cluster', 'Cluster'),
+      thoughts: thoughts.slice(0, 20).map(th => ({
+        content: th.content,
+        createdAt: th.createdAt,
+        aiTheme: th.aiTheme ?? null,
+      })),
+      clusterDescription: cluster?.description,
+    };
+    onOpenChatWithContext(context);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -96,16 +112,15 @@ export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenPr
           </div>
         )}
 
-        {/* Generate Proposal button */}
-        <div className="mt-8 text-center">
-          <Button variant="outline" size="full" disabled>
-            <FileText className="w-4 h-4 mr-2" />
-            {bilingual('Générer une proposition', 'Generate Proposal')}
-          </Button>
-          <p className="text-xs text-muted-foreground mt-2">
-            {t('Bientôt disponible', 'Coming soon').primary}
-          </p>
-        </div>
+        {/* Discuss cluster button */}
+        {thoughts.length > 0 && (
+          <div className="mt-8 text-center">
+            <Button variant="default" size="full" onClick={handleChatCluster}>
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {bilingual('Discuter ce cluster', 'Discuss this cluster')}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

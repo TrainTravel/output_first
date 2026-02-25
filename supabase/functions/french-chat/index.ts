@@ -31,16 +31,19 @@ serve(async (req) => {
       });
     }
 
-    const { messages } = await req.json();
+    const { messages, thoughtContext } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Chat request with messages:", messages.length);
+    console.log("Chat request with messages:", messages.length, "context:", thoughtContext?.mode ?? 'none');
 
-    const systemPrompt = `You are a warm, supportive French conversation partner who helps people:
+    const systemPrompt = buildSystemPrompt(thoughtContext);
+
+    function buildSystemPrompt(ctx?: { mode: string; label: string; thoughts: Array<{ content: string; createdAt: string; aiTheme: string | null }>; clusterDescription?: string }): string {
+      const basePrompt = `You are a warm, supportive French conversation partner who helps people:
 1. Practice expressing themselves in French
 2. Build emotional awareness through reflection
 3. Develop emotional vocabulary granularity
@@ -66,9 +69,66 @@ TONE:
 - Warm and encouraging, like a supportive friend
 - Non-judgmental about emotions - all feelings are valid signals
 - Focus on expression, not perfection
-- Help users name what they feel, never analyze WHY they feel it
+- Help users name what they feel, never analyze WHY they feel it`;
 
-Start conversations with a gentle, open question in French.`;
+      if (!ctx || !ctx.thoughts || ctx.thoughts.length === 0) {
+        return basePrompt + `\n\nStart conversations with a gentle, open question in French.`;
+      }
+
+      // Format thoughts for context (max 15, truncate content)
+      const formattedThoughts = ctx.thoughts
+        .slice(0, 15)
+        .map(t => {
+          const date = new Date(t.createdAt).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+          const theme = t.aiTheme ? `[${t.aiTheme}]` : '';
+          const content = t.content.length > 150 ? t.content.substring(0, 150) + '...' : t.content;
+          return `${theme} "${content}" - ${date}`;
+        })
+        .join('\n');
+
+      let contextInstructions = '';
+
+      switch (ctx.mode) {
+        case 'all':
+          contextInstructions = `
+
+CONTEXT - USER'S THOUGHT GARDEN:
+The user has recorded these personal thoughts and reflections. Use them as a starting point for conversation, but don't overwhelm them by referencing too many at once. Pick one or two that seem emotionally significant and gently explore.
+
+${formattedThoughts}
+
+Start by acknowledging you've seen their garden of thoughts, and ask about one that stands out - perhaps a recent one or one with emotional depth. Use French with English support.`;
+          break;
+
+        case 'theme':
+          contextInstructions = `
+
+CONTEXT - FOCUSED THEME: ${ctx.label}
+The user wants to explore their thoughts specifically about "${ctx.label}". These are their recorded thoughts in this area:
+
+${formattedThoughts}
+
+Start by gently acknowledging this theme area and ask an open question in French about what draws them to explore these thoughts today.`;
+          break;
+
+        case 'cluster':
+          contextInstructions = `
+
+CONTEXT - USER'S CLUSTER: ${ctx.label}
+${ctx.clusterDescription ? `Description: ${ctx.clusterDescription}` : ''}
+The user has grouped these thoughts together intentionally:
+
+${formattedThoughts}
+
+Start by asking what made them group these thoughts together, or what pattern they see. Help them articulate the connection in French.`;
+          break;
+
+        default:
+          return basePrompt + `\n\nStart conversations with a gentle, open question in French.`;
+      }
+
+      return basePrompt + contextInstructions;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

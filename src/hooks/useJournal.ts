@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
+import { ThoughtContext } from '@/types/chat';
 
 const STORAGE_KEY = 'outputfirst_entries';
 
@@ -10,6 +11,8 @@ export function useJournal() {
   const [currentCycle, setCurrentCycle] = useState(0);
   const [reflectionCycles, setReflectionCycles] = useState<ReflectionCycle[]>([]);
   const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
+  const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
+
   // Load entries from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -162,6 +165,7 @@ export function useJournal() {
     setCurrentEntry({});
     setCurrentCycle(0);
     setReflectionCycles([]);
+    setChatContext(null);
   };
 
   const viewProgress = () => {
@@ -169,6 +173,12 @@ export function useJournal() {
   };
 
   const openChat = () => {
+    setChatContext(null);
+    setCurrentStep('chat');
+  };
+
+  const openChatWithContext = (context: ThoughtContext) => {
+    setChatContext(context);
     setCurrentStep('chat');
   };
 
@@ -194,6 +204,8 @@ export function useJournal() {
     goHome,
     viewProgress,
     openChat,
+    openChatWithContext,
+    chatContext,
     openBrainDump: () => setCurrentStep('braindump'),
     openThoughtGarden: () => setCurrentStep('thoughtgarden'),
     openClusters: () => setCurrentStep('clusters'),

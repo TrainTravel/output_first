@@ -52,6 +52,8 @@ export function JournalApp() {
     openClusters,
     openClusterDetail,
     activeClusterId,
+    openChatWithContext,
+    chatContext,
   } = useJournal();
 
   const bgClass = STEP_BG_CLASS[currentStep] || '';
@@ -132,7 +134,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'chat' && (
-        <ChatScreen onBack={goHome} />
+        <ChatScreen onBack={goHome} context={chatContext} />
       )}
 
       {currentStep === 'braindump' && (
@@ -140,7 +142,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'thoughtgarden' && (
-        <ThoughtGardenScreen onBack={goHome} />
+        <ThoughtGardenScreen onBack={goHome} onOpenChatWithContext={openChatWithContext} />
       )}
 
       {currentStep === 'clusters' && (
@@ -148,7 +150,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'clusterdetail' && activeClusterId && (
-        <ClusterDetailScreen clusterId={activeClusterId} onBack={openClusters} />
+        <ClusterDetailScreen clusterId={activeClusterId} onBack={openClusters} onOpenChatWithContext={openChatWithContext} />
       )}
     </div>
   );
