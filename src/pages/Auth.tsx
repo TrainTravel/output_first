@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Navigate } from 'react-router-dom';
-import { Feather } from 'lucide-react';
+import { Feather, ArrowLeft } from 'lucide-react';
+
+type AuthMode = 'signin' | 'signup' | 'forgot';
 
 export default function Auth() {
-  const { user, loading, signUp, signIn } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const { user, loading, signUp, signIn, resetPassword } = useAuth();
+  const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -26,16 +28,30 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
-
     setSubmitting(true);
-    const { error } = isSignUp
+
+    if (mode === 'forgot') {
+      if (!email.trim()) { setSubmitting(false); return; }
+      const { error } = await resetPassword(email.trim());
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Check your email for a password reset link.');
+        setMode('signin');
+      }
+      setSubmitting(false);
+      return;
+    }
+
+    if (!email.trim() || !password.trim()) { setSubmitting(false); return; }
+
+    const { error } = mode === 'signup'
       ? await signUp(email.trim(), password)
       : await signIn(email.trim(), password);
 
     if (error) {
       toast.error(error.message);
-    } else if (isSignUp) {
+    } else if (mode === 'signup') {
       toast.success('Account created! You are now signed in.');
     }
     setSubmitting(false);
@@ -48,9 +64,22 @@ export default function Auth() {
           <Feather className="w-10 h-10 mx-auto text-primary" />
           <h1 className="font-serif text-3xl text-foreground">OutputFirst</h1>
           <p className="text-muted-foreground text-sm">
-            {isSignUp ? 'Create your account' : 'Sign in to your journal'}
+            {mode === 'signup' && 'Create your account'}
+            {mode === 'signin' && 'Sign in to your journal'}
+            {mode === 'forgot' && 'Reset your password'}
           </p>
         </div>
+
+        {mode === 'forgot' && (
+          <button
+            type="button"
+            onClick={() => setMode('signin')}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to sign in
+          </button>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -65,34 +94,57 @@ export default function Auth() {
               autoComplete="email"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              minLength={6}
-              autoComplete={isSignUp ? 'new-password' : 'current-password'}
-            />
-          </div>
+          {mode !== 'forgot' && (
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                minLength={6}
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              />
+            </div>
+          )}
+
+          {mode === 'signin' && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => setMode('forgot')}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           <Button type="submit" size="full" disabled={submitting}>
-            {submitting ? 'Please wait...' : isSignUp ? 'Sign Up' : 'Sign In'}
+            {submitting
+              ? 'Please wait...'
+              : mode === 'signup'
+                ? 'Sign Up'
+                : mode === 'forgot'
+                  ? 'Send Reset Link'
+                  : 'Sign In'}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary hover:underline font-medium"
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
-          </button>
-        </p>
+        {mode !== 'forgot' && (
+          <p className="text-center text-sm text-muted-foreground">
+            {mode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
+            <button
+              type="button"
+              onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
+              className="text-primary hover:underline font-medium"
+            >
+              {mode === 'signup' ? 'Sign In' : 'Sign Up'}
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
