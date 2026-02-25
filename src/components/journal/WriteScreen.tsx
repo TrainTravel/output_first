@@ -13,7 +13,7 @@ interface WriteScreenProps {
 
 export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
   const [content, setContent] = useState('');
-  const { t, bilingual } = useLanguage();
+  const { t } = useLanguage();
 
   const handleSubmit = () => {
     if (content.trim()) {
@@ -32,7 +32,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{bilingual('Retour', 'Back')}</span>
+          <span className="text-sm">{t('Retour', 'Back').primary}</span>
         </button>
 
         {/* Bilingual Prompt */}
@@ -50,12 +50,12 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={bilingual('Écrivez ici...', 'Write here...')}
+            placeholder={t('Écrivez ici...', 'Write here...').primary}
             className="flex-1 min-h-[200px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
 
           <p className="text-muted-foreground text-sm text-center">
-            {bilingual("Ne vous inquiétez pas des erreurs.", "Don't worry about mistakes.")}
+            {t("Ne vous inquiétez pas des erreurs.", "Don't worry about mistakes.").primary}
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
             onClick={handleSubmit}
             disabled={!content.trim()}
           >
-            {bilingual('Continuer', 'Continue')}
+            {t('Continuer', 'Continue').primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

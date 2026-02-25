@@ -15,7 +15,7 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
-  const { bilingual, isFr } = useLanguage();
+  const { bilingual, t, isFr } = useLanguage();
   const { signOut } = useAuth();
   const today = new Date();
   const formattedDatePrimary = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
@@ -34,7 +34,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
         <div className="flex justify-between items-center">
           <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
             <LogOut className="w-4 h-4 mr-1" />
-            {bilingual('Déconnexion', 'Sign out')}
+            {t('Déconnexion', 'Sign out').primary}
           </Button>
           <LanguageToggle />
         </div>
@@ -51,7 +51,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             OutputFirst
           </h1>
           <p className="text-muted-foreground text-sm italic">
-            {bilingual('Journaling en français', 'French journaling practice')}
+            {t('Journaling en français', 'French journaling practice').primary}
           </p>
         </div>
 
@@ -67,12 +67,12 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             {hasJournaledToday ? (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">{bilingual('Terminé', 'Completed')}</span>
+                <span className="text-sm font-medium">{t('Terminé', 'Completed').primary}</span>
               </>
             ) : (
               <>
                 <Feather className="w-4 h-4" />
-                <span className="text-sm font-medium">{bilingual('Pas encore', 'Not started')}</span>
+                <span className="text-sm font-medium">{t('Pas encore', 'Not started').primary}</span>
               </>
             )}
           </div>
@@ -87,9 +87,9 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             className="animate-breathe"
           >
             <Feather className="w-5 h-5 mr-2" />
-            {hasJournaledToday 
-              ? bilingual('Écrire encore', 'Write another')
-              : bilingual('Écrire aujourd\'hui', 'Write today')
+            {hasJournaledToday
+              ? t('Écrire encore', 'Write another').primary
+              : t("Écrire aujourd'hui", 'Write today').primary
             }
           </Button>
 
@@ -99,7 +99,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             onClick={onOpenChat}
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            {bilingual('Pratiquer en conversation', 'Practice conversation')}
+            {bilingual('Conversation', 'Conversation')}
           </Button>
 
           <Button
@@ -130,7 +130,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           </Button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
-            {bilingual('Une ou deux phrases suffisent.', 'One or two sentences is enough.')}
+            {t('Une ou deux phrases suffisent.', 'One or two sentences is enough.').primary}
           </p>
         </div>
 
@@ -142,7 +142,7 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
             className="text-muted-foreground hover:text-foreground"
           >
             <BarChart3 className="w-4 h-4 mr-2" />
-            {bilingual('Voir vos progrès', 'View progress')}
+            {t('Voir vos progrès', 'View progress').primary}
           </Button>
         </div>
       </div>

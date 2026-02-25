@@ -10,7 +10,7 @@ interface ClusterDetailScreenProps {
 }
 
 export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenProps) {
-  const { bilingual, isFr } = useLanguage();
+  const { bilingual, t, isFr } = useLanguage();
   const { clusters, fetchClusterThoughts } = useClusters();
   const [thoughts, setThoughts] = useState<ClusterThought[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenPr
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {bilingual('Retour', 'Back')}
+          {t('Retour', 'Back').primary}
         </Button>
       </div>
 
@@ -58,17 +58,17 @@ export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenPr
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {bilingual('Chargement…', 'Loading…')}
+              {t('Chargement…', 'Loading…').primary}
             </p>
           </div>
         ) : thoughts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <FileText className="w-10 h-10 text-muted-foreground/30 mb-3" />
             <p className="text-muted-foreground text-sm">
-              {bilingual(
+              {t(
                 'Aucune pensée liée pour le moment.',
                 'No linked thoughts yet.'
-              )}
+              ).primary}
             </p>
           </div>
         ) : (
@@ -103,7 +103,7 @@ export function ClusterDetailScreen({ clusterId, onBack }: ClusterDetailScreenPr
             {bilingual('Générer une proposition', 'Generate Proposal')}
           </Button>
           <p className="text-xs text-muted-foreground mt-2">
-            {bilingual('Bientôt disponible', 'Coming soon')}
+            {t('Bientôt disponible', 'Coming soon').primary}
           </p>
         </div>
       </div>

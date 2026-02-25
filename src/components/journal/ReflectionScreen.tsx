@@ -33,7 +33,7 @@ export function ReflectionScreen({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState('');
-  const { bilingual, isFr } = useLanguage();
+  const { bilingual, t, isFr } = useLanguage();
 
   useEffect(() => {
     generateReflection();
@@ -89,7 +89,7 @@ export function ReflectionScreen({
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span className="text-sm">{bilingual('Retour', 'Back')}</span>
+            <span className="text-sm">{t('Retour', 'Back').primary}</span>
           </button>
           
           {/* Cycle dots */}
@@ -110,7 +110,7 @@ export function ReflectionScreen({
           <div className="flex-1 flex flex-col items-center justify-center space-y-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary/60" />
             <p className="text-muted-foreground text-sm">
-              {bilingual('Prenant un moment pour réfléchir...', 'Taking a moment to reflect...')}
+              {t('Prenant un moment pour réfléchir...', 'Taking a moment to reflect...').primary}
             </p>
           </div>
         )}
@@ -124,7 +124,7 @@ export function ReflectionScreen({
             <div className="mt-auto">
               <Button variant="default" size="full" onClick={handleSkip}>
                 <ArrowRight className="w-5 h-5 mr-2" />
-                {bilingual('Continuer', 'Continue')}
+                {t('Continuer', 'Continue').primary}
               </Button>
             </div>
           </div>
@@ -152,11 +152,11 @@ export function ReflectionScreen({
               <Textarea
                 value={response}
                 onChange={(e) => setResponse(e.target.value)}
-                placeholder={bilingual('Prenez votre temps...', 'Take your time...')}
+                placeholder={t('Prenez votre temps...', 'Take your time...').primary}
                 className="min-h-[120px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
               />
               <p className="text-muted-foreground text-xs mt-2">
-                {bilingual("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.')}
+                {t("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.').primary}
               </p>
             </div>
 

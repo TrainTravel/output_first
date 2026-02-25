@@ -11,7 +11,7 @@ interface ClustersScreenProps {
 }
 
 export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
-  const { bilingual, isFr } = useLanguage();
+  const { bilingual, t, isFr } = useLanguage();
   const { clusters, loading, createCluster } = useClusters();
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -33,7 +33,7 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {bilingual('Retour', 'Back')}
+          {t('Retour', 'Back').primary}
         </Button>
         <Button
           variant="ghost"
@@ -51,10 +51,10 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
           {bilingual('Mes Clusters', 'My Clusters')}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
-          {bilingual(
+          {t(
             'Regroupez vos pensées librement.',
             'Group your thoughts freely.'
-          )}
+          ).primary}
         </p>
       </div>
 
@@ -63,14 +63,14 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
         <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
           <div className="flex gap-2">
             <Input
-              placeholder={bilingual('Nom du cluster…', 'Cluster name…')}
+              placeholder={t('Nom du cluster…', 'Cluster name…').primary}
               value={newTitle}
               onChange={e => setNewTitle(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreate()}
               autoFocus
             />
             <Button onClick={handleCreate} disabled={!newTitle.trim() || creating} size="sm">
-              {creating ? '…' : bilingual('Créer', 'Create')}
+              {creating ? '…' : t('Créer', 'Create').primary}
             </Button>
           </div>
         </div>
@@ -81,17 +81,17 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {bilingual('Chargement…', 'Loading…')}
+              {t('Chargement…', 'Loading…').primary}
             </p>
           </div>
         ) : clusters.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Layers className="w-12 h-12 text-muted-foreground/30 mb-4" />
             <p className="text-muted-foreground">
-              {bilingual(
+              {t(
                 'Pas encore de clusters. Créez-en un pour regrouper vos pensées.',
                 'No clusters yet. Create one to group your thoughts.'
-              )}
+              ).primary}
             </p>
           </div>
         ) : (

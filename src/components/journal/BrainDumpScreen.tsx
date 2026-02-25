@@ -25,7 +25,7 @@ const PLACEHOLDERS_FR = [
 ];
 
 export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
-  const { isFr, bilingual } = useLanguage();
+  const { isFr, bilingual, t } = useLanguage();
   const { addThought, thoughts } = useThoughts();
   const [input, setInput] = useState('');
   const [recentlyAdded, setRecentlyAdded] = useState<Thought[]>([]);
@@ -77,11 +77,11 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {bilingual('Retour', 'Back')}
+          {t('Retour', 'Back').primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Zap className="w-4 h-4" />
-          <span>{thoughts.length} {bilingual('pensées', 'thoughts')}</span>
+          <span>{thoughts.length} {t('pensées', 'thoughts').primary}</span>
         </div>
       </div>
 
@@ -91,10 +91,10 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
           {bilingual('Vide-tête', 'Brain Dump')}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
-          {bilingual(
+          {t(
             'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.',
             'One thought at a time. Press Enter to save.'
-          )}
+          ).primary}
         </p>
 
         <div className="w-full relative">
@@ -113,10 +113,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving
-              ? bilingual('…', '…')
-              : bilingual('Ajouter', 'Add')
-            }
+            {saving ? '…' : t('Ajouter', 'Add').primary}
           </Button>
         </div>
 

@@ -49,7 +49,7 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{bilingual('Retour', 'Back')}</span>
+          <span className="text-sm">{t('Retour', 'Back').primary}</span>
         </button>
 
         {/* Header */}
@@ -61,7 +61,7 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             {header.secondary}
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            {bilingual(`Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, `Choose up to ${MAX_EMOTIONS} words.`)}
+            {t(`Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, `Choose up to ${MAX_EMOTIONS} words.`).primary}
             {selectedEmotions.length > 0 && (
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
@@ -123,16 +123,16 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             size="full"
             onClick={handleContinue}
           >
-            {bilingual('Continuer', 'Continue')}
+            {t('Continuer', 'Continue').primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          
+
           <Button
             variant="skip"
             size="full"
             onClick={handleSkip}
           >
-            {bilingual('Passer cette étape', 'Skip this step')}
+            {t('Passer cette étape', 'Skip this step').primary}
           </Button>
         </div>
       </div>

@@ -35,7 +35,7 @@ export function ProgressScreen({
               {isFr ? 'You showed up today' : 'Vous êtes venu(e) aujourd\'hui'}
             </p>
             <p className="text-muted-foreground text-sm">
-              {bilingual("C'est ce qui compte le plus.", "That's what matters most.")}
+              {t("C'est ce qui compte le plus.", "That's what matters most.").primary}
             </p>
           </div>
         )}
@@ -91,13 +91,13 @@ export function ProgressScreen({
           {!hasJournaledToday && (
             <Button variant="default" size="full" onClick={onStartJournal}>
               <Feather className="w-5 h-5 mr-2" />
-              {bilingual('Écrire aujourd\'hui', 'Write today')}
+              {t("Écrire aujourd'hui", 'Write today').primary}
             </Button>
           )}
-          
+
           <Button variant="gentle" size="full" onClick={onGoHome}>
             <Home className="w-5 h-5 mr-2" />
-            {bilingual("Retour à l'accueil", 'Return home')}
+            {t("Retour à l'accueil", 'Return home').primary}
           </Button>
         </div>
       </div>

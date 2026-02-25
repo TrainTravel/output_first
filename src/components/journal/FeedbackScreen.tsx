@@ -239,13 +239,13 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         {/* Actions */}
         <div className="mt-8 space-y-3">
           <Button variant="default" size="full" onClick={onContinue}>
-            {bilingual('Continuer', 'Continue')}
+            {t('Continuer', 'Continue').primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          
+
           {isLoading && (
             <Button variant="skip" size="full" onClick={onSkip}>
-              {bilingual('Passer', 'Skip')}
+              {t('Passer', 'Skip').primary}
             </Button>
           )}
         </div>

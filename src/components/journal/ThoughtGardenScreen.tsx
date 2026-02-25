@@ -35,7 +35,7 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 }
 
 export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
-  const { bilingual, isFr } = useLanguage();
+  const { bilingual, t, isFr } = useLanguage();
   const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -87,13 +87,13 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {bilingual('Retour', 'Back')}
+          {t('Retour', 'Back').primary}
         </Button>
         <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
             <Button variant="destructive" size="sm" onClick={archiveSelected}>
               <Archive className="w-4 h-4 mr-1" />
-              {bilingual('Archiver', 'Archive')} ({selectedIds.size})
+              {t('Archiver', 'Archive').primary} ({selectedIds.size})
             </Button>
           )}
           <Button variant="ghost" size="icon" onClick={() => setShowSearch(s => !s)}>
@@ -109,13 +109,13 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
           {bilingual('Jardin de pensées', 'Thought Garden')}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
-          {bilingual(
+          {t(
             `${thoughts.length} pensées capturées`,
             `${thoughts.length} thoughts captured`
-          )}
+          ).primary}
           {groups.length > 1 && (
             <span className="ml-1">
-              · {groups.length} {bilingual('thèmes', 'themes')}
+              · {groups.length} {t('thèmes', 'themes').primary}
             </span>
           )}
         </p>
@@ -133,7 +133,7 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
                 ) : (
                   <Sparkles className="w-4 h-4 mr-1.5" />
                 )}
-                {bilingual(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`)}
+                {t(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`).primary}
               </Button>
             )}
             <Button
@@ -147,7 +147,7 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
               ) : (
                 <Sparkles className="w-4 h-4 mr-1.5" />
               )}
-              {bilingual('Tout ré-étiqueter', 'Re-tag all')}
+              {t('Tout ré-étiqueter', 'Re-tag all').primary}
             </Button>
           </div>
         )}
@@ -157,7 +157,7 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
       {showSearch && (
         <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
           <Input
-            placeholder={bilingual('Rechercher…', 'Search…')}
+            placeholder={t('Rechercher…', 'Search…').primary}
             value={search}
             onChange={e => setSearch(e.target.value)}
             autoFocus
@@ -170,7 +170,7 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {bilingual('Chargement…', 'Loading…')}
+              {t('Chargement…', 'Loading…').primary}
             </p>
           </div>
         ) : filtered.length === 0 ? (
@@ -178,11 +178,11 @@ export function ThoughtGardenScreen({ onBack }: ThoughtGardenScreenProps) {
             <Sprout className="w-12 h-12 text-muted-foreground/30 mb-4" />
             <p className="text-muted-foreground">
               {search
-                ? bilingual('Aucun résultat trouvé.', 'No results found.')
-                : bilingual(
+                ? t('Aucun résultat trouvé.', 'No results found.').primary
+                : t(
                     'Votre jardin est vide. Commencez par un vide-tête !',
                     'Your garden is empty. Start with a brain dump!'
-                  )}
+                  ).primary}
             </p>
           </div>
         ) : (
