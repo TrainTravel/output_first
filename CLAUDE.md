@@ -115,6 +115,27 @@ This app is designed for neurodivergent users. Follow these principles when addi
 - Delete without archive option (preserve without decision fatigue)
 - Forced linear flows without exit points
 
+## Commit Conventions
+
+**When committing code changes:**
+1. Use conventional commit prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
+2. **Always update `docs/CHANGELOG.md`** for user-facing changes (features, UX improvements, bug fixes)
+3. Changelog entries should explain the ADHD-friendly rationale when applicable
+4. Separate concerns into multiple commits when appropriate
+
+**Changelog format:**
+```markdown
+### Feature Name
+
+**Brief description of what changed**
+
+- Bullet points with specific changes
+- Include entry points and user flows
+
+**ADHD-Friendly:** (when applicable)
+- Explain why this helps neurodivergent users
+```
+
 ## Important Notes
 
 - No test suite currently exists
