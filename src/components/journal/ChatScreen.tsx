@@ -36,6 +36,13 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
     scrollToBottom();
   }, [messages]);
 
+  // Auto-start conversation when context is provided
+  useEffect(() => {
+    if (context && context.thoughts.length > 0 && !hasStarted) {
+      startConversation();
+    }
+  }, [context]);
+
   const startConversation = async () => {
     setHasStarted(true);
     setIsLoading(true);
@@ -203,16 +210,24 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
               <h2 className="text-2xl mb-3">
-                {isFr ? 'Practice French Conversation' : 'Practice French Conversation'}
+                {context
+                  ? (isFr ? 'Explorer vos pensées' : 'Explore Your Thoughts')
+                  : (isFr ? 'Practice French Conversation' : 'Practice French Conversation')}
               </h2>
               <p className="text-muted-foreground mb-8 max-w-md">
-                {isFr
-                  ? 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'
-                  : 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'}
+                {context
+                  ? (isFr
+                    ? "Discutons ensemble de vos pensées. L'IA utilisera des techniques de TCC pour vous aider à explorer vos schémas de pensée avec curiosité et bienveillance."
+                    : 'Let\'s discuss your thoughts together. The AI will use CBT techniques to help you explore your thinking patterns with curiosity and compassion.')
+                  : (isFr
+                    ? 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'
+                    : 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.')}
               </p>
               <Button onClick={startConversation} size="lg" className="gap-2">
                 <MessageCircle className="h-5 w-5" />
-                {isFr ? 'Start Conversation' : 'Start Conversation'}
+                {context
+                  ? (isFr ? 'Commencer l\'exploration' : 'Start Exploring')
+                  : (isFr ? 'Start Conversation' : 'Start Conversation')}
               </Button>
             </div>
           ) : (
