@@ -8,8 +8,8 @@ interface BreatheScreenProps {
   onBack: () => void;
 }
 
-const BREATHE_DURATION = 6000; // 6 seconds before button appears
-const CYCLE_MS = 4000; // one breathe cycle
+const BREATHE_DURATION = 18000; // 18 seconds before button appears (1.5 cycles)
+const CYCLE_MS = 12000; // one breathe cycle (3x slower)
 
 export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   const { t } = useLanguage();
