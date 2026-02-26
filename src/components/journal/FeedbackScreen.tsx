@@ -57,8 +57,18 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           body: { text: journalContent, type: 'feedback' },
         });
 
-        if (fnError) throw new Error(fnError.message);
-        if (data?.error) throw new Error(data.error);
+        if (fnError) {
+          // Extract error details from the function error
+          const errorMsg = fnError.message || 'Failed to get feedback';
+          throw new Error(errorMsg);
+        }
+        if (data?.error) {
+          // Use the detailed error message from the edge function
+          const errorMsg = data.code
+            ? `${data.error} (${data.code})`
+            : data.error;
+          throw new Error(errorMsg);
+        }
 
         if (data?.raw) {
           const rawContent = data.raw;
@@ -122,7 +132,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
 
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 text-center">
-              <p className="text-destructive">{error}</p>
+              <p className="text-destructive font-medium">{error}</p>
               <p className="text-muted-foreground text-sm mt-2">
                 {isFr ? 'You can skip this step and continue.' : 'You can skip this step and continue.'}
               </p>

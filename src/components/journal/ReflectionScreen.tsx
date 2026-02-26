@@ -63,15 +63,26 @@ export function ReflectionScreen({
         }
       );
 
-      if (!res.ok) throw new Error('Failed to generate reflection');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMsg = errorData.code
+          ? `${errorData.error || 'Failed'} (${errorData.code})`
+          : errorData.error || 'Failed to generate reflection';
+        throw new Error(errorMsg);
+      }
 
       const data = await res.json();
+      if (data?.error) {
+        const errorMsg = data.code
+          ? `${data.error} (${data.code})`
+          : data.error;
+        throw new Error(errorMsg);
+      }
       setReflectionData(data);
     } catch (err) {
       console.error('Error generating reflection:', err);
-      setError(isFr
-        ? 'Unable to generate reflection. You can continue to the next step.'
-        : 'Unable to generate reflection. You can continue to the next step.');
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(`${errorMessage}. You can continue to the next step.`);
     } finally {
       setIsLoading(false);
     }

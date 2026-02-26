@@ -35,7 +35,14 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+      console.error("LOVABLE_API_KEY secret is not set in Supabase");
+      return new Response(JSON.stringify({
+        error: "AI service not configured",
+        code: "API_KEY_MISSING",
+        details: "Contact app administrator to configure LOVABLE_API_KEY"
+      }), {
+        status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("Chat request with messages:", messages.length, "context:", thoughtContext?.mode ?? 'none');
@@ -173,20 +180,41 @@ You already have full context. Start by reflecting what you see as the connectin
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      
+
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
+        return new Response(JSON.stringify({
+          error: "Too many requests. Please wait a moment.",
+          code: "RATE_LIMIT",
+          details: "AI service rate limit exceeded"
+        }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Usage limit reached. Please add credits." }), {
+        return new Response(JSON.stringify({
+          error: "AI credits exhausted. Contact administrator.",
+          code: "CREDITS_EXHAUSTED",
+          details: "Lovable AI gateway usage limit reached"
+        }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      
-      return new Response(JSON.stringify({ error: "AI service error" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (response.status === 401 || response.status === 403) {
+        return new Response(JSON.stringify({
+          error: "AI service authentication failed.",
+          code: "AI_AUTH_FAILED",
+          details: "LOVABLE_API_KEY may be invalid"
+        }), {
+          status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify({
+        error: "AI service temporarily unavailable.",
+        code: "AI_ERROR",
+        details: `Gateway returned ${response.status}: ${errorText.substring(0, 100)}`
+      }), {
+        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -195,7 +223,11 @@ You already have full context. Start by reflecting what you see as the connectin
     });
   } catch (error) {
     console.error("Error in french-chat function:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    return new Response(JSON.stringify({
+      error: "Chat service error",
+      code: "INTERNAL_ERROR",
+      details: error instanceof Error ? error.message : "Unknown error"
+    }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

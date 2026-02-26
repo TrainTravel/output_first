@@ -61,8 +61,11 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       });
 
       if (!resp.ok) {
-        const errorData = await resp.json();
-        throw new Error(errorData.error || 'Failed to start conversation');
+        const errorData = await resp.json().catch(() => ({}));
+        const errorMsg = errorData.code
+          ? `${errorData.error || 'Failed'} (${errorData.code})`
+          : errorData.error || 'Failed to start conversation';
+        throw new Error(errorMsg);
       }
 
       await streamResponse(resp, []);
@@ -152,8 +155,11 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       });
 
       if (!resp.ok) {
-        const errorData = await resp.json();
-        throw new Error(errorData.error || 'Failed to send message');
+        const errorData = await resp.json().catch(() => ({}));
+        const errorMsg = errorData.code
+          ? `${errorData.error || 'Failed'} (${errorData.code})`
+          : errorData.error || 'Failed to send message';
+        throw new Error(errorMsg);
       }
 
       await streamResponse(resp, newMessages);
