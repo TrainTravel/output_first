@@ -1,3 +1,4 @@
+import { useAuth } from '@/contexts/AuthContext';
 import { useJournal } from '@/hooks/useJournal';
 import { HomeScreen } from './HomeScreen';
 import { BreatheScreen } from './BreatheScreen';
@@ -25,6 +26,7 @@ const STEP_BG_CLASS: Record<string, string> = {
 };
 
 export function JournalApp() {
+  const { loading } = useAuth();
   const {
     currentStep,
     currentEntry,
@@ -55,6 +57,14 @@ export function JournalApp() {
     openChatWithContext,
     chatContext,
   } = useJournal();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground animate-gentle-pulse">Loading…</p>
+      </div>
+    );
+  }
 
   const bgClass = STEP_BG_CLASS[currentStep] || '';
 
