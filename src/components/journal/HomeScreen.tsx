@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers, LogOut } from 'lucide-react';
+import { Feather, CheckCircle2, MessageCircle, Zap, Sprout, Layers, LogOut, Flame, CalendarDays } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,6 +7,8 @@ import { GardenThemeSelector } from './GardenThemeSelector';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
+  streak: number;
+  totalDays: number;
   onStartJournal: () => void;
   onViewProgress: () => void;
   onOpenChat: () => void;
@@ -15,7 +17,7 @@ interface HomeScreenProps {
   onOpenClusters: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
@@ -124,17 +126,32 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
           </p>
         </div>
 
-        {/* Progress Link */}
-        <div className="text-center pt-4">
-          <Button
-            variant="ghost"
-            onClick={onViewProgress}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <BarChart3 className="w-4 h-4 mr-2" />
-            {t('Voir vos progrès', 'View progress').primary}
-          </Button>
-        </div>
+        {/* Inline Progress Card */}
+        <button
+          onClick={onViewProgress}
+          className="w-full rounded-xl border bg-card text-card-foreground shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer text-left"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Flame className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
+                <p className="text-xs text-muted-foreground">{t('Série', 'Streak').primary}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-accent/30 p-2">
+                <CalendarDays className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
+                <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days').primary}</p>
+              </div>
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );
