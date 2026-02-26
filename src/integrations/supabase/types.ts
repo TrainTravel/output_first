@@ -190,6 +190,10 @@ export type Database = {
           user_anonymous_id: string
         }[]
       }
+      migrate_anonymous_data: {
+        Args: { new_user_id: string; old_anon_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
