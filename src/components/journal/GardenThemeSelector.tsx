@@ -3,13 +3,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Palette, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 
-function ThemeCard({ info, isActive, onSelect }: { info: GardenThemeInfo; isActive: boolean; onSelect: () => void }) {
+const ThemeCard = forwardRef<HTMLButtonElement, { info: GardenThemeInfo; isActive: boolean; onSelect: () => void }>(({ info, isActive, onSelect }, ref) => {
   const { isFr } = useLanguage();
 
   return (
     <button
+      ref={ref}
       onClick={onSelect}
       className={`
         relative w-full rounded-lg p-4 text-left transition-all duration-300
@@ -42,7 +43,9 @@ function ThemeCard({ info, isActive, onSelect }: { info: GardenThemeInfo; isActi
       )}
     </button>
   );
-}
+});
+
+ThemeCard.displayName = 'ThemeCard';
 
 export function GardenThemeSelector() {
   const [open, setOpen] = useState(false);
