@@ -5,9 +5,9 @@
 ### Slower Breathing Animation
 
 - Breathing cycle slowed from 4s to 12s (3x slower)
-- Button reveal delay increased from 6s to 18s
+- Button reveal delay: 9 seconds (enough grounding, not too long)
 
-**ADHD-Friendly:** Slower pace allows genuine grounding before journaling, addressing time blindness by externalizing a calming rhythm.
+**ADHD-Friendly:** Slower pace allows genuine grounding before journaling, while keeping wait time under 10s to reduce friction.
 
 ---
 
