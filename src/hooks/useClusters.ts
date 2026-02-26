@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserId } from '@/hooks/useUserId';
 
 export interface Cluster {
   id: string;
@@ -22,11 +22,9 @@ export interface ClusterThought {
 export function useClusters() {
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const userId = user?.id;
+  const userId = useUserId();
 
   const fetchClusters = useCallback(async () => {
-    if (!userId) return;
     setLoading(true);
 
     const { data, error } = await supabase
@@ -73,7 +71,6 @@ export function useClusters() {
   };
 
   const createCluster = async (title: string, description?: string): Promise<Cluster | null> => {
-    if (!userId) return null;
     const { data, error } = await supabase
       .from('clusters')
       .insert({ title, description: description || '', user_anonymous_id: userId })
