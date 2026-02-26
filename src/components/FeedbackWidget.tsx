@@ -26,6 +26,7 @@ const PLATFORM_OPTIONS = [
 
 export function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(() => localStorage.getItem('feedback-hidden') === 'true');
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [wouldPay, setWouldPay] = useState<string | null>(null);
@@ -79,17 +80,26 @@ export function FeedbackWidget() {
   return (
     <>
       {/* Floating trigger button */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
-          aria-label="Give feedback"
-        >
-          <MessageSquareHeart className="w-5 h-5" />
-          <span className="text-sm font-medium hidden sm:inline">
-            {isFr ? 'Votre avis' : 'Feedback'}
-          </span>
-        </button>
+      {!isOpen && !isHidden && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-1">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
+            aria-label="Give feedback"
+          >
+            <MessageSquareHeart className="w-5 h-5" />
+            <span className="text-sm font-medium hidden sm:inline">
+              {isFr ? 'Votre avis' : 'Feedback'}
+            </span>
+          </button>
+          <button
+            onClick={() => { setIsHidden(true); localStorage.setItem('feedback-hidden', 'true'); }}
+            className="rounded-full bg-muted p-1.5 text-muted-foreground shadow hover:text-foreground transition-colors"
+            aria-label="Hide feedback button"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
       )}
 
       {/* Modal overlay */}
