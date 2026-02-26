@@ -9,19 +9,43 @@ interface BreatheScreenProps {
 }
 
 const BREATHE_DURATION = 9000; // 9 seconds before button appears
-const CYCLE_MS = 12000; // one breathe cycle (3x slower)
+const INHALE_MS = 4000;  // breathe in
+const HOLD_MS = 2000;    // hold breath
+const EXHALE_MS = 6000;  // breathe out
+const CYCLE_MS = INHALE_MS + HOLD_MS + EXHALE_MS; // 12 seconds total
+
+type BreathPhase = 'inhale' | 'hold' | 'exhale';
 
 export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   const { t } = useLanguage();
   const [showContinue, setShowContinue] = useState(false);
-  const [phase, setPhase] = useState<'inhale' | 'exhale'>('inhale');
+  const [phase, setPhase] = useState<BreathPhase>('inhale');
 
-  // Cycle breathing phase text
+  // Cycle breathing phases: inhale (4s) → hold (2s) → exhale (6s)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPhase(p => (p === 'inhale' ? 'exhale' : 'inhale'));
-    }, CYCLE_MS / 2);
-    return () => clearInterval(interval);
+    let timeout: NodeJS.Timeout;
+
+    const cyclePhase = (currentPhase: BreathPhase) => {
+      if (currentPhase === 'inhale') {
+        timeout = setTimeout(() => {
+          setPhase('hold');
+          cyclePhase('hold');
+        }, INHALE_MS);
+      } else if (currentPhase === 'hold') {
+        timeout = setTimeout(() => {
+          setPhase('exhale');
+          cyclePhase('exhale');
+        }, HOLD_MS);
+      } else {
+        timeout = setTimeout(() => {
+          setPhase('inhale');
+          cyclePhase('inhale');
+        }, EXHALE_MS);
+      }
+    };
+
+    cyclePhase('inhale');
+    return () => clearTimeout(timeout);
   }, []);
 
   // Reveal continue button after delay
@@ -32,6 +56,8 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
 
   const phaseText = phase === 'inhale'
     ? t('Inspirez...', 'Breathe in...')
+    : phase === 'hold'
+    ? t('Retenez...', 'Hold...')
     : t('Expirez...', 'Breathe out...');
 
   return (
@@ -55,14 +81,24 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
               className="absolute w-44 h-44 rounded-full opacity-30"
               style={{
                 background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)',
-                animation: `breatheCircle ${CYCLE_MS}ms ease-in-out infinite`,
+                transform: phase === 'exhale' ? 'scale(0.8)' : 'scale(1.3)',
+                transition: phase === 'inhale'
+                  ? `transform ${INHALE_MS}ms ease-out`
+                  : phase === 'hold'
+                  ? 'none'
+                  : `transform ${EXHALE_MS}ms ease-in`,
               }}
             />
             {/* Main breathing circle */}
             <div
               className="w-32 h-32 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center"
               style={{
-                animation: `breatheCircle ${CYCLE_MS}ms ease-in-out infinite`,
+                transform: phase === 'exhale' ? 'scale(0.85)' : 'scale(1.25)',
+                transition: phase === 'inhale'
+                  ? `transform ${INHALE_MS}ms ease-out`
+                  : phase === 'hold'
+                  ? 'none'
+                  : `transform ${EXHALE_MS}ms ease-in`,
               }}
             >
               {/* Inner dot */}
