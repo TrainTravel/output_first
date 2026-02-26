@@ -73,6 +73,8 @@ export function JournalApp() {
       {currentStep === 'home' && (
         <HomeScreen
           hasJournaledToday={hasJournaledToday}
+          streak={streak}
+          totalDays={totalDays}
           onStartJournal={startJournal}
           onViewProgress={viewProgress}
           onOpenChat={openChat}
