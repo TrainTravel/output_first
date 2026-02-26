@@ -49,13 +49,14 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Not authenticated');
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({ messages: [], thoughtContext: context }),
       });
@@ -143,13 +144,14 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Not authenticated');
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({ messages: newMessages, thoughtContext: context }),
       });
