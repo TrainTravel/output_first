@@ -21,6 +21,17 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[object.property.name='user'][property.name='id']",
+          message: "Do not access user.id directly. Use useUserId() from @/hooks/useUserId instead.",
+        },
+        {
+          selector: "OptionalMemberExpression[object.property.name='user'][property.name='id']",
+          message: "Do not access user?.id directly. Use useUserId() from @/hooks/useUserId instead.",
+        },
+      ],
     },
   },
 );
