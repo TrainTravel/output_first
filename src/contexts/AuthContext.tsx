@@ -2,6 +2,30 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+const OLD_ANON_KEY = 'outputfirst_anon_id';
+const MIGRATED_KEY = 'outputfirst_migrated';
+
+/** One-time migration: re-link thoughts/clusters from old localStorage ID to new auth.uid() */
+async function migrateOldAnonData(newUserId: string) {
+  const oldId = localStorage.getItem(OLD_ANON_KEY);
+  if (!oldId || oldId === newUserId || localStorage.getItem(MIGRATED_KEY)) return;
+
+  // Update thoughts
+  await supabase
+    .from('thoughts')
+    .update({ user_anonymous_id: newUserId })
+    .eq('user_anonymous_id', oldId);
+
+  // Update clusters
+  await supabase
+    .from('clusters')
+    .update({ user_anonymous_id: newUserId })
+    .eq('user_anonymous_id', oldId);
+
+  localStorage.setItem(MIGRATED_KEY, 'true');
+  console.log(`Migrated data from ${oldId} to ${newUserId}`);
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -32,12 +56,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session.user);
         setLoading(false);
+        // Migrate old localStorage-based data to this auth user
+        migrateOldAnonData(session.user.id);
       } else {
         // Auto sign-in anonymously so every visitor gets a real auth.uid()
         const { data, error } = await supabase.auth.signInAnonymously();
         if (!error && data.session) {
           setSession(data.session);
           setUser(data.session.user);
+          // Migrate old localStorage-based data to this auth user
+          migrateOldAnonData(data.session.user.id);
         }
         setLoading(false);
       }
