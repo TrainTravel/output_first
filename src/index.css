@@ -231,3 +231,157 @@
 .journal-step-complete {
   background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(18 50% 60% / 0.1) 100%);
 }
+
+/* ═══════════════════════════════════════════════
+   Garden Themes — Sensory cosmetic overrides
+   ═══════════════════════════════════════════════ */
+
+/* Provence Garden — Lavender & warm gold */
+.theme-provence {
+  --background: 270 20% 96%;
+  --foreground: 270 15% 22%;
+  --card: 270 18% 93%;
+  --card-foreground: 270 15% 22%;
+  --popover: 270 20% 96%;
+  --popover-foreground: 270 15% 22%;
+  --primary: 270 35% 55%;
+  --primary-foreground: 270 20% 96%;
+  --primary-muted: 270 25% 85%;
+  --accent: 42 60% 55%;
+  --accent-foreground: 270 20% 96%;
+  --accent-muted: 42 40% 88%;
+  --secondary: 270 12% 90%;
+  --secondary-foreground: 270 15% 22%;
+  --muted: 270 10% 87%;
+  --muted-foreground: 270 10% 48%;
+  --border: 270 12% 84%;
+  --input: 270 15% 91%;
+  --ring: 270 35% 55%;
+  --gentle-shadow: 0 4px 20px -4px hsl(270 15% 22% / 0.08);
+  --soft-glow: 0 0 40px hsl(270 35% 55% / 0.15);
+  --paper-texture: linear-gradient(135deg, hsl(270 20% 96%) 0%, hsl(270 18% 93%) 100%);
+}
+.dark.theme-provence {
+  --background: 270 15% 10%;
+  --foreground: 270 15% 88%;
+  --card: 270 12% 14%;
+  --card-foreground: 270 15% 88%;
+  --popover: 270 15% 10%;
+  --popover-foreground: 270 15% 88%;
+  --primary: 270 40% 60%;
+  --primary-foreground: 270 15% 10%;
+  --primary-muted: 270 20% 25%;
+  --accent: 42 50% 50%;
+  --accent-foreground: 270 15% 10%;
+  --accent-muted: 42 20% 20%;
+  --secondary: 270 10% 18%;
+  --secondary-foreground: 270 15% 88%;
+  --muted: 270 10% 20%;
+  --muted-foreground: 270 10% 58%;
+  --border: 270 10% 22%;
+  --input: 270 10% 18%;
+  --ring: 270 40% 60%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+  --soft-glow: 0 0 40px hsl(270 40% 60% / 0.2);
+  --paper-texture: linear-gradient(135deg, hsl(270 15% 10%) 0%, hsl(270 12% 12%) 100%);
+}
+
+/* Zen Garden — Stone grey & moss green */
+.theme-zen {
+  --background: 60 8% 95%;
+  --foreground: 60 8% 20%;
+  --card: 60 6% 91%;
+  --card-foreground: 60 8% 20%;
+  --popover: 60 8% 95%;
+  --popover-foreground: 60 8% 20%;
+  --primary: 90 15% 42%;
+  --primary-foreground: 60 8% 95%;
+  --primary-muted: 90 10% 82%;
+  --accent: 40 12% 50%;
+  --accent-foreground: 60 8% 95%;
+  --accent-muted: 40 8% 86%;
+  --secondary: 60 6% 88%;
+  --secondary-foreground: 60 8% 20%;
+  --muted: 60 5% 85%;
+  --muted-foreground: 60 5% 45%;
+  --border: 60 6% 82%;
+  --input: 60 6% 90%;
+  --ring: 90 15% 42%;
+  --gentle-shadow: 0 4px 20px -4px hsl(60 8% 20% / 0.06);
+  --soft-glow: 0 0 40px hsl(90 15% 42% / 0.12);
+  --paper-texture: linear-gradient(135deg, hsl(60 8% 95%) 0%, hsl(60 6% 91%) 100%);
+}
+.dark.theme-zen {
+  --background: 60 5% 9%;
+  --foreground: 60 6% 85%;
+  --card: 60 4% 13%;
+  --card-foreground: 60 6% 85%;
+  --popover: 60 5% 9%;
+  --popover-foreground: 60 6% 85%;
+  --primary: 90 20% 48%;
+  --primary-foreground: 60 5% 9%;
+  --primary-muted: 90 10% 22%;
+  --accent: 40 15% 45%;
+  --accent-foreground: 60 5% 9%;
+  --accent-muted: 40 8% 18%;
+  --secondary: 60 4% 16%;
+  --secondary-foreground: 60 6% 85%;
+  --muted: 60 4% 18%;
+  --muted-foreground: 60 5% 55%;
+  --border: 60 4% 20%;
+  --input: 60 4% 16%;
+  --ring: 90 20% 48%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+  --soft-glow: 0 0 40px hsl(90 20% 48% / 0.15);
+  --paper-texture: linear-gradient(135deg, hsl(60 5% 9%) 0%, hsl(60 4% 11%) 100%);
+}
+
+/* Northern Lights — Deep blue & aurora purple */
+.theme-northern {
+  --background: 220 25% 96%;
+  --foreground: 220 20% 20%;
+  --card: 220 20% 93%;
+  --card-foreground: 220 20% 20%;
+  --popover: 220 25% 96%;
+  --popover-foreground: 220 20% 20%;
+  --primary: 210 50% 50%;
+  --primary-foreground: 220 25% 96%;
+  --primary-muted: 210 35% 85%;
+  --accent: 280 40% 58%;
+  --accent-foreground: 220 25% 96%;
+  --accent-muted: 280 25% 88%;
+  --secondary: 220 15% 90%;
+  --secondary-foreground: 220 20% 20%;
+  --muted: 220 12% 87%;
+  --muted-foreground: 220 10% 48%;
+  --border: 220 15% 84%;
+  --input: 220 18% 91%;
+  --ring: 210 50% 50%;
+  --gentle-shadow: 0 4px 20px -4px hsl(220 20% 20% / 0.08);
+  --soft-glow: 0 0 40px hsl(210 50% 50% / 0.15);
+  --paper-texture: linear-gradient(135deg, hsl(220 25% 96%) 0%, hsl(220 20% 93%) 100%);
+}
+.dark.theme-northern {
+  --background: 220 20% 8%;
+  --foreground: 220 15% 88%;
+  --card: 220 18% 12%;
+  --card-foreground: 220 15% 88%;
+  --popover: 220 20% 8%;
+  --popover-foreground: 220 15% 88%;
+  --primary: 210 55% 55%;
+  --primary-foreground: 220 20% 8%;
+  --primary-muted: 210 25% 22%;
+  --accent: 280 45% 55%;
+  --accent-foreground: 220 20% 8%;
+  --accent-muted: 280 20% 18%;
+  --secondary: 220 15% 16%;
+  --secondary-foreground: 220 15% 88%;
+  --muted: 220 12% 18%;
+  --muted-foreground: 220 10% 58%;
+  --border: 220 12% 20%;
+  --input: 220 15% 16%;
+  --ring: 210 55% 55%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.35);
+  --soft-glow: 0 0 40px hsl(210 55% 55% / 0.2);
+  --paper-texture: linear-gradient(135deg, hsl(220 20% 8%) 0%, hsl(220 18% 10%) 100%);
+}

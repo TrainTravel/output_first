@@ -3,6 +3,7 @@ import { Feather, CheckCircle2, BarChart3, MessageCircle, Zap, Sprout, Layers, L
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { GardenThemeSelector } from './GardenThemeSelector';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
@@ -32,13 +33,15 @@ export function HomeScreen({ hasJournaledToday, onStartJournal, onViewProgress, 
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
         {/* Language Toggle */}
         <div className="flex justify-between items-center">
-          {user && (
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
-              <LogOut className="w-4 h-4 mr-1" />
-              {t('Déconnexion', 'Sign out').primary}
-            </Button>
-          )}
-          {!user && <div />}
+          <div className="flex items-center gap-1">
+            {user && (
+              <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
+                <LogOut className="w-4 h-4 mr-1" />
+                {t('Déconnexion', 'Sign out').primary}
+              </Button>
+            )}
+            <GardenThemeSelector />
+          </div>
           <LanguageToggle />
         </div>
 
