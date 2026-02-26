@@ -5,25 +5,22 @@ import type { User, Session } from '@supabase/supabase-js';
 const OLD_ANON_KEY = 'outputfirst_anon_id';
 const MIGRATED_KEY = 'outputfirst_migrated';
 
-/** One-time migration: re-link thoughts/clusters from old localStorage ID to new auth.uid() */
+/** One-time migration: re-link thoughts/clusters from old localStorage ID to new auth.uid() via SECURITY DEFINER function */
 async function migrateOldAnonData(newUserId: string) {
   const oldId = localStorage.getItem(OLD_ANON_KEY);
   if (!oldId || oldId === newUserId || localStorage.getItem(MIGRATED_KEY)) return;
 
-  // Update thoughts
-  await supabase
-    .from('thoughts')
-    .update({ user_anonymous_id: newUserId })
-    .eq('user_anonymous_id', oldId);
+  const { error } = await supabase.rpc('migrate_anonymous_data', {
+    old_anon_id: oldId,
+    new_user_id: newUserId,
+  } as any);
 
-  // Update clusters
-  await supabase
-    .from('clusters')
-    .update({ user_anonymous_id: newUserId })
-    .eq('user_anonymous_id', oldId);
-
-  localStorage.setItem(MIGRATED_KEY, 'true');
-  console.log(`Migrated data from ${oldId} to ${newUserId}`);
+  if (error) {
+    console.error('Migration failed:', error);
+  } else {
+    localStorage.setItem(MIGRATED_KEY, 'true');
+    console.log(`Migrated data from ${oldId} to ${newUserId}`);
+  }
 }
 
 interface AuthContextType {
