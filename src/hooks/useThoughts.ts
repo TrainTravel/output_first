@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserId } from '@/hooks/useUserId';
 import { toast } from 'sonner';
 
 export interface Thought {
@@ -15,11 +15,9 @@ export interface Thought {
 export function useThoughts() {
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const userId = user?.id;
+  const userId = useUserId();
 
   const fetchThoughts = useCallback(async () => {
-    if (!userId) return;
     setLoading(true);
     const { data, error } = await supabase
       .from('thoughts')
@@ -47,7 +45,6 @@ export function useThoughts() {
   }, [fetchThoughts]);
 
   const addThought = async (content: string): Promise<Thought | null> => {
-    if (!userId) return null;
     const { data, error } = await supabase
       .from('thoughts')
       .insert({ content, user_anonymous_id: userId })
