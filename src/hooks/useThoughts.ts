@@ -51,7 +51,11 @@ export function useThoughts() {
       .select()
       .single();
 
-    if (error || !data) return null;
+    if (error || !data) {
+      console.error('Failed to add thought:', error);
+      toast.error('Failed to save thought. Please try again.');
+      return null;
+    }
 
     const thought: Thought = {
       id: data.id,
