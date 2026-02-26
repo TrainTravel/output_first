@@ -153,6 +153,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_all_thoughts: { Args: { new_user_id: string }; Returns: number }
       compost_and_fetch_thoughts: {
         Args: { p_user_anonymous_id: string }
         Returns: {
