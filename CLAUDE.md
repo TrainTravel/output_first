@@ -115,6 +115,17 @@ This app is designed for neurodivergent users. Follow these principles when addi
 - Delete without archive option (preserve without decision fatigue)
 - Forced linear flows without exit points
 
+## Neuro-Inclusive Design Standards
+
+**Addressing Time Blindness:**
+- **Externalize Time:** Avoid invisible countdowns. Use visual anchors (progress bars, shrinking shapes) to show the "flow" of time.
+- **Immediate Rewards:** Every "effort" step (writing, categorizing) must be followed by an immediate "reward" (animation, summary, or compassionate feedback) to bridge the "time chasm."
+- **Chunking:** Break long processes into steps that take < 2 minutes.
+
+**AI Interaction & Consistency:**
+- **Clarity First:** If the AI (Gemini/Claude) generates a response, it must use "Supportive Scaffolding"—explaining complex terms or offering bilingual nuances (e.g., clarifying false friends like 'Forfait').
+- **Persistence:** Important status info (e.g., "3 thoughts remaining to cluster") should remain visible to prevent "out of sight, out of mind" forgetting.
+
 ## Commit Conventions
 
 **When committing code changes:**
