@@ -46,16 +46,23 @@ export function ReflectionScreen({
     
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Not authenticated');
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Use JWT if logged in, otherwise use anon key
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      } else {
+        headers['Authorization'] = `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`;
+      }
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/reflection`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`,
-          },
+          headers,
           body: JSON.stringify({ 
             journalContent,
             emotions: emotionsFr || emotions || 'none selected'
@@ -90,7 +97,7 @@ export function ReflectionScreen({
 
   const handleContinueExploring = () => onContinue(response.trim() || undefined, false);
   const handleMoveToGratitude = () => onContinue(response.trim() || undefined, true);
-  const handleSkip = () => onContinue(undefined, false);
+  const handleSkip = () => onContinue(undefined, true);
 
   const isLastCycle = currentCycle >= MAX_CYCLES - 1;
 
