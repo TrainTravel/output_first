@@ -2,6 +2,15 @@
 
 ## [Unreleased] - 2026-02-26
 
+### Slower Breathing Animation
+
+- Breathing cycle slowed from 4s to 12s (3x slower)
+- Button reveal delay increased from 6s to 18s
+
+**ADHD-Friendly:** Slower pace allows genuine grounding before journaling, addressing time blindness by externalizing a calming rhythm.
+
+---
+
 ### Improved Error Messages
 
 **Technical:** Edge functions now return structured error responses with diagnostic codes.
