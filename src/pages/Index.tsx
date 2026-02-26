@@ -1,4 +1,5 @@
 import { JournalApp } from '@/components/journal/JournalApp';
+import { FeedbackWidget } from '@/components/FeedbackWidget';
 import { Helmet } from 'react-helmet-async';
 
 const Index = () => {
@@ -9,6 +10,7 @@ const Index = () => {
         <meta name="description" content="A calm, private journaling app that helps you build a daily habit of expression while improving emotional awareness and gratitude." />
       </Helmet>
       <JournalApp />
+      <FeedbackWidget />
     </>
   );
 };

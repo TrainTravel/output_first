@@ -80,6 +80,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          platform_preference: string | null
+          price_range: string | null
+          rating: number
+          user_anonymous_id: string
+          would_pay: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          platform_preference?: string | null
+          price_range?: string | null
+          rating: number
+          user_anonymous_id: string
+          would_pay?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          platform_preference?: string | null
+          price_range?: string | null
+          rating?: number
+          user_anonymous_id?: string
+          would_pay?: string
+        }
+        Relationships: []
+      }
       proposals: {
         Row: {
           cluster_id: string
