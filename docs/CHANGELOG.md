@@ -2,12 +2,14 @@
 
 ## [Unreleased] - 2026-02-26
 
-### Slower Breathing Animation
+### 4-2-6 Breathing Pattern
 
-- Breathing cycle slowed from 4s to 12s (3x slower)
-- Button reveal delay: 9 seconds (enough grounding, not too long)
+- **Breathe in:** 4 seconds (circle grows)
+- **Hold:** 2 seconds (circle stays expanded)
+- **Breathe out:** 6 seconds (circle shrinks)
+- Button reveal: 9 seconds
 
-**ADHD-Friendly:** Slower pace allows genuine grounding before journaling, while keeping wait time under 10s to reduce friction.
+**ADHD-Friendly:** Structured breathing technique externalizes time and provides a calming rhythm. The hold phase creates a natural pause point.
 
 ---
 
