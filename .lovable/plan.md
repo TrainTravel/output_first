@@ -1,95 +1,155 @@
 
+# OutputFirst — Product Plan & Roadmap
 
-# Brain Dump: Thought Capture and Project Builder
+## Current State (Feb 2026)
 
-## Overview
+A bilingual (French/English) journaling app with:
+- Journaling flow (breathe → write → feedback → emotions → reflection → gratitude → progress)
+- Brain Dump (rapid thought capture)
+- Thought Garden (AI-themed thought organization)
+- Clusters (group thoughts into clusters, generate proposals)
+- French conversation practice (Chat)
+- Anonymous auth (auto sign-in, zero friction)
+- Garden Themes monetization concept (cosmetic upgrades)
 
-A new section of OutputFirst designed for capturing scattered thoughts quickly and transforming them over time into organized projects and simple proposals. The design follows ADHD-friendly principles: zero friction input, no blank-page anxiety, and gentle AI-assisted organization.
+**Published at:** https://quiet-words-grow.lovable.app
 
-## Core Concepts
+---
 
-1. **Brain Dump** -- A rapid-fire thought capture screen. Users type or dictate fleeting ideas one at a time (short snippets). No structure required. Just dump everything.
-2. **Thought Garden** -- A view of all captured thoughts, loosely grouped by AI-suggested themes. Users can drag/tap to rearrange, merge, or archive.
-3. **Projects** -- When a cluster of thoughts starts forming a pattern, users can promote them into a "Project" with a title and collected thoughts.
-4. **Proposal Generator** -- AI takes a project's collected thoughts and generates a simple, structured proposal (goal, steps, timeline, why it matters) that users can refine and export.
+## Phase 1: Reddit Launch & Feedback Collection (NEXT)
 
-## User Flow
+### Goal
+Post to neurodivergent communities, collect structured feedback to validate demand and guide iteration.
 
-```text
-Home Screen
-  |
-  +-- [Brain Dump] --> Quick capture screen (one thought at a time)
-  |                     |
-  |                     +--> Thoughts saved to database
-  |
-  +-- [My Thoughts] --> Thought Garden (all thoughts, AI-grouped)
-  |                     |
-  |                     +--> Select thoughts --> Create Project
-  |
-  +-- [My Projects] --> List of projects
-                        |
-                        +--> View project --> See collected thoughts
-                        |
-                        +--> [Generate Proposal] --> AI creates proposal
-                        |
-                        +--> Edit / Export proposal
-```
+### 1.1 — In-App Feedback Widget
+- Add a floating feedback button (bottom-right, subtle but visible)
+- Opens a short modal with:
+  - "How's your experience?" (1-5 stars or emoji scale)
+  - "What would you change?" (open text, optional)
+  - "Would you pay for this?" (Yes / No / Maybe)
+  - "How much per month?" ($0-3 / $3-5 / $5-10 / $10+) — only shown if Yes/Maybe
+  - "Where do you want this?" (Web / iOS / Android / Don't care)
+- Store responses in a `feedback` table in the database
+- No login required — tied to anonymous session
+- Keep it to ONE screen, < 60 seconds to complete
 
-## What Gets Built
+### 1.2 — Feedback Dashboard (Internal)
+- Simple `/feedback-results` page (protected or hidden)
+- Show aggregated stats: avg rating, payment willingness %, platform preference breakdown
+- List individual responses with timestamps
 
-### Database (4 tables)
+### 1.3 — Reddit Launch Posts
+Target subreddits:
+- r/ADHD, r/adhdwomen, r/neurodiversity
+- r/depression, r/anxiety
+- r/journaling, r/getdisciplined
+- r/productivity (for neurotypical reach)
 
-- **thoughts** -- id, user-anonymous-id (localStorage-based for now), content, created_at, archived, ai_theme (nullable)
-- **projects** -- id, user-anonymous-id, title, description, status (draft/active/completed), created_at, updated_at
-- **project_thoughts** -- links thoughts to projects (many-to-many)
-- **proposals** -- id, project_id, content (markdown), generated_at
+**Post framing:**
+> "I built a free journaling app designed for ADHD brains — zero friction, no blank pages, gentle AI feedback. Looking for honest feedback from people who actually struggle with journaling."
 
-Since there's no auth currently, we'll use a localStorage-based anonymous ID to keep things simple and friction-free (aligned with the app's current pattern). No RLS needed since data is filtered client-side by anonymous ID.
+- Link to published app
+- Mention: free, no signup, no data collection beyond anonymous feedback
+- Ask for brutal honesty
+- Cross-post strategically (not spam — space out over 1-2 weeks)
 
-### New Screens (4 components)
+---
 
-1. **BrainDumpScreen** -- Large text input, "Add" button, shows last few captured thoughts as fading confirmation. One thought at a time, press Enter to save. Minimal UI, maximum speed.
-2. **ThoughtGardenScreen** -- Card grid of all thoughts, optionally grouped by AI-suggested themes. Select multiple to create a project. Archive/delete individual thoughts.
-3. **ProjectsScreen** -- List of user's projects with thought count, status. Tap to view details.
-4. **ProjectDetailScreen** -- Shows project title, linked thoughts, and a "Generate Proposal" button. Displays the generated proposal with options to copy/share.
+## Phase 2: Iterate Based on Feedback
 
-### New Edge Function (1)
+### 2.1 — Quick Wins (< 1 week each)
+Based on feedback themes, prioritize:
+- UX friction points (anything users complain about twice = fix immediately)
+- Missing features users expect (e.g., dark mode polish, export journal entries)
+- Accessibility issues
 
-- **generate-proposal** -- Takes a project's thoughts and generates a structured proposal using Lovable AI (Gemini Flash). Returns a simple markdown proposal with: Goal, Key Ideas, Suggested Steps, Why This Matters.
+### 2.2 — Neurotypical Appeal
+The app should work for everyone, not just neurodivergent users. Strategy:
+- **Keep the ADHD-friendly UX** — it's just good UX. One thing at a time, low friction, clear paths.
+- **Tone down clinical language** in public-facing copy — frame as "simple, calm journaling" not "ADHD tool"
+- **Add a clean landing page** that appeals broadly: "Journal in 2 minutes. Feel better."
+- The bilingual angle is a unique differentiator for language learners too
 
-### Home Screen Update
+### 2.3 — Feature Prioritization Framework
+Use feedback data to score features:
+- **Frequency** — How many people asked for it?
+- **Willingness to pay** — Did paying users want this?
+- **Effort** — How long to build?
+- **Alignment** — Does it fit the core product principles?
 
-Add two new buttons to the home screen:
-- "Brain Dump" -- quick thought capture
-- "My Projects" -- view projects and proposals
+---
 
-### Navigation Update
+## Phase 3: Platform Strategy
 
-Add new steps to the JournalStep type and useJournal hook to handle the new screens.
+### 3.1 — PWA First (Before Native iOS)
+- Make the existing Vite app installable as a Progressive Web App
+- Add manifest.json, service worker, install prompt
+- This gets mobile users 80% of the native experience for 5% of the effort
+- Track install rates and usage patterns
 
-## Technical Details
+### 3.2 — Native iOS (Only If Validated)
+- Build only if feedback shows 60%+ want iOS AND willingness to pay is strong
+- Consider React Native or Expo for code sharing
+- This is a significant investment — validate first
 
-### New Types (src/types/thoughts.ts)
+---
 
-- `Thought` interface (id, content, createdAt, aiTheme, archived)
-- `Project` interface (id, title, description, status, thoughts, createdAt)
-- `Proposal` interface (id, projectId, content, generatedAt)
-- `ThoughtStep` type added to navigation
+## Phase 4: Monetization Validation
 
-### New Hook (src/hooks/useThoughts.ts)
+### Competitive Landscape
+| App | Price | Focus |
+|-----|-------|-------|
+| Daylio | $5-10/mo | Mood tracking |
+| Finch | $5/mo | Mental health pet |
+| Reflectly | $10/mo | AI journaling |
+| Stoic | $5/mo | CBT + journaling |
 
-Manages all thought/project CRUD operations against localStorage initially, with the database tables ready for when auth is added.
+### OutputFirst Differentiators
+- **ADHD-first design** (not bolted on)
+- **Bilingual** (French/English — unique in market)
+- **Brain Dump → Cluster → Proposal** pipeline (thought-to-action)
+- **No predatory mechanics** (no streak shaming, no paywalls on core features)
 
-### Edge Function: generate-proposal
+### Pricing Strategy
+- **Free tier**: Full journaling flow, brain dump, thought garden
+- **Premium ($5-7/mo)**: Garden themes, advanced AI features, proposal export, custom prompts
+- Validate price point through feedback widget data before implementing payments
 
-Uses Lovable AI (google/gemini-2.5-flash) to take a collection of raw thoughts and produce a clean, encouraging proposal. The prompt will be bilingual-aware based on the user's language preference.
+---
 
-### ADHD-Friendly Design Principles Applied
+## Phase 5: Growth & Retention
 
-- **One thing at a time**: Brain dump shows one input field, not a list to manage
-- **Instant gratification**: Each saved thought gets a subtle animation confirmation
-- **No blank page**: Placeholder text rotates gentle prompts like "What's on your mind?" / "Any idea, big or small..."
-- **Low commitment**: Everything is a "thought" not a "task" -- no pressure to act
-- **Gentle organization**: AI groups themes automatically, user doesn't have to categorize
-- **Celebration**: Generating a proposal from scattered thoughts is framed as an achievement
+### 5.1 — Retention Mechanics (Non-Punitive)
+- Gentle streak display (celebrate, never shame)
+- Weekly reflection email (opt-in)
+- "Your garden grew" — visual progress over time
 
+### 5.2 — Organic Growth
+- SEO landing page
+- Reddit community presence (not ads — genuine participation)
+- Content marketing: "How journaling helps ADHD" blog posts
+- Shareable proposals (from Cluster feature)
+
+---
+
+## Design Principles (Non-Negotiable)
+
+These apply to ALL future features:
+
+1. **One thing at a time** — each screen has one primary action
+2. **Low friction** — minimal clicks, clear paths, Enter key submits
+3. **No blank pages** — rotating prompts, pre-filled defaults
+4. **Skip is always available** — no forced completion
+5. **Gentle, not clinical** — support awareness without therapy overreach
+6. **Bilingual anchors** — key terms shown in both languages for learning
+7. **No predatory monetization** — core features stay free forever
+8. **ADHD-friendly = good UX for everyone** — don't compromise on this
+
+---
+
+## Technical Debt & Cleanup
+
+- [ ] Remove `claim_all_thoughts` RPC (temporary migration hack)
+- [ ] Clean up legacy localStorage keys handling
+- [ ] Add proper error boundaries to all screens
+- [ ] Consider adding basic analytics (privacy-respecting)
