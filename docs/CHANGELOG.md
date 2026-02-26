@@ -1,6 +1,18 @@
 # Changelog
 
-## [Unreleased] - 2026-02-25
+## [Unreleased] - 2026-02-26
+
+### Improved Error Messages
+
+**Technical:** Edge functions now return structured error responses with diagnostic codes.
+
+- Error codes: `RATE_LIMIT`, `CREDITS_EXHAUSTED`, `API_KEY_MISSING`, `AI_AUTH_FAILED`, `AI_ERROR`, `INTERNAL_ERROR`
+- Frontend displays error code in parentheses for easier debugging
+- Helps identify whether issue is rate limiting, credits, or configuration
+
+---
+
+## [2026-02-25]
 
 ### Bilingual Display Refinement
 
