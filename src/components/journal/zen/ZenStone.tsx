@@ -1,11 +1,14 @@
 import { Thought } from '@/hooks/useThoughts';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 import stone1 from '@/assets/zen/stone-1.png';
 import stone2 from '@/assets/zen/stone-2.png';
 import stone3 from '@/assets/zen/stone-3.png';
+import plant1 from '@/assets/zen/plant-1.png';
+import plant2 from '@/assets/zen/plant-2.png';
 
 const STONE_IMAGES = [stone1, stone2, stone3];
+const PLANT_IMAGES = [plant1, plant2];
+const ALL_ELEMENTS = [...STONE_IMAGES, ...PLANT_IMAGES];
 
 interface ZenStoneProps {
   thought: Thought;
@@ -14,34 +17,33 @@ interface ZenStoneProps {
 }
 
 export function ZenStone({ thought, index, clusterSize = 1 }: ZenStoneProps) {
-  const { t } = useLanguage();
-
   const baseSize = Math.min(160, 90 + clusterSize * 15);
-  const stoneImg = STONE_IMAGES[index % STONE_IMAGES.length];
-  const rotation = (index * 7 - 8) % 15;
+  const elementImg = ALL_ELEMENTS[index % ALL_ELEMENTS.length];
+  const isPlant = PLANT_IMAGES.includes(elementImg);
+  const rotation = isPlant ? 0 : (index * 7 - 8) % 15;
+  const sizeMultiplier = isPlant ? 1.2 : 1;
 
   return (
     <div
       className="zen-stone-wrapper relative flex items-center justify-center cursor-default select-none"
       style={{
-        width: `${baseSize}px`,
-        height: `${baseSize * 0.8}px`,
+        width: `${baseSize * sizeMultiplier}px`,
+        height: `${baseSize * 0.8 * sizeMultiplier}px`,
         transform: `rotate(${rotation}deg)`,
       }}
       title={thought.aiTheme || undefined}
     >
-      {/* Sumi-e stone image */}
       <img
-        src={stoneImg}
+        src={elementImg}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-90 mix-blend-multiply"
+        className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-95"
         draggable={false}
       />
 
       {/* Text overlay */}
       <p
-        className="zen-stone-text relative z-10 text-center px-5 leading-snug"
+        className="zen-stone-text relative z-10 text-center px-5 leading-snug drop-shadow-sm"
         style={{ transform: `rotate(${-rotation}deg)` }}
       >
         {thought.content.length > 50

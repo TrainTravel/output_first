@@ -5,8 +5,10 @@ import { anchorPosition, scatterPosition } from './zenPlacement';
 
 import anchorImg1 from '@/assets/zen/stone-anchor-1.png';
 import anchorImg2 from '@/assets/zen/stone-anchor-2.png';
+import plantAnchor1 from '@/assets/zen/plant-1.png';
+import plantAnchor2 from '@/assets/zen/plant-2.png';
 
-const ANCHOR_IMAGES = [anchorImg1, anchorImg2];
+const ANCHOR_IMAGES = [anchorImg1, plantAnchor1, anchorImg2, plantAnchor2];
 
 interface ZenClusterGroupProps {
   cluster: Cluster;
@@ -81,7 +83,7 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
             src={anchorImg}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-90 mix-blend-multiply"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-95"
             draggable={false}
           />
           <p className="zen-anchor-text relative z-10 text-center px-3 leading-snug">
