@@ -28,11 +28,13 @@ export interface BilingualPrompt {
 export interface EmotionWord {
   en: string;
   fr: string;
+  es: string;
 }
 
 export interface EmotionSuggestion {
   category: string;
   categoryFr: string;
+  categoryEs: string;
   emotions: EmotionWord[];
 }
 
@@ -56,41 +58,45 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
   {
     category: "Calm",
     categoryFr: "Calme",
+    categoryEs: "Calmado",
     emotions: [
-      { en: "peaceful", fr: "paisible" },
-      { en: "content", fr: "satisfait(e)" },
-      { en: "relaxed", fr: "détendu(e)" },
-      { en: "settled", fr: "apaisé(e)" },
+      { en: "peaceful", fr: "paisible", es: "tranquilo/a" },
+      { en: "content", fr: "satisfait(e)", es: "contento/a" },
+      { en: "relaxed", fr: "détendu(e)", es: "relajado/a" },
+      { en: "settled", fr: "apaisé(e)", es: "calmado/a" },
     ],
   },
   {
     category: "Uncertain",
     categoryFr: "Incertain",
+    categoryEs: "Inseguro",
     emotions: [
-      { en: "unsure", fr: "incertain(e)" },
-      { en: "hesitant", fr: "hésitant(e)" },
-      { en: "questioning", fr: "interrogatif/ive" },
-      { en: "searching", fr: "en quête" },
+      { en: "unsure", fr: "incertain(e)", es: "inseguro/a" },
+      { en: "hesitant", fr: "hésitant(e)", es: "vacilante" },
+      { en: "questioning", fr: "interrogatif/ive", es: "cuestionando" },
+      { en: "searching", fr: "en quête", es: "buscando" },
     ],
   },
   {
     category: "Heavy",
     categoryFr: "Lourd",
+    categoryEs: "Pesado",
     emotions: [
-      { en: "tired", fr: "fatigué(e)" },
-      { en: "weary", fr: "las/lasse" },
-      { en: "drained", fr: "épuisé(e)" },
-      { en: "low", fr: "abattu(e)" },
+      { en: "tired", fr: "fatigué(e)", es: "cansado/a" },
+      { en: "weary", fr: "las/lasse", es: "agotado/a" },
+      { en: "drained", fr: "épuisé(e)", es: "sin energía" },
+      { en: "low", fr: "abattu(e)", es: "decaído/a" },
     ],
   },
   {
     category: "Light",
     categoryFr: "Léger",
+    categoryEs: "Ligero",
     emotions: [
-      { en: "hopeful", fr: "plein(e) d'espoir" },
-      { en: "curious", fr: "curieux/se" },
-      { en: "grateful", fr: "reconnaissant(e)" },
-      { en: "present", fr: "présent(e)" },
+      { en: "hopeful", fr: "plein(e) d'espoir", es: "esperanzado/a" },
+      { en: "curious", fr: "curieux/se", es: "curioso/a" },
+      { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a" },
+      { en: "present", fr: "présent(e)", es: "presente" },
     ],
   },
 ];

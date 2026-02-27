@@ -58,12 +58,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         });
 
         if (fnError) {
-          // Extract error details from the function error
           const errorMsg = fnError.message || 'Failed to get feedback';
           throw new Error(errorMsg);
         }
         if (data?.error) {
-          // Use the detailed error message from the edge function
           const errorMsg = data.code
             ? `${data.error} (${data.code})`
             : data.error;
@@ -98,10 +96,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   }, [journalContent]);
 
   const acknowledgment = feedback?.acknowledgment || feedback?.encouragement;
-  const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected && 
+  const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected &&
     feedback?.emotionalGranularity?.alternatives?.length > 0;
 
-  const headerText = t('Un moment de clarté', 'A moment of clarity');
+  const headerText = t('Un moment de clarté', 'A moment of clarity', 'Un momento de claridad');
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
@@ -125,7 +123,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
             <div className="flex flex-col items-center justify-center py-12 space-y-4">
               <Loader2 className="w-8 h-8 text-primary animate-spin" />
               <p className="text-muted-foreground">
-                {isFr ? 'Reading what you wrote...' : 'Reading what you wrote...'}
+                Reading what you wrote...
               </p>
             </div>
           )}
@@ -134,7 +132,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 text-center">
               <p className="text-destructive font-medium">{error}</p>
               <p className="text-muted-foreground text-sm mt-2">
-                {isFr ? 'You can skip this step and continue.' : 'You can skip this step and continue.'}
+                You can skip this step and continue.
               </p>
             </div>
           )}
@@ -159,16 +157,16 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                   <div className="flex items-center gap-2 text-foreground">
                     <Sparkles className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      {bilingual('Nommer avec précision', 'Naming with precision')}
+                      {bilingual('Nommer avec précision', 'Naming with precision', 'Nombrar con precisión')}
                     </span>
                   </div>
-                  
+
                   <div className="bg-accent/10 border border-accent/20 rounded-xl p-5 space-y-4">
                     <p className="text-muted-foreground text-sm">
-                      You used "<span className="text-foreground font-medium">{feedback.emotionalGranularity!.detected}</span>" — 
+                      You used "<span className="text-foreground font-medium">{feedback.emotionalGranularity!.detected}</span>" —
                       here are some words that might capture it more precisely:
                     </p>
-                    
+
                     <div className="space-y-3">
                       {feedback.emotionalGranularity!.alternatives.map((alt, index) => (
                         <div key={index} className="bg-background/50 rounded-lg p-3 border border-border/50">
@@ -180,9 +178,9 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                         </div>
                       ))}
                     </div>
-                    
+
                     <p className="text-muted-foreground/60 text-xs pt-2 border-t border-border/30">
-                      {isFr ? 'Does one of these resonate? You can use it next time.' : 'Does one of these resonate? You can use it next time.'}
+                      Does one of these resonate? You can use it next time.
                     </p>
                   </div>
                 </div>
@@ -193,7 +191,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual('Une petite note', 'A small note')}</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota')}</span>
                   </div>
                   <div className="bg-card border border-border rounded-xl p-4 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
@@ -216,7 +214,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual('Une petite note', 'A small note')}</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota')}</span>
                   </div>
                   {feedback.suggestions.slice(0, 1).map((suggestion, index) => (
                     <div key={index} className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -249,13 +247,13 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         {/* Actions */}
         <div className="mt-8 space-y-3">
           <Button variant="default" size="full" onClick={onContinue}>
-            {t('Continuer', 'Continue').primary}
+            {t('Continuer', 'Continue', 'Continuar').primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
 
           {isLoading && (
             <Button variant="skip" size="full" onClick={onSkip}>
-              {t('Passer', 'Skip').primary}
+              {t('Passer', 'Skip', 'Omitir').primary}
             </Button>
           )}
         </div>

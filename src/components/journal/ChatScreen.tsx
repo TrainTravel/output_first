@@ -26,7 +26,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { bilingual, isFr } = useLanguage();
+  const { isFr, isEs } = useLanguage();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,7 +73,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       console.error('Error starting conversation:', error);
       toast({
         variant: 'destructive',
-        title: isFr ? 'Erreur de connexion' : 'Connection error',
+        title: isFr ? 'Erreur de connexion' : isEs ? 'Error de conexión' : 'Connection error',
         description: error instanceof Error ? error.message : 'Could not connect to chat',
       });
       setHasStarted(false);
@@ -167,7 +167,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       console.error('Error sending message:', error);
       toast({
         variant: 'destructive',
-        title: isFr ? 'Erreur' : 'Error',
+        title: isFr ? 'Erreur' : isEs ? 'Error' : 'Error',
         description: error instanceof Error ? error.message : 'Could not send message',
       });
     } finally {
@@ -193,7 +193,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <MessageCircle className="h-5 w-5 text-primary flex-shrink-0" />
             <h1 className="text-xl font-medium truncate">
-              {context ? context.label : (isFr ? 'Conversation' : 'Conversation')}
+              {context ? context.label : (isFr ? 'Conversation' : isEs ? 'Conversación' : 'Conversation')}
             </h1>
           </div>
           {context && (
@@ -217,23 +217,27 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
               </div>
               <h2 className="text-2xl mb-3">
                 {context
-                  ? (isFr ? 'Explorer vos pensées' : 'Explore Your Thoughts')
-                  : (isFr ? 'Practice French Conversation' : 'Practice French Conversation')}
+                  ? (isFr ? 'Explorer vos pensées' : isEs ? 'Explorar tus pensamientos' : 'Explore Your Thoughts')
+                  : (isFr ? 'Practice French Conversation' : isEs ? 'Practica la conversación en francés' : 'Practice French Conversation')}
               </h2>
               <p className="text-muted-foreground mb-8 max-w-md">
                 {context
                   ? (isFr
                     ? "Discutons ensemble de vos pensées. L'IA utilisera des techniques de TCC pour vous aider à explorer vos schémas de pensée avec curiosité et bienveillance."
+                    : isEs
+                    ? 'Hablemos de tus pensamientos. La IA usará técnicas de TCC para ayudarte a explorar tus patrones de pensamiento con curiosidad y compasión.'
                     : 'Let\'s discuss your thoughts together. The AI will use CBT techniques to help you explore your thinking patterns with curiosity and compassion.')
                   : (isFr
                     ? 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.'
+                    : isEs
+                    ? 'Chatea con un compañero IA que te ayuda a expresarte en francés y desarrollar conciencia emocional.'
                     : 'Chat with a supportive AI partner who helps you express yourself in French while building emotional awareness.')}
               </p>
               <Button onClick={startConversation} size="lg" className="gap-2">
                 <MessageCircle className="h-5 w-5" />
                 {context
-                  ? (isFr ? 'Commencer l\'exploration' : 'Start Exploring')
-                  : (isFr ? 'Start Conversation' : 'Start Conversation')}
+                  ? (isFr ? 'Commencer l\'exploration' : isEs ? 'Comenzar exploración' : 'Start Exploring')
+                  : (isFr ? 'Start Conversation' : isEs ? 'Comenzar conversación' : 'Start Conversation')}
               </Button>
             </div>
           ) : (
@@ -280,7 +284,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isFr ? 'Write in French...' : 'Write in French...'}
+              placeholder={isFr ? 'Write in French...' : isEs ? 'Escribe en francés...' : 'Write in French...'}
               className="resize-none min-h-[48px] max-h-32"
               rows={1}
               disabled={isLoading}

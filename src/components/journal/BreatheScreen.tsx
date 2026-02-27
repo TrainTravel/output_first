@@ -55,10 +55,10 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   }, []);
 
   const phaseText = phase === 'inhale'
-    ? t('Inspirez...', 'Breathe in...')
+    ? t('Inspirez...', 'Breathe in...', 'Inhala...')
     : phase === 'hold'
-    ? t('Retenez...', 'Hold...')
-    : t('Expirez...', 'Breathe out...');
+    ? t('Retenez...', 'Hold...', 'Mantén...')
+    : t('Expirez...', 'Breathe out...', 'Exhala...');
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 animate-fade-in">
@@ -69,7 +69,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back').primary}</span>
+          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
         </button>
 
         {/* Breathing circle */}
@@ -121,13 +121,15 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
             <p className="text-muted-foreground text-sm">
               {t(
                 'Prenez un moment pour vous ancrer.',
-                'Take a moment to ground yourself.'
+                'Take a moment to ground yourself.',
+                'Tómate un momento para centrarte.'
               ).primary}
             </p>
             <p className="text-muted-foreground/60 text-xs italic">
               {t(
                 'Prenez un moment pour vous ancrer.',
-                'Take a moment to ground yourself.'
+                'Take a moment to ground yourself.',
+                'Tómate un momento para centrarte.'
               ).secondary}
             </p>
           </div>
@@ -143,10 +145,10 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
           }}
         >
           <Button variant="default" size="full" onClick={onReady}>
-            {t('Je suis prêt(e)', "I'm ready").primary}
+            {t('Je suis prêt(e)', "I'm ready", 'Estoy listo/a').primary}
           </Button>
           <p className="text-center text-muted-foreground/50 text-xs mt-2 italic">
-            {t('Je suis prêt(e)', "I'm ready").secondary}
+            {t('Je suis prêt(e)', "I'm ready", 'Estoy listo/a').secondary}
           </p>
         </div>
       </div>

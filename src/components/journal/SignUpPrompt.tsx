@@ -33,26 +33,28 @@ export function SignUpPrompt({ open, onOpenChange, featureName }: SignUpPromptPr
             <Feather className="w-10 h-10 text-primary" />
           </div>
           <DialogTitle className="font-serif text-2xl">
-            {t('Créez un compte pour continuer', 'Create an account to continue').primary}
+            {t('Créez un compte pour continuer', 'Create an account to continue', 'Crea una cuenta para continuar').primary}
           </DialogTitle>
           <DialogDescription className="text-base">
             {featureName
               ? t(
                   `Pour utiliser ${featureName}, créez un compte gratuit. Vos données de journal seront préservées.`,
-                  `To use ${featureName}, create a free account. Your journal data will be preserved.`
+                  `To use ${featureName}, create a free account. Your journal data will be preserved.`,
+                  `Para usar ${featureName}, crea una cuenta gratuita. Tus datos del diario se conservarán.`
                 ).primary
               : t(
                   'Créez un compte gratuit pour sauvegarder vos données.',
-                  'Create a free account to save your data.'
+                  'Create a free account to save your data.',
+                  'Crea una cuenta gratuita para guardar tus datos.'
                 ).primary}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 pt-2">
           <Button size="full" onClick={handleSignUp}>
-            {t("S'inscrire", 'Sign Up').primary}
+            {t("S'inscrire", 'Sign Up', 'Registrarse').primary}
           </Button>
           <Button variant="ghost" size="full" onClick={() => onOpenChange(false)}>
-            {t('Plus tard', 'Maybe later').primary}
+            {t('Plus tard', 'Maybe later', 'Más tarde').primary}
           </Button>
         </div>
       </DialogContent>

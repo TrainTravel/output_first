@@ -26,7 +26,6 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
     map.get(key)!.push(t);
   }
 
-  // Sort groups: largest first, "Uncategorized" last
   return [...map.entries()]
     .sort(([a, aList], [b, bList]) => {
       if (a === 'Uncategorized') return 1;
@@ -37,19 +36,21 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 }
 
 export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGardenScreenProps) {
-  const { bilingual, t, isFr } = useLanguage();
+  const { bilingual, t, isFr, isEs } = useLanguage();
   const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
   const [retagging, setRetagging] = useState(false);
 
+  const dateLocale = isFr ? 'fr-FR' : isEs ? 'es-ES' : 'en-US';
+
   const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
 
   const handleChatAllThoughts = () => {
     const context: ThoughtContext = {
       mode: 'all',
-      label: bilingual('Mon jardin', 'My garden'),
+      label: bilingual('Mon jardin', 'My garden', 'Mi jardín'),
       thoughts: thoughts.slice(0, 20).map(th => ({
         content: th.content,
         createdAt: th.createdAt,
@@ -76,9 +77,9 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
     setRetagging(true);
     try {
       const count = all ? await retagAll() : await retagUntagged();
-      toast.success(bilingual(`${count} pensées étiquetées`, `${count} thoughts tagged`));
+      toast.success(bilingual(`${count} pensées étiquetées`, `${count} thoughts tagged`, `${count} pensamientos etiquetados`));
     } catch {
-      toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed'));
+      toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed', 'Error al etiquetar'));
     }
     setRetagging(false);
   };
@@ -115,13 +116,13 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back').primary}
+          {t('Retour', 'Back', 'Volver').primary}
         </Button>
         <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
             <Button variant="destructive" size="sm" onClick={archiveSelected}>
               <Archive className="w-4 h-4 mr-1" />
-              {t('Archiver', 'Archive').primary} ({selectedIds.size})
+              {t('Archiver', 'Archive', 'Archivar').primary} ({selectedIds.size})
             </Button>
           )}
           <Button variant="ghost" size="icon" onClick={() => setShowSearch(s => !s)}>
@@ -134,16 +135,17 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
       <div className="text-center mb-6">
         <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
           <Sprout className="w-7 h-7 text-primary" />
-          {bilingual('Jardin de pensées', 'Thought Garden')}
+          {bilingual('Jardin de pensées', 'Thought Garden', 'Jardín de pensamientos')}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
           {t(
             `${thoughts.length} pensées capturées`,
-            `${thoughts.length} thoughts captured`
+            `${thoughts.length} thoughts captured`,
+            `${thoughts.length} pensamientos capturados`
           ).primary}
           {groups.length > 1 && (
             <span className="ml-1">
-              · {groups.length} {t('thèmes', 'themes').primary}
+              · {groups.length} {t('thèmes', 'themes', 'temas').primary}
             </span>
           )}
         </p>
@@ -155,7 +157,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
               onClick={handleChatAllThoughts}
             >
               <MessageCircle className="w-4 h-4 mr-1.5" />
-              {bilingual('Discuter', 'Discuss')}
+              {bilingual('Discuter', 'Discuss', 'Discutir')}
             </Button>
             {untaggedCount > 0 && (
               <Button
@@ -169,7 +171,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
                 ) : (
                   <Sparkles className="w-4 h-4 mr-1.5" />
                 )}
-                {t(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`).primary}
+                {t(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`, `Etiquetar ${untaggedCount} nuevos`).primary}
               </Button>
             )}
             <Button
@@ -183,7 +185,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
               ) : (
                 <Sparkles className="w-4 h-4 mr-1.5" />
               )}
-              {t('Tout ré-étiqueter', 'Re-tag all').primary}
+              {t('Tout ré-étiqueter', 'Re-tag all', 'Re-etiquetar todo').primary}
             </Button>
           </div>
         )}
@@ -193,7 +195,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
       {showSearch && (
         <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
           <Input
-            placeholder={t('Rechercher…', 'Search…').primary}
+            placeholder={t('Rechercher…', 'Search…', 'Buscar…').primary}
             value={search}
             onChange={e => setSearch(e.target.value)}
             autoFocus
@@ -206,7 +208,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {t('Chargement…', 'Loading…').primary}
+              {t('Chargement…', 'Loading…', 'Cargando…').primary}
             </p>
           </div>
         ) : filtered.length === 0 ? (
@@ -214,10 +216,11 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
             <Sprout className="w-12 h-12 text-muted-foreground/30 mb-4" />
             <p className="text-muted-foreground">
               {search
-                ? t('Aucun résultat trouvé.', 'No results found.').primary
+                ? t('Aucun résultat trouvé.', 'No results found.', 'No se encontraron resultados.').primary
                 : t(
                     'Votre jardin est vide. Commencez par un vide-tête !',
-                    'Your garden is empty. Start with a brain dump!'
+                    'Your garden is empty. Start with a brain dump!',
+                    '¡Tu jardín está vacío. Comienza con un volcado mental!'
                   ).primary}
             </p>
           </div>
@@ -236,22 +239,22 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
                     <button
                       onClick={() => handleChatTheme(group)}
                       className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
-                      title={bilingual('Discuter ce thème', 'Discuss this theme')}
+                      title={bilingual('Discuter ce thème', 'Discuss this theme', 'Discutir este tema')}
                     >
                       <MessageCircle className="w-4 h-4" />
                     </button>
                   </div>
                 )}
                 <div className="space-y-2">
-                  {group.thoughts.map(t => (
+                  {group.thoughts.map(th => (
                     <ThoughtCard
-                      key={t.id}
-                      content={t.content}
-                      date={t.createdAt}
-                      selected={selectedIds.has(t.id)}
-                      onToggle={() => toggleSelect(t.id)}
-                      onArchive={() => archiveThought(t.id)}
-                      isFr={isFr}
+                      key={th.id}
+                      content={th.content}
+                      date={th.createdAt}
+                      selected={selectedIds.has(th.id)}
+                      onToggle={() => toggleSelect(th.id)}
+                      onArchive={() => archiveThought(th.id)}
+                      dateLocale={dateLocale}
                     />
                   ))}
                 </div>
@@ -270,16 +273,16 @@ function ThoughtCard({
   selected,
   onToggle,
   onArchive,
-  isFr,
+  dateLocale,
 }: {
   content: string;
   date: string;
   selected: boolean;
   onToggle: () => void;
   onArchive: () => void;
-  isFr: boolean;
+  dateLocale: string;
 }) {
-  const formatted = new Date(date).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+  const formatted = new Date(date).toLocaleDateString(dateLocale, {
     month: 'short',
     day: 'numeric',
   });

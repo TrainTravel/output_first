@@ -12,17 +12,18 @@ interface ClusterDetailScreenProps {
 }
 
 export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }: ClusterDetailScreenProps) {
-  const { bilingual, t, isFr } = useLanguage();
+  const { bilingual, t, isFr, isEs } = useLanguage();
   const { clusters, fetchClusterThoughts } = useClusters();
   const [thoughts, setThoughts] = useState<ClusterThought[]>([]);
   const [loading, setLoading] = useState(true);
 
   const cluster = clusters.find(c => c.id === clusterId);
+  const dateLocale = isFr ? 'fr-FR' : isEs ? 'es-ES' : 'en-US';
 
   const handleChatCluster = () => {
     const context: ThoughtContext = {
       mode: 'cluster',
-      label: cluster?.title ?? bilingual('Cluster', 'Cluster'),
+      label: cluster?.title ?? bilingual('Cluster', 'Cluster', 'Grupo'),
       thoughts: thoughts.slice(0, 20).map(th => ({
         content: th.content,
         createdAt: th.createdAt,
@@ -49,7 +50,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back').primary}
+          {t('Retour', 'Back', 'Volver').primary}
         </Button>
       </div>
 
@@ -57,7 +58,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       <div className="text-center mb-8">
         <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
           <Layers className="w-7 h-7 text-primary" />
-          {cluster?.title ?? bilingual('Cluster', 'Cluster')}
+          {cluster?.title ?? bilingual('Cluster', 'Cluster', 'Grupo')}
         </h2>
         {cluster?.description && (
           <p className="text-muted-foreground text-sm mt-1">{cluster.description}</p>
@@ -67,14 +68,14 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       {/* Linked thoughts */}
       <div className="flex-1 max-w-lg mx-auto w-full">
         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
-          {bilingual('Pensées liées', 'Linked Thoughts')}
+          {bilingual('Pensées liées', 'Linked Thoughts', 'Pensamientos vinculados')}
           <span className="ml-2 lowercase font-normal">({thoughts.length})</span>
         </h3>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {t('Chargement…', 'Loading…').primary}
+              {t('Chargement…', 'Loading…', 'Cargando…').primary}
             </p>
           </div>
         ) : thoughts.length === 0 ? (
@@ -83,26 +84,27 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
             <p className="text-muted-foreground text-sm">
               {t(
                 'Aucune pensée liée pour le moment.',
-                'No linked thoughts yet.'
+                'No linked thoughts yet.',
+                'Aún no hay pensamientos vinculados.'
               ).primary}
             </p>
           </div>
         ) : (
           <div className="space-y-2">
-            {thoughts.map(t => {
-              const formatted = new Date(t.createdAt).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+            {thoughts.map(th => {
+              const formatted = new Date(th.createdAt).toLocaleDateString(dateLocale, {
                 month: 'short',
                 day: 'numeric',
               });
               return (
                 <div
-                  key={t.id}
+                  key={th.id}
                   className="bg-card border border-border rounded-xl px-4 py-3 animate-fade-in-up"
                 >
-                  <p className="text-foreground text-sm leading-relaxed">{t.content}</p>
+                  <p className="text-foreground text-sm leading-relaxed">{th.content}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    {t.aiTheme && (
-                      <span className="text-xs text-primary">{t.aiTheme}</span>
+                    {th.aiTheme && (
+                      <span className="text-xs text-primary">{th.aiTheme}</span>
                     )}
                     <span className="text-xs text-muted-foreground">{formatted}</span>
                   </div>
@@ -117,7 +119,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
           <div className="mt-8 text-center">
             <Button variant="default" size="full" onClick={handleChatCluster}>
               <MessageCircle className="w-4 h-4 mr-2" />
-              {bilingual('Discuter ce cluster', 'Discuss this cluster')}
+              {bilingual('Discuter ce cluster', 'Discuss this cluster', 'Discutir este grupo')}
             </Button>
           </div>
         )}
