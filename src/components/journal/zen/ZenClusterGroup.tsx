@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Cluster, ClusterThought } from '@/hooks/useClusters';
 import { ZenStone } from './ZenStone';
-import { anchorPosition, scatterPosition, StonePosition } from './zenPlacement';
+import { anchorPosition, scatterPosition } from './zenPlacement';
+
+import anchorImg1 from '@/assets/zen/stone-anchor-1.png';
+import anchorImg2 from '@/assets/zen/stone-anchor-2.png';
+
+const ANCHOR_IMAGES = [anchorImg1, anchorImg2];
 
 interface ZenClusterGroupProps {
   cluster: Cluster;
@@ -20,8 +25,8 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
     }
   }, [cluster.id, visible, fetchThoughts]);
 
-  // Only show up to 5 child stones (Rule of Odds: 3 or 5)
   const visibleThoughts = thoughts.slice(0, 5);
+  const anchorImg = ANCHOR_IMAGES[clusterIndex % ANCHOR_IMAGES.length];
 
   return (
     <div
@@ -29,7 +34,7 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
-      {/* Child stones rendered first (behind anchor) */}
+      {/* Child stones */}
       {visibleThoughts.map((thought, i) => {
         const pos = scatterPosition(thought.id, anchor, i);
         return (
@@ -59,7 +64,7 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
         );
       })}
 
-      {/* Cluster anchor stone — larger, on top */}
+      {/* Cluster anchor stone — larger, sumi-e image */}
       <div
         className="absolute zen-stone-enter"
         style={{
@@ -69,12 +74,21 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
           zIndex: 10,
         }}
       >
-        <div className="zen-anchor-stone flex items-center justify-center cursor-default select-none">
-          <p className="zen-anchor-text text-center px-3 leading-snug">
+        <div className="zen-anchor-wrapper relative flex items-center justify-center cursor-default select-none"
+          style={{ width: '160px', height: '120px' }}
+        >
+          <img
+            src={anchorImg}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-90 mix-blend-multiply"
+            draggable={false}
+          />
+          <p className="zen-anchor-text relative z-10 text-center px-3 leading-snug">
             {cluster.title}
           </p>
           {cluster.thoughtCount != null && cluster.thoughtCount > 0 && (
-            <span className="zen-anchor-count absolute -bottom-5 text-[10px] tracking-widest opacity-50">
+            <span className="zen-anchor-count absolute -bottom-5 text-[10px] tracking-widest opacity-50 z-10">
               {cluster.thoughtCount}
             </span>
           )}
