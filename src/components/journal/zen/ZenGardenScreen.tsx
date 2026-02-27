@@ -7,13 +7,14 @@ import { useThoughts } from '@/hooks/useThoughts';
 import { ZenClusterGroup } from './ZenClusterGroup';
 import { ZenStone } from './ZenStone';
 import { anchorPosition } from './zenPlacement';
+import { getGardenTier, TIER_THRESHOLDS } from './gardenTiers';
 import './zen-garden.css';
 
 interface ZenGardenScreenProps {
   onBack: () => void;
 }
 
-const MAX_VISIBLE = 3; // Rule C: 3-cluster constraint
+const MAX_VISIBLE = 3;
 
 export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
   const { bilingual, t } = useLanguage();
@@ -22,6 +23,9 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
   const [viewOffset, setViewOffset] = useState(0);
 
   const loading = clustersLoading || thoughtsLoading;
+
+  // Garden tier based on cluster count
+  const tier = useMemo(() => getGardenTier(clusters.length), [clusters.length]);
 
   // Unclustered thoughts (no cluster assignment) shown as loose stones
   const unclusteredThoughts = thoughts.filter(th => !th.archived && !th.composted);
@@ -86,6 +90,8 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
                 clusterIndex={i}
                 fetchThoughts={fetchClusterThoughts}
                 visible={i >= visibleRange.start && i < visibleRange.end}
+                stonePool={tier.stonePool}
+                anchorPool={tier.anchorPool}
               />
             ))}
           </>
@@ -105,7 +111,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
                     animationDelay: `${i * 0.2}s`,
                   }}
                 >
-                  <ZenStone thought={thought} index={i} />
+                  <ZenStone thought={thought} index={i} elementPool={tier.stonePool} />
                 </div>
               );
             })}
@@ -139,14 +145,27 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
         </div>
       )}
 
-      {/* Footer — cluster/stone count */}
-      <footer className="text-center pb-8 pt-4 relative z-20">
+      {/* Footer — garden tier + progress */}
+      <footer className="text-center pb-8 pt-4 relative z-20 space-y-2">
         <p className="zen-text-muted text-xs tracking-widest uppercase">
-          {clusters.length > 0
-            ? `${clusters.length} ${t('groupes', 'clusters').primary}`
-            : `${unclusteredThoughts.length} ${t('pierres', 'stones').primary}`
-          }
+          {t(tier.label.fr, tier.label.en).primary}
         </p>
+        {tier.level < 4 && (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-24 h-1 rounded-full overflow-hidden" style={{ background: 'hsl(30 10% 82% / 0.4)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-1000"
+                style={{
+                  width: `${tier.progress * 100}%`,
+                  background: 'hsl(30 10% 50%)',
+                }}
+              />
+            </div>
+            <span className="zen-text-muted text-[10px]">
+              {clusters.length}/{TIER_THRESHOLDS[tier.level + 1] ?? 7}
+            </span>
+          </div>
+        )}
       </footer>
     </div>
   );

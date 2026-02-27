@@ -1,25 +1,19 @@
 import { Thought } from '@/hooks/useThoughts';
-
-import stone1 from '@/assets/zen/stone-1.png';
-import stone2 from '@/assets/zen/stone-2.png';
-import stone3 from '@/assets/zen/stone-3.png';
-import plant1 from '@/assets/zen/plant-1.png';
-import plant2 from '@/assets/zen/plant-2.png';
-
-const STONE_IMAGES = [stone1, stone2, stone3];
-const PLANT_IMAGES = [plant1, plant2];
-const ALL_ELEMENTS = [...STONE_IMAGES, ...PLANT_IMAGES];
+import { PLANTS } from './gardenTiers';
 
 interface ZenStoneProps {
   thought: Thought;
   index: number;
   clusterSize?: number;
+  elementPool?: string[];  // available images based on garden tier
 }
 
-export function ZenStone({ thought, index, clusterSize = 1 }: ZenStoneProps) {
+export function ZenStone({ thought, index, clusterSize = 1, elementPool = [] }: ZenStoneProps) {
   const baseSize = Math.min(160, 90 + clusterSize * 15);
-  const elementImg = ALL_ELEMENTS[index % ALL_ELEMENTS.length];
-  const isPlant = PLANT_IMAGES.includes(elementImg);
+  const elementImg = elementPool.length > 0
+    ? elementPool[index % elementPool.length]
+    : undefined;
+  const isPlant = elementImg ? PLANTS.includes(elementImg) : false;
   const rotation = isPlant ? 0 : (index * 7 - 8) % 15;
   const sizeMultiplier = isPlant ? 1.2 : 1;
 

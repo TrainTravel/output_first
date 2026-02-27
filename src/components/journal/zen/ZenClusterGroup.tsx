@@ -2,22 +2,18 @@ import { useEffect, useState } from 'react';
 import { Cluster, ClusterThought } from '@/hooks/useClusters';
 import { ZenStone } from './ZenStone';
 import { anchorPosition, scatterPosition } from './zenPlacement';
-
-import anchorImg1 from '@/assets/zen/stone-anchor-1.png';
-import anchorImg2 from '@/assets/zen/stone-anchor-2.png';
-import plantAnchor1 from '@/assets/zen/plant-1.png';
-import plantAnchor2 from '@/assets/zen/plant-2.png';
-
-const ANCHOR_IMAGES = [anchorImg1, plantAnchor1, anchorImg2, plantAnchor2];
+import { lantern } from './gardenTiers';
 
 interface ZenClusterGroupProps {
   cluster: Cluster;
   clusterIndex: number;
   fetchThoughts: (clusterId: string) => Promise<ClusterThought[]>;
   visible: boolean;
+  stonePool: string[];
+  anchorPool: string[];
 }
 
-export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible }: ZenClusterGroupProps) {
+export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible, stonePool, anchorPool }: ZenClusterGroupProps) {
   const [thoughts, setThoughts] = useState<ClusterThought[]>([]);
   const anchor = anchorPosition(cluster.id, clusterIndex);
 
@@ -28,7 +24,8 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
   }, [cluster.id, visible, fetchThoughts]);
 
   const visibleThoughts = thoughts.slice(0, 5);
-  const anchorImg = ANCHOR_IMAGES[clusterIndex % ANCHOR_IMAGES.length];
+  const anchorImg = anchorPool[clusterIndex % anchorPool.length];
+  const isLantern = anchorImg === lantern;
 
   return (
     <div
@@ -61,6 +58,7 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
               }}
               index={i}
               clusterSize={1}
+              elementPool={stonePool}
             />
           </div>
         );
@@ -77,7 +75,7 @@ export function ZenClusterGroup({ cluster, clusterIndex, fetchThoughts, visible 
         }}
       >
         <div className="zen-anchor-wrapper relative flex items-center justify-center cursor-default select-none"
-          style={{ width: '160px', height: '120px' }}
+          style={{ width: isLantern ? '120px' : '160px', height: isLantern ? '160px' : '120px' }}
         >
           <img
             src={anchorImg}
