@@ -84,13 +84,57 @@
   border: 1px dashed hsl(var(--zen-rake-line) / 0.5);
 }
 
-/* Horizontal scroll — hide scrollbar, preserve snap */
-.zen-scroll-container {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* ── Cluster anchor stones (large) ── */
+.zen-anchor-stone {
+  width: 140px;
+  height: 100px;
+  border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%;
+  background: linear-gradient(
+    145deg,
+    hsl(200 4% 24%) 0%,
+    hsl(200 5% 18%) 50%,
+    hsl(200 3% 28%) 100%
+  );
+  box-shadow:
+    6px 8px 16px hsl(var(--zen-stone) / 0.4),
+    inset -3px -3px 8px hsl(0 0% 100% / 0.06),
+    inset 3px 3px 6px hsl(0 0% 0% / 0.2);
+  position: relative;
 }
-.zen-scroll-container::-webkit-scrollbar {
-  display: none;
+
+.zen-anchor-text {
+  color: hsl(var(--zen-stone-text));
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  max-width: 120px;
+  word-break: break-word;
+}
+
+.zen-anchor-count {
+  color: hsl(var(--zen-stone-text) / 0.5);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Stone entrance animation ── */
+.zen-stone-enter {
+  animation: zenStoneAppear 0.8s ease-out both;
+}
+
+@keyframes zenStoneAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Cluster group fade ── */
+.zen-cluster-group {
+  transition: opacity 1s ease-in-out;
 }
 
 /* Text color utilities for zen context */
@@ -136,6 +180,19 @@
     4px 6px 12px hsl(0 0% 0% / 0.5),
     inset -2px -2px 6px hsl(0 0% 100% / 0.03),
     inset 2px 2px 4px hsl(0 0% 0% / 0.3);
+}
+
+.dark .zen-anchor-stone {
+  background: linear-gradient(
+    145deg,
+    hsl(200 4% 16%) 0%,
+    hsl(200 3% 12%) 50%,
+    hsl(200 5% 20%) 100%
+  );
+  box-shadow:
+    6px 8px 16px hsl(0 0% 0% / 0.6),
+    inset -3px -3px 8px hsl(0 0% 100% / 0.03),
+    inset 3px 3px 6px hsl(0 0% 0% / 0.4);
 }
 
 .dark .zen-text-foreground {
