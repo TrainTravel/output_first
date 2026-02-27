@@ -123,6 +123,13 @@ export async function setFrenchLanguage(page: Page) {
   });
 }
 
+/** Set Spanish language preference in localStorage before page load. */
+export async function setSpanishLanguage(page: Page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('outputfirst_language', 'es');
+  });
+}
+
 /** Inject a mock authenticated Supabase session. */
 export async function injectMockSession(page: Page) {
   await page.addInitScript(() => {

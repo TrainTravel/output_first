@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage } from './helpers/mocks';
+import { setFrenchLanguage, setSpanishLanguage } from './helpers/mocks';
 
 test.describe('Language toggle', () => {
   test('defaults to French — shows "Écrire aujourd\'hui" and "FR" toggle', async ({ page }) => {
@@ -34,6 +34,7 @@ test.describe('Language toggle', () => {
 
     const toggle = page.getByRole('button', { name: 'Toggle language' });
     await toggle.click(); // → EN
+    await toggle.click(); // → ES
     await toggle.click(); // → FR
 
     await expect(
@@ -84,5 +85,69 @@ test.describe('Language toggle', () => {
     await expect(btn).toBeVisible({ timeout: 3_000 });
     const text = await btn.textContent();
     expect(text).toMatch(/^Brain Dump/);
+  });
+
+  test('toggle cycles all three languages FR→EN→ES→FR', async ({ page }) => {
+    await setFrenchLanguage(page);
+    await page.goto('/');
+
+    const toggle = page.getByRole('button', { name: 'Toggle language' });
+
+    // Start: FR
+    await expect(toggle).toContainText('FR');
+
+    // Click → EN
+    await toggle.click();
+    await expect(toggle).toContainText('EN', { timeout: 3_000 });
+
+    // Click → ES
+    await toggle.click();
+    await expect(toggle).toContainText('ES', { timeout: 3_000 });
+
+    // Click → back to FR
+    await toggle.click();
+    await expect(toggle).toContainText('FR', { timeout: 3_000 });
+  });
+
+  test('ES mode shows Spanish CTA and ES toggle label', async ({ page }) => {
+    await setSpanishLanguage(page);
+    await page.goto('/');
+
+    await expect(
+      page.getByRole('button', { name: 'Escribir hoy' })
+    ).toBeVisible({ timeout: 3_000 });
+
+    const toggle = page.getByRole('button', { name: 'Toggle language' });
+    await expect(toggle).toContainText('ES');
+  });
+
+  test('bilingual ES-first order in Spanish mode', async ({ page }) => {
+    await setSpanishLanguage(page);
+    await page.goto('/');
+
+    const btn = page.getByRole('button', { name: 'Volcado mental / Brain Dump' });
+    await expect(btn).toBeVisible({ timeout: 3_000 });
+    const text = await btn.textContent();
+    expect(text).toMatch(/^Volcado mental/);
+  });
+
+  test('ES preference persists after page reload', async ({ page }) => {
+    // Switch to Spanish via two toggles (FR→EN→ES), without using addInitScript
+    await page.goto('/');
+
+    const toggle = page.getByRole('button', { name: 'Toggle language' });
+    await toggle.click(); // → EN
+    await toggle.click(); // → ES
+    await expect(page.getByRole('button', { name: 'Escribir hoy' })).toBeVisible({ timeout: 3_000 });
+
+    // Reload — localStorage 'es' should be respected
+    await page.reload();
+
+    await expect(
+      page.getByRole('button', { name: 'Escribir hoy' })
+    ).toBeVisible({ timeout: 3_000 });
+    await expect(
+      page.getByRole('button', { name: 'Toggle language' })
+    ).toContainText('ES');
   });
 });
