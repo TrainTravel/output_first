@@ -148,6 +148,17 @@ This app is designed for neurodivergent users. Follow these principles when addi
 - Do not prematurely optimize for API costs, latency, or token counts.
 - If users grow and costs rise, that is a "good problem." Optimization (smaller models, caching, parallel calls) comes after value is confirmed.
 
+## Git Workflow
+
+**Always work on a feature branch — never commit directly to `main`.**
+
+Before starting any code changes:
+1. Create a branch: `git checkout -b <type>/<short-description>` (e.g. `feat/spanish-support`, `fix/breathe-animation`)
+2. Make commits on the branch
+3. When done, open a PR targeting `main` via `gh pr create`
+
+Branch naming: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/` prefix matching the commit type.
+
 ## Commit Conventions
 
 **When committing code changes:**
