@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════════
+   Zen Garden (Karesansui) — Phase A
+   "Ma" (Empty Space) as a design principle
+   ═══════════════════════════════════════════════ */
+
+/* Zen-specific design tokens */
+:root {
+  --zen-sand: 30 30% 96%;
+  --zen-sand-dark: 30 18% 90%;
+  --zen-stone: 200 3% 28%;
+  --zen-stone-text: 30 20% 94%;
+  --zen-rake-line: 30 10% 82%;
+  --zen-water: 200 40% 70%;
+}
+
+/* Raked sand background — CSS flowing ripple lines */
+.zen-garden-bg {
+  background-color: hsl(var(--zen-sand));
+  background-image:
+    /* Primary rake lines — horizontal flow */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 18px,
+      hsl(var(--zen-rake-line) / 0.3) 18px,
+      hsl(var(--zen-rake-line) / 0.3) 19px,
+      transparent 19px,
+      transparent 38px
+    ),
+    /* Secondary subtle curve — diagonal overlay for organic feel */
+    repeating-linear-gradient(
+      175deg,
+      transparent,
+      transparent 40px,
+      hsl(var(--zen-rake-line) / 0.08) 40px,
+      hsl(var(--zen-rake-line) / 0.08) 41px,
+      transparent 41px,
+      transparent 80px
+    );
+}
+
+/* River stones */
+.zen-stone {
+  background: linear-gradient(
+    145deg,
+    hsl(var(--zen-stone)) 0%,
+    hsl(200 5% 22%) 50%,
+    hsl(200 3% 32%) 100%
+  );
+  box-shadow:
+    4px 6px 12px hsl(var(--zen-stone) / 0.35),
+    inset -2px -2px 6px hsl(0 0% 100% / 0.06),
+    inset 2px 2px 4px hsl(0 0% 0% / 0.15);
+  position: relative;
+  transition: box-shadow 0.6s ease, transform 0.6s ease;
+}
+
+.zen-stone:hover {
+  box-shadow:
+    4px 6px 16px hsl(var(--zen-stone) / 0.45),
+    inset -2px -2px 6px hsl(0 0% 100% / 0.08),
+    inset 2px 2px 4px hsl(0 0% 0% / 0.15);
+}
+
+.zen-stone-text {
+  color: hsl(var(--zen-stone-text));
+  font-size: 0.7rem;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.02em;
+  max-width: 140px;
+  word-break: break-word;
+}
+
+.zen-stone-theme {
+  color: hsl(var(--zen-stone-text) / 0.7);
+}
+
+/* Empty state placeholder stone */
+.zen-empty-stone {
+  width: 100px;
+  height: 75px;
+  border-radius: 55% 45% 50% 50% / 50% 55% 45% 50%;
+  background: hsl(var(--zen-rake-line) / 0.3);
+  border: 1px dashed hsl(var(--zen-rake-line) / 0.5);
+}
+
+/* Horizontal scroll — hide scrollbar, preserve snap */
+.zen-scroll-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.zen-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Text color utilities for zen context */
+.zen-text-foreground {
+  color: hsl(200 5% 22%);
+}
+.zen-text-muted {
+  color: hsl(30 8% 50%);
+}
+
+/* Dark mode overrides */
+.dark .zen-garden-bg {
+  background-color: hsl(30 8% 12%);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 18px,
+      hsl(30 6% 20% / 0.4) 18px,
+      hsl(30 6% 20% / 0.4) 19px,
+      transparent 19px,
+      transparent 38px
+    ),
+    repeating-linear-gradient(
+      175deg,
+      transparent,
+      transparent 40px,
+      hsl(30 6% 20% / 0.1) 40px,
+      hsl(30 6% 20% / 0.1) 41px,
+      transparent 41px,
+      transparent 80px
+    );
+}
+
+.dark .zen-stone {
+  background: linear-gradient(
+    145deg,
+    hsl(200 4% 18%) 0%,
+    hsl(200 3% 14%) 50%,
+    hsl(200 5% 22%) 100%
+  );
+  box-shadow:
+    4px 6px 12px hsl(0 0% 0% / 0.5),
+    inset -2px -2px 6px hsl(0 0% 100% / 0.03),
+    inset 2px 2px 4px hsl(0 0% 0% / 0.3);
+}
+
+.dark .zen-text-foreground {
+  color: hsl(30 10% 80%);
+}
+.dark .zen-text-muted {
+  color: hsl(30 6% 55%);
+}
