@@ -144,6 +144,7 @@ export function useJournal() {
 
     setEntries(prev => [...prev, newEntry]);
     setCurrentStep('complete');
+    localStorage.setItem('feedback-eligible', 'true');
   };
 
   const skipToComplete = () => {
@@ -158,6 +159,7 @@ export function useJournal() {
 
     setEntries(prev => [...prev, newEntry]);
     setCurrentStep('complete');
+    localStorage.setItem('feedback-eligible', 'true');
   };
 
   const goHome = () => {

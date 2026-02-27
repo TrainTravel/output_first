@@ -27,6 +27,7 @@ const PLATFORM_OPTIONS = [
 export function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(() => localStorage.getItem('feedback-hidden') === 'true');
+  const isEligible = localStorage.getItem('feedback-eligible') === 'true';
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [wouldPay, setWouldPay] = useState<string | null>(null);
@@ -80,7 +81,7 @@ export function FeedbackWidget() {
   return (
     <>
       {/* Floating trigger button */}
-      {!isOpen && !isHidden && (
+      {!isOpen && !isHidden && isEligible && (
         <div className="fixed bottom-5 right-5 z-50 flex items-center gap-1">
           <button
             onClick={() => setIsOpen(true)}
