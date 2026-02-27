@@ -63,18 +63,18 @@
 }
 
 .zen-stone-text {
-  color: hsl(0 0% 100%);
+  color: hsl(30 10% 20%);
   font-size: 0.65rem;
   font-family: 'DM Sans', sans-serif;
   letter-spacing: 0.02em;
   max-width: 140px;
   word-break: break-word;
-  text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
+  text-shadow: 0 1px 2px hsl(0 0% 100% / 0.4);
 }
 
 .zen-stone-theme {
-  color: hsl(0 0% 100% / 0.8);
-  text-shadow: 0 1px 2px hsl(0 0% 0% / 0.6);
+  color: hsl(30 8% 30%);
+  text-shadow: 0 1px 1px hsl(0 0% 100% / 0.3);
 }
 
 /* Empty state placeholder stone */
@@ -105,17 +105,18 @@
 }
 
 .zen-anchor-text {
-  color: hsl(var(--zen-stone-text));
+  color: hsl(30 10% 20%);
   font-family: 'Cormorant Garamond', serif;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.05em;
   max-width: 120px;
   word-break: break-word;
+  text-shadow: 0 1px 2px hsl(0 0% 100% / 0.4);
 }
 
 .zen-anchor-count {
-  color: hsl(var(--zen-stone-text) / 0.5);
+  color: hsl(30 8% 35%);
   font-family: 'DM Sans', sans-serif;
 }
 
@@ -202,4 +203,19 @@
 }
 .dark .zen-text-muted {
   color: hsl(30 6% 55%);
+}
+.dark .zen-stone-text {
+  color: hsl(30 15% 85%);
+  text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
+}
+.dark .zen-stone-theme {
+  color: hsl(30 10% 75%);
+  text-shadow: 0 1px 2px hsl(0 0% 0% / 0.6);
+}
+.dark .zen-anchor-text {
+  color: hsl(30 15% 85%);
+  text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
+}
+.dark .zen-anchor-count {
+  color: hsl(30 8% 70%);
 }
