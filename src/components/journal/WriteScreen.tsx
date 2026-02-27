@@ -21,7 +21,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
     }
   };
 
-  const promptText = t(prompt.fr, prompt.en);
+  const promptText = t(prompt.fr, prompt.en, prompt.en);
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
@@ -32,7 +32,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back').primary}</span>
+          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
         </button>
 
         {/* Bilingual Prompt */}
@@ -50,12 +50,12 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={t('Écrivez ici...', 'Write here...').primary}
+            placeholder={t('Écrivez ici...', 'Write here...', 'Escribe aquí...').primary}
             className="flex-1 min-h-[200px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
 
           <p className="text-muted-foreground text-sm text-center">
-            {t("Ne vous inquiétez pas des erreurs.", "Don't worry about mistakes.").primary}
+            {t("Ne vous inquiétez pas des erreurs.", "Don't worry about mistakes.", "No te preocupes por los errores.").primary}
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
             onClick={handleSubmit}
             disabled={!content.trim()}
           >
-            {t('Continuer', 'Continue').primary}
+            {t('Continuer', 'Continue', 'Continuar').primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

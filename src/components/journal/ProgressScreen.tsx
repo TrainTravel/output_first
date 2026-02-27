@@ -15,14 +15,14 @@ interface ProgressScreenProps {
   onStartJournal: () => void;
 }
 
-export function ProgressScreen({ 
-  streak, 
-  totalDays, 
+export function ProgressScreen({
+  streak,
+  totalDays,
   hasJournaledToday,
   onGoHome,
   onStartJournal,
 }: ProgressScreenProps) {
-  const { t, bilingual, isFr } = useLanguage();
+  const { t, bilingual, isFr, isEs } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const { entries, isLoading } = useJournalEntries();
@@ -46,13 +46,13 @@ export function ProgressScreen({
               <Feather className="w-8 h-8 text-primary" />
             </div>
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              {isFr ? 'Vous êtes venu(e) aujourd\'hui' : 'You showed up today'}
+              {isFr ? 'Vous êtes venu(e) aujourd\'hui' : isEs ? 'Viniste hoy' : 'You showed up today'}
             </h1>
             <p className="text-muted-foreground italic">
-              {isFr ? 'You showed up today' : 'Vous êtes venu(e) aujourd\'hui'}
+              {isFr ? 'You showed up today' : isEs ? 'You showed up today' : 'Vous êtes venu(e) aujourd\'hui'}
             </p>
             <p className="text-muted-foreground text-sm">
-              {t("C'est ce qui compte le plus.", "That's what matters most.").primary}
+              {t("C'est ce qui compte le plus.", "That's what matters most.", 'Es lo que más importa.').primary}
             </p>
           </div>
         )}
@@ -60,10 +60,10 @@ export function ProgressScreen({
         {!hasJournaledToday && (
           <div className="text-center space-y-4">
             <h1 className="font-serif text-3xl md:text-4xl text-foreground">
-              {isFr ? 'Vos progrès' : 'Your Progress'}
+              {isFr ? 'Vos progrès' : isEs ? 'Tu progreso' : 'Your Progress'}
             </h1>
             <p className="text-muted-foreground italic">
-              {isFr ? 'Your Progress' : 'Vos progrès'}
+              {isFr ? 'Your Progress' : isEs ? 'Your Progress' : 'Vos progrès'}
             </p>
           </div>
         )}
@@ -77,8 +77,8 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{streak}</p>
-            <p className="text-muted-foreground text-sm">{isFr ? 'jours de suite' : 'day streak'}</p>
-            <p className="text-muted-foreground/60 text-xs">{isFr ? 'day streak' : 'jours de suite'}</p>
+            <p className="text-muted-foreground text-sm">{isFr ? 'jours de suite' : isEs ? 'días seguidos' : 'day streak'}</p>
+            <p className="text-muted-foreground/60 text-xs">{isFr ? 'day streak' : isEs ? 'day streak' : 'jours de suite'}</p>
           </div>
 
           <div className="bg-card rounded-2xl p-6 text-center shadow-gentle border border-border">
@@ -88,8 +88,8 @@ export function ProgressScreen({
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{totalDays}</p>
-            <p className="text-muted-foreground text-sm">{isFr ? "jours d'écriture" : 'days journaled'}</p>
-            <p className="text-muted-foreground/60 text-xs">{isFr ? 'days journaled' : "jours d'écriture"}</p>
+            <p className="text-muted-foreground text-sm">{isFr ? "jours d'écriture" : isEs ? 'días de escritura' : 'days journaled'}</p>
+            <p className="text-muted-foreground/60 text-xs">{isFr ? 'days journaled' : isEs ? 'days journaled' : "jours d'écriture"}</p>
           </div>
         </div>
 
@@ -137,10 +137,10 @@ export function ProgressScreen({
         {/* Affirmation */}
         <div className="bg-primary/5 rounded-2xl p-6 text-center border border-primary/10">
           <p className="text-foreground font-serif text-lg">
-            {isFr ? '« Se montrer, c\'est déjà réussir. »' : '"Showing up counts."'}
+            {isFr ? '« Se montrer, c\'est déjà réussir. »' : isEs ? '«Aparecer ya es un logro.»' : '"Showing up counts."'}
           </p>
           <p className="text-muted-foreground text-sm italic mt-2">
-            {isFr ? '"Showing up counts."' : '« Se montrer, c\'est déjà réussir. »'}
+            {isFr ? '"Showing up counts."' : isEs ? '"Showing up counts."' : '« Se montrer, c\'est déjà réussir. »'}
           </p>
         </div>
 
@@ -149,13 +149,13 @@ export function ProgressScreen({
           {!hasJournaledToday && (
             <Button variant="default" size="full" onClick={onStartJournal}>
               <Feather className="w-5 h-5 mr-2" />
-              {t("Écrire aujourd'hui", 'Write today').primary}
+              {t("Écrire aujourd'hui", 'Write today', 'Escribir hoy').primary}
             </Button>
           )}
 
           <Button variant="gentle" size="full" onClick={onGoHome}>
             <Home className="w-5 h-5 mr-2" />
-            {t("Retour à l'accueil", 'Return home').primary}
+            {t("Retour à l'accueil", 'Return home', 'Volver al inicio').primary}
           </Button>
         </div>
       </div>

@@ -24,8 +24,16 @@ const PLACEHOLDERS_FR = [
   "Sans pression, videz votre esprit…",
 ];
 
+const PLACEHOLDERS_ES = [
+  "¿Qué tienes en mente?",
+  "Cualquier idea, grande o pequeña…",
+  "Un pensamiento fugaz…",
+  "Algo que quieras recordar…",
+  "Sin presión, solo suéltalo…",
+];
+
 export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
-  const { isFr, bilingual, t } = useLanguage();
+  const { isFr, isEs, bilingual, t } = useLanguage();
   const { addThought, thoughts } = useThoughts();
   const [input, setInput] = useState('');
   const [recentlyAdded, setRecentlyAdded] = useState<Thought[]>([]);
@@ -46,7 +54,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
     inputRef.current?.focus();
   }, []);
 
-  const placeholders = isFr ? PLACEHOLDERS_FR : PLACEHOLDERS_EN;
+  const placeholders = isFr ? PLACEHOLDERS_FR : isEs ? PLACEHOLDERS_ES : PLACEHOLDERS_EN;
   const currentPlaceholder = placeholders[placeholderIdx % placeholders.length];
 
   const handleSubmit = async () => {
@@ -78,23 +86,24 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back').primary}
+          {t('Retour', 'Back', 'Volver').primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Zap className="w-4 h-4" />
-          <span>{thoughts.length} {t('pensées', 'thoughts').primary}</span>
+          <span>{thoughts.length} {t('pensées', 'thoughts', 'pensamientos').primary}</span>
         </div>
       </div>
 
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual('Vide-tête', 'Brain Dump')}
+          {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
             'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.',
-            'One thought at a time. Press Enter to save.'
+            'One thought at a time. Press Enter to save.',
+            'Un pensamiento a la vez. Presiona Enter para guardar.'
           ).primary}
         </p>
 
@@ -114,7 +123,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving ? '…' : t('Ajouter', 'Add').primary}
+            {saving ? '…' : t('Ajouter', 'Add', 'Agregar').primary}
           </Button>
         </div>
 

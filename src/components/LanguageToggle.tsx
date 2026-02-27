@@ -11,7 +11,7 @@ export function LanguageToggle() {
       aria-label="Toggle language"
     >
       <Globe className="w-3.5 h-3.5" />
-      {lang === 'fr' ? 'FR' : 'EN'}
+      {lang === 'fr' ? 'FR' : lang === 'es' ? 'ES' : 'EN'}
     </button>
   );
 }

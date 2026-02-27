@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased] - 2026-02-27
+
+### Spanish Language Support
+
+**Full trilingual support: French → English → Spanish**
+
+- Language toggle cycles FR → EN → ES → FR
+- Toggle button shows `FR`, `EN`, or `ES` label
+- Spanish translations across all 17 screens and components
+- Bilingual anchors in ES mode show `ES / EN` (e.g. "Volcado mental / Brain Dump")
+- Emotion vocabulary and categories translated to Spanish
+- Date formatting uses `es-ES` locale in Spanish mode
+- Brain Dump rotating placeholders in Spanish
+
+**ADHD-Friendly:** Spanish adds a third anchor language for multilingual users. The bilingual anchor pattern (feature name + English) keeps the English term visible as a universal reference point, supporting cross-language concept mapping.
+
+---
+
 ## [Unreleased] - 2026-02-26
 
 ### 4-2-6 Breathing Pattern

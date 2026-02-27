@@ -11,11 +11,13 @@ interface ClustersScreenProps {
 }
 
 export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
-  const { bilingual, t, isFr } = useLanguage();
+  const { bilingual, t, isFr, isEs } = useLanguage();
   const { clusters, loading, createCluster } = useClusters();
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [creating, setCreating] = useState(false);
+
+  const dateLocale = isFr ? 'fr-FR' : isEs ? 'es-ES' : 'en-US';
 
   const handleCreate = async () => {
     const trimmed = newTitle.trim();
@@ -33,7 +35,7 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back').primary}
+          {t('Retour', 'Back', 'Volver').primary}
         </Button>
         <Button
           variant="ghost"
@@ -48,12 +50,13 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
       <div className="text-center mb-6">
         <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
           <Layers className="w-7 h-7 text-primary" />
-          {bilingual('Mes Clusters', 'My Clusters')}
+          {bilingual('Mes Clusters', 'My Clusters', 'Mis Grupos')}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
           {t(
             'Regroupez vos pensées librement.',
-            'Group your thoughts freely.'
+            'Group your thoughts freely.',
+            'Agrupa tus pensamientos libremente.'
           ).primary}
         </p>
       </div>
@@ -63,14 +66,14 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
         <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
           <div className="flex gap-2">
             <Input
-              placeholder={t('Nom du cluster…', 'Cluster name…').primary}
+              placeholder={t('Nom du cluster…', 'Cluster name…', 'Nombre del grupo…').primary}
               value={newTitle}
               onChange={e => setNewTitle(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreate()}
               autoFocus
             />
             <Button onClick={handleCreate} disabled={!newTitle.trim() || creating} size="sm">
-              {creating ? '…' : t('Créer', 'Create').primary}
+              {creating ? '…' : t('Créer', 'Create', 'Crear').primary}
             </Button>
           </div>
         </div>
@@ -81,7 +84,7 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {t('Chargement…', 'Loading…').primary}
+              {t('Chargement…', 'Loading…', 'Cargando…').primary}
             </p>
           </div>
         ) : clusters.length === 0 ? (
@@ -90,7 +93,8 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
             <p className="text-muted-foreground">
               {t(
                 'Pas encore de clusters. Créez-en un pour regrouper vos pensées.',
-                'No clusters yet. Create one to group your thoughts.'
+                'No clusters yet. Create one to group your thoughts.',
+                'Aún no hay grupos. Crea uno para agrupar tus pensamientos.'
               ).primary}
             </p>
           </div>
@@ -101,7 +105,8 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
                 key={cluster.id}
                 cluster={cluster}
                 onClick={() => onOpenCluster(cluster.id)}
-                isFr={isFr}
+                dateLocale={dateLocale}
+                thoughtsLabel={isFr ? 'pensées' : isEs ? 'pensamientos' : 'thoughts'}
               />
             ))}
           </div>
@@ -114,13 +119,15 @@ export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
 function ClusterCard({
   cluster,
   onClick,
-  isFr,
+  dateLocale,
+  thoughtsLabel,
 }: {
   cluster: Cluster;
   onClick: () => void;
-  isFr: boolean;
+  dateLocale: string;
+  thoughtsLabel: string;
 }) {
-  const formatted = new Date(cluster.updatedAt).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+  const formatted = new Date(cluster.updatedAt).toLocaleDateString(dateLocale, {
     month: 'short',
     day: 'numeric',
   });
@@ -141,7 +148,7 @@ function ClusterCard({
       </div>
       <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
         <span>
-          {cluster.thoughtCount ?? 0} {isFr ? 'pensées' : 'thoughts'}
+          {cluster.thoughtCount ?? 0} {thoughtsLabel}
         </span>
         <span>·</span>
         <span>{formatted}</span>
