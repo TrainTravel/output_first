@@ -63,16 +63,18 @@
 }
 
 .zen-stone-text {
-  color: hsl(var(--zen-stone-text));
-  font-size: 0.7rem;
+  color: hsl(0 0% 100%);
+  font-size: 0.65rem;
   font-family: 'DM Sans', sans-serif;
   letter-spacing: 0.02em;
   max-width: 140px;
   word-break: break-word;
+  text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
 }
 
 .zen-stone-theme {
-  color: hsl(var(--zen-stone-text) / 0.7);
+  color: hsl(0 0% 100% / 0.8);
+  text-shadow: 0 1px 2px hsl(0 0% 0% / 0.6);
 }
 
 /* Empty state placeholder stone */
