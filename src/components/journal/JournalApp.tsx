@@ -13,6 +13,7 @@ import { BrainDumpScreen } from './BrainDumpScreen';
 import { ThoughtGardenScreen } from './ThoughtGardenScreen';
 import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
+import { ZenGardenScreen } from './zen/ZenGardenScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -54,6 +55,7 @@ export function JournalApp() {
     openClusters,
     openClusterDetail,
     activeClusterId,
+    openZenGarden,
     openChatWithContext,
     chatContext,
   } = useJournal();
@@ -81,6 +83,7 @@ export function JournalApp() {
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenClusters={openClusters}
+          onOpenZenGarden={openZenGarden}
         />
       )}
 
@@ -163,6 +166,10 @@ export function JournalApp() {
 
       {currentStep === 'clusterdetail' && activeClusterId && (
         <ClusterDetailScreen clusterId={activeClusterId} onBack={openClusters} onOpenChatWithContext={openChatWithContext} />
+      )}
+
+      {currentStep === 'zengarden' && (
+        <ZenGardenScreen onBack={goHome} />
       )}
     </div>
   );

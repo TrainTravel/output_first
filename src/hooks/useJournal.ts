@@ -212,6 +212,7 @@ export function useJournal() {
     openThoughtGarden: () => setCurrentStep('thoughtgarden'),
     openClusters: () => setCurrentStep('clusters'),
     openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
+    openZenGarden: () => setCurrentStep('zengarden'),
     activeClusterId,
   };
 }

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, MessageCircle, Zap, Sprout, Layers, LogOut, Flame, CalendarDays } from 'lucide-react';
+import { Feather, CheckCircle2, MessageCircle, Zap, Sprout, Layers, LogOut, Flame, CalendarDays, Mountain } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,9 +15,10 @@ interface HomeScreenProps {
   onOpenBrainDump: () => void;
   onOpenThoughtGarden: () => void;
   onOpenClusters: () => void;
+  onOpenZenGarden: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenClusters, onOpenZenGarden }: HomeScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
@@ -119,6 +120,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
           <Button variant="outline" size="full" onClick={onOpenClusters}>
             <Layers className="w-5 h-5 mr-2" />
             {bilingual('Mes Clusters', 'My Clusters')}
+          </Button>
+
+          <Button variant="outline" size="full" onClick={onOpenZenGarden}>
+            <Mountain className="w-5 h-5 mr-2" />
+            {bilingual('Jardin Zen', 'Zen Garden')}
           </Button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
