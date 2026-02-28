@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
+import { logger } from '@/lib/logger';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -24,6 +25,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [sessionRequestId] = useState(() => crypto.randomUUID());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { isFr, isEs } = useLanguage();
@@ -46,6 +48,8 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const startConversation = async () => {
     setHasStarted(true);
     setIsLoading(true);
+    const startTime = Date.now();
+    logger.info('ai.request.start', { component: 'ChatScreen', requestId: sessionRequestId, action: 'startConversation' });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -56,6 +60,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
+          'X-Request-Id': sessionRequestId,
         },
         body: JSON.stringify({ messages: [], thoughtContext: context }),
       });
@@ -140,6 +145,8 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
+    const startTime = Date.now();
+    logger.info('ai.request.start', { component: 'ChatScreen', requestId: sessionRequestId, action: 'sendMessage' });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -150,6 +157,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
+          'X-Request-Id': sessionRequestId,
         },
         body: JSON.stringify({ messages: newMessages, thoughtContext: context }),
       });
@@ -164,11 +172,13 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
 
       await streamResponse(resp, newMessages);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Could not send message';
+      logger.error('ai.request.error', { component: 'ChatScreen', requestId: sessionRequestId, action: 'sendMessage', latencyMs: Date.now() - startTime, error: errorMessage });
       console.error('Error sending message:', error);
       toast({
         variant: 'destructive',
         title: isFr ? 'Erreur' : isEs ? 'Error' : 'Error',
-        description: error instanceof Error ? error.message : 'Could not send message',
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);

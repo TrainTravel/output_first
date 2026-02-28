@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft, Loader2, Heart } from 'lucide-react';
 import { MAX_CYCLES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 interface ReflectionScreenProps {
   journalContent: string;
@@ -32,7 +33,7 @@ export function ReflectionScreen({
 }: ReflectionScreenProps) {
   const [reflectionData, setReflectionData] = useState<ReflectionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; requestId: string } | null>(null);
   const [response, setResponse] = useState('');
   const { bilingual, t, isFr, isEs } = useLanguage();
 
@@ -44,11 +45,16 @@ export function ReflectionScreen({
     setIsLoading(true);
     setError(null);
 
+    const requestId = crypto.randomUUID();
+    const startTime = Date.now();
+    logger.info('ai.request.start', { component: 'ReflectionScreen', requestId, cycle: currentCycle });
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        'X-Request-Id': requestId,
       };
 
       if (session?.access_token) {
@@ -84,11 +90,13 @@ export function ReflectionScreen({
           : data.error;
         throw new Error(errorMsg);
       }
+
+      logger.info('ai.request.success', { component: 'ReflectionScreen', requestId, latencyMs: Date.now() - startTime });
       setReflectionData(data);
     } catch (err) {
-      console.error('Error generating reflection:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(`${errorMessage}. You can continue to the next step.`);
+      logger.error('ai.request.error', { component: 'ReflectionScreen', requestId, latencyMs: Date.now() - startTime, error: errorMessage });
+      setError({ message: `${errorMessage}. You can continue to the next step.`, requestId });
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +148,8 @@ export function ReflectionScreen({
         {error && !isLoading && (
           <div className="flex-1 flex flex-col">
             <div className="mb-8 p-4 bg-muted/30 rounded-xl border border-border/50">
-              <p className="text-muted-foreground text-sm">{error}</p>
+              <p className="text-muted-foreground text-sm">{error.message}</p>
+              <p className="text-muted-foreground/40 text-xs font-mono mt-1">Ref: {error.requestId.slice(0, 8)}</p>
             </div>
             <div className="mt-auto">
               <Button variant="default" size="full" onClick={handleSkip}>

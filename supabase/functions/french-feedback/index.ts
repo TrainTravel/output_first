@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-request-id",
 };
 
 serve(async (req) => {
@@ -12,23 +12,26 @@ serve(async (req) => {
   }
 
   try {
+    const requestId = req.headers.get("x-request-id") ?? "no-id";
+
     // Allow both authenticated users and anon-key requests (guests)
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: "Unauthorized", requestId }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const { text, type } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY secret is not set in Supabase");
+      console.error(`[${requestId}] LOVABLE_API_KEY secret is not set in Supabase`);
       return new Response(JSON.stringify({
         error: "AI service not configured",
         code: "API_KEY_MISSING",
-        details: "Contact app administrator to configure LOVABLE_API_KEY"
+        details: "Contact app administrator to configure LOVABLE_API_KEY",
+        requestId,
       }), {
         status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -94,13 +97,14 @@ RULES:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+      console.error(`[${requestId}] AI gateway error:`, response.status, errorText);
 
       if (response.status === 429) {
         return new Response(JSON.stringify({
           error: "Too many requests. Please wait a moment.",
           code: "RATE_LIMIT",
-          details: "AI service rate limit exceeded"
+          details: "AI service rate limit exceeded",
+          requestId,
         }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -109,7 +113,8 @@ RULES:
         return new Response(JSON.stringify({
           error: "AI credits exhausted. Contact administrator.",
           code: "CREDITS_EXHAUSTED",
-          details: "Lovable AI gateway usage limit reached"
+          details: "Lovable AI gateway usage limit reached",
+          requestId,
         }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -118,7 +123,8 @@ RULES:
         return new Response(JSON.stringify({
           error: "AI service authentication failed.",
           code: "AI_AUTH_FAILED",
-          details: "LOVABLE_API_KEY may be invalid"
+          details: "LOVABLE_API_KEY may be invalid",
+          requestId,
         }), {
           status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -127,7 +133,8 @@ RULES:
       return new Response(JSON.stringify({
         error: "AI service temporarily unavailable.",
         code: "AI_ERROR",
-        details: `Gateway returned ${response.status}: ${errorText.substring(0, 100)}`
+        details: `Gateway returned ${response.status}: ${errorText.substring(0, 100)}`,
+        requestId,
       }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -135,9 +142,9 @@ RULES:
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
-    
-    console.log("AI response:", content);
-    
+
+    console.log(`[${requestId}] AI response:`, content);
+
     try {
       const parsed = JSON.parse(content);
       return new Response(JSON.stringify(parsed), {
@@ -149,11 +156,11 @@ RULES:
       });
     }
   } catch (error) {
-    console.error("Error in french-feedback function:", error);
+    console.error(`[no-id] Error in french-feedback function:`, error);
     return new Response(JSON.stringify({
       error: "Feedback service error",
       code: "INTERNAL_ERROR",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

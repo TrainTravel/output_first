@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Heart, Loader2, Sparkles, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { logger } from '@/lib/logger';
 
 interface EmotionAlternative {
   fr: string;
@@ -44,28 +45,29 @@ interface FeedbackScreenProps {
 export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackScreenProps) {
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; requestId: string } | null>(null);
   const { t, bilingual, isFr } = useLanguage();
 
   useEffect(() => {
     const fetchFeedback = async () => {
+      const requestId = crypto.randomUUID();
+      const startTime = Date.now();
+      logger.info('ai.request.start', { component: 'FeedbackScreen', requestId });
+
       try {
         setIsLoading(true);
         setError(null);
 
         const { data, error: fnError } = await supabase.functions.invoke('french-feedback', {
           body: { text: journalContent, type: 'feedback' },
+          headers: { 'X-Request-Id': requestId },
         });
 
         if (fnError) {
-          const errorMsg = fnError.message || 'Failed to get feedback';
-          throw new Error(errorMsg);
+          throw new Error(fnError.message || 'Failed to get feedback');
         }
         if (data?.error) {
-          const errorMsg = data.code
-            ? `${data.error} (${data.code})`
-            : data.error;
-          throw new Error(errorMsg);
+          throw new Error(data.code ? `${data.error} (${data.code})` : data.error);
         }
 
         if (data?.raw) {
@@ -74,6 +76,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           if (jsonMatch) {
             try {
               const parsed = JSON.parse(jsonMatch[1].trim());
+              logger.info('ai.request.success', { component: 'FeedbackScreen', requestId, latencyMs: Date.now() - startTime });
               setFeedback(parsed);
               return;
             } catch {
@@ -83,10 +86,12 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           }
         }
 
+        logger.info('ai.request.success', { component: 'FeedbackScreen', requestId, latencyMs: Date.now() - startTime });
         setFeedback(data);
       } catch (err) {
-        console.error('Feedback error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to get feedback');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to get feedback';
+        logger.error('ai.request.error', { component: 'FeedbackScreen', requestId, latencyMs: Date.now() - startTime, error: errorMessage });
+        setError({ message: errorMessage, requestId });
       } finally {
         setIsLoading(false);
       }
@@ -130,10 +135,11 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
 
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 text-center">
-              <p className="text-destructive font-medium">{error}</p>
+              <p className="text-destructive font-medium">{error.message}</p>
               <p className="text-muted-foreground text-sm mt-2">
                 You can skip this step and continue.
               </p>
+              <p className="text-muted-foreground/40 text-xs font-mono mt-1">Ref: {error.requestId.slice(0, 8)}</p>
             </div>
           )}
 
