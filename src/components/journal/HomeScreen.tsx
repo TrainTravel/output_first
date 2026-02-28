@@ -65,27 +65,14 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
 
         {/* Status + Progress */}
         <div className="space-y-4">
-          <div className="flex justify-center">
-            <div className={`
-              inline-flex items-center gap-2 px-4 py-2 rounded-full
-              ${hasJournaledToday 
-                ? 'bg-primary/10 text-primary' 
-                : 'bg-muted text-muted-foreground'
-              }
-            `}>
-              {hasJournaledToday ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span className="text-sm font-medium">{t('Terminé', 'Completed').primary}</span>
-                </>
-              ) : (
-                <>
-                  <Feather className="w-4 h-4" />
-                  <span className="text-sm font-medium">{t('Pas encore', 'Not started').primary}</span>
-                </>
-              )}
+          {hasJournaledToday && (
+            <div className="flex justify-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-sm font-medium">{t('Terminé', 'Completed').primary}</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Inline Progress Card */}
           <button
