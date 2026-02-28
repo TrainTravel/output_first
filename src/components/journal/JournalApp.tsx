@@ -82,7 +82,6 @@ export function JournalApp() {
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
-          onOpenClusters={openClusters}
           onOpenZenGarden={openZenGarden}
         />
       )}
@@ -157,7 +156,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'thoughtgarden' && (
-        <ThoughtGardenScreen onBack={goHome} onOpenChatWithContext={openChatWithContext} />
+        <ThoughtGardenScreen onBack={goHome} onOpenChatWithContext={openChatWithContext} onOpenCluster={openClusterDetail} />
       )}
 
       {currentStep === 'clusters' && (
