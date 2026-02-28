@@ -17,7 +17,7 @@ export interface JournalEntryRow {
 const STORAGE_KEY = 'outputfirst_entries';
 const MIGRATED_KEY = 'outputfirst_migrated_to_db';
 
-export function useJournalEntries() {
+export function useJournalEntries(skip = false) {
   const userId = useUserId();
   const queryClient = useQueryClient();
   const migrationRan = useRef(false);
@@ -34,6 +34,7 @@ export function useJournalEntries() {
       if (error) throw error;
       return data as JournalEntryRow[];
     },
+    enabled: !skip,
   });
 
   // Auto-migrate localStorage entries once
