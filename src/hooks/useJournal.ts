@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
@@ -6,6 +7,7 @@ import { ThoughtContext } from '@/types/chat';
 const STORAGE_KEY = 'outputfirst_entries';
 
 export function useJournal() {
+  const queryClient = useQueryClient();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentStep, setCurrentStep] = useState<JournalStep>('home');
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({});
@@ -144,11 +146,12 @@ export function useJournal() {
           emotion_fr: entry.emotionFr || null,
           gratitude: entry.gratitude || null,
         });
+        queryClient.invalidateQueries({ queryKey: ['journal-entries'] });
       }
     } catch (e) {
       console.error('Failed to persist journal entry:', e);
     }
-  }, []);
+  }, [queryClient]);
 
   const saveGratitude = (gratitude?: string) => {
     const newEntry: JournalEntry = {
