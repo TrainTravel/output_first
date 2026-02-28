@@ -1,6 +1,11 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, Feather, Flame, Calendar } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useJournalEntries, JournalEntryRow } from '@/hooks/useJournalEntries';
+import { format } from 'date-fns';
+import { fr as frLocale, enUS } from 'date-fns/locale';
 
 interface ProgressScreenProps {
   streak: number;
@@ -18,10 +23,21 @@ export function ProgressScreen({
   onStartJournal,
 }: ProgressScreenProps) {
   const { t, bilingual, isFr } = useLanguage();
+  const { entries, isLoading } = useJournalEntries();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+  // Dates that have entries
+  const entryDates = new Set(entries.map(e => e.date));
+
+  // Entries for the selected date
+  const selectedDateStr = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+  const selectedEntries = selectedDateStr
+    ? entries.filter(e => e.date === selectedDateStr)
+    : [];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md space-y-12 animate-fade-in-up">
+    <div className="min-h-screen flex flex-col items-center px-6 py-12">
+      <div className="w-full max-w-md space-y-8 animate-fade-in-up">
         {/* Completion Message */}
         {hasJournaledToday && (
           <div className="text-center space-y-4">
@@ -67,7 +83,7 @@ export function ProgressScreen({
           <div className="bg-card rounded-2xl p-6 text-center shadow-gentle border border-border">
             <div className="flex justify-center mb-3">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-primary" />
+                <CalendarIcon className="w-5 h-5 text-primary" />
               </div>
             </div>
             <p className="font-serif text-3xl text-foreground mb-1">{totalDays}</p>
@@ -75,6 +91,47 @@ export function ProgressScreen({
             <p className="text-muted-foreground/60 text-xs">{isFr ? 'days journaled' : "jours d'écriture"}</p>
           </div>
         </div>
+
+        {/* Calendar */}
+        <div className="bg-card rounded-2xl p-4 shadow-gentle border border-border">
+          <div className="flex items-center gap-2 mb-3 px-2">
+            <BookOpen className="w-4 h-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">
+              {t('Journal passé', 'Past entries').primary}
+            </p>
+          </div>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            locale={isFr ? frLocale : enUS}
+            className="p-3 pointer-events-auto mx-auto"
+            modifiers={{
+              journaled: (date) => entryDates.has(format(date, 'yyyy-MM-dd')),
+            }}
+            modifiersClassNames={{
+              journaled: 'bg-primary/20 text-primary font-semibold',
+            }}
+            disabled={(date) => date > new Date()}
+          />
+        </div>
+
+        {/* Selected Entry Card */}
+        {selectedDate && (
+          <div className="space-y-3 animate-fade-in-up">
+            {selectedEntries.length === 0 ? (
+              <div className="bg-muted/50 rounded-2xl p-5 text-center border border-border">
+                <p className="text-muted-foreground text-sm">
+                  {t('Aucune entrée ce jour-là', 'No entry on this day').primary}
+                </p>
+              </div>
+            ) : (
+              selectedEntries.map((entry) => (
+                <EntryCard key={entry.id} entry={entry} isFr={isFr} />
+              ))
+            )}
+          </div>
+        )}
 
         {/* Affirmation */}
         <div className="bg-primary/5 rounded-2xl p-6 text-center border border-primary/10">
@@ -101,6 +158,31 @@ export function ProgressScreen({
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function EntryCard({ entry, isFr }: { entry: JournalEntryRow; isFr: boolean }) {
+  return (
+    <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-3">
+      <p className="text-foreground text-sm leading-relaxed">{entry.content}</p>
+      
+      {(entry.emotion || entry.emotion_fr) && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+            {isFr ? (entry.emotion_fr || entry.emotion) : (entry.emotion || entry.emotion_fr)}
+          </span>
+        </div>
+      )}
+
+      {entry.gratitude && (
+        <div className="border-t border-border pt-3">
+          <p className="text-xs text-muted-foreground mb-1">
+            {isFr ? 'Gratitude' : 'Gratitude'}
+          </p>
+          <p className="text-sm text-foreground/80 italic">{entry.gratitude}</p>
+        </div>
+      )}
     </div>
   );
 }
