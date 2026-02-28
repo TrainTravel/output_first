@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle, Layers, Plus } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
+import { useClusters, Cluster } from '@/hooks/useClusters';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { ThoughtContext } from '@/types/chat';
@@ -10,6 +11,7 @@ import { ThoughtContext } from '@/types/chat';
 interface ThoughtGardenScreenProps {
   onBack: () => void;
   onOpenChatWithContext: (context: ThoughtContext) => void;
+  onOpenCluster: (clusterId: string) => void;
 }
 
 interface ThemeGroup {
@@ -26,7 +28,6 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
     map.get(key)!.push(t);
   }
 
-  // Sort groups: largest first, "Uncategorized" last
   return [...map.entries()]
     .sort(([a, aList], [b, bList]) => {
       if (a === 'Uncategorized') return 1;
@@ -36,13 +37,17 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
     .map(([label, thoughts]) => ({ label, thoughts }));
 }
 
-export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGardenScreenProps) {
+export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenCluster }: ThoughtGardenScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
   const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
+  const { clusters, loading: clustersLoading, createCluster } = useClusters();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
   const [retagging, setRetagging] = useState(false);
+  const [showCreateCluster, setShowCreateCluster] = useState(false);
+  const [newClusterTitle, setNewClusterTitle] = useState('');
+  const [creatingCluster, setCreatingCluster] = useState(false);
 
   const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
 
@@ -81,6 +86,19 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
       toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed'));
     }
     setRetagging(false);
+  };
+
+  const handleCreateCluster = async () => {
+    const trimmed = newClusterTitle.trim();
+    if (!trimmed || creatingCluster) return;
+    setCreatingCluster(true);
+    const cluster = await createCluster(trimmed);
+    setCreatingCluster(false);
+    setNewClusterTitle('');
+    setShowCreateCluster(false);
+    if (cluster) {
+      toast.success(bilingual('Cluster créé', 'Cluster created'));
+    }
   };
 
   const filtered = useMemo(() => {
@@ -201,7 +219,73 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
         </div>
       )}
 
-      {/* Content */}
+      {/* Clusters Section */}
+      <div className="max-w-lg mx-auto w-full mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
+            <Layers className="w-5 h-5 text-primary" />
+            {bilingual('Mes Clusters', 'My Clusters')}
+          </h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowCreateCluster(s => !s)}
+          >
+            {showCreateCluster ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 mr-1" />}
+            {!showCreateCluster && t('Nouveau', 'New').primary}
+          </Button>
+        </div>
+
+        {showCreateCluster && (
+          <div className="flex gap-2 mb-3 animate-fade-in-up">
+            <Input
+              placeholder={t('Nom du cluster…', 'Cluster name…').primary}
+              value={newClusterTitle}
+              onChange={e => setNewClusterTitle(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleCreateCluster()}
+              autoFocus
+            />
+            <Button onClick={handleCreateCluster} disabled={!newClusterTitle.trim() || creatingCluster} size="sm">
+              {creatingCluster ? '…' : t('Créer', 'Create').primary}
+            </Button>
+          </div>
+        )}
+
+        {clustersLoading ? (
+          <p className="text-muted-foreground text-sm animate-gentle-pulse">
+            {t('Chargement…', 'Loading…').primary}
+          </p>
+        ) : clusters.length === 0 ? (
+          <div className="bg-muted/50 rounded-xl p-4 text-center border border-border">
+            <p className="text-muted-foreground text-sm">
+              {t(
+                'Pas encore de clusters. Créez-en un pour regrouper vos pensées.',
+                'No clusters yet. Create one to group your thoughts.'
+              ).primary}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {clusters.map(cluster => (
+              <ClusterCard
+                key={cluster.id}
+                cluster={cluster}
+                onClick={() => onOpenCluster(cluster.id)}
+                isFr={isFr}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Divider */}
+      {thoughts.length > 0 && clusters.length > 0 && (
+        <div className="max-w-lg mx-auto w-full mb-6">
+          <div className="border-t border-border" />
+        </div>
+      )}
+
+      {/* Thoughts grouped by theme */}
       <div className="flex-1 max-w-lg mx-auto w-full">
         {loading ? (
           <div className="flex items-center justify-center py-16">
@@ -259,6 +343,39 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext }: ThoughtGa
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ClusterCard({
+  cluster,
+  onClick,
+  isFr,
+}: {
+  cluster: Cluster;
+  onClick: () => void;
+  isFr: boolean;
+}) {
+  const formatted = new Date(cluster.updatedAt).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+
+  return (
+    <div
+      onClick={onClick}
+      className="group bg-card border border-border rounded-xl px-4 py-3 cursor-pointer transition-all hover:border-primary/30 hover:shadow-[var(--gentle-shadow)]"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex-1 min-w-0">
+          <h4 className="font-serif text-base text-foreground truncate">{cluster.title}</h4>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground flex-shrink-0 ml-3">
+          <span>{cluster.thoughtCount ?? 0} {isFr ? 'pensées' : 'thoughts'}</span>
+          <span>·</span>
+          <span>{formatted}</span>
+        </div>
       </div>
     </div>
   );
