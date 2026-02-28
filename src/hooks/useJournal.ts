@@ -135,7 +135,7 @@ export function useJournal() {
   const persistToDb = useCallback(async (entry: JournalEntry) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session && !session.user.is_anonymous) {
+      if (session) {
         await supabase.from('journal_entries').insert({
           user_id: session.user.id,
           date: entry.date,

@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, UserPlus } from 'lucide-react';
+import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { useJournalEntries, JournalEntryRow } from '@/hooks/useJournalEntries';
 import { format } from 'date-fns';
 import { fr as frLocale, enUS } from 'date-fns/locale';
-import { useNavigate } from 'react-router-dom';
 
 interface ProgressScreenProps {
   streak: number;
@@ -25,13 +23,9 @@ export function ProgressScreen({
   onStartJournal,
 }: ProgressScreenProps) {
   const { t, bilingual, isFr } = useLanguage();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const isRegistered = user && !user.is_anonymous;
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  // Only fetch entries for registered users
-  const { entries, isLoading } = useJournalEntries(!isRegistered);
+  const { entries, isLoading } = useJournalEntries();
 
   // Dates that have entries
   const entryDates = new Set(entries.map(e => e.date));
@@ -99,62 +93,45 @@ export function ProgressScreen({
           </div>
         </div>
 
-        {/* Calendar — registered users only */}
-        {isRegistered ? (
-          <>
-            <div className="bg-card rounded-2xl p-4 shadow-gentle border border-border">
-              <div className="flex items-center gap-2 mb-3 px-2">
-                <BookOpen className="w-4 h-4 text-primary" />
-                <p className="text-sm font-medium text-foreground">
-                  {t('Journal passé', 'Past entries').primary}
+        {/* Calendar */}
+        <div className="bg-card rounded-2xl p-4 shadow-gentle border border-border">
+          <div className="flex items-center gap-2 mb-3 px-2">
+            <BookOpen className="w-4 h-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">
+              {t('Journal passé', 'Past entries').primary}
+            </p>
+          </div>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            locale={isFr ? frLocale : enUS}
+            className="p-3 pointer-events-auto mx-auto"
+            modifiers={{
+              journaled: (date) => entryDates.has(format(date, 'yyyy-MM-dd')),
+            }}
+            modifiersClassNames={{
+              journaled: 'bg-primary/20 text-primary font-semibold',
+            }}
+            disabled={(date) => date > new Date()}
+          />
+        </div>
+
+        {/* Selected Entry Card */}
+        {selectedDate && (
+          <div className="space-y-3 animate-fade-in-up">
+            {selectedEntries.length === 0 ? (
+              <div className="bg-muted/50 rounded-2xl p-5 text-center border border-border">
+                <p className="text-muted-foreground text-sm">
+                  {t('Aucune entrée ce jour-là', 'No entry on this day').primary}
                 </p>
               </div>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                locale={isFr ? frLocale : enUS}
-                className="p-3 pointer-events-auto mx-auto"
-                modifiers={{
-                  journaled: (date) => entryDates.has(format(date, 'yyyy-MM-dd')),
-                }}
-                modifiersClassNames={{
-                  journaled: 'bg-primary/20 text-primary font-semibold',
-                }}
-                disabled={(date) => date > new Date()}
-              />
-            </div>
-
-            {/* Selected Entry Card */}
-            {selectedDate && (
-              <div className="space-y-3 animate-fade-in-up">
-                {selectedEntries.length === 0 ? (
-                  <div className="bg-muted/50 rounded-2xl p-5 text-center border border-border">
-                    <p className="text-muted-foreground text-sm">
-                      {t('Aucune entrée ce jour-là', 'No entry on this day').primary}
-                    </p>
-                  </div>
-                ) : (
-                  selectedEntries.map((entry) => (
-                    <EntryCard key={entry.id} entry={entry} isFr={isFr} />
-                  ))
-                )}
-              </div>
+            ) : (
+              selectedEntries.map((entry) => (
+                <EntryCard key={entry.id} entry={entry} isFr={isFr} />
+              ))
             )}
-          </>
-        ) : (
-          <button
-            onClick={() => navigate('/auth')}
-            className="w-full bg-primary/5 rounded-2xl p-5 text-center border border-primary/10 hover:border-primary/30 transition-colors cursor-pointer"
-          >
-            <UserPlus className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-foreground font-medium text-sm">
-              {t('Créez un compte pour voir votre historique', 'Create an account to see your history').primary}
-            </p>
-            <p className="text-muted-foreground text-xs mt-1">
-              {t('Retrouvez vos entrées passées sur un calendrier', 'Browse past entries on a calendar').primary}
-            </p>
-          </button>
+          </div>
         )}
 
         {/* Affirmation */}
