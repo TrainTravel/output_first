@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
+import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 
 const STORAGE_KEY = 'outputfirst_entries';
@@ -131,6 +132,24 @@ export function useJournal() {
 
   const canMoveToGratitude = currentCycle >= MIN_CYCLES - 1; // -1 because we check before incrementing
 
+  const persistToDb = useCallback(async (entry: JournalEntry) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await supabase.from('journal_entries').insert({
+          user_id: session.user.id,
+          date: entry.date,
+          content: entry.content,
+          emotion: entry.emotion || null,
+          emotion_fr: entry.emotionFr || null,
+          gratitude: entry.gratitude || null,
+        });
+      }
+    } catch (e) {
+      console.error('Failed to persist journal entry:', e);
+    }
+  }, []);
+
   const saveGratitude = (gratitude?: string) => {
     const newEntry: JournalEntry = {
       id: crypto.randomUUID(),
@@ -143,6 +162,7 @@ export function useJournal() {
     };
 
     setEntries(prev => [...prev, newEntry]);
+    persistToDb(newEntry);
     setCurrentStep('complete');
     localStorage.setItem('feedback-eligible', 'true');
   };
@@ -158,6 +178,7 @@ export function useJournal() {
     };
 
     setEntries(prev => [...prev, newEntry]);
+    persistToDb(newEntry);
     setCurrentStep('complete');
     localStorage.setItem('feedback-eligible', 'true');
   };

@@ -113,6 +113,39 @@ export type Database = {
         }
         Relationships: []
       }
+      journal_entries: {
+        Row: {
+          content: string
+          created_at: string
+          date: string
+          emotion: string | null
+          emotion_fr: string | null
+          gratitude: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          date: string
+          emotion?: string | null
+          emotion_fr?: string | null
+          gratitude?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          date?: string
+          emotion?: string | null
+          emotion_fr?: string | null
+          gratitude?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       proposals: {
         Row: {
           cluster_id: string
