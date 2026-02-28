@@ -64,27 +64,56 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
           </p>
         </div>
 
-        {/* Status */}
-        <div className="flex justify-center">
-          <div className={`
-            inline-flex items-center gap-2 px-4 py-2 rounded-full
-            ${hasJournaledToday 
-              ? 'bg-primary/10 text-primary' 
-              : 'bg-muted text-muted-foreground'
-            }
-          `}>
-            {hasJournaledToday ? (
-              <>
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">{t('Terminé', 'Completed').primary}</span>
-              </>
-            ) : (
-              <>
-                <Feather className="w-4 h-4" />
-                <span className="text-sm font-medium">{t('Pas encore', 'Not started').primary}</span>
-              </>
-            )}
+        {/* Status + Progress */}
+        <div className="space-y-4">
+          <div className="flex justify-center">
+            <div className={`
+              inline-flex items-center gap-2 px-4 py-2 rounded-full
+              ${hasJournaledToday 
+                ? 'bg-primary/10 text-primary' 
+                : 'bg-muted text-muted-foreground'
+              }
+            `}>
+              {hasJournaledToday ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span className="text-sm font-medium">{t('Terminé', 'Completed').primary}</span>
+                </>
+              ) : (
+                <>
+                  <Feather className="w-4 h-4" />
+                  <span className="text-sm font-medium">{t('Pas encore', 'Not started').primary}</span>
+                </>
+              )}
+            </div>
           </div>
+
+          {/* Inline Progress Card */}
+          <button
+            onClick={onViewProgress}
+            className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm p-4 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left"
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-primary/10 p-2">
+                  <Flame className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
+                  <p className="text-xs text-muted-foreground">{t('Série', 'Streak').primary}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-accent/30 p-2">
+                  <CalendarDays className="w-5 h-5 text-accent-foreground" />
+                </div>
+                <div>
+                  <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
+                  <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days').primary}</p>
+                </div>
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Main Actions */}
@@ -132,32 +161,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
           </p>
         </div>
 
-        {/* Inline Progress Card */}
-        <button
-          onClick={onViewProgress}
-          className="w-full rounded-xl border bg-card text-card-foreground shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer text-left"
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-primary/10 p-2">
-                <Flame className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
-                <p className="text-xs text-muted-foreground">{t('Série', 'Streak').primary}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-accent/30 p-2">
-                <CalendarDays className="w-5 h-5 text-accent-foreground" />
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
-                <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days').primary}</p>
-              </div>
-            </div>
-          </div>
-        </button>
       </div>
     </div>
   );
