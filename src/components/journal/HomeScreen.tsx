@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, MessageCircle, Zap, Sprout, Layers, LogOut, Flame, CalendarDays, Mountain } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, Layers, LogOut, Flame, CalendarDays, Mountain } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -131,10 +131,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
             }
           </Button>
 
-          <Button variant="outline" size="full" onClick={onOpenChat}>
-            <MessageCircle className="w-5 h-5 mr-2" />
-            {bilingual('Conversation', 'Conversation')}
-          </Button>
 
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
