@@ -171,6 +171,12 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       }
 
       await streamResponse(resp, newMessages);
+      logger.info('ai.request.success', {
+        component: 'ChatScreen',
+        requestId: sessionRequestId,
+        action: 'sendMessage',
+        latencyMs: Date.now() - startTime,
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Could not send message';
       logger.error('ai.request.error', { component: 'ChatScreen', requestId: sessionRequestId, action: 'sendMessage', latencyMs: Date.now() - startTime, error: errorMessage });
