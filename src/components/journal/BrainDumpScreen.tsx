@@ -71,19 +71,6 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
     }
   };
 
-  const handleTestDump = async () => {
-    const testThoughts = [
-      "je dois payer mon louer",
-      "je veux comprendre le processus de aller à l'ecole de langues",
-      "je veux que mon crush m'aime",
-      "je me sens tranquille",
-      "je suis content",
-    ];
-    for (const text of testThoughts) {
-      const t = await addThought(text);
-      if (t) setRecentlyAdded(prev => [t, ...prev].slice(0, 5));
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-8">
@@ -96,11 +83,6 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Zap className="w-4 h-4" />
           <span>{thoughts.length} {t('pensées', 'thoughts').primary}</span>
-          {thoughts.length === 0 && (
-            <Button variant="outline" size="sm" onClick={handleTestDump} className="ml-2 text-xs">
-              Test
-            </Button>
-          )}
         </div>
       </div>
 

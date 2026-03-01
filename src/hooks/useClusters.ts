@@ -71,9 +71,13 @@ export function useClusters() {
   };
 
   const createCluster = async (title: string, description?: string): Promise<Cluster | null> => {
+    // Check for existing cluster with same title (case-insensitive)
+    const existing = clusters.find(c => c.title.toLowerCase() === title.trim().toLowerCase());
+    if (existing) return existing;
+
     const { data, error } = await supabase
       .from('clusters')
-      .insert({ title, description: description || '', user_anonymous_id: userId })
+      .insert({ title: title.trim(), description: description || '', user_anonymous_id: userId })
       .select()
       .single();
 
