@@ -1,36 +1,52 @@
 
 
-## Make Progress More Visible on the Home Screen
+## Add Thought-to-Cluster Management in Thought Garden
 
-Right now, progress is hidden behind a small ghost button at the bottom of the home screen. Most users never tap it. The fix: bring the key stats directly onto the home screen so users see their streak and total days every time they open the app — no extra tap needed.
+### What You'll Get
 
-### What Changes
+Three new ways to organize thoughts into clusters, directly from the Thought Garden screen:
 
-**1. Add an inline progress summary card to HomeScreen**
+1. **Link individual thoughts to a cluster** -- Each thought card gets a small "link" button. Tap it, pick a cluster from a dropdown, and the thought is added to that cluster instantly.
 
-Replace the bottom "View progress" ghost button with a compact, always-visible progress card placed between the status badge and the action buttons. It will show:
-- Streak (flame icon + day count)
-- Total days journaled (calendar icon + count)
-- A subtle tap target to see the full progress screen
+2. **Bulk-move selected thoughts** -- When you select multiple thoughts (by tapping them), a new "Add to Cluster" button appears alongside the existing "Archive" button. Pick a cluster and all selected thoughts get linked at once.
 
-This card uses the same warm styling as the rest of the app (rounded corners, gentle shadow, bilingual labels).
+3. **Convert an AI theme into a cluster** -- Each theme group header gets a new button to automatically create a cluster from that theme name and link all its thoughts into it in one tap.
 
-**2. Pass streak and totalDays to HomeScreen**
+### How It Works
 
-The `HomeScreen` component currently doesn't receive streak/totalDays props. We'll add them from `useJournal` (already available in `JournalApp`).
+**ThoughtGardenScreen.tsx changes:**
 
-### Files to Change
+- Add a small `Link` icon button on each `ThoughtCard` that opens a popover/dropdown listing available clusters. Selecting one calls `addThoughtToCluster`.
+- When thoughts are selected (`selectedIds.size > 0`), show an "Add to Cluster" button next to the existing "Archive" button. This opens the same cluster picker and bulk-links all selected thoughts.
+- On each theme group header (next to the existing chat button), add a "Convert to Cluster" button. This calls `createCluster(themeName)` then loops through the group's thoughts calling `addThoughtToCluster` for each, and shows a success toast.
 
-- **`src/components/journal/HomeScreen.tsx`**
-  - Add `streak` and `totalDays` to props interface
-  - Replace the bottom "View progress" ghost button with an inline stats card showing streak + total days, with the card itself still clickable to open the full progress screen
-  
-- **`src/components/journal/JournalApp.tsx`**
-  - Pass `streak` and `totalDays` props to `HomeScreen`
+**ThoughtCard component updates:**
+- Add an `onLinkToCluster` callback prop
+- Render a small link icon button (visible on hover, like the existing archive button)
 
-### Design Details
+**Cluster picker component:**
+- A small reusable popover (using the existing Popover + Command components from shadcn/ui) that lists available clusters and optionally lets you create a new one inline.
 
-The progress card will be a horizontal two-column layout (matching the ProgressScreen grid style) but more compact — showing the flame icon with streak count and calendar icon with total days. Bilingual labels underneath. The whole card is tappable to navigate to the full progress view, keeping it low-friction.
+**No database changes needed** -- the `cluster_thoughts` table and `addThoughtToCluster` / `createCluster` functions already exist.
 
-This follows the ADHD principle of "visible progress" — users see their streak every time they open the app without needing to remember to check it.
+### Technical Details
+
+| File | Change |
+|------|--------|
+| `src/components/journal/ThoughtGardenScreen.tsx` | Add cluster picker popover, bulk "Add to Cluster" button for selected thoughts, "Convert to Cluster" button on theme headers, pass new props to ThoughtCard |
+| `ThoughtCard` (inline component) | Add `onLinkToCluster` prop with a link icon button on hover |
+| New: `src/components/journal/ClusterPicker.tsx` | Small popover component using Popover + Command that lists clusters and allows selection |
+
+**Flow for "Convert Theme to Cluster":**
+1. User taps the convert button on a theme header
+2. A new cluster is created with the theme name as title
+3. All thoughts in that group are linked to the new cluster via `addThoughtToCluster`
+4. Clusters list refreshes, success toast shown
+5. Thoughts remain visible in the garden (they're linked, not moved)
+
+**ADHD-friendly considerations:**
+- One-tap actions wherever possible (no multi-step modals)
+- Thoughts stay visible after linking (no anxiety about "losing" them)
+- Bulk operations reduce repetitive work
+- Theme-to-cluster conversion removes the need to manually recreate what AI already organized
 
