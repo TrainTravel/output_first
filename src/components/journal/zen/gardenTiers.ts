@@ -14,6 +14,13 @@ import stone3 from '@/assets/zen/stone-3.png';
 import plant1 from '@/assets/zen/plant-1.png';
 import plant2 from '@/assets/zen/plant-2.png';
 import lantern from '@/assets/zen/lantern.png';
+import tree1 from '@/assets/zen/tree-1.png';
+import tree2 from '@/assets/zen/tree-2.png';
+import tree3 from '@/assets/zen/tree-3.png';
+import tree4 from '@/assets/zen/tree-4.png';
+import lantern1 from '@/assets/zen/lantern-1.png';
+import lantern2 from '@/assets/zen/lantern-2.png';
+import lantern3 from '@/assets/zen/lantern-3.png';
 
 export interface GardenTier {
   level: number;          // 1-4
@@ -25,6 +32,8 @@ export interface GardenTier {
 
 const STONES = [stone1, stone2, stone3];
 const PLANTS = [plant1, plant2];
+const TREES = [tree1, tree2, tree3, tree4];
+const LANTERNS = [lantern, lantern1, lantern2, lantern3];
 
 export const TIER_THRESHOLDS = [0, 1, 3, 5, 7]; // cluster counts for each tier boundary
 
@@ -65,18 +74,18 @@ export function getGardenTier(clusterCount: number): GardenTier {
       stonePool = [...STONES];
       anchorPool = [...STONES];
       break;
-    case 2: // + plants
+    case 2: // + plants & trees
       stonePool = [...STONES, ...PLANTS];
-      anchorPool = [...STONES, ...PLANTS];
+      anchorPool = [...STONES, ...PLANTS, ...TREES.slice(0, 2)];
       break;
-    case 3: // all natural
-      stonePool = [...STONES, ...PLANTS];
-      anchorPool = [...STONES, ...PLANTS];
+    case 3: // all natural elements + all trees
+      stonePool = [...STONES, ...PLANTS, ...TREES];
+      anchorPool = [...STONES, ...PLANTS, ...TREES];
       break;
-    case 4: // + lantern capstone
+    case 4: // full garden + lanterns capstone
     default:
-      stonePool = [...STONES, ...PLANTS];
-      anchorPool = [...STONES, ...PLANTS, lantern];
+      stonePool = [...STONES, ...PLANTS, ...TREES];
+      anchorPool = [...STONES, ...PLANTS, ...TREES, ...LANTERNS];
       break;
   }
 
@@ -89,4 +98,4 @@ export function getGardenTier(clusterCount: number): GardenTier {
   };
 }
 
-export { lantern, STONES, PLANTS };
+export { lantern, STONES, PLANTS, TREES, LANTERNS };
