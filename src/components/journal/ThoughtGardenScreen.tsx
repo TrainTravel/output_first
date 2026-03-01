@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle, Layers, Plus, Link2, FolderPlus } from 'lucide-react';
+import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle, Layers, Plus, Link2, FolderPlus, ArrowRightLeft } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
 import { useClusters, Cluster } from '@/hooks/useClusters';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -38,7 +38,7 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 
 export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenCluster }: ThoughtGardenScreenProps) {
   const { bilingual, t, isFr } = useLanguage();
-  const { thoughts, loading, archiveThought, retagUntagged, retagAll } = useThoughts();
+  const { thoughts, loading, archiveThought, moveThoughtToTheme, retagUntagged, retagAll } = useThoughts();
   const { clusters, loading: clustersLoading, createCluster, addThoughtToCluster, fetchClusters } = useClusters();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -151,6 +151,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
   }, [thoughts, search]);
 
   const groups = useMemo(() => groupByTheme(filtered), [filtered]);
+  const themeLabels = useMemo(() => groups.map(g => g.label).filter(l => l !== 'Uncategorized'), [groups]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -342,9 +343,15 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
                       key={thought.id}
                       content={thought.content}
                       date={thought.createdAt}
+                      currentTheme={thought.aiTheme}
+                      themeLabels={themeLabels}
                       selected={selectedIds.has(thought.id)}
                       onToggle={() => toggleSelect(thought.id)}
                       onArchive={() => archiveThought(thought.id)}
+                      onMoveToTheme={(theme) => {
+                        moveThoughtToTheme(thought.id, theme);
+                        toast.success(bilingual(`Déplacé vers "${theme}"`, `Moved to "${theme}"`));
+                      }}
                       onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
                       onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}
                       clusters={clusters}
@@ -380,13 +387,17 @@ function ClusterCard({ cluster, onClick, isFr }: { cluster: Cluster; onClick: ()
 }
 
 function ThoughtCard({
-  content, date, selected, onToggle, onArchive, onLinkToCluster, onCreateAndLink, clusters, isFr,
+  content, date, currentTheme, themeLabels, selected, onToggle, onArchive, onMoveToTheme, onLinkToCluster, onCreateAndLink, clusters, isFr,
 }: {
-  content: string; date: string; selected: boolean; onToggle: () => void; onArchive: () => void;
+  content: string; date: string; currentTheme: string | null; themeLabels: string[];
+  selected: boolean; onToggle: () => void; onArchive: () => void;
+  onMoveToTheme: (theme: string) => void;
   onLinkToCluster: (clusterId: string) => void; onCreateAndLink: (title: string) => void;
   clusters: Cluster[]; isFr: boolean;
 }) {
   const formatted = new Date(date).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' });
+  const [showThemePicker, setShowThemePicker] = useState(false);
+  const otherThemes = themeLabels.filter(l => l !== currentTheme);
 
   return (
     <div
@@ -397,6 +408,32 @@ function ThoughtCard({
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs text-muted-foreground">{formatted}</span>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Move to theme */}
+          <div className="relative">
+            <button
+              onClick={e => { e.stopPropagation(); setShowThemePicker(p => !p); }}
+              className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+              aria-label={isFr ? 'Déplacer vers un thème' : 'Move to theme'}
+            >
+              <ArrowRightLeft className="w-3.5 h-3.5" />
+            </button>
+            {showThemePicker && otherThemes.length > 0 && (
+              <div
+                className="absolute right-0 bottom-7 z-50 bg-popover border border-border rounded-lg shadow-md py-1 min-w-[160px] animate-fade-in-up"
+                onClick={e => e.stopPropagation()}
+              >
+                {otherThemes.map(theme => (
+                  <button
+                    key={theme}
+                    onClick={() => { onMoveToTheme(theme); setShowThemePicker(false); }}
+                    className="w-full text-left px-3 py-1.5 text-sm text-foreground hover:bg-accent/50 transition-colors truncate"
+                  >
+                    {theme}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <ClusterPicker
             clusters={clusters}
             onSelect={onLinkToCluster}
