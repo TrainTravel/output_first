@@ -1,5 +1,5 @@
 import { Thought } from '@/hooks/useThoughts';
-import { PLANTS, TREES, LANTERNS } from './gardenTiers';
+import { PLANTS, TREES, LANTERNS, MOSS, WATER, BRIDGES } from './gardenTiers';
 
 interface ZenStoneProps {
   thought: Thought;
@@ -16,9 +16,12 @@ export function ZenStone({ thought, index, clusterSize = 1, elementPool = [] }: 
   const isPlant = elementImg ? PLANTS.includes(elementImg) : false;
   const isTree = elementImg ? TREES.includes(elementImg) : false;
   const isLantern = elementImg ? LANTERNS.includes(elementImg) : false;
-  const isOrganic = isPlant || isTree;
-  const rotation = isOrganic || isLantern ? 0 : (index * 7 - 8) % 15;
-  const sizeMultiplier = isTree ? 1.4 : isLantern ? 1.3 : isPlant ? 1.2 : 1;
+  const isMoss = elementImg ? MOSS.includes(elementImg) : false;
+  const isWater = elementImg ? WATER.includes(elementImg) : false;
+  const isBridge = elementImg ? BRIDGES.includes(elementImg) : false;
+  const isOrganic = isPlant || isTree || isMoss;
+  const rotation = isOrganic || isLantern || isWater || isBridge ? 0 : (index * 7 - 8) % 15;
+  const sizeMultiplier = isTree ? 1.4 : isLantern || isWater ? 1.3 : isPlant || isBridge ? 1.2 : isMoss ? 1.1 : 1;
 
   return (
     <div
