@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle, Layers, Plus, Link2, FolderPlus, ArrowRightLeft } from 'lucide-react';
+import { ArrowLeft, Search, Sprout, Archive, Trash2, X, Sparkles, Loader2, MessageCircle, Layers, Plus, Link2, FolderPlus, ArrowRightLeft, GripVertical } from 'lucide-react';
 import { useThoughts, Thought } from '@/hooks/useThoughts';
 import { useClusters, Cluster } from '@/hooks/useClusters';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { ThoughtContext } from '@/types/chat';
 import { ClusterPicker } from './ClusterPicker';
+import { DndContext, DragOverlay, useDraggable, useDroppable, closestCenter, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 
 interface ThoughtGardenScreenProps {
   onBack: () => void;
@@ -48,6 +49,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
   const [newClusterTitle, setNewClusterTitle] = useState('');
   const [creatingCluster, setCreatingCluster] = useState(false);
   const [convertingTheme, setConvertingTheme] = useState<string | null>(null);
+  const [activeThought, setActiveThought] = useState<Thought | null>(null);
 
   const untaggedCount = useMemo(() => thoughts.filter(t => !t.aiTheme).length, [thoughts]);
 
@@ -164,6 +166,26 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
   const archiveSelected = async () => {
     for (const id of selectedIds) await archiveThought(id);
     setSelectedIds(new Set());
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const id = event.active.id as string;
+    const thought = thoughts.find(t => t.id === id) || null;
+    setActiveThought(thought);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveThought(null);
+    const { active, over } = event;
+    if (!over) return;
+    const thoughtId = active.id as string;
+    const targetTheme = over.id as string;
+    const thought = thoughts.find(t => t.id === thoughtId);
+    if (!thought) return;
+    const currentTheme = thought.aiTheme || 'Uncategorized';
+    if (currentTheme === targetTheme) return;
+    moveThoughtToTheme(thoughtId, targetTheme === 'Uncategorized' ? '' : targetTheme);
+    toast.success(bilingual(`Déplacé vers "${targetTheme}"`, `Moved to "${targetTheme}"`));
   };
 
   return (
@@ -305,63 +327,73 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
             </p>
           </div>
         ) : (
-          <div className="space-y-8">
-            {groups.map((group, idx) => (
-              <div key={idx} className="animate-fade-in-up">
-                {groups.length > 1 && (
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4 flex items-center justify-between">
-                    <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
-                      {group.label}
-                      <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">({group.thoughts.length})</span>
-                    </h3>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleConvertTheme(group)}
-                        disabled={convertingTheme === group.label}
-                        className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors disabled:opacity-50"
-                        title={bilingual('Convertir en cluster', 'Convert to cluster')}
-                      >
-                        {convertingTheme === group.label ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <FolderPlus className="w-4 h-4" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleChatTheme(group)}
-                        className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
-                        title={bilingual('Discuter ce thème', 'Discuss this theme')}
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                      </button>
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
+            <div className="space-y-8">
+              {groups.map((group, idx) => (
+                <ThemeDropZone key={group.label} themeLabel={group.label} isOver={false}>
+                  <div className="animate-fade-in-up">
+                    {groups.length > 1 && (
+                      <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4 flex items-center justify-between">
+                        <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
+                          {group.label}
+                          <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">({group.thoughts.length})</span>
+                        </h3>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleConvertTheme(group)}
+                            disabled={convertingTheme === group.label}
+                            className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors disabled:opacity-50"
+                            title={bilingual('Convertir en cluster', 'Convert to cluster')}
+                          >
+                            {convertingTheme === group.label ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <FolderPlus className="w-4 h-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => handleChatTheme(group)}
+                            className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
+                            title={bilingual('Discuter ce thème', 'Discuss this theme')}
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      {group.thoughts.map(thought => (
+                        <DraggableThoughtCard
+                          key={thought.id}
+                          thought={thought}
+                          currentTheme={thought.aiTheme}
+                          themeLabels={themeLabels}
+                          selected={selectedIds.has(thought.id)}
+                          onToggle={() => toggleSelect(thought.id)}
+                          onArchive={() => archiveThought(thought.id)}
+                          onMoveToTheme={(theme) => {
+                            moveThoughtToTheme(thought.id, theme);
+                            toast.success(bilingual(`Déplacé vers "${theme}"`, `Moved to "${theme}"`));
+                          }}
+                          onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
+                          onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}
+                          clusters={clusters}
+                          isFr={isFr}
+                        />
+                      ))}
                     </div>
                   </div>
-                )}
-                <div className="space-y-2">
-                  {group.thoughts.map(thought => (
-                    <ThoughtCard
-                      key={thought.id}
-                      content={thought.content}
-                      date={thought.createdAt}
-                      currentTheme={thought.aiTheme}
-                      themeLabels={themeLabels}
-                      selected={selectedIds.has(thought.id)}
-                      onToggle={() => toggleSelect(thought.id)}
-                      onArchive={() => archiveThought(thought.id)}
-                      onMoveToTheme={(theme) => {
-                        moveThoughtToTheme(thought.id, theme);
-                        toast.success(bilingual(`Déplacé vers "${theme}"`, `Moved to "${theme}"`));
-                      }}
-                      onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
-                      onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}
-                      clusters={clusters}
-                      isFr={isFr}
-                    />
-                  ))}
+                </ThemeDropZone>
+              ))}
+            </div>
+            <DragOverlay>
+              {activeThought && (
+                <div className="bg-card border border-primary rounded-xl px-4 py-3 shadow-lg opacity-90 max-w-lg">
+                  <p className="text-foreground text-sm leading-relaxed">{activeThought.content}</p>
                 </div>
-              </div>
-            ))}
-          </div>
+              )}
+            </DragOverlay>
+          </DndContext>
         )}
       </div>
     </div>
@@ -386,76 +418,111 @@ function ClusterCard({ cluster, onClick, isFr }: { cluster: Cluster; onClick: ()
   );
 }
 
-function ThoughtCard({
-  content, date, currentTheme, themeLabels, selected, onToggle, onArchive, onMoveToTheme, onLinkToCluster, onCreateAndLink, clusters, isFr,
-}: {
-  content: string; date: string; currentTheme: string | null; themeLabels: string[];
-  selected: boolean; onToggle: () => void; onArchive: () => void;
+function ThemeDropZone({ themeLabel, children }: { themeLabel: string; isOver?: boolean; children: React.ReactNode }) {
+  const { isOver, setNodeRef } = useDroppable({ id: themeLabel });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`rounded-xl transition-all duration-200 ${isOver ? 'ring-2 ring-primary/40 bg-primary/5' : ''}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+interface DraggableThoughtCardProps {
+  thought: Thought;
+  currentTheme: string | null;
+  themeLabels: string[];
+  selected: boolean;
+  onToggle: () => void;
+  onArchive: () => void;
   onMoveToTheme: (theme: string) => void;
-  onLinkToCluster: (clusterId: string) => void; onCreateAndLink: (title: string) => void;
-  clusters: Cluster[]; isFr: boolean;
-}) {
-  const formatted = new Date(date).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' });
+  onLinkToCluster: (clusterId: string) => void;
+  onCreateAndLink: (title: string) => void;
+  clusters: Cluster[];
+  isFr: boolean;
+}
+
+function DraggableThoughtCard(props: DraggableThoughtCardProps) {
+  const { thought, currentTheme, themeLabels, selected, onToggle, onArchive, onMoveToTheme, onLinkToCluster, onCreateAndLink, clusters, isFr } = props;
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: thought.id });
+  const formatted = new Date(thought.createdAt).toLocaleDateString(isFr ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' });
   const [showThemePicker, setShowThemePicker] = useState(false);
   const otherThemes = themeLabels.filter(l => l !== currentTheme);
 
   return (
     <div
+      ref={setNodeRef}
       onClick={onToggle}
-      className={`group relative bg-card border rounded-xl px-4 py-3 cursor-pointer transition-all ${selected ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/30'}`}
+      className={`group relative bg-card border rounded-xl px-4 py-3 cursor-pointer transition-all ${isDragging ? 'opacity-30' : ''} ${selected ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/30'}`}
     >
-      <p className="text-foreground text-sm leading-relaxed pr-16">{content}</p>
-      <div className="flex items-center justify-between mt-2">
-        <span className="text-xs text-muted-foreground">{formatted}</span>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {/* Move to theme */}
-          <div className="relative">
-            <button
-              onClick={e => { e.stopPropagation(); setShowThemePicker(p => !p); }}
-              className="text-muted-foreground hover:text-primary transition-colors p-0.5"
-              aria-label={isFr ? 'Déplacer vers un thème' : 'Move to theme'}
-            >
-              <ArrowRightLeft className="w-3.5 h-3.5" />
-            </button>
-            {showThemePicker && otherThemes.length > 0 && (
-              <div
-                className="absolute right-0 bottom-7 z-50 bg-popover border border-border rounded-lg shadow-md py-1 min-w-[160px] animate-fade-in-up"
-                onClick={e => e.stopPropagation()}
-              >
-                {otherThemes.map(theme => (
-                  <button
-                    key={theme}
-                    onClick={() => { onMoveToTheme(theme); setShowThemePicker(false); }}
-                    className="w-full text-left px-3 py-1.5 text-sm text-foreground hover:bg-accent/50 transition-colors truncate"
+      <div className="flex items-start gap-2">
+        {/* Drag handle */}
+        <button
+          {...attributes}
+          {...listeners}
+          onClick={e => e.stopPropagation()}
+          className="mt-0.5 text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
+          aria-label="Drag to move"
+        >
+          <GripVertical className="w-4 h-4" />
+        </button>
+        <div className="flex-1 min-w-0">
+          <p className="text-foreground text-sm leading-relaxed pr-12">{thought.content}</p>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-xs text-muted-foreground">{formatted}</span>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Move to theme */}
+              <div className="relative">
+                <button
+                  onClick={e => { e.stopPropagation(); setShowThemePicker(p => !p); }}
+                  className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+                  aria-label={isFr ? 'Déplacer vers un thème' : 'Move to theme'}
+                >
+                  <ArrowRightLeft className="w-3.5 h-3.5" />
+                </button>
+                {showThemePicker && otherThemes.length > 0 && (
+                  <div
+                    className="absolute right-0 bottom-7 z-50 bg-popover border border-border rounded-lg shadow-md py-1 min-w-[160px] animate-fade-in-up"
+                    onClick={e => e.stopPropagation()}
                   >
-                    {theme}
-                  </button>
-                ))}
+                    {otherThemes.map(theme => (
+                      <button
+                        key={theme}
+                        onClick={() => { onMoveToTheme(theme); setShowThemePicker(false); }}
+                        className="w-full text-left px-3 py-1.5 text-sm text-foreground hover:bg-accent/50 transition-colors truncate"
+                      >
+                        {theme}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <ClusterPicker
-            clusters={clusters}
-            onSelect={onLinkToCluster}
-            onCreateAndSelect={onCreateAndLink}
-            align="end"
-            trigger={
+              <ClusterPicker
+                clusters={clusters}
+                onSelect={onLinkToCluster}
+                onCreateAndSelect={onCreateAndLink}
+                align="end"
+                trigger={
+                  <button
+                    onClick={e => e.stopPropagation()}
+                    className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+                    aria-label="Link to cluster"
+                  >
+                    <Link2 className="w-3.5 h-3.5" />
+                  </button>
+                }
+              />
               <button
-                onClick={e => e.stopPropagation()}
-                className="text-muted-foreground hover:text-primary transition-colors p-0.5"
-                aria-label="Link to cluster"
+                onClick={e => { e.stopPropagation(); onArchive(); }}
+                className="text-muted-foreground hover:text-destructive transition-colors p-0.5"
+                aria-label="Archive"
               >
-                <Link2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
-            }
-          />
-          <button
-            onClick={e => { e.stopPropagation(); onArchive(); }}
-            className="text-muted-foreground hover:text-destructive transition-colors p-0.5"
-            aria-label="Archive"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
