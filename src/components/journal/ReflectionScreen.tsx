@@ -34,6 +34,7 @@ export function ReflectionScreen({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState('');
+  const [showQuestion, setShowQuestion] = useState(false);
   const { bilingual, t, isFr } = useLanguage();
 
   useEffect(() => {
@@ -86,6 +87,8 @@ export function ReflectionScreen({
         throw new Error(errorMsg);
       }
       setReflectionData(data);
+      // Delay showing the question so user reads the reflection first
+      setTimeout(() => setShowQuestion(true), 2500);
     } catch (err) {
       console.error('Error generating reflection:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -155,35 +158,37 @@ export function ReflectionScreen({
         {/* Reflection Content */}
         {reflectionData && !isLoading && (
           <>
-            {/* Acknowledgment */}
-            <div className="mb-6 p-5 bg-muted/30 rounded-xl border border-border/50">
-              <p className="text-foreground leading-relaxed">
+            {/* Acknowledgment — AI uses primary color */}
+            <div className="mb-6 p-5 bg-primary/5 rounded-xl border border-primary/15">
+              <p className="text-primary leading-relaxed font-medium">
                 {reflectionData.reflection}
               </p>
             </div>
 
-            {/* Curious Question */}
-            <div className="mb-8 space-y-3">
-              <h2 className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
-                {reflectionData.question}
-              </h2>
-            </div>
+            {/* Curious Question — revealed after delay */}
+            {showQuestion && (
+              <div className="animate-fade-in-up">
+                <div className="mb-8 space-y-3">
+                  <h2 className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
+                    {reflectionData.question}
+                  </h2>
+                </div>
 
-            {/* Optional Response */}
-            <div className="flex-1">
-              <Textarea
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                placeholder={t('Prenez votre temps...', 'Take your time...').primary}
-                className="min-h-[120px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
-              />
-              <p className="text-muted-foreground text-xs mt-2">
-                {t("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.').primary}
-              </p>
-            </div>
+                {/* Optional Response */}
+                <div className="flex-1">
+                  <Textarea
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    placeholder={t('Prenez votre temps...', 'Take your time...').primary}
+                    className="min-h-[120px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
+                  />
+                  <p className="text-muted-foreground text-xs mt-2">
+                    {t("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.').primary}
+                  </p>
+                </div>
 
-            {/* Choice: Continue exploring or move to gratitude */}
-            <div className="mt-8">
+                {/* Choice: Continue exploring or move to gratitude */}
+                <div className="mt-8">
               {isLastCycle ? (
                 <div className="space-y-3">
                   <p className="text-center text-muted-foreground text-sm mb-4">
@@ -232,7 +237,9 @@ export function ReflectionScreen({
                   </div>
                 </div>
               )}
-            </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
