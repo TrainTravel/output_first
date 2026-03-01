@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -8,6 +8,7 @@ import { ZenClusterGroup } from './ZenClusterGroup';
 import { ZenStone } from './ZenStone';
 import { anchorPosition } from './zenPlacement';
 import { getGardenTier, TIER_THRESHOLDS } from './gardenTiers';
+import { ZenAmbientDecor } from './ZenAmbientDecor';
 import './zen-garden.css';
 
 interface ZenGardenScreenProps {
@@ -21,6 +22,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
   const { clusters, loading: clustersLoading, fetchClusterThoughts } = useClusters();
   const { thoughts, loading: thoughtsLoading } = useThoughts();
   const [viewOffset, setViewOffset] = useState(0);
+  const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
 
   const loading = clustersLoading || thoughtsLoading;
 
@@ -41,11 +43,23 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
 
   const hasContent = clusters.length > 0 || unclusteredThoughts.length > 0;
 
+  // Click on cluster → toggle its thoughts; click elsewhere → dismiss
+  const handleClusterClick = useCallback((clusterId: string) => {
+    setActiveClusterId(prev => prev === clusterId ? null : clusterId);
+  }, []);
+
+  const handleBackgroundClick = useCallback(() => {
+    setActiveClusterId(null);
+  }, []);
+
   return (
-    <div className="zen-garden-bg min-h-screen flex flex-col relative overflow-hidden">
+    <div
+      className="zen-garden-bg min-h-screen flex flex-col relative overflow-hidden"
+      onClick={handleBackgroundClick}
+    >
       {/* Header — minimal, lots of Ma */}
       <header className="flex items-center justify-between px-6 pt-6 pb-2 relative z-20">
-        <Button variant="ghost" size="sm" onClick={onBack} className="zen-text-muted">
+        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onBack(); }} className="zen-text-muted">
           <ArrowLeft className="w-4 h-4 mr-1" />
           {t('Retour', 'Back').primary}
         </Button>
@@ -58,9 +72,12 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       {/* Breathing prompt */}
       <div className="text-center py-4 relative z-20">
         <p className="zen-text-muted text-sm italic tracking-wide animate-gentle-pulse">
-          {t('Respirez… observez les pierres.', 'Breathe… observe the stones.').primary}
+          {t('Respirez… touchez une pierre.', 'Breathe… touch a stone.').primary}
         </p>
       </div>
+
+      {/* Ambient decorations — background moss/water elements */}
+      <ZenAmbientDecor decorPool={tier.decorPool} clusterCount={clusters.length} />
 
       {/* The Garden — 2D scattered placement */}
       <div className="flex-1 relative" style={{ minHeight: '60vh' }}>
@@ -92,6 +109,8 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
                 visible={i >= visibleRange.start && i < visibleRange.end}
                 stonePool={tier.stonePool}
                 anchorPool={tier.anchorPool}
+                activeClusterId={activeClusterId}
+                onClusterClick={handleClusterClick}
               />
             ))}
           </>
@@ -125,7 +144,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setViewOffset(v => Math.max(0, v - 1))}
+            onClick={(e) => { e.stopPropagation(); setViewOffset(v => Math.max(0, v - 1)); }}
             disabled={!canScrollUp}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
             aria-label={t('Défiler vers le haut', 'Scroll up').primary}
@@ -135,7 +154,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setViewOffset(v => v + 1)}
+            onClick={(e) => { e.stopPropagation(); setViewOffset(v => v + 1); }}
             disabled={!canScrollDown}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
             aria-label={t('Défiler vers le bas', 'Scroll down').primary}
@@ -152,12 +171,12 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
         </p>
         {tier.level < 4 && (
           <div className="flex items-center justify-center gap-2">
-            <div className="w-24 h-1 rounded-full overflow-hidden" style={{ background: 'hsl(30 10% 82% / 0.4)' }}>
+            <div className="w-24 h-1 rounded-full overflow-hidden" style={{ background: 'hsl(90 10% 76% / 0.4)' }}>
               <div
                 className="h-full rounded-full transition-all duration-1000"
                 style={{
                   width: `${tier.progress * 100}%`,
-                  background: 'hsl(30 10% 50%)',
+                  background: 'hsl(110 25% 42%)',
                 }}
               />
             </div>

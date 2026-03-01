@@ -1,29 +1,43 @@
 /* ═══════════════════════════════════════════════
-   Zen Garden (Karesansui) — Phase A
+   Zen Garden (Karesansui) — Phase B
+   Inspired by Ryōan-ji, Saihō-ji, Kenroku-en
    "Ma" (Empty Space) as a design principle
    ═══════════════════════════════════════════════ */
 
 /* Zen-specific design tokens */
 :root {
-  --zen-sand: 30 30% 96%;
-  --zen-sand-dark: 30 18% 90%;
+  --zen-sand: 90 18% 90%;
+  --zen-sand-dark: 90 12% 84%;
   --zen-stone: 200 3% 28%;
   --zen-stone-text: 30 20% 94%;
-  --zen-rake-line: 30 10% 82%;
+  --zen-rake-line: 90 8% 76%;
   --zen-water: 200 40% 70%;
+  --zen-moss: 110 30% 42%;
+  --zen-moss-glow: 110 35% 55%;
 }
 
-/* Raked sand background — CSS flowing ripple lines */
+/* Raked sand background with green undertone */
 .zen-garden-bg {
   background-color: hsl(var(--zen-sand));
   background-image:
+    /* Subtle moss gradient wash — gives the green shade */
+    radial-gradient(
+      ellipse 80% 60% at 30% 70%,
+      hsl(var(--zen-moss) / 0.06) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 75% 40%,
+      hsl(var(--zen-moss) / 0.04) 0%,
+      transparent 60%
+    ),
     /* Primary rake lines — horizontal flow */
     repeating-linear-gradient(
       0deg,
       transparent,
       transparent 18px,
-      hsl(var(--zen-rake-line) / 0.3) 18px,
-      hsl(var(--zen-rake-line) / 0.3) 19px,
+      hsl(var(--zen-rake-line) / 0.25) 18px,
+      hsl(var(--zen-rake-line) / 0.25) 19px,
       transparent 19px,
       transparent 38px
     ),
@@ -32,8 +46,8 @@
       175deg,
       transparent,
       transparent 40px,
-      hsl(var(--zen-rake-line) / 0.08) 40px,
-      hsl(var(--zen-rake-line) / 0.08) 41px,
+      hsl(var(--zen-rake-line) / 0.07) 40px,
+      hsl(var(--zen-rake-line) / 0.07) 41px,
       transparent 41px,
       transparent 80px
     );
@@ -120,6 +134,22 @@
   font-family: 'DM Sans', sans-serif;
 }
 
+/* ── Clickable anchor interaction ── */
+.zen-anchor-wrapper {
+  cursor: pointer;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.zen-anchor-wrapper:hover {
+  transform: scale(1.05);
+  filter: brightness(1.05);
+}
+
+.zen-anchor-wrapper.zen-active {
+  transform: scale(1.08);
+  filter: brightness(1.1) drop-shadow(0 0 12px hsl(var(--zen-moss) / 0.3));
+}
+
 /* ── Stone entrance animation ── */
 .zen-stone-enter {
   animation: zenStoneAppear 0.8s ease-out both;
@@ -135,9 +165,55 @@
   }
 }
 
+/* ── Thought reveal animation ── */
+.zen-thought-reveal {
+  animation: zenThoughtReveal 0.5s ease-out both;
+}
+
+@keyframes zenThoughtReveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.zen-thought-hide {
+  animation: zenThoughtHide 0.35s ease-in both;
+}
+
+@keyframes zenThoughtHide {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    filter: blur(3px);
+  }
+}
+
 /* ── Cluster group fade ── */
 .zen-cluster-group {
   transition: opacity 1s ease-in-out;
+}
+
+/* ── Ambient decoration ── */
+.zen-decor {
+  pointer-events: none;
+  opacity: 0.35;
+  transition: opacity 2s ease;
+  animation: zenDecorAppear 2s ease-out both;
+}
+
+@keyframes zenDecorAppear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 0.35; }
 }
 
 /* Text color utilities for zen context */
@@ -148,16 +224,38 @@
   color: hsl(30 8% 50%);
 }
 
+/* ── Ripple circles around active anchor ── */
+.zen-ripple {
+  border: 1px solid hsl(var(--zen-moss) / 0.15);
+  border-radius: 50%;
+  animation: zenRipple 2.5s ease-out infinite;
+}
+
+@keyframes zenRipple {
+  0% { transform: scale(0.5); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
 /* Dark mode overrides */
 .dark .zen-garden-bg {
-  background-color: hsl(30 8% 12%);
+  background-color: hsl(90 6% 12%);
   background-image:
+    radial-gradient(
+      ellipse 80% 60% at 30% 70%,
+      hsl(var(--zen-moss) / 0.08) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 75% 40%,
+      hsl(var(--zen-moss) / 0.05) 0%,
+      transparent 60%
+    ),
     repeating-linear-gradient(
       0deg,
       transparent,
       transparent 18px,
-      hsl(30 6% 20% / 0.4) 18px,
-      hsl(30 6% 20% / 0.4) 19px,
+      hsl(90 4% 20% / 0.4) 18px,
+      hsl(90 4% 20% / 0.4) 19px,
       transparent 19px,
       transparent 38px
     ),
@@ -165,8 +263,8 @@
       175deg,
       transparent,
       transparent 40px,
-      hsl(30 6% 20% / 0.1) 40px,
-      hsl(30 6% 20% / 0.1) 41px,
+      hsl(90 4% 20% / 0.1) 40px,
+      hsl(90 4% 20% / 0.1) 41px,
       transparent 41px,
       transparent 80px
     );
@@ -199,23 +297,23 @@
 }
 
 .dark .zen-text-foreground {
-  color: hsl(30 10% 80%);
+  color: hsl(90 10% 80%);
 }
 .dark .zen-text-muted {
-  color: hsl(30 6% 55%);
+  color: hsl(90 6% 55%);
 }
 .dark .zen-stone-text {
-  color: hsl(30 15% 85%);
+  color: hsl(90 15% 85%);
   text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
 }
 .dark .zen-stone-theme {
-  color: hsl(30 10% 75%);
+  color: hsl(90 10% 75%);
   text-shadow: 0 1px 2px hsl(0 0% 0% / 0.6);
 }
 .dark .zen-anchor-text {
-  color: hsl(30 15% 85%);
+  color: hsl(90 15% 85%);
   text-shadow: 0 1px 3px hsl(0 0% 0% / 0.7);
 }
 .dark .zen-anchor-count {
-  color: hsl(30 8% 70%);
+  color: hsl(90 8% 70%);
 }
