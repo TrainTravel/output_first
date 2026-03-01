@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type GardenTheme = 'default' | 'provence' | 'zen' | 'northern';
+export type GardenTheme = 'default' | 'provence' | 'zen' | 'northern' | 'denim';
 
 export interface GardenThemeInfo {
   id: GardenTheme;
@@ -44,6 +44,14 @@ export const GARDEN_THEMES: GardenThemeInfo[] = [
     descriptionFr: 'Bleu profond & violet aurore',
     preview: { primary: 'hsl(210 50% 50%)', accent: 'hsl(280 40% 58%)', bg: 'hsl(220 25% 96%)' },
   },
+  {
+    id: 'denim',
+    name: 'Denim Sky',
+    nameFr: 'Ciel denim',
+    description: 'Slate blue & soft cloud',
+    descriptionFr: 'Bleu ardoise & nuage doux',
+    preview: { primary: 'hsl(215 28% 52%)', accent: 'hsl(200 18% 62%)', bg: 'hsl(215 20% 96%)' },
+  },
 ];
 
 interface GardenThemeContextType {
@@ -67,7 +75,7 @@ export function GardenThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, theme);
     const root = document.documentElement;
     // Remove all theme classes
-    root.classList.remove('theme-provence', 'theme-zen', 'theme-northern');
+    root.classList.remove('theme-provence', 'theme-zen', 'theme-northern', 'theme-denim');
     // Apply new theme class (default has no class)
     if (theme !== 'default') {
       root.classList.add(`theme-${theme}`);
