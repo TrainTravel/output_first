@@ -11,9 +11,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const requestId = req.headers.get("x-request-id") ?? "no-id";
+  const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
+  try {
     // Allow both authenticated users and anon-key requests (guests)
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
@@ -156,7 +156,7 @@ RULES:
       });
     }
   } catch (error) {
-    console.error(`[no-id] Error in french-feedback function:`, error);
+    console.error(`[${requestId}] Error in french-feedback function:`, error);
     return new Response(JSON.stringify({
       error: "Feedback service error",
       code: "INTERNAL_ERROR",
