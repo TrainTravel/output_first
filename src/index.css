@@ -385,3 +385,53 @@
   --soft-glow: 0 0 40px hsl(210 55% 55% / 0.2);
   --paper-texture: linear-gradient(135deg, hsl(220 20% 8%) 0%, hsl(220 18% 10%) 100%);
 }
+
+/* Denim Sky — Slate blue & soft cloud */
+.theme-denim {
+  --background: 215 20% 96%;
+  --foreground: 215 18% 22%;
+  --card: 215 16% 92%;
+  --card-foreground: 215 18% 22%;
+  --popover: 215 20% 96%;
+  --popover-foreground: 215 18% 22%;
+  --primary: 215 28% 52%;
+  --primary-foreground: 215 20% 96%;
+  --primary-muted: 215 20% 84%;
+  --accent: 200 18% 62%;
+  --accent-foreground: 215 20% 96%;
+  --accent-muted: 200 14% 88%;
+  --secondary: 215 12% 90%;
+  --secondary-foreground: 215 18% 22%;
+  --muted: 215 10% 87%;
+  --muted-foreground: 215 10% 48%;
+  --border: 215 12% 83%;
+  --input: 215 14% 91%;
+  --ring: 215 28% 52%;
+  --gentle-shadow: 0 4px 20px -4px hsl(215 18% 22% / 0.08);
+  --soft-glow: 0 0 40px hsl(215 28% 52% / 0.15);
+  --paper-texture: linear-gradient(135deg, hsl(215 20% 96%) 0%, hsl(215 16% 92%) 100%);
+}
+.dark.theme-denim {
+  --background: 215 18% 9%;
+  --foreground: 215 14% 86%;
+  --card: 215 15% 13%;
+  --card-foreground: 215 14% 86%;
+  --popover: 215 18% 9%;
+  --popover-foreground: 215 14% 86%;
+  --primary: 215 32% 58%;
+  --primary-foreground: 215 18% 9%;
+  --primary-muted: 215 18% 23%;
+  --accent: 200 22% 55%;
+  --accent-foreground: 215 18% 9%;
+  --accent-muted: 200 12% 19%;
+  --secondary: 215 12% 17%;
+  --secondary-foreground: 215 14% 86%;
+  --muted: 215 10% 19%;
+  --muted-foreground: 215 8% 56%;
+  --border: 215 10% 21%;
+  --input: 215 12% 17%;
+  --ring: 215 32% 58%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.32);
+  --soft-glow: 0 0 40px hsl(215 32% 58% / 0.2);
+  --paper-texture: linear-gradient(135deg, hsl(215 18% 9%) 0%, hsl(215 15% 11%) 100%);
+}
