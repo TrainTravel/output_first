@@ -82,6 +82,13 @@ export function useThoughts() {
     setThoughts(prev => prev.filter(t => t.id !== id));
   };
 
+  const moveThoughtToTheme = async (id: string, newTheme: string) => {
+    await supabase.from('thoughts').update({ ai_theme: newTheme }).eq('id', id);
+    setThoughts(prev =>
+      prev.map(t => t.id === id ? { ...t, aiTheme: newTheme } : t)
+    );
+  };
+
   const retagList = async (list: Thought[]): Promise<number> => {
     let tagged = 0;
     for (const t of list) {
@@ -111,5 +118,5 @@ export function useThoughts() {
     return retagList(thoughts);
   };
 
-  return { thoughts, loading, addThought, archiveThought, retagUntagged, retagAll, refetch: fetchThoughts };
+  return { thoughts, loading, addThought, archiveThought, moveThoughtToTheme, retagUntagged, retagAll, refetch: fetchThoughts };
 }
