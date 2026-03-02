@@ -11,8 +11,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
+
   try {
-    const requestId = req.headers.get("x-request-id") ?? "no-id";
 
     // Validate JWT
     const authHeader = req.headers.get("Authorization");
@@ -229,7 +230,7 @@ You already have full context. Start by reflecting what you see as the connectin
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error(`[no-id] Error in french-chat function:`, error);
+    console.error(`[${requestId}] Error in french-chat function:`, error);
     return new Response(JSON.stringify({
       error: "Chat service error",
       code: "INTERNAL_ERROR",
