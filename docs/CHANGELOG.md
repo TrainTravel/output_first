@@ -1,6 +1,37 @@
 # Changelog
 
+## [Unreleased] - 2026-02-28
+
+### AI Request Tracing and Structured Client Logging
+
+**Every AI call is now end-to-end traceable for faster debugging**
+
+- Each AI request (reflection, feedback, chat) generates a UUID `requestId`
+- `requestId` flows as `X-Request-Id` header to all edge functions
+- Edge functions prefix every log line with `[requestId]` for correlated server logs
+- `requestId` is included in error response bodies from edge functions
+- New `src/lib/logger.ts` structured logger emits `start`, `success`, and `error` events with `latencyMs`
+- Error UI surfaces a short `Ref: <8-char-id>` for easy bug reporting
+
+---
+
 ## [Unreleased] - 2026-02-27
+
+### Playwright E2E Test Suite with CI Workflow
+
+**25 automated tests covering all main user flows**
+
+- `playwright.config.ts`: Chromium, baseURL `localhost:8080`, auto-starts dev server
+- `e2e/helpers/mocks.ts`: shared route mocks and localStorage helpers — all Supabase and edge function calls are intercepted so tests run offline and deterministically
+- `e2e/home.spec.ts`: 6 rendering tests
+- `e2e/journal-flow.spec.ts`: happy path, skip-gratitude, BreatheScreen clock test
+- `e2e/braindump.spec.ts`: input, submission, and navigation
+- `e2e/navigation.spec.ts`: each section open/back
+- `e2e/language.spec.ts`: toggle, persistence after reload, bilingual order
+- `.github/workflows/e2e.yml`: runs on push/PR to main, uploads HTML report as artifact
+- `docs/e2e-tests.md`: permanent summary of all tests and helpers
+
+---
 
 ### Spanish Language Support
 
