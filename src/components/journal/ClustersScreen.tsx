@@ -139,7 +139,7 @@ function ClusterCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <h3 className="font-serif text-lg text-foreground truncate">{cluster.title}</h3>
+          <h3 className="font-serif text-lg text-foreground line-clamp-2">{cluster.title}</h3>
           {cluster.description && (
             <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{cluster.description}</p>
           )}

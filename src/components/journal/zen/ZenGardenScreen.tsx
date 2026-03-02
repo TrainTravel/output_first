@@ -61,10 +61,10 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       <header className="flex items-center justify-between px-6 pt-6 pb-2 relative z-20">
         <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onBack(); }} className="zen-text-muted">
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back').primary}
+          {t('Retour', 'Back', 'Volver').primary}
         </Button>
         <h1 className="font-serif text-lg zen-text-foreground tracking-wider">
-          {bilingual('Jardin Zen', 'Zen Garden')}
+          {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
         </h1>
         <div className="w-16" />
       </header>
@@ -72,7 +72,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       {/* Breathing prompt */}
       <div className="text-center py-4 relative z-20">
         <p className="zen-text-muted text-sm italic tracking-wide animate-gentle-pulse">
-          {t('Respirez… touchez une pierre.', 'Breathe… touch a stone.').primary}
+          {t('Respirez… touchez une pierre.', 'Breathe… touch a stone.', 'Respira… toca una piedra.').primary}
         </p>
       </div>
 
@@ -90,9 +90,10 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
             <div className="text-center space-y-3">
               <div className="zen-empty-stone mx-auto" />
               <p className="zen-text-muted text-sm">
-                {t(
+                 {t(
                   'Aucune pensée encore. Visitez le Vide-tête pour commencer.',
-                  'No thoughts yet. Visit Brain Dump to begin.'
+                  'No thoughts yet. Visit Brain Dump to begin.',
+                  'Aún no hay pensamientos. Visita Volcado Mental para empezar.'
                 ).primary}
               </p>
             </div>
@@ -147,7 +148,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
             onClick={(e) => { e.stopPropagation(); setViewOffset(v => Math.max(0, v - 1)); }}
             disabled={!canScrollUp}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
-            aria-label={t('Défiler vers le haut', 'Scroll up').primary}
+            aria-label={t('Défiler vers le haut', 'Scroll up', 'Desplazar arriba').primary}
           >
             <ChevronUp className="w-5 h-5" />
           </Button>
@@ -157,7 +158,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
             onClick={(e) => { e.stopPropagation(); setViewOffset(v => v + 1); }}
             disabled={!canScrollDown}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
-            aria-label={t('Défiler vers le bas', 'Scroll down').primary}
+            aria-label={t('Défiler vers le bas', 'Scroll down', 'Desplazar abajo').primary}
           >
             <ChevronDown className="w-5 h-5" />
           </Button>
@@ -167,7 +168,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       {/* Footer — garden tier + progress */}
       <footer className="text-center pb-8 pt-4 relative z-20 space-y-2">
         <p className="zen-text-muted text-xs tracking-widest uppercase">
-          {t(tier.label.fr, tier.label.en).primary}
+          {t(tier.label.fr, tier.label.en, tier.label.en).primary}
         </p>
         {tier.level < 4 && (
           <div className="flex items-center justify-center gap-2">

@@ -117,7 +117,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
         {/* Discuss cluster button */}
         {thoughts.length > 0 && (
           <div className="mt-8 text-center">
-            <Button variant="default" size="full" onClick={handleChatCluster}>
+            <Button variant="default" size="full" onClick={handleChatCluster} className="whitespace-normal h-auto min-h-[3.5rem] py-3">
               <MessageCircle className="w-4 h-4 mr-2" />
               {bilingual('Discuter ce cluster', 'Discuss this cluster', 'Discutir este grupo')}
             </Button>
