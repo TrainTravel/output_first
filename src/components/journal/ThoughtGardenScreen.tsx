@@ -94,19 +94,19 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     setCreatingCluster(false);
     setNewClusterTitle('');
     setShowCreateCluster(false);
-    if (cluster) toast.success(bilingual('Cluster créé', 'Cluster created'));
+    if (cluster) toast.success(bilingual('Cluster créé', 'Cluster created', 'Cluster creado'));
   };
 
   const handleLinkThought = async (thoughtId: string, clusterId: string) => {
     await addThoughtToCluster(clusterId, thoughtId);
-    toast.success(bilingual('Pensée ajoutée au cluster', 'Thought added to cluster'));
+    toast.success(bilingual('Pensée ajoutée au cluster', 'Thought added to cluster', 'Pensamiento añadido al cluster'));
   };
 
   const handleCreateAndLink = async (title: string, thoughtId: string) => {
     const cluster = await createCluster(title);
     if (cluster) {
       await addThoughtToCluster(cluster.id, thoughtId);
-      toast.success(bilingual('Cluster créé et pensée ajoutée', 'Cluster created & thought added'));
+      toast.success(bilingual('Cluster créé et pensée ajoutée', 'Cluster created & thought added', 'Cluster creado y pensamiento añadido'));
     }
   };
 
@@ -114,7 +114,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     for (const id of selectedIds) {
       await addThoughtToCluster(clusterId, id);
     }
-    toast.success(bilingual(`${selectedIds.size} pensées ajoutées`, `${selectedIds.size} thoughts added`));
+    toast.success(bilingual(`${selectedIds.size} pensées ajoutées`, `${selectedIds.size} thoughts added`, `${selectedIds.size} pensamientos añadidos`));
     setSelectedIds(new Set());
   };
 
@@ -124,7 +124,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       for (const id of selectedIds) {
         await addThoughtToCluster(cluster.id, id);
       }
-      toast.success(bilingual(`Cluster créé avec ${selectedIds.size} pensées`, `Cluster created with ${selectedIds.size} thoughts`));
+      toast.success(bilingual(`Cluster créé avec ${selectedIds.size} pensées`, `Cluster created with ${selectedIds.size} thoughts`, `Cluster creado con ${selectedIds.size} pensamientos`));
       setSelectedIds(new Set());
     }
   };
@@ -138,7 +138,8 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       }
       toast.success(bilingual(
         `Cluster "${group.label}" créé avec ${group.thoughts.length} pensées`,
-        `Cluster "${group.label}" created with ${group.thoughts.length} thoughts`
+        `Cluster "${group.label}" created with ${group.thoughts.length} thoughts`,
+        `Cluster "${group.label}" creado con ${group.thoughts.length} pensamientos`
       ));
     }
     setConvertingTheme(null);
@@ -187,7 +188,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     const currentTheme = thought.aiTheme || 'Uncategorized';
     if (currentTheme === targetTheme) return;
     moveThoughtToTheme(thoughtId, targetTheme === 'Uncategorized' ? '' : targetTheme);
-    toast.success(bilingual(`Déplacé vers "${targetTheme}"`, `Moved to "${targetTheme}"`));
+    toast.success(bilingual(`Déplacé vers "${targetTheme}"`, `Moved to "${targetTheme}"`, `Movido a "${targetTheme}"`));
   };
 
   return (
@@ -268,35 +269,35 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
             <Layers className="w-5 h-5 text-primary" />
-            {bilingual('Mes Clusters', 'My Clusters')}
+            {bilingual('Mes Clusters', 'My Clusters', 'Mis Clusters')}
           </h3>
           <Button variant="ghost" size="sm" onClick={() => setShowCreateCluster(s => !s)}>
             {showCreateCluster ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 mr-1" />}
-            {!showCreateCluster && t('Nouveau', 'New').primary}
+            {!showCreateCluster && t('Nouveau', 'New', 'Nuevo').primary}
           </Button>
         </div>
 
         {showCreateCluster && (
           <div className="flex gap-2 mb-3 animate-fade-in-up">
             <Input
-              placeholder={t('Nom du cluster…', 'Cluster name…').primary}
+              placeholder={t('Nom du cluster…', 'Cluster name…', 'Nombre del cluster…').primary}
               value={newClusterTitle}
               onChange={e => setNewClusterTitle(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreateCluster()}
               autoFocus
             />
             <Button onClick={handleCreateCluster} disabled={!newClusterTitle.trim() || creatingCluster} size="sm">
-              {creatingCluster ? '…' : t('Créer', 'Create').primary}
+              {creatingCluster ? '…' : t('Créer', 'Create', 'Crear').primary}
             </Button>
           </div>
         )}
 
         {clustersLoading ? (
-          <p className="text-muted-foreground text-sm animate-gentle-pulse">{t('Chargement…', 'Loading…').primary}</p>
+          <p className="text-muted-foreground text-sm animate-gentle-pulse">{t('Chargement…', 'Loading…', 'Cargando…').primary}</p>
         ) : clusters.length === 0 ? (
           <div className="bg-muted/50 rounded-xl p-4 text-center border border-border">
             <p className="text-muted-foreground text-sm">
-              {t('Pas encore de clusters. Créez-en un pour regrouper vos pensées.', 'No clusters yet. Create one to group your thoughts.').primary}
+              {t('Pas encore de clusters. Créez-en un pour regrouper vos pensées.', 'No clusters yet. Create one to group your thoughts.', 'Aún no hay clusters. Crea uno para agrupar tus pensamientos.').primary}
             </p>
           </div>
         ) : (

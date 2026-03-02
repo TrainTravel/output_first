@@ -43,7 +43,7 @@ export function ClusterPicker({ clusters, onSelect, onCreateAndSelect, trigger, 
         <div className="space-y-1 max-h-48 overflow-y-auto">
           {clusters.length === 0 && !showCreate && (
             <p className="text-xs text-muted-foreground px-2 py-1.5">
-              {t('Aucun cluster', 'No clusters').primary}
+              {t('Aucun cluster', 'No clusters', 'Sin clusters').primary}
             </p>
           )}
           {clusters.map(c => (
@@ -68,7 +68,7 @@ export function ClusterPicker({ clusters, onSelect, onCreateAndSelect, trigger, 
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCreate()}
-                  placeholder={t('Nom…', 'Name…').primary}
+                  placeholder={t('Nom…', 'Name…', 'Nombre…').primary}
                   className="h-7 text-xs"
                   autoFocus
                 />
@@ -82,7 +82,7 @@ export function ClusterPicker({ clusters, onSelect, onCreateAndSelect, trigger, 
                 className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
-                {t('Nouveau cluster', 'New cluster').primary}
+                {t('Nouveau cluster', 'New cluster', 'Nuevo cluster').primary}
               </button>
             )}
           </>

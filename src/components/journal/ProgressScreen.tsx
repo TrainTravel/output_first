@@ -98,7 +98,7 @@ export function ProgressScreen({
           <div className="flex items-center gap-2 mb-3 px-2">
             <BookOpen className="w-4 h-4 text-primary" />
             <p className="text-sm font-medium text-foreground">
-              {t('Journal passé', 'Past entries').primary}
+              {t('Journal passé', 'Past entries', 'Entradas pasadas').primary}
             </p>
           </div>
           <Calendar
@@ -123,7 +123,7 @@ export function ProgressScreen({
             {selectedEntries.length === 0 ? (
               <div className="bg-muted/50 rounded-2xl p-5 text-center border border-border">
                 <p className="text-muted-foreground text-sm">
-                  {t('Aucune entrée ce jour-là', 'No entry on this day').primary}
+                  {t('Aucune entrée ce jour-là', 'No entry on this day', 'Sin entrada ese día').primary}
                 </p>
               </div>
             ) : (

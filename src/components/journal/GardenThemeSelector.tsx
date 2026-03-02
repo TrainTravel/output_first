@@ -61,17 +61,17 @@ export function GardenThemeSelector() {
         className="text-muted-foreground hover:text-foreground"
       >
         <Palette className="w-4 h-4 mr-1" />
-        {t('Thème', 'Theme').primary}
+        {t('Thème', 'Theme', 'Tema').primary}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl">
-              {t('Choisir un jardin', 'Choose a garden').primary}
+              {t('Choisir un jardin', 'Choose a garden', 'Elegir un jardín').primary}
             </DialogTitle>
             <DialogDescription className="text-sm italic">
-              {t('Choisir un jardin', 'Choose a garden').secondary}
+              {t('Choisir un jardin', 'Choose a garden', 'Elegir un jardín').secondary}
             </DialogDescription>
           </DialogHeader>
 
