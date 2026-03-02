@@ -60,8 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!error && data.session) {
           setSession(data.session);
           setUser(data.session.user);
-          // Claim all existing data for this user (single-user migration)
-          claimAllData(data.session.user.id);
+          // Do NOT call claimAllData here — new anonymous users have nothing
+          // to claim. claimAllData is only for returning email-auth users who
+          // previously used the app under a different ID.
         }
         setLoading(false);
       }
