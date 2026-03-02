@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -20,13 +20,19 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   const { t } = useLanguage();
   const [showContinue, setShowContinue] = useState(false);
   const [phase, setPhase] = useState<BreathPhase>('inhale');
+  // Start collapsed so the first inhale visibly expands
+  const [circleExpanded, setCircleExpanded] = useState(false);
+  const rafRef = useRef<number>(0);
 
   // Cycle breathing phases: inhale (4s) → hold (2s) → exhale (6s)
+  // Scale changes are deferred one frame via rAF so the correct transition
+  // property is already applied before the transform target changes.
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
     const cyclePhase = (currentPhase: BreathPhase) => {
       if (currentPhase === 'inhale') {
+        rafRef.current = requestAnimationFrame(() => setCircleExpanded(true));
         timeout = setTimeout(() => {
           setPhase('hold');
           cyclePhase('hold');
@@ -34,6 +40,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
       } else if (currentPhase === 'hold') {
         timeout = setTimeout(() => {
           setPhase('exhale');
+          rafRef.current = requestAnimationFrame(() => setCircleExpanded(false));
           cyclePhase('exhale');
         }, HOLD_MS);
       } else {
@@ -45,7 +52,10 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
     };
 
     cyclePhase('inhale');
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   // Reveal continue button after delay
@@ -81,7 +91,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
               className="absolute w-44 h-44 rounded-full opacity-30"
               style={{
                 background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)',
-                transform: phase === 'exhale' ? 'scale(0.8)' : 'scale(1.3)',
+                transform: circleExpanded ? 'scale(1.3)' : 'scale(0.8)',
                 transition: phase === 'inhale'
                   ? `transform ${INHALE_MS}ms ease-out`
                   : phase === 'hold'
@@ -93,7 +103,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
             <div
               className="w-32 h-32 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center"
               style={{
-                transform: phase === 'exhale' ? 'scale(0.85)' : 'scale(1.25)',
+                transform: circleExpanded ? 'scale(1.25)' : 'scale(0.85)',
                 transition: phase === 'inhale'
                   ? `transform ${INHALE_MS}ms ease-out`
                   : phase === 'hold'
