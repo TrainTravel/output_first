@@ -44,8 +44,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
+
   try {
-    const requestId = req.headers.get("x-request-id") ?? "no-id";
 
     // Allow both authenticated users and anon-key requests (guests)
     const authHeader = req.headers.get("Authorization");
@@ -148,7 +149,7 @@ Please provide a brief, compassionate reflection and one gentle question.`;
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error(`[no-id] Error in reflection function:`, error);
+    console.error(`[${requestId}] Error in reflection function:`, error);
     return new Response(JSON.stringify({
       error: "Reflection service error",
       code: "INTERNAL_ERROR",
