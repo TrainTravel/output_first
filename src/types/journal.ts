@@ -64,6 +64,8 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
       { en: "content", fr: "satisfait(e)", es: "contento/a" },
       { en: "relaxed", fr: "détendu(e)", es: "relajado/a" },
       { en: "settled", fr: "apaisé(e)", es: "calmado/a" },
+      { en: "grounded", fr: "ancré(e)", es: "enraizado/a" },
+      { en: "safe", fr: "en sécurité", es: "seguro/a" },
     ],
   },
   {
@@ -75,6 +77,8 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
       { en: "hesitant", fr: "hésitant(e)", es: "vacilante" },
       { en: "questioning", fr: "interrogatif/ive", es: "cuestionando" },
       { en: "searching", fr: "en quête", es: "buscando" },
+      { en: "conflicted", fr: "partagé(e)", es: "en conflicto" },
+      { en: "lost", fr: "perdu(e)", es: "perdido/a" },
     ],
   },
   {
@@ -86,6 +90,8 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
       { en: "weary", fr: "las/lasse", es: "agotado/a" },
       { en: "drained", fr: "épuisé(e)", es: "sin energía" },
       { en: "low", fr: "abattu(e)", es: "decaído/a" },
+      { en: "sad", fr: "triste", es: "triste" },
+      { en: "numb", fr: "engourdi(e)", es: "entumecido/a" },
     ],
   },
   {
@@ -97,6 +103,34 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
       { en: "curious", fr: "curieux/se", es: "curioso/a" },
       { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a" },
       { en: "present", fr: "présent(e)", es: "presente" },
+      { en: "joyful", fr: "joyeux/se", es: "alegre" },
+      { en: "energized", fr: "dynamisé(e)", es: "con energía" },
+    ],
+  },
+  {
+    category: "Activated",
+    categoryFr: "Activé",
+    categoryEs: "Activado",
+    emotions: [
+      { en: "anxious", fr: "anxieux/se", es: "ansioso/a" },
+      { en: "overwhelmed", fr: "submergé(e)", es: "abrumado/a" },
+      { en: "restless", fr: "agité(e)", es: "inquieto/a" },
+      { en: "frustrated", fr: "frustré(e)", es: "frustrado/a" },
+      { en: "tense", fr: "tendu(e)", es: "tenso/a" },
+      { en: "scattered", fr: "dispersé(e)", es: "disperso/a" },
+    ],
+  },
+  {
+    category: "Connected",
+    categoryFr: "Relié",
+    categoryEs: "Conectado",
+    emotions: [
+      { en: "lonely", fr: "seul(e)", es: "solo/a" },
+      { en: "supported", fr: "soutenu(e)", es: "apoyado/a" },
+      { en: "seen", fr: "vu(e)", es: "visto/a" },
+      { en: "distant", fr: "distant(e)", es: "distante" },
+      { en: "warm", fr: "chaleureux/se", es: "chaleuroso/a" },
+      { en: "irritated", fr: "irrité(e)", es: "irritado/a" },
     ],
   },
 ];
