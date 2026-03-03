@@ -12,7 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    // Allow both authenticated users and anon-key requests (guests)
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -20,7 +19,7 @@ serve(async (req) => {
       });
     }
 
-    const { text, type } = await req.json();
+    const { text, type, vocabularyContext } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -37,6 +36,24 @@ serve(async (req) => {
     let systemPrompt = "";
     
     if (type === "feedback") {
+      // Build vocabulary context section if available
+      let vocabSection = "";
+      if (vocabularyContext) {
+        const { encountered = [], used = [], recentlyLearned = [] } = vocabularyContext;
+        vocabSection = `
+
+VOCABULARY CONTEXT (use this to personalize your suggestions):
+- Words the user has SEEN before: ${encountered.join(", ") || "none yet"}
+- Words the user has ACTIVELY USED: ${used.join(", ") || "none yet"}
+- Words learned in the last 7 days: ${recentlyLearned.join(", ") || "none"}
+
+VOCABULARY BRIDGE INSTRUCTIONS:
+- When suggesting precise emotion alternatives, PREFER words the user has encountered but not yet used (bridging familiar → active)
+- If the user used a word 3+ sessions ago, consider reintroducing it (spaced repetition)
+- Frame suggestions as connections to what they wrote: "You've seen *exaspéré(e)* before. Does that capture it better?"
+- Include a "vocabularyBridge" field in your response with ONE word that connects to their writing`;
+      }
+
       systemPrompt = `You are a warm, supportive companion for someone journaling in French. Your primary role is to help them NAME their emotions more precisely — this builds emotional awareness.
 
 CORE PRINCIPLE: "Naming is the first step to awareness."
@@ -53,6 +70,7 @@ VAGUE → PRECISE EMOTION EXAMPLES:
 - "sad" → melancholic, lonely, grieving, empty
 - "happy" → grateful, relieved, excited, peaceful
 - "tired" → exhausted, depleted, weary, burnt out
+${vocabSection}
 
 Format your response as JSON:
 {
@@ -63,7 +81,8 @@ Format your response as JSON:
       { "fr": "...", "en": "...", "nuance": "brief explanation of when this fits" }
     ]
   },
-  "languageNote": { "original": "...", "improved": "...", "note": { "fr": "...", "en": "..." } } | null
+  "languageNote": { "original": "...", "improved": "...", "note": { "fr": "...", "en": "..." } } | null,
+  "vocabularyBridge": { "word": { "fr": "...", "en": "..." }, "connection": "brief sentence connecting this word to what they wrote", "isRevisit": true/false } | null
 }
 
 RULES:
@@ -72,7 +91,9 @@ RULES:
 - Treat all emotions as valid signals
 - Be brief and warm, not clinical
 - If no vague emotions detected, set emotionalGranularity.detected to null and alternatives to empty array
-- If French is good, set languageNote to null`;
+- If French is good, set languageNote to null
+- If no vocabulary context provided or no good bridge word, set vocabularyBridge to null
+- For vocabularyBridge.isRevisit, set true if the word is one the user has seen before`;
     } else {
       systemPrompt = `You are a supportive French companion. Respond briefly and warmly.`;
     }
