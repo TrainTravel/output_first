@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Heart, Loader2, Sparkles, MessageCircle } from 'lucide-react';
+import { ArrowRight, Heart, Loader2, Sparkles, MessageCircle, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 
 interface EmotionAlternative {
   fr: string;
   en: string;
   nuance: string;
+}
+
+interface VocabularyBridge {
+  word: { fr: string; en: string };
+  connection: string;
+  isRevisit: boolean;
 }
 
 interface FeedbackResponse {
@@ -31,6 +38,7 @@ interface FeedbackResponse {
     word: { fr: string; en: string };
     example: { fr: string; en: string };
   };
+  vocabularyBridge?: VocabularyBridge;
   raw?: string;
   error?: string;
 }
@@ -46,6 +54,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { t, bilingual, isFr } = useLanguage();
+  const { getVocabularyContext } = useEmotionVocab();
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -53,8 +62,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         setIsLoading(true);
         setError(null);
 
+        const vocabularyContext = getVocabularyContext();
+
         const { data, error: fnError } = await supabase.functions.invoke('french-feedback', {
-          body: { text: journalContent, type: 'feedback' },
+          body: { text: journalContent, type: 'feedback', vocabularyContext },
         });
 
         if (fnError) {
@@ -93,7 +104,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
     };
 
     if (journalContent) fetchFeedback();
-  }, [journalContent]);
+  }, [journalContent, getVocabularyContext]);
 
   const acknowledgment = feedback?.acknowledgment || feedback?.encouragement;
   const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected &&
@@ -231,6 +242,38 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                       </p>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Vocabulary Bridge */}
+              {feedback.vocabularyBridge && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-foreground">
+                    <BookOpen className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">
+                      {bilingual('Pont de vocabulaire', 'Vocabulary bridge', 'Puente de vocabulario')}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      feedback.vocabularyBridge.isRevisit 
+                        ? 'bg-accent/20 text-accent-foreground' 
+                        : 'bg-primary/10 text-primary'
+                    }`}>
+                      {feedback.vocabularyBridge.isRevisit
+                        ? (isFr ? 'Déjà vu' : 'Seen before')
+                        : (isFr ? 'Nouveau mot' : 'New word')}
+                    </span>
+                  </div>
+                  <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 space-y-2">
+                    <p className="text-foreground font-medium">
+                      {isFr ? feedback.vocabularyBridge.word.fr : feedback.vocabularyBridge.word.en}
+                      <span className="text-muted-foreground text-sm font-normal ml-2">
+                        ({isFr ? feedback.vocabularyBridge.word.en : feedback.vocabularyBridge.word.fr})
+                      </span>
+                    </p>
+                    <p className="text-muted-foreground text-sm italic">
+                      {feedback.vocabularyBridge.connection}
+                    </p>
+                  </div>
                 </div>
               )}
 
