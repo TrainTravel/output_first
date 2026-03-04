@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, setupJournalMocks } from './helpers/mocks';
+import { setFrenchLanguage, setupJournalMocks, mockFeedback } from './helpers/mocks';
 
 test.describe('Journal flow - happy path', () => {
   test.beforeEach(async ({ page }) => {
@@ -93,6 +93,63 @@ test.describe('Journal flow - happy path', () => {
     await expect(
       page.getByText("Vous êtes venu(e) aujourd'hui")
     ).toBeVisible({ timeout: 5_000 });
+  });
+});
+
+test.describe('Reflection - multi-round conversation history', () => {
+  test('second reflection call includes previousCycles with first round data', async ({ page }) => {
+    await setFrenchLanguage(page);
+    await mockFeedback(page);
+
+    // Capture each reflection request body in order
+    const reflectionBodies: Array<Record<string, unknown>> = [];
+    await page.route('**/functions/v1/reflection', (route) => {
+      const body = route.request().postDataJSON() as Record<string, unknown>;
+      reflectionBodies.push(body);
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          reflection: 'It sounds like a lot is on your mind.',
+          question: 'What comes up when you sit with that feeling?',
+        }),
+      });
+    });
+
+    await page.goto('/');
+
+    // Start → breathe → write
+    await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
+    await page.getByPlaceholder('Écrivez ici...').fill("J'ai du mal à me concentrer.");
+    await page.getByRole('button', { name: 'Continuer' }).click();
+
+    // Feedback → emotions
+    await expect(page.getByText('Un moment de clarté')).toBeVisible({ timeout: 8_000 });
+    await page.getByRole('button', { name: 'Continuer' }).click();
+    await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
+    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
+    await page.getByRole('button', { name: 'Sélectionner' }).click();
+    await page.getByRole('button', { name: 'Continuer' }).click();
+
+    // Round 1 — question appears, user types a response, clicks "explore more"
+    await expect(page.getByText("What comes up when you sit with that feeling?")).toBeVisible({ timeout: 8_000 });
+    await page.getByPlaceholder('Prenez votre temps...').fill("Je pense à toutes mes tâches.");
+    await page.getByRole('button', { name: /Oui, explorer plus/ }).click();
+
+    // Feedback between rounds, then round 2 reflection loads
+    await expect(page.getByText('Un moment de clarté')).toBeVisible({ timeout: 8_000 });
+    await page.getByRole('button', { name: 'Continuer' }).click();
+    await expect(page.getByText("What comes up when you sit with that feeling?")).toBeVisible({ timeout: 8_000 });
+
+    // Round 1 had no previousCycles
+    expect(reflectionBodies[0].previousCycles).toBeUndefined();
+
+    // Round 2 carries round 1's question + user response
+    expect(reflectionBodies).toHaveLength(2);
+    const cycle = (reflectionBodies[1].previousCycles as Array<Record<string, string>>)[0];
+    expect(cycle.reflectionResponse).toBe("Je pense à toutes mes tâches.");
+    expect(cycle.aiQuestion).toBe("What comes up when you sit with that feeling?");
   });
 });
 
