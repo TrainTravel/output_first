@@ -33,8 +33,10 @@ test.describe('Journal flow - happy path', () => {
     await expect(
       page.getByText('Un mot pour ce que vous ressentez')
     ).toBeVisible({ timeout: 5_000 });
-    // Click first available emotion pill (words rotate daily — avoid hardcoding specific words)
+    // Tap pill to open detail drawer, then select the word
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
+    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
+    await page.getByRole('button', { name: 'Sélectionner' }).click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     // 6. ReflectionScreen — loading then question appears
@@ -76,6 +78,8 @@ test.describe('Journal flow - happy path', () => {
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
+    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
+    await page.getByRole('button', { name: 'Sélectionner' }).click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     await expect(

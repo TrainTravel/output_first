@@ -5,12 +5,7 @@ import { ArrowRight, ArrowLeft, Sprout } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { Progress } from '@/components/ui/progress';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { EmotionDetailDrawer } from './EmotionDetailDrawer';
 
 const MAX_EMOTIONS = 3;
 
@@ -21,7 +16,9 @@ interface EmotionsScreenProps {
 
 export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
-  const { t, isFr, isEs } = useLanguage();
+  const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { t, isFr, isEs, lang } = useLanguage();
   const { getSessionWords, markEncountered, markUsed, isFirstEncounter, stats } = useEmotionVocab();
 
   const sessionWords = useMemo(() => getSessionWords(), [getSessionWords]);
@@ -32,7 +29,12 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
     markEncountered(allWords);
   }, [sessionWords, markEncountered]);
 
-  const toggleEmotion = (emotion: EmotionWord) => {
+  const openDrawer = (emotion: EmotionWord) => {
+    setDrawerWord(emotion);
+    setDrawerOpen(true);
+  };
+
+  const handleToggleSelect = (emotion: EmotionWord) => {
     const isSelected = selectedEmotions.some(e => e.en === emotion.en);
     if (isSelected) {
       setSelectedEmotions(selectedEmotions.filter(e => e.en !== emotion.en));
@@ -106,84 +108,65 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
         </div>
 
         {/* Emotion Groups */}
-        <TooltipProvider delayDuration={300}>
-          <div className="flex-1 space-y-6">
-            {sessionWords.map((group) => (
-              <div key={group.category} className="space-y-3">
-                <p className="text-sm text-muted-foreground font-medium tracking-wide">
-                  {isFr ? (
-                    <>{group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span></>
-                  ) : isEs ? (
-                    <>{group.categoryEs} <span className="text-muted-foreground/60">/ {group.category}</span></>
-                  ) : (
-                    <>{group.category} <span className="text-muted-foreground/60">/ {group.categoryFr}</span></>
-                  )}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {group.emotions.map((emotion) => {
-                    const isSelected = selectedEmotions.some(e => e.en === emotion.en);
-                    const isDisabled = !isSelected && selectedEmotions.length >= MAX_EMOTIONS;
-                    const isNew = isFirstEncounter(emotion);
+        <div className="flex-1 space-y-6">
+          {sessionWords.map((group) => (
+            <div key={group.category} className="space-y-3">
+              <p className="text-sm text-muted-foreground font-medium tracking-wide">
+                {isFr ? (
+                  <>{group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span></>
+                ) : isEs ? (
+                  <>{group.categoryEs} <span className="text-muted-foreground/60">/ {group.category}</span></>
+                ) : (
+                  <>{group.category} <span className="text-muted-foreground/60">/ {group.categoryFr}</span></>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {group.emotions.map((emotion) => {
+                  const isSelected = selectedEmotions.some(e => e.en === emotion.en);
+                  const isAtMax = !isSelected && selectedEmotions.length >= MAX_EMOTIONS;
+                  const isNew = isFirstEncounter(emotion);
 
-                    const button = (
-                      <button
-                        key={emotion.en}
-                        onClick={() => toggleEmotion(emotion)}
-                        disabled={isDisabled}
-                        className={`
-                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative
-                          ${isSelected
-                            ? 'bg-primary text-primary-foreground shadow-gentle'
-                            : isDisabled
-                              ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
-                              : 'bg-card border border-border text-foreground hover:bg-muted'
-                          }
-                          ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
-                        `}
-                      >
-                        {isFr ? (
-                          <>
-                            <span className="font-medium">{emotion.fr}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : isEs ? (
-                          <>
-                            <span className="font-medium">{emotion.es}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="font-medium">{emotion.en}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
-                          </>
-                        )}
-                        {isNew && !isSelected && (
-                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-                        )}
-                      </button>
-                    );
-
-                    // Show nuance tooltip for first encounters
-                    if (isNew) {
-                      return (
-                        <Tooltip key={emotion.en}>
-                          <TooltipTrigger asChild>
-                            {button}
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-[200px] text-xs">
-                            {emotion.nuance}
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    }
-
-                    return button;
-                  })}
-                </div>
+                  return (
+                    <button
+                      key={emotion.en}
+                      onClick={() => openDrawer(emotion)}
+                      className={`
+                        px-4 py-2 rounded-full text-sm transition-all duration-200 relative
+                        ${isSelected
+                          ? 'bg-primary text-primary-foreground shadow-gentle'
+                          : isAtMax
+                            ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
+                            : 'bg-card border border-border text-foreground hover:bg-muted'
+                        }
+                        ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
+                      `}
+                    >
+                      {isFr ? (
+                        <>
+                          <span className="font-medium">{emotion.fr}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : isEs ? (
+                        <>
+                          <span className="font-medium">{emotion.es}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium">{emotion.en}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
+                        </>
+                      )}
+                      {isNew && !isSelected && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        </TooltipProvider>
+            </div>
+          ))}
+        </div>
 
         {/* Actions */}
         <div className="mt-8 space-y-3">
@@ -205,6 +188,16 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
           </Button>
         </div>
       </div>
+
+      <EmotionDetailDrawer
+        word={drawerWord}
+        isOpen={drawerOpen}
+        isSelected={drawerWord ? selectedEmotions.some(e => e.en === drawerWord.en) : false}
+        atMax={selectedEmotions.length >= MAX_EMOTIONS}
+        onClose={() => setDrawerOpen(false)}
+        onToggleSelect={handleToggleSelect}
+        language={lang}
+      />
     </div>
   );
 }
