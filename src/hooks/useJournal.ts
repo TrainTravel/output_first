@@ -110,11 +110,13 @@ export function useJournal() {
     setCurrentStep('reflection');
   };
 
-  const continueFromReflection = (reflectionResponse?: string, moveToGratitude?: boolean) => {
+  const continueFromReflection = (reflectionResponse?: string, moveToGratitude?: boolean, aiQuestion?: string, aiReflection?: string) => {
     // Save this cycle's data
     const cycleData: ReflectionCycle = {
       emotion: currentEntry.emotion,
       emotionFr: currentEntry.emotionFr,
+      aiReflection,
+      aiQuestion,
       reflectionResponse,
     };
     
@@ -217,6 +219,7 @@ export function useJournal() {
     streak,
     totalDays,
     currentCycle,
+    reflectionCycles,
     canMoveToGratitude,
     getDailyPrompt,
     getGratitudePrompt,

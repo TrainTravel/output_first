@@ -53,7 +53,7 @@ serve(async (req) => {
       });
     }
 
-    const { journalContent, emotions } = await req.json();
+    const { journalContent, emotions, previousCycles } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -69,11 +69,26 @@ serve(async (req) => {
 
     console.log("Generating reflection for emotions:", emotions);
 
-    const userMessage = `Journal entry: "${journalContent}"
-    
-Emotions they chose: ${emotions || "none selected"}
+    let userMessage = `Journal entry: "${journalContent}"
 
-Please provide a brief, compassionate reflection and one gentle question.`;
+Emotions they chose: ${emotions || "none selected"}`;
+
+    if (previousCycles && previousCycles.length > 0) {
+      userMessage += `\n\nConversation so far:`;
+      for (const cycle of previousCycles) {
+        if (cycle.aiQuestion) {
+          userMessage += `\n- You asked: "${cycle.aiQuestion}"`;
+        }
+        if (cycle.reflectionResponse) {
+          userMessage += `\n  They replied: "${cycle.reflectionResponse}"`;
+        } else {
+          userMessage += `\n  They chose not to respond.`;
+        }
+      }
+      userMessage += `\n\nNow respond to their most recent reply, building naturally on what they've shared. Don't repeat observations from earlier rounds.`;
+    } else {
+      userMessage += `\n\nPlease provide a brief, compassionate reflection and one gentle question.`;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowRight, ArrowLeft, Loader2, Heart } from 'lucide-react';
-import { MAX_CYCLES } from '@/types/journal';
+import { MAX_CYCLES, ReflectionCycle } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,7 +12,8 @@ interface ReflectionScreenProps {
   emotionsFr?: string;
   currentCycle: number;
   canMoveToGratitude: boolean;
-  onContinue: (reflectionResponse?: string, moveToGratitude?: boolean) => void;
+  reflectionCycles: ReflectionCycle[];
+  onContinue: (reflectionResponse?: string, moveToGratitude?: boolean, aiQuestion?: string, aiReflection?: string) => void;
   onBack: () => void;
 }
 
@@ -27,6 +28,7 @@ export function ReflectionScreen({
   emotionsFr,
   currentCycle,
   canMoveToGratitude,
+  reflectionCycles,
   onContinue,
   onBack
 }: ReflectionScreenProps) {
@@ -65,7 +67,8 @@ export function ReflectionScreen({
           headers,
           body: JSON.stringify({
             journalContent,
-            emotions: emotionsFr || emotions || 'none selected'
+            emotions: emotionsFr || emotions || 'none selected',
+            previousCycles: reflectionCycles.length > 0 ? reflectionCycles : undefined,
           }),
         }
       );
@@ -97,8 +100,8 @@ export function ReflectionScreen({
     }
   };
 
-  const handleContinueExploring = () => onContinue(response.trim() || undefined, false);
-  const handleMoveToGratitude = () => onContinue(response.trim() || undefined, true);
+  const handleContinueExploring = () => onContinue(response.trim() || undefined, false, reflectionData?.question, reflectionData?.reflection);
+  const handleMoveToGratitude = () => onContinue(response.trim() || undefined, true, reflectionData?.question, reflectionData?.reflection);
   const handleSkip = () => onContinue(undefined, true);
 
   const isLastCycle = currentCycle >= MAX_CYCLES - 1;
