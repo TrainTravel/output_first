@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Lovable vs Claude Code
+
+When planning any new feature, assess which tool fits first:
+
+**Suggest Lovable when the task is primarily:**
+- A new screen or page built from scratch
+- Layout, spacing, or visual component structure
+- UI iteration that benefits from seeing it in the browser immediately
+
+**Use Claude Code directly when the task is:**
+- Bug fixes, logic errors, or state management
+- Tests (unit or E2E)
+- Multi-file wiring or data flow
+- Cleanup or hardening of Lovable-generated code
+- Edge function / backend logic
+
+**Default workflow:** Lovable to scaffold → Claude Code to harden, test, and fix.
+Avoid both tools editing the same file in the same session without review.
+
 ## Build & Development Commands
 
 ```bash
