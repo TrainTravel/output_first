@@ -35,8 +35,6 @@ test.describe('Journal flow - happy path', () => {
     ).toBeVisible({ timeout: 5_000 });
     // Tap pill to open detail drawer, then select the word
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
-    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
-    await page.getByRole('button', { name: 'Sélectionner' }).click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     // 6. ReflectionScreen — loading then question appears
@@ -78,8 +76,6 @@ test.describe('Journal flow - happy path', () => {
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
-    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
-    await page.getByRole('button', { name: 'Sélectionner' }).click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     await expect(
@@ -128,8 +124,6 @@ test.describe('Reflection - multi-round conversation history', () => {
     await expect(page.getByText('Un moment de clarté')).toBeVisible({ timeout: 8_000 });
     await page.getByRole('button', { name: 'Continuer' }).click();
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
-    await expect(page.getByRole('button', { name: 'Sélectionner' })).toBeVisible({ timeout: 3_000 });
-    await page.getByRole('button', { name: 'Sélectionner' }).click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
     // Round 1 — question appears, user types a response, clicks "explore more"
