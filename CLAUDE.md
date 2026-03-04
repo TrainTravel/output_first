@@ -279,6 +279,10 @@ Branch naming: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/` prefix matching t
 - **Privacy First:** If selling "Cognitive Insights," the data must be processed securely and never sold to third parties.
 - **Transparency:** Clearly distinguish between "Core Utility" (Free) and "Premium Experience" (Paid).
 
+## Backlog / Future Ideas
+
+- **Free journaling mode** — unstructured entry point for users who've outgrown the guided flow. "Graduate mode": no breathe screen, no prompts, optional AI. Build only when real users with 20+ entries are asking for less structure. Start in Lovable (new screen) then harden here.
+
 ## Important Notes
 
 - Playwright E2E test suite in `e2e/` (25 tests, run with `npm run test:e2e`)
