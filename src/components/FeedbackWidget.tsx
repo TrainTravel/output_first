@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useUserId } from '@/hooks/useUserId';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const EMOJI_RATINGS = ['😞', '😐', '🙂', '😊', '🤩'];
@@ -36,7 +36,7 @@ export function FeedbackWidget() {
   const [isSending, setIsSending] = useState(false);
   const [sent, setSent] = useState(false);
   const { t, isFr } = useLanguage();
-  const userId = useUserId();
+  const { user } = useAuth();
 
   const reset = () => {
     setRating(null);
@@ -52,7 +52,7 @@ export function FeedbackWidget() {
     setIsSending(true);
 
     const { error } = await supabase.from('feedback' as any).insert({
-      user_anonymous_id: userId,
+      user_anonymous_id: user?.id,
       rating,
       comment: comment.trim().slice(0, 2000),
       would_pay: wouldPay || 'no',
