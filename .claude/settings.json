@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "export PATH=\"/usr/local/opt/node@22/bin:$PATH\" && npm test 2>&1 | tail -20",
+            "onFailure": "warn"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "export PATH=\"/usr/local/opt/node@22/bin:$PATH\" && npm test 2>&1 | tail -5",
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  }
+}
