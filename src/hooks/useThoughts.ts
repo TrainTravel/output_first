@@ -72,6 +72,8 @@ export function useThoughts() {
       body: { thoughtId: data.id, content: data.content },
     }).then(({ error: embedErr }) => {
       if (embedErr) console.warn('Embedding generation failed:', embedErr);
+    }).catch((err) => {
+      console.warn('Embedding invocation failed:', err);
     });
 
     return thought;

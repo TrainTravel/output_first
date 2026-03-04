@@ -84,6 +84,51 @@ Uses `LOVABLE_API_KEY` for AI integration via Lovable's AI gateway.
 
 `@` maps to `./src` (configured in vite.config.ts and tsconfig.json)
 
+## Coding Standards
+
+### Option Pattern — Model Absence Explicitly
+
+**Rule:** Use `fp-ts` `Option<T>` to represent values that may or may not exist, rather than `T | null | undefined`. This makes absence visible in the type system and forces callers to handle both cases.
+
+```typescript
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
+
+// ✅ Prefer — absence is explicit in the type
+const displayName = pipe(
+  O.fromNullable(localStorage.getItem('user')),
+  O.map(raw => JSON.parse(raw).email),
+  O.getOrElse(() => 'Anonymous'),
+);
+
+// ❌ Avoid — null leaks silently through the call chain
+const raw = localStorage.getItem('user'); // string | null
+const name = raw ? JSON.parse(raw).email : 'Anonymous'; // easy to forget
+```
+
+**Core fp-ts utilities to know:**
+- `O.some(value)` / `O.none` — construct an Option
+- `O.fromNullable(x)` — wrap any `T | null | undefined` into `Option<T>`
+- `O.map(f)` — transform the inner value if present
+- `O.flatMap(f)` — chain operations that also return Option
+- `O.getOrElse(() => default)` — extract with a fallback
+- `O.isSome(o)` / `O.isNone(o)` — type-safe guards
+- `pipe(value, O.fromNullable, O.map(...), O.getOrElse(...))` — compose safely
+
+**When to apply:**
+- `localStorage.getItem()` — always returns `string | null`
+- Supabase query results (`.data` rows, `.single()` responses)
+- Optional component props or config values
+- Any function that may legitimately return nothing
+
+**Use `Either<E, A>` for operations that can fail with a typed error** (not just absent):
+```typescript
+import * as E from 'fp-ts/Either';
+// E.right(value) = success, E.left(error) = failure
+```
+
+---
+
 ## ADHD-Friendly UX Principles
 
 This app is designed for neurodivergent users. Follow these principles when adding features:

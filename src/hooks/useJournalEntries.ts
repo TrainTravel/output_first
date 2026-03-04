@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserId } from './useUserId';
 import { useEffect, useRef } from 'react';
@@ -41,11 +43,11 @@ export function useJournalEntries(skip = false) {
   useEffect(() => {
     if (migrationRan.current) return;
     if (isLoading) return;
-    const alreadyMigrated = localStorage.getItem(MIGRATED_KEY);
-    if (alreadyMigrated) return;
+    if (O.isSome(O.fromNullable(localStorage.getItem(MIGRATED_KEY)))) return;
 
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
+    const storedOpt = pipe(O.fromNullable(localStorage.getItem(STORAGE_KEY)));
+
+    if (O.isNone(storedOpt)) {
       localStorage.setItem(MIGRATED_KEY, 'true');
       return;
     }
@@ -53,7 +55,7 @@ export function useJournalEntries(skip = false) {
     migrationRan.current = true;
 
     try {
-      const parsed = JSON.parse(stored) as Array<{
+      const parsed = JSON.parse(storedOpt.value) as Array<{
         id: string;
         date: string;
         content: string;
@@ -80,7 +82,7 @@ export function useJournalEntries(skip = false) {
       const rows = toMigrate.map(e => ({
         user_id: userId,
         date: e.date,
-        content: e.content || '',
+        content: e.content ?? '',
         emotion: e.emotion || null,
         emotion_fr: e.emotionFr || null,
         gratitude: e.gratitude || null,
@@ -95,6 +97,9 @@ export function useJournalEntries(skip = false) {
           console.error('Migration failed:', error);
           migrationRan.current = false;
         }
+      }).catch((err) => {
+        console.error('Unexpected migration error:', err);
+        migrationRan.current = false;
       });
     } catch (e) {
       console.error('Failed to parse localStorage entries for migration:', e);
