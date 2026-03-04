@@ -35,6 +35,7 @@ export function JournalApp() {
     streak,
     totalDays,
     currentCycle,
+    reflectionCycles,
     canMoveToGratitude,
     getDailyPrompt,
     getGratitudePrompt,
@@ -123,6 +124,7 @@ export function JournalApp() {
           emotionsFr={currentEntry.emotionFr}
           currentCycle={currentCycle}
           canMoveToGratitude={canMoveToGratitude}
+          reflectionCycles={reflectionCycles}
           onContinue={continueFromReflection}
           onBack={() => saveEmotion(currentEntry.emotion, currentEntry.emotionFr)}
         />

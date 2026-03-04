@@ -1,6 +1,8 @@
 export interface ReflectionCycle {
   emotion?: string;
   emotionFr?: string;
+  aiReflection?: string;
+  aiQuestion?: string;
   reflectionResponse?: string;
 }
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { EmotionWord } from '@/types/journal';
-import { ArrowRight, ArrowLeft, Sprout } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sprout, Info } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { Progress } from '@/components/ui/progress';
@@ -127,40 +127,51 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
                   const isNew = isFirstEncounter(emotion);
 
                   return (
-                    <button
-                      key={emotion.en}
-                      onClick={() => openDrawer(emotion)}
-                      className={`
-                        px-4 py-2 rounded-full text-sm transition-all duration-200 relative
-                        ${isSelected
-                          ? 'bg-primary text-primary-foreground shadow-gentle'
-                          : isAtMax
-                            ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
-                            : 'bg-card border border-border text-foreground hover:bg-muted'
-                        }
-                        ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
-                      `}
-                    >
-                      {isFr ? (
-                        <>
-                          <span className="font-medium">{emotion.fr}</span>
-                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                        </>
-                      ) : isEs ? (
-                        <>
-                          <span className="font-medium">{emotion.es}</span>
-                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="font-medium">{emotion.en}</span>
-                          <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
-                        </>
-                      )}
-                      {isNew && !isSelected && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-                      )}
-                    </button>
+                    <div key={emotion.en} className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleToggleSelect(emotion)}
+                        disabled={isAtMax}
+                        className={`
+                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative
+                          ${isSelected
+                            ? 'bg-primary text-primary-foreground shadow-gentle'
+                            : isAtMax
+                              ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
+                              : 'bg-card border border-border text-foreground hover:bg-muted'
+                          }
+                          ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
+                        `}
+                      >
+                        {isFr ? (
+                          <>
+                            <span className="font-medium">{emotion.fr}</span>
+                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                          </>
+                        ) : isEs ? (
+                          <>
+                            <span className="font-medium">{emotion.es}</span>
+                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="font-medium">{emotion.en}</span>
+                            <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
+                          </>
+                        )}
+                        {isNew && !isSelected && (
+                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => openDrawer(emotion)}
+                        aria-label={`Learn more about ${emotion.en}`}
+                        className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors flex-shrink-0
+                          ${isNew && !isSelected ? 'text-primary' : 'text-muted-foreground/40 hover:text-muted-foreground'}
+                        `}
+                      >
+                        <Info className="w-3 h-3" />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
