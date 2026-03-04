@@ -1,4 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
 import { EMOTION_SUGGESTIONS, EmotionWord, EmotionSuggestion } from '@/types/journal';
 
 const STORAGE_KEY = 'outputfirst_emotion_vocab';
@@ -12,11 +14,14 @@ interface VocabState {
 }
 
 function loadState(): VocabState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return { encountered: [], used: {}, lastSeen: {} };
+  return pipe(
+    O.fromNullable(localStorage.getItem(STORAGE_KEY)),
+    O.flatMap(raw => {
+      try { return O.some(JSON.parse(raw) as VocabState); }
+      catch { return O.none; }
+    }),
+    O.getOrElse((): VocabState => ({ encountered: [], used: {}, lastSeen: {} })),
+  );
 }
 
 function saveState(state: VocabState) {

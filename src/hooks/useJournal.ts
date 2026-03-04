@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
 import { useQueryClient } from '@tanstack/react-query';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,18 +20,18 @@ export function useJournal() {
 
   // Load entries from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setEntries(parsed.map((e: JournalEntry) => ({
-          ...e,
-          createdAt: new Date(e.createdAt),
-        })));
-      } catch (e) {
-        console.error('Failed to load entries:', e);
-      }
-    }
+    pipe(
+      O.fromNullable(localStorage.getItem(STORAGE_KEY)),
+      O.flatMap(stored => {
+        try { return O.some(JSON.parse(stored) as JournalEntry[]); }
+        catch (e) { console.error('Failed to load entries:', e); return O.none; }
+      }),
+      O.map(parsed => parsed.map((e: JournalEntry) => ({
+        ...e,
+        createdAt: new Date(e.createdAt),
+      }))),
+      O.map(setEntries),
+    );
   }, []);
 
   // Save entries to localStorage
@@ -39,7 +41,7 @@ export function useJournal() {
     }
   }, [entries]);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')?.[0] ?? '';
   const todayEntry = entries.find(e => e.date === today);
   const hasJournaledToday = !!todayEntry;
 
@@ -52,7 +54,7 @@ export function useJournal() {
     const checkDate = new Date();
     
     for (const dateStr of sortedDates) {
-      const checkDateStr = checkDate.toISOString().split('T')[0];
+      const checkDateStr = checkDate.toISOString().split('T')?.[0] ?? '';
       
       if (dateStr === checkDateStr) {
         streak++;
