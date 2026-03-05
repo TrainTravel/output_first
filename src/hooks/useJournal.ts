@@ -134,7 +134,9 @@ export function useJournal() {
   };
 
   const continuePastFeedback = () => {
-    setCurrentStep('emotions');
+    // After the initial write feedback → emotions.
+    // Between reflection rounds (currentCycle > 0) → back to reflection.
+    setCurrentStep(currentCycle > 0 ? 'reflection' : 'emotions');
   };
 
   const saveEmotion = (emotion?: string, emotionFr?: string) => {
@@ -283,6 +285,7 @@ export function useJournal() {
     openClusters: () => setCurrentStep('clusters'),
     openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
     openZenGarden: () => setCurrentStep('zengarden'),
+    openSmallWins: () => setCurrentStep('smallwins'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,

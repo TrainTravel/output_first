@@ -279,9 +279,41 @@ Branch naming: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/` prefix matching t
 - **Privacy First:** If selling "Cognitive Insights," the data must be processed securely and never sold to third parties.
 - **Transparency:** Clearly distinguish between "Core Utility" (Free) and "Premium Experience" (Paid).
 
+## Self-Improvement
+
+After every correction or mistake, update this CLAUDE.md with a rule to prevent repeating it.
+
+End corrections with: "Now update CLAUDE.md so you don't make that mistake again."
+
+Keep iterating until the mistake rate measurably drops.
+
+## Working with Plan Mode
+
+- Start every complex task in plan mode (shift+tab to cycle)
+- Pour energy into the plan so Claude can 1-shot the implementation
+- When something goes sideways, switch back to plan mode and re-plan. Don't keep pushing.
+- **Verification section is mandatory in every plan** — must include: type check, new unit tests for all new logic, new E2E tests for new user flows, and regression check. "Existing tests still pass" alone is not sufficient.
+
+## Parallel Work
+
+- For tasks that need more compute, use subagents to work in parallel
+- Offload individual tasks to subagents to keep the main context window clean and focused
+- When working in parallel, only one agent should edit a given file at a time
+- For fully parallel workstreams, use git worktrees:
+  `git worktree add .claude/worktrees/<name> origin/main`
+
+## Things Claude Should NOT Do
+
+- Don't use `any` type in TypeScript without explicit approval
+- Don't skip error handling
+- Don't commit without running tests first
+- Don't make breaking API changes without discussion
+- **Don't ship a feature without writing tests for its new logic** — new step transitions, derived state, and user flows all need unit and/or E2E coverage in the same PR
+
 ## Backlog / Future Ideas
 
-- **Free journaling mode** — unstructured entry point for users who've outgrown the guided flow. "Graduate mode": no breathe screen, no prompts, optional AI. Build only when real users with 20+ entries are asking for less structure. Start in Lovable (new screen) then harden here.
+- ~~**Free journaling mode**~~ — shipped in `feat/prompts-freewrite-badges` (PR #16). Optional AI and "graduate mode" polish still possible.
+- **Voice input (Whisper)** — infra committed (edge fn + hook + button), UI not wired. Requires `supabase secrets set OPENAI_API_KEY` + `supabase functions deploy speech-to-text` before activation.
 
 ## Important Notes
 
