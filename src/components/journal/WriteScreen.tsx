@@ -9,10 +9,11 @@ interface WriteScreenProps {
   prompt: BilingualPrompt;
   onSave: (content: string) => void;
   onBack: () => void;
+  initialContent?: string;
 }
 
-export function WriteScreen({ prompt, onSave, onBack }: WriteScreenProps) {
-  const [content, setContent] = useState('');
+export function WriteScreen({ prompt, onSave, onBack, initialContent }: WriteScreenProps) {
+  const [content, setContent] = useState(initialContent ?? '');
   const { t } = useLanguage();
 
   const handleSubmit = () => {

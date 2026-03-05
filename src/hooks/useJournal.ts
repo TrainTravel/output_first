@@ -2,11 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 import { useQueryClient } from '@tanstack/react-query';
-import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES } from '@/types/journal';
+import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 
 const STORAGE_KEY = 'outputfirst_entries';
+
+const countWords = (text: string): number =>
+  text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
 
 export function useJournal() {
   const queryClient = useQueryClient();
@@ -18,6 +21,7 @@ export function useJournal() {
   const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
   const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
   const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
+  const [promptTemplate, setPromptTemplate] = useState('');
 
   // Load entries from localStorage
   useEffect(() => {
@@ -70,6 +74,9 @@ export function useJournal() {
 
   const streak = calculateStreak();
   const totalDays = new Set(entries.map(e => e.date)).size;
+  const totalWords = entries.reduce((sum, e) =>
+    sum + countWords(e.content || '') + countWords(e.gratitude || ''), 0);
+  const earnedBadges: Badge[] = BADGES.filter(b => totalWords >= b.threshold);
 
   // Get random prompt - returns BilingualPrompt
   const getDailyPrompt = (): BilingualPrompt => {
@@ -84,13 +91,37 @@ export function useJournal() {
 
   const startJournal = () => {
     setCurrentEntry({ date: today });
+    setPromptTemplate('');
     setCurrentStep('breathe');
     setCurrentCycle(0);
     setReflectionCycles([]);
   };
 
   const finishBreathe = () => {
-    setCurrentStep('write');
+    setCurrentStep('promptchoice');
+  };
+
+  const chooseDirect = () => setCurrentStep('write');
+  const openPromptLibrary = () => setCurrentStep('promptlibrary');
+  const pickPrompt = (template: string) => { setPromptTemplate(template); setCurrentStep('write'); };
+
+  const startFreeWrite = () => {
+    setCurrentEntry({ date: today });
+    setPromptTemplate('');
+    setCurrentStep('freewrite');
+  };
+
+  const saveFreeContent = (content: string) => {
+    const newEntry: JournalEntry = {
+      id: crypto.randomUUID(),
+      date: today,
+      content,
+      wordCount: countWords(content),
+      createdAt: new Date(),
+    };
+    setEntries(prev => [...prev, newEntry]);
+    persistToDb(newEntry);
+    setCurrentStep('complete');
   };
 
   const saveContent = (content: string) => {
@@ -103,7 +134,9 @@ export function useJournal() {
   };
 
   const continuePastFeedback = () => {
-    setCurrentStep('emotions');
+    // After the initial write feedback → emotions.
+    // Between reflection rounds (currentCycle > 0) → back to reflection.
+    setCurrentStep(currentCycle > 0 ? 'reflection' : 'emotions');
   };
 
   const saveEmotion = (emotion?: string, emotionFr?: string) => {
@@ -166,6 +199,7 @@ export function useJournal() {
       emotion: currentEntry.emotion,
       emotionFr: currentEntry.emotionFr,
       gratitude: gratitude,
+      wordCount: countWords(currentEntry.content || '') + countWords(gratitude || ''),
       createdAt: new Date(),
     };
 
@@ -219,6 +253,9 @@ export function useJournal() {
     hasJournaledToday,
     streak,
     totalDays,
+    totalWords,
+    earnedBadges,
+    promptTemplate,
     currentCycle,
     reflectionCycles,
     canMoveToGratitude,
@@ -226,6 +263,11 @@ export function useJournal() {
     getGratitudePrompt,
     startJournal,
     finishBreathe,
+    chooseDirect,
+    openPromptLibrary,
+    pickPrompt,
+    startFreeWrite,
+    saveFreeContent,
     saveContent,
     skipFeedback,
     continuePastFeedback,
@@ -243,6 +285,7 @@ export function useJournal() {
     openClusters: () => setCurrentStep('clusters'),
     openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
     openZenGarden: () => setCurrentStep('zengarden'),
+    openSmallWins: () => setCurrentStep('smallwins'),
     openSandTimer: () => setCurrentStep('sandtimer'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
