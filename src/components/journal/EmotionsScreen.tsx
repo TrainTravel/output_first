@@ -19,6 +19,7 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showHint, setShowHint] = useState(() => !localStorage.getItem('emotion_drawer_used'));
   const { t, isFr, isEs, lang } = useLanguage();
   const { getSessionWords, markEncountered, markUsed, isFirstEncounter, stats } = useEmotionVocab();
 
@@ -36,6 +37,10 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
   const openDrawer = (emotion: EmotionWord) => {
     setDrawerWord(emotion);
     setDrawerOpen(true);
+    if (showHint) {
+      setShowHint(false);
+      localStorage.setItem('emotion_drawer_used', '1');
+    }
   };
 
   const clearTimer = useCallback(() => {
@@ -110,6 +115,11 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
           </p>
+          {showHint && (
+            <p className="text-xs text-muted-foreground/70 animate-fade-in-up">
+              {t('Appui long pour explorer un mot', 'Long-press a word to explore it', 'Mantén pulsado para explorar una palabra').primary}
+            </p>
+          )}
         </div>
 
         {/* Vocabulary Growth Badge */}
