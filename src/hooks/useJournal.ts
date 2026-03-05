@@ -286,6 +286,7 @@ export function useJournal() {
     openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
     openZenGarden: () => setCurrentStep('zengarden'),
     openSmallWins: () => setCurrentStep('smallwins'),
+    openSandTimer: () => setCurrentStep('sandtimer'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,
