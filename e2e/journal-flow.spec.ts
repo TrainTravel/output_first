@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, setupJournalMocks, mockFeedback } from './helpers/mocks';
+import { setFrenchLanguage, setupJournalMocks, mockFeedback, injectMockSession, mockAuthRoutes } from './helpers/mocks';
 
 test.describe('Journal flow - happy path', () => {
   test.beforeEach(async ({ page }) => {
     await setFrenchLanguage(page);
+    await injectMockSession(page);
+    await mockAuthRoutes(page);
     await setupJournalMocks(page);
     await page.goto('/');
   });
@@ -18,6 +20,10 @@ test.describe('Journal flow - happy path', () => {
       page.getByRole('button', { name: 'Je suis prêt(e)' })
     ).toBeVisible({ timeout: 12_000 });
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
+
+    // 2b. PromptChoiceScreen — choose direct write
+    await expect(page.getByText("Je sais ce que j'écris")).toBeVisible({ timeout: 5_000 });
+    await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
 
     // 3. WriteScreen — type and continue
     const textarea = page.getByPlaceholder('Écrivez ici...');
@@ -67,6 +73,7 @@ test.describe('Journal flow - happy path', () => {
 
     // Wait for breathe button (up to 12s)
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
+    await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
 
     const textarea = page.getByPlaceholder('Écrivez ici...');
     await textarea.fill('Un texte quelconque.');
@@ -95,6 +102,8 @@ test.describe('Journal flow - happy path', () => {
 test.describe('Reflection - multi-round conversation history', () => {
   test('second reflection call includes previousCycles with first round data', async ({ page }) => {
     await setFrenchLanguage(page);
+    await injectMockSession(page);
+    await mockAuthRoutes(page);
     await mockFeedback(page);
 
     // Capture each reflection request body in order
@@ -117,6 +126,7 @@ test.describe('Reflection - multi-round conversation history', () => {
     // Start → breathe → write
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
+    await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
     await page.getByPlaceholder('Écrivez ici...').fill("J'ai du mal à me concentrer.");
     await page.getByRole('button', { name: 'Continuer' }).click();
 
@@ -172,7 +182,11 @@ test.describe('BreatheScreen - clock control', () => {
     await expect(readyBtn).toBeEnabled();
     await readyBtn.click();
 
-    // Should advance to WriteScreen
+    // Should advance to PromptChoiceScreen
+    await expect(page.getByText("Je sais ce que j'écris")).toBeVisible({ timeout: 5_000 });
+    await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
+
+    // Then WriteScreen
     await expect(page.getByPlaceholder('Écrivez ici...')).toBeVisible({ timeout: 5_000 });
   });
 });

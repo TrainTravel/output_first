@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { EmotionWord } from '@/types/journal';
-import { ArrowRight, ArrowLeft, Sprout, Info } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sprout } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { Progress } from '@/components/ui/progress';
@@ -12,12 +12,14 @@ const MAX_EMOTIONS = 3;
 interface EmotionsScreenProps {
   onSave: (emotion?: string, emotionFr?: string) => void;
   onBack: () => void;
+  onOpenVocabulary?: () => void;
 }
 
-export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
+export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScreenProps) {
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showHint, setShowHint] = useState(() => !localStorage.getItem('emotion_drawer_used'));
   const { t, isFr, isEs, lang } = useLanguage();
   const { getSessionWords, markEncountered, markUsed, isFirstEncounter, stats } = useEmotionVocab();
 
@@ -29,10 +31,36 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
     markEncountered(allWords);
   }, [sessionWords, markEncountered]);
 
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const didLongPress = useRef(false);
+
   const openDrawer = (emotion: EmotionWord) => {
     setDrawerWord(emotion);
     setDrawerOpen(true);
+    if (showHint) {
+      setShowHint(false);
+      localStorage.setItem('emotion_drawer_used', '1');
+    }
   };
+
+  const clearTimer = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handlePointerDown = useCallback((emotion: EmotionWord) => {
+    didLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      didLongPress.current = true;
+      openDrawer(emotion);
+    }, 400);
+  }, []);
+
+  const handlePointerUpOrLeave = useCallback(() => {
+    clearTimer();
+  }, [clearTimer]);
 
   const handleToggleSelect = (emotion: EmotionWord) => {
     const isSelected = selectedEmotions.some(e => e.en === emotion.en);
@@ -87,6 +115,11 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
           </p>
+          {showHint && (
+            <p className="text-xs text-muted-foreground/70 animate-fade-in-up">
+              {t('Appui long pour explorer un mot', 'Long-press a word to explore it', 'Mantén pulsado para explorar una palabra').primary}
+            </p>
+          )}
         </div>
 
         {/* Vocabulary Growth Badge */}
@@ -126,58 +159,65 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
                   const isAtMax = !isSelected && selectedEmotions.length >= MAX_EMOTIONS;
                   const isNew = isFirstEncounter(emotion);
 
-                  return (
-                    <div key={emotion.en} className="flex items-center gap-1">
-                      <button
-                        onClick={() => handleToggleSelect(emotion)}
-                        disabled={isAtMax}
-                        className={`
-                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative
-                          ${isSelected
-                            ? 'bg-primary text-primary-foreground shadow-gentle'
-                            : isAtMax
-                              ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
-                              : 'bg-card border border-border text-foreground hover:bg-muted'
-                          }
-                          ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
-                        `}
-                      >
-                        {isFr ? (
-                          <>
-                            <span className="font-medium">{emotion.fr}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : isEs ? (
-                          <>
-                            <span className="font-medium">{emotion.es}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="font-medium">{emotion.en}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
-                          </>
-                        )}
-                        {isNew && !isSelected && (
-                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => openDrawer(emotion)}
-                        aria-label={`Learn more about ${emotion.en}`}
-                        className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors flex-shrink-0
-                          ${isNew && !isSelected ? 'text-primary' : 'text-muted-foreground/40 hover:text-muted-foreground'}
-                        `}
-                      >
-                        <Info className="w-3 h-3" />
-                      </button>
-                    </div>
+                    return (
+                    <button
+                      key={emotion.en}
+                      onClick={() => {
+                        if (!didLongPress.current) handleToggleSelect(emotion);
+                      }}
+                      onPointerDown={() => handlePointerDown(emotion)}
+                      onPointerUp={handlePointerUpOrLeave}
+                      onPointerLeave={handlePointerUpOrLeave}
+                      onContextMenu={(e) => e.preventDefault()}
+                      disabled={isAtMax}
+                      className={`
+                        px-4 py-2 rounded-full text-sm transition-all duration-200 relative select-none touch-none
+                        ${isSelected
+                          ? 'bg-primary text-primary-foreground shadow-gentle'
+                          : isAtMax
+                            ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
+                            : 'bg-card border border-border text-foreground hover:bg-muted'
+                        }
+                        ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
+                      `}
+                    >
+                      {isFr ? (
+                        <>
+                          <span className="font-medium">{emotion.fr}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : isEs ? (
+                        <>
+                          <span className="font-medium">{emotion.es}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium">{emotion.en}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
+                        </>
+                      )}
+                      {isNew && !isSelected && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                      )}
+                    </button>
                   );
                 })}
               </div>
             </div>
           ))}
         </div>
+
+        {/* Explore all words link */}
+        {onOpenVocabulary && (
+          <button
+            onClick={onOpenVocabulary}
+            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+          >
+            <Sprout className="w-3.5 h-3.5" />
+            {t('Explorer les 48 mots', 'Explore all 48 words', 'Explorar las 48 palabras').primary} →
+          </button>
+        )}
 
         {/* Actions */}
         <div className="mt-8 space-y-3">

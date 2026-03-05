@@ -39,24 +39,13 @@ test.describe('Navigation', () => {
     ).toBeVisible({ timeout: 5_000 });
   });
 
-  test('Home → Clusters → back to Home', async ({ page }) => {
-    await page.getByRole('button', { name: /Mes Clusters/i }).click();
-    await expect(
-      page.getByText(/Mes Clusters/i)
-    ).toBeVisible({ timeout: 5_000 });
-
-    await page.getByRole('button', { name: /Retour|Back/i }).click();
-    await expect(
-      page.getByRole('button', { name: "Écrire aujourd'hui" })
-    ).toBeVisible({ timeout: 5_000 });
-  });
-
-  test('Home → Progress → shows "Vos progrès" → back to Home', async ({ page }) => {
-    await page.getByRole('button', { name: 'Voir vos progrès' }).click();
-    // Check for the streak stats section — always visible on ProgressScreen
+  test('Home → Progress (via progress card) → back to Home', async ({ page }) => {
+    // The progress card is a <button> containing streak/days stats — click it
+    await page.getByText(/Série|Streak|Racha/i).click();
+    // ProgressScreen shows streak stat
     await expect(page.getByText(/jours de suite/i)).toBeVisible({ timeout: 5_000 });
 
-    await page.getByRole('button', { name: /Retour|Back/i }).click();
+    await page.getByRole('button', { name: /Retour à l'accueil|Return home|Volver al inicio/i }).click();
     await expect(
       page.getByRole('button', { name: "Écrire aujourd'hui" })
     ).toBeVisible({ timeout: 5_000 });

@@ -53,6 +53,126 @@ describe('useJournal — date string safety', () => {
   });
 });
 
+describe('useJournal — prompt flow steps', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('finishBreathe goes to promptchoice', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.finishBreathe());
+    expect(result.current.currentStep).toBe('promptchoice');
+  });
+
+  it('chooseDirect goes to write', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.finishBreathe());
+    act(() => result.current.chooseDirect());
+    expect(result.current.currentStep).toBe('write');
+  });
+
+  it('openPromptLibrary goes to promptlibrary', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.finishBreathe());
+    act(() => result.current.openPromptLibrary());
+    expect(result.current.currentStep).toBe('promptlibrary');
+  });
+
+  it('pickPrompt sets template and goes to write', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.finishBreathe());
+    act(() => result.current.openPromptLibrary());
+    act(() => result.current.pickPrompt('Today I feel ___ because ___.'));
+    expect(result.current.promptTemplate).toBe('Today I feel ___ because ___.');
+    expect(result.current.currentStep).toBe('write');
+  });
+
+  it('startJournal clears promptTemplate from previous session', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.finishBreathe());
+    act(() => result.current.pickPrompt('Some template'));
+    act(() => result.current.startJournal());
+    expect(result.current.promptTemplate).toBe('');
+  });
+});
+
+describe('useJournal — free write flow', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('startFreeWrite goes to freewrite', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startFreeWrite());
+    expect(result.current.currentStep).toBe('freewrite');
+  });
+
+  it('saveFreeContent saves entry and goes to complete', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startFreeWrite());
+    act(() => result.current.saveFreeContent('This is a free write entry.'));
+    expect(result.current.currentStep).toBe('complete');
+  });
+
+  it('saveFreeContent entry has correct wordCount', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startFreeWrite());
+    act(() => result.current.saveFreeContent('one two three four five'));
+    expect(result.current.totalWords).toBe(5);
+  });
+});
+
+describe('useJournal — totalWords and earnedBadges', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('totalWords is 0 with no entries', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    expect(result.current.totalWords).toBe(0);
+  });
+
+  it('totalWords sums content and gratitude across entries', () => {
+    const entry = {
+      id: 'seed-1',
+      date: '2026-03-01',
+      content: 'word1 word2 word3',
+      gratitude: 'word4 word5',
+      createdAt: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([entry]));
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    expect(result.current.totalWords).toBe(5);
+  });
+
+  it('earnedBadges is empty below 50 words', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startFreeWrite());
+    act(() => result.current.saveFreeContent('only three words'));
+    expect(result.current.earnedBadges).toHaveLength(0);
+  });
+
+  it('earns seedling badge at exactly 50 words', () => {
+    const content = Array(50).fill('word').join(' ');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      { id: 'e1', date: '2026-03-01', content, createdAt: new Date().toISOString() },
+    ]));
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    expect(result.current.earnedBadges.some(b => b.id === 'seedling')).toBe(true);
+    expect(result.current.earnedBadges.some(b => b.id === 'writer')).toBe(false);
+  });
+
+  it('earns seedling and writer at 200 words, not voice', () => {
+    const content = Array(200).fill('word').join(' ');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      { id: 'e1', date: '2026-03-01', content, createdAt: new Date().toISOString() },
+    ]));
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    expect(result.current.earnedBadges.some(b => b.id === 'seedling')).toBe(true);
+    expect(result.current.earnedBadges.some(b => b.id === 'writer')).toBe(true);
+    expect(result.current.earnedBadges.some(b => b.id === 'voice')).toBe(false);
+  });
+});
+
 describe('useJournal — reflection cycle accumulation', () => {
   beforeEach(() => localStorage.clear());
 

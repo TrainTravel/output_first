@@ -14,11 +14,20 @@ import { ThoughtGardenScreen } from './ThoughtGardenScreen';
 import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
 import { ZenGardenScreen } from './zen/ZenGardenScreen';
+import { VocabularyScreen } from './VocabularyScreen';
+import { PromptChoiceScreen } from './PromptChoiceScreen';
+import { PromptLibraryScreen } from './PromptLibraryScreen';
+import { FreeWriteScreen } from './FreeWriteScreen';
+import { SmallWinsScreen } from './SmallWinsScreen';
+import { SandTimerScreen } from './SandTimerScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
   breathe: 'journal-step-breathe',
+  promptchoice: 'journal-step-write',
+  promptlibrary: 'journal-step-write',
   write: 'journal-step-write',
+  freewrite: 'journal-step-write',
   feedback: 'journal-step-feedback',
   emotions: 'journal-step-emotions',
   reflection: 'journal-step-reflection',
@@ -34,6 +43,9 @@ export function JournalApp() {
     hasJournaledToday,
     streak,
     totalDays,
+    totalWords,
+    earnedBadges,
+    promptTemplate,
     currentCycle,
     reflectionCycles,
     canMoveToGratitude,
@@ -41,6 +53,11 @@ export function JournalApp() {
     getGratitudePrompt,
     startJournal,
     finishBreathe,
+    chooseDirect,
+    openPromptLibrary,
+    pickPrompt,
+    startFreeWrite,
+    saveFreeContent,
     saveContent,
     skipFeedback,
     continuePastFeedback,
@@ -56,7 +73,11 @@ export function JournalApp() {
     openClusters,
     openClusterDetail,
     activeClusterId,
+    openSmallWins,
     openZenGarden,
+    openSandTimer,
+    openVocabulary,
+    vocabOrigin,
     openChatWithContext,
     chatContext,
   } = useJournal();
@@ -78,12 +99,18 @@ export function JournalApp() {
           hasJournaledToday={hasJournaledToday}
           streak={streak}
           totalDays={totalDays}
+          totalWords={totalWords}
+          earnedBadges={earnedBadges}
           onStartJournal={startJournal}
+          onStartFreeWrite={startFreeWrite}
           onViewProgress={viewProgress}
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
+          onOpenSmallWins={openSmallWins}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
+          onOpenSandTimer={openSandTimer}
+          onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
 
@@ -94,10 +121,33 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'promptchoice' && (
+        <PromptChoiceScreen
+          onChooseDirect={chooseDirect}
+          onOpenLibrary={openPromptLibrary}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'promptlibrary' && (
+        <PromptLibraryScreen
+          onPickPrompt={pickPrompt}
+          onBack={() => chooseDirect()}
+        />
+      )}
+
       {currentStep === 'write' && (
         <WriteScreen
           prompt={getDailyPrompt()}
+          initialContent={promptTemplate}
           onSave={saveContent}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'freewrite' && (
+        <FreeWriteScreen
+          onSave={saveFreeContent}
           onBack={goHome}
         />
       )}
@@ -114,6 +164,7 @@ export function JournalApp() {
         <EmotionsScreen
           onSave={saveEmotion}
           onBack={() => startJournal()}
+          onOpenVocabulary={() => openVocabulary('emotions')}
         />
       )}
 
@@ -143,14 +194,21 @@ export function JournalApp() {
         <ProgressScreen
           streak={streak}
           totalDays={totalDays}
+          totalWords={totalWords}
+          earnedBadges={earnedBadges}
           hasJournaledToday={hasJournaledToday}
           onGoHome={goHome}
           onStartJournal={startJournal}
+          onOpenVocabulary={openVocabulary}
         />
       )}
 
       {currentStep === 'chat' && (
         <ChatScreen onBack={goHome} context={chatContext} />
+      )}
+
+      {currentStep === 'smallwins' && (
+        <SmallWinsScreen onBack={goHome} />
       )}
 
       {currentStep === 'braindump' && (
@@ -171,6 +229,18 @@ export function JournalApp() {
 
       {currentStep === 'zengarden' && (
         <ZenGardenScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'sandtimer' && (
+        <SandTimerScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'vocabulary' && (
+        <VocabularyScreen onBack={() => {
+          if (vocabOrigin === 'emotions') saveEmotion(currentEntry.emotion, currentEntry.emotionFr);
+          else if (vocabOrigin === 'complete') viewProgress();
+          else goHome();
+        }} />
       )}
     </div>
   );

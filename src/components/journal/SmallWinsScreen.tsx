@@ -1,47 +1,47 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Zap } from 'lucide-react';
-import { useThoughts, Thought } from '@/hooks/useThoughts';
+import { ArrowLeft, Trophy } from 'lucide-react';
+import { useSmallWins, SmallWin } from '@/hooks/useSmallWins';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-interface BrainDumpScreenProps {
+interface SmallWinsScreenProps {
   onBack: () => void;
 }
 
 const PLACEHOLDERS_EN = [
-  "What's on your mind?",
-  "Any idea, big or small…",
-  "A fleeting thought…",
-  "Something you want to remember…",
-  "No pressure, just dump it…",
+  'Finished a task…',
+  'Replied to that message…',
+  'Got out of bed today…',
+  'Did the thing…',
+  'Showed up…',
 ];
 
 const PLACEHOLDERS_FR = [
-  "Qu'avez-vous en tête ?",
-  "Une idée, grande ou petite…",
-  "Une pensée passagère…",
-  "Quelque chose à retenir…",
-  "Sans pression, videz votre esprit…",
+  'Terminé une tâche…',
+  'Répondu à ce message…',
+  'Levé du lit aujourd\'hui…',
+  'Fait la chose difficile…',
+  'Montré présent(e)…',
 ];
 
 const PLACEHOLDERS_ES = [
-  "¿Qué tienes en mente?",
-  "Cualquier idea, grande o pequeña…",
-  "Un pensamiento fugaz…",
-  "Algo que quieras recordar…",
-  "Sin presión, solo suéltalo…",
+  'Terminé una tarea…',
+  'Respondí ese mensaje…',
+  'Me levanté hoy…',
+  'Hice lo que debía…',
+  'Me presenté…',
 ];
 
-export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
+export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
   const { isFr, isEs, bilingual, t } = useLanguage();
-  const { addThought, thoughts } = useThoughts();
+  const { addWin, winsToday } = useSmallWins();
   const [input, setInput] = useState('');
-  const [recentlyAdded, setRecentlyAdded] = useState<Thought[]>([]);
+  const [recentlyAdded, setRecentlyAdded] = useState<SmallWin[]>([]);
+  const [celebratingId, setCelebratingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Rotate placeholders
   useEffect(() => {
     const interval = setInterval(() => {
       setPlaceholderIdx(prev => prev + 1);
@@ -49,7 +49,6 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-focus
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -57,27 +56,24 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
   const placeholders = isFr ? PLACEHOLDERS_FR : isEs ? PLACEHOLDERS_ES : PLACEHOLDERS_EN;
   const currentPlaceholder = placeholders[placeholderIdx % placeholders.length];
 
-  const submitThought = async (text: string) => {
+  const submitWin = (text: string) => {
     if (!text || saving) return;
     setSaving(true);
-    const thought = await addThought(text);
+    const win = addWin(text);
     setSaving(false);
-    if (thought) {
-      setRecentlyAdded(prev => [thought, ...prev].slice(0, 5));
-      setInput('');
-      inputRef.current?.focus();
-    }
+    setRecentlyAdded(prev => [win, ...prev].slice(0, 5));
+    setCelebratingId(win.id);
+    setTimeout(() => setCelebratingId(null), 700);
+    setInput('');
+    inputRef.current?.focus();
   };
-
-  const handleSubmit = async () => submitThought(input.trim());
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      submitWin(input.trim());
     }
   };
-
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-8">
@@ -88,21 +84,23 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
           {t('Retour', 'Back', 'Volver').primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          <Zap className="w-4 h-4" />
-          <span>{thoughts.length} {t('pensées', 'thoughts', 'pensamientos').primary}</span>
+          <Trophy className="w-4 h-4" />
+          <span>
+            {winsToday.length} {t('victoire(s) aujourd\'hui', 'win(s) today', 'logro(s) hoy').primary}
+          </span>
         </div>
       </div>
 
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
+          {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
-            'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.',
-            'One thought at a time. Press Enter to save.',
-            'Un pensamiento a la vez. Presiona Enter para guardar.'
+            'Même les choses déjà faites comptent.',
+            'Even things you already did count.',
+            'Incluso lo que ya hiciste cuenta.'
           ).primary}
         </p>
 
@@ -117,7 +115,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
             className="w-full bg-card border border-border rounded-xl px-5 py-4 text-foreground text-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring/50 placeholder:text-muted-foreground/50 transition-all"
           />
           <Button
-            onClick={handleSubmit}
+            onClick={() => submitWin(input.trim())}
             disabled={!input.trim() || saving}
             size="sm"
             className="absolute bottom-3 right-3"
@@ -126,16 +124,19 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
           </Button>
         </div>
 
-        {/* Recently added thoughts - subtle confirmation */}
+        {/* Recently added wins */}
         {recentlyAdded.length > 0 && (
           <div className="w-full mt-8 space-y-2">
-            {recentlyAdded.map((thought, i) => (
+            {recentlyAdded.map((win, i) => (
               <div
-                key={thought.id}
-                className="animate-fade-in-up text-sm text-muted-foreground bg-muted/50 rounded-lg px-4 py-3 transition-opacity"
+                key={win.id}
+                className={`animate-fade-in-up text-sm text-muted-foreground bg-muted/50 rounded-lg px-4 py-3 flex items-center gap-2 transition-opacity ${
+                  celebratingId === win.id ? 'animate-celebrate' : ''
+                }`}
                 style={{ opacity: 1 - i * 0.2 }}
               >
-                {thought.content}
+                <Trophy className="w-3 h-3 text-primary shrink-0" />
+                {win.text}
               </div>
             ))}
           </div>

@@ -2,29 +2,37 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Progress } from '@/components/ui/progress';
-import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, Sprout } from 'lucide-react';
+import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, Sprout, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useJournalEntries, JournalEntryRow } from '@/hooks/useJournalEntries';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { format } from 'date-fns';
 import { fr as frLocale, enUS } from 'date-fns/locale';
 
+import { BADGES, Badge } from '@/types/journal';
+
 interface ProgressScreenProps {
   streak: number;
   totalDays: number;
+  totalWords: number;
+  earnedBadges: Badge[];
   hasJournaledToday: boolean;
   onGoHome: () => void;
   onStartJournal: () => void;
+  onOpenVocabulary?: () => void;
 }
 
 export function ProgressScreen({
   streak,
   totalDays,
+  totalWords,
+  earnedBadges,
   hasJournaledToday,
   onGoHome,
   onStartJournal,
+  onOpenVocabulary,
 }: ProgressScreenProps) {
-  const { t, bilingual, isFr, isEs } = useLanguage();
+  const { t, bilingual, isFr, isEs, lang } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const { entries, isLoading } = useJournalEntries();
@@ -99,12 +107,15 @@ export function ProgressScreen({
 
         {/* Emotion Vocabulary Growth */}
         {stats.totalEncountered > 0 && (
-          <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-3">
+          <button
+            onClick={onOpenVocabulary}
+            className="w-full text-left bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-3 hover:border-primary/30 transition-colors"
+          >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                 <Sprout className="w-4 h-4 text-primary" />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">
                   {isFr ? 'Vocabulaire émotionnel' : isEs ? 'Vocabulario emocional' : 'Emotion vocabulary'}
                 </p>
@@ -112,6 +123,7 @@ export function ProgressScreen({
                   {isFr ? 'Your emotional vocabulary is growing' : isEs ? 'Tu vocabulario emocional crece' : 'Votre vocabulaire émotionnel grandit'}
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </div>
             <div className="flex items-center gap-3">
               <Progress value={vocabPercent} className="h-2 flex-1" />
@@ -128,8 +140,49 @@ export function ProgressScreen({
                     : `${stats.totalUsed} words used in your writing`}
               </p>
             )}
-          </div>
+          </button>
         )}
+
+        {/* Badge shelf */}
+        <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-4">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              {t('Badges', 'Badges', 'Insignias').primary}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {totalWords} {t('mots écrits au total', 'words written in total', 'palabras escritas en total').primary}
+            </p>
+          </div>
+          <div className="flex gap-4 flex-wrap">
+            {BADGES.map(badge => {
+              const earned = earnedBadges.some(b => b.id === badge.id);
+              return (
+                <div
+                  key={badge.id}
+                  className={`flex flex-col items-center gap-1 transition-opacity ${earned ? 'opacity-100' : 'opacity-25'}`}
+                  title={`${badge[lang]} — ${badge.threshold} ${isFr ? 'mots' : isEs ? 'palabras' : 'words'}`}
+                >
+                  <span className="text-2xl">{badge.icon}</span>
+                  <span className="text-xs text-muted-foreground text-center leading-tight">{badge[lang]}</span>
+                  <span className="text-xs text-muted-foreground/50">{badge.threshold}</span>
+                </div>
+              );
+            })}
+          </div>
+          {(() => {
+            const next = BADGES.find(b => totalWords < b.threshold);
+            if (!next) return (
+              <p className="text-xs text-primary">
+                {t('Tous les badges obtenus !', 'All badges earned!', '¡Todas las insignias obtenidas!').primary}
+              </p>
+            );
+            return (
+              <p className="text-xs text-muted-foreground">
+                {next.icon} {next[lang]} — {next.threshold - totalWords} {t('mots restants', 'words to go', 'palabras restantes').primary}
+              </p>
+            );
+          })()}
+        </div>
 
         {/* Calendar */}
         <div className="bg-card rounded-2xl p-4 shadow-gentle border border-border">

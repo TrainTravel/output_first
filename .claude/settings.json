@@ -6,6 +6,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "export PATH=\"/usr/local/opt/node@22/bin:$PATH\" && npx tsc --noEmit 2>&1",
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
             "command": "export PATH=\"/usr/local/opt/node@22/bin:$PATH\" && npm test 2>&1 | tail -20",
             "onFailure": "warn"
           }

@@ -144,6 +144,10 @@
   .animate-breathe {
     animation: breathe 4s ease-in-out infinite;
   }
+
+  .animate-celebrate {
+    animation: celebrate 0.6s ease-out forwards;
+  }
 }
 
 @keyframes fadeIn {
@@ -193,6 +197,13 @@
   50% {
     transform: scale(1.02);
   }
+}
+
+@keyframes celebrate {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.03); }
+  70% { transform: scale(0.98); }
+  100% { transform: scale(1); }
 }
 
 @keyframes breatheCircle {
@@ -434,4 +445,54 @@
   --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.32);
   --soft-glow: 0 0 40px hsl(215 32% 58% / 0.2);
   --paper-texture: linear-gradient(135deg, hsl(215 18% 9%) 0%, hsl(215 15% 11%) 100%);
+}
+
+/* Solar — Warm amber & burnt sienna */
+.theme-solar {
+  --background: 38 35% 96%;
+  --foreground: 28 20% 20%;
+  --card: 38 28% 92%;
+  --card-foreground: 28 20% 20%;
+  --popover: 38 35% 96%;
+  --popover-foreground: 28 20% 20%;
+  --primary: 32 65% 50%;
+  --primary-foreground: 38 35% 96%;
+  --primary-muted: 38 40% 85%;
+  --accent: 12 55% 52%;
+  --accent-foreground: 38 35% 96%;
+  --accent-muted: 12 35% 88%;
+  --secondary: 38 18% 90%;
+  --secondary-foreground: 28 20% 20%;
+  --muted: 38 14% 87%;
+  --muted-foreground: 28 12% 48%;
+  --border: 38 18% 83%;
+  --input: 38 22% 91%;
+  --ring: 32 65% 50%;
+  --gentle-shadow: 0 4px 20px -4px hsl(28 20% 20% / 0.08);
+  --soft-glow: 0 0 40px hsl(32 65% 50% / 0.18);
+  --paper-texture: linear-gradient(135deg, hsl(38 35% 96%) 0%, hsl(38 28% 92%) 100%);
+}
+.dark.theme-solar {
+  --background: 28 18% 9%;
+  --foreground: 38 20% 86%;
+  --card: 28 15% 13%;
+  --card-foreground: 38 20% 86%;
+  --popover: 28 18% 9%;
+  --popover-foreground: 38 20% 86%;
+  --primary: 32 70% 55%;
+  --primary-foreground: 28 18% 9%;
+  --primary-muted: 32 25% 22%;
+  --accent: 12 50% 48%;
+  --accent-foreground: 28 18% 9%;
+  --accent-muted: 12 18% 18%;
+  --secondary: 28 12% 17%;
+  --secondary-foreground: 38 20% 86%;
+  --muted: 28 10% 19%;
+  --muted-foreground: 28 8% 55%;
+  --border: 28 10% 21%;
+  --input: 28 12% 17%;
+  --ring: 32 70% 55%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.32);
+  --soft-glow: 0 0 40px hsl(32 70% 55% / 0.22);
+  --paper-texture: linear-gradient(135deg, hsl(28 18% 9%) 0%, hsl(28 15% 11%) 100%);
 }
