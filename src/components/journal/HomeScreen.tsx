@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,12 +17,13 @@ interface HomeScreenProps {
   onViewProgress: () => void;
   onOpenChat: () => void;
   onOpenBrainDump: () => void;
+  onOpenSmallWins: () => void;
   onOpenThoughtGarden: () => void;
   onOpenZenGarden: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenZenGarden, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
@@ -151,6 +152,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
             {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
+          </Button>
+
+          <Button variant="outline" size="full" onClick={onOpenSmallWins}>
+            <Trophy className="w-5 h-5 mr-2" />
+            {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
           </Button>
 
           <Button variant="outline" size="full" onClick={onOpenThoughtGarden}>

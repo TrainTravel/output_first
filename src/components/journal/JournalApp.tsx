@@ -18,6 +18,7 @@ import { VocabularyScreen } from './VocabularyScreen';
 import { PromptChoiceScreen } from './PromptChoiceScreen';
 import { PromptLibraryScreen } from './PromptLibraryScreen';
 import { FreeWriteScreen } from './FreeWriteScreen';
+import { SmallWinsScreen } from './SmallWinsScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -71,6 +72,7 @@ export function JournalApp() {
     openClusters,
     openClusterDetail,
     activeClusterId,
+    openSmallWins,
     openZenGarden,
     openVocabulary,
     vocabOrigin,
@@ -102,6 +104,7 @@ export function JournalApp() {
           onViewProgress={viewProgress}
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
+          onOpenSmallWins={openSmallWins}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
           onOpenVocabulary={() => openVocabulary('home')}
@@ -199,6 +202,10 @@ export function JournalApp() {
 
       {currentStep === 'chat' && (
         <ChatScreen onBack={goHome} context={chatContext} />
+      )}
+
+      {currentStep === 'smallwins' && (
+        <SmallWinsScreen onBack={goHome} />
       )}
 
       {currentStep === 'braindump' && (
