@@ -59,6 +59,7 @@ export function JournalApp() {
     activeClusterId,
     openZenGarden,
     openVocabulary,
+    vocabOrigin,
     openChatWithContext,
     chatContext,
   } = useJournal();
@@ -86,6 +87,7 @@ export function JournalApp() {
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
+          onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
 
@@ -116,6 +118,7 @@ export function JournalApp() {
         <EmotionsScreen
           onSave={saveEmotion}
           onBack={() => startJournal()}
+          onOpenVocabulary={() => openVocabulary('emotions')}
         />
       )}
 
@@ -177,7 +180,11 @@ export function JournalApp() {
       )}
 
       {currentStep === 'vocabulary' && (
-        <VocabularyScreen onBack={goHome} />
+        <VocabularyScreen onBack={() => {
+          if (vocabOrigin === 'emotions') saveEmotion(currentEntry.emotion, currentEntry.emotionFr);
+          else if (vocabOrigin === 'complete') viewProgress();
+          else goHome();
+        }} />
       )}
     </div>
   );

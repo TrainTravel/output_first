@@ -12,9 +12,10 @@ const MAX_EMOTIONS = 3;
 interface EmotionsScreenProps {
   onSave: (emotion?: string, emotionFr?: string) => void;
   onBack: () => void;
+  onOpenVocabulary?: () => void;
 }
 
-export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
+export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScreenProps) {
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -178,6 +179,17 @@ export function EmotionsScreen({ onSave, onBack }: EmotionsScreenProps) {
             </div>
           ))}
         </div>
+
+        {/* Explore all words link */}
+        {onOpenVocabulary && (
+          <button
+            onClick={onOpenVocabulary}
+            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+          >
+            <Sprout className="w-3.5 h-3.5" />
+            {t('Explorer les 48 mots', 'Explore all 48 words', 'Explorar las 48 palabras').primary} →
+          </button>
+        )}
 
         {/* Actions */}
         <div className="mt-8 space-y-3">
