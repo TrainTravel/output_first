@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain } from 'lucide-react';
+
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,9 +16,10 @@ interface HomeScreenProps {
   onOpenBrainDump: () => void;
   onOpenThoughtGarden: () => void;
   onOpenZenGarden: () => void;
+  onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenZenGarden }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenZenGarden, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
@@ -137,6 +139,24 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
             <Mountain className="w-5 h-5 mr-2" />
             {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
           </Button>
+
+          {/* Vocabulary Progress Card */}
+          <button
+            onClick={onOpenVocabulary}
+            className="w-full rounded-xl border border-border bg-card text-card-foreground p-3 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer text-left flex items-center gap-3"
+          >
+            <div className="rounded-full bg-primary/10 p-2">
+              <Sprout className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground font-medium">
+                {t('Vocabulaire émotionnel', 'Emotion vocabulary', 'Vocabulario emocional').primary}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t('Explorer vos mots', 'Explore your words', 'Explora tus palabras').primary} →
+              </p>
+            </div>
+          </button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
             {t('Une ou deux phrases suffisent.', 'One or two sentences is enough.', 'Una o dos frases bastan.').primary}

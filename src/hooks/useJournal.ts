@@ -17,6 +17,7 @@ export function useJournal() {
   const [reflectionCycles, setReflectionCycles] = useState<ReflectionCycle[]>([]);
   const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
   const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
+  const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
 
   // Load entries from localStorage
   useEffect(() => {
@@ -242,7 +243,8 @@ export function useJournal() {
     openClusters: () => setCurrentStep('clusters'),
     openClusterDetail: (id: string) => { setActiveClusterId(id); setCurrentStep('clusterdetail'); },
     openZenGarden: () => setCurrentStep('zengarden'),
-    openVocabulary: () => setCurrentStep('vocabulary'),
+    openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
+    vocabOrigin,
     activeClusterId,
   };
 }
