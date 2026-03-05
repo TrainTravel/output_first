@@ -57,20 +57,19 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
   const placeholders = isFr ? PLACEHOLDERS_FR : isEs ? PLACEHOLDERS_ES : PLACEHOLDERS_EN;
   const currentPlaceholder = placeholders[placeholderIdx % placeholders.length];
 
-  const handleSubmit = async () => {
-    const trimmed = input.trim();
-    if (!trimmed || saving) return;
-
+  const submitThought = async (text: string) => {
+    if (!text || saving) return;
     setSaving(true);
-    const thought = await addThought(trimmed);
+    const thought = await addThought(text);
     setSaving(false);
-
     if (thought) {
       setRecentlyAdded(prev => [thought, ...prev].slice(0, 5));
       setInput('');
       inputRef.current?.focus();
     }
   };
+
+  const handleSubmit = async () => submitThought(input.trim());
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

@@ -15,11 +15,17 @@ import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
 import { ZenGardenScreen } from './zen/ZenGardenScreen';
 import { VocabularyScreen } from './VocabularyScreen';
+import { PromptChoiceScreen } from './PromptChoiceScreen';
+import { PromptLibraryScreen } from './PromptLibraryScreen';
+import { FreeWriteScreen } from './FreeWriteScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
   breathe: 'journal-step-breathe',
+  promptchoice: 'journal-step-write',
+  promptlibrary: 'journal-step-write',
   write: 'journal-step-write',
+  freewrite: 'journal-step-write',
   feedback: 'journal-step-feedback',
   emotions: 'journal-step-emotions',
   reflection: 'journal-step-reflection',
@@ -35,6 +41,9 @@ export function JournalApp() {
     hasJournaledToday,
     streak,
     totalDays,
+    totalWords,
+    earnedBadges,
+    promptTemplate,
     currentCycle,
     reflectionCycles,
     canMoveToGratitude,
@@ -42,6 +51,11 @@ export function JournalApp() {
     getGratitudePrompt,
     startJournal,
     finishBreathe,
+    chooseDirect,
+    openPromptLibrary,
+    pickPrompt,
+    startFreeWrite,
+    saveFreeContent,
     saveContent,
     skipFeedback,
     continuePastFeedback,
@@ -81,7 +95,10 @@ export function JournalApp() {
           hasJournaledToday={hasJournaledToday}
           streak={streak}
           totalDays={totalDays}
+          totalWords={totalWords}
+          earnedBadges={earnedBadges}
           onStartJournal={startJournal}
+          onStartFreeWrite={startFreeWrite}
           onViewProgress={viewProgress}
           onOpenChat={openChat}
           onOpenBrainDump={openBrainDump}
@@ -98,10 +115,33 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'promptchoice' && (
+        <PromptChoiceScreen
+          onChooseDirect={chooseDirect}
+          onOpenLibrary={openPromptLibrary}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'promptlibrary' && (
+        <PromptLibraryScreen
+          onPickPrompt={pickPrompt}
+          onBack={() => chooseDirect()}
+        />
+      )}
+
       {currentStep === 'write' && (
         <WriteScreen
           prompt={getDailyPrompt()}
+          initialContent={promptTemplate}
           onSave={saveContent}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'freewrite' && (
+        <FreeWriteScreen
+          onSave={saveFreeContent}
           onBack={goHome}
         />
       )}
@@ -148,6 +188,8 @@ export function JournalApp() {
         <ProgressScreen
           streak={streak}
           totalDays={totalDays}
+          totalWords={totalWords}
+          earnedBadges={earnedBadges}
           hasJournaledToday={hasJournaledToday}
           onGoHome={goHome}
           onStartJournal={startJournal}

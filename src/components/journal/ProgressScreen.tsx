@@ -9,9 +9,13 @@ import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { format } from 'date-fns';
 import { fr as frLocale, enUS } from 'date-fns/locale';
 
+import { BADGES, Badge } from '@/types/journal';
+
 interface ProgressScreenProps {
   streak: number;
   totalDays: number;
+  totalWords: number;
+  earnedBadges: Badge[];
   hasJournaledToday: boolean;
   onGoHome: () => void;
   onStartJournal: () => void;
@@ -21,12 +25,14 @@ interface ProgressScreenProps {
 export function ProgressScreen({
   streak,
   totalDays,
+  totalWords,
+  earnedBadges,
   hasJournaledToday,
   onGoHome,
   onStartJournal,
   onOpenVocabulary,
 }: ProgressScreenProps) {
-  const { t, bilingual, isFr, isEs } = useLanguage();
+  const { t, bilingual, isFr, isEs, lang } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const { entries, isLoading } = useJournalEntries();
@@ -136,6 +142,47 @@ export function ProgressScreen({
             )}
           </button>
         )}
+
+        {/* Badge shelf */}
+        <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-4">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              {t('Badges', 'Badges', 'Insignias').primary}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {totalWords} {t('mots écrits au total', 'words written in total', 'palabras escritas en total').primary}
+            </p>
+          </div>
+          <div className="flex gap-4 flex-wrap">
+            {BADGES.map(badge => {
+              const earned = earnedBadges.some(b => b.id === badge.id);
+              return (
+                <div
+                  key={badge.id}
+                  className={`flex flex-col items-center gap-1 transition-opacity ${earned ? 'opacity-100' : 'opacity-25'}`}
+                  title={`${badge[lang]} — ${badge.threshold} ${isFr ? 'mots' : isEs ? 'palabras' : 'words'}`}
+                >
+                  <span className="text-2xl">{badge.icon}</span>
+                  <span className="text-xs text-muted-foreground text-center leading-tight">{badge[lang]}</span>
+                  <span className="text-xs text-muted-foreground/50">{badge.threshold}</span>
+                </div>
+              );
+            })}
+          </div>
+          {(() => {
+            const next = BADGES.find(b => totalWords < b.threshold);
+            if (!next) return (
+              <p className="text-xs text-primary">
+                {t('Tous les badges obtenus !', 'All badges earned!', '¡Todas las insignias obtenidas!').primary}
+              </p>
+            );
+            return (
+              <p className="text-xs text-muted-foreground">
+                {next.icon} {next[lang]} — {next.threshold - totalWords} {t('mots restants', 'words to go', 'palabras restantes').primary}
+              </p>
+            );
+          })()}
+        </div>
 
         {/* Calendar */}
         <div className="bg-card rounded-2xl p-4 shadow-gentle border border-border">

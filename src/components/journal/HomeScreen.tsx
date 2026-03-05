@@ -1,16 +1,19 @@
 import { Button } from '@/components/ui/button';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain } from 'lucide-react';
-
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
+import { Badge } from '@/types/journal';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
   streak: number;
   totalDays: number;
+  totalWords: number;
+  earnedBadges: Badge[];
   onStartJournal: () => void;
+  onStartFreeWrite: () => void;
   onViewProgress: () => void;
   onOpenChat: () => void;
   onOpenBrainDump: () => void;
@@ -19,8 +22,8 @@ interface HomeScreenProps {
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJournal, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenZenGarden, onOpenVocabulary }: HomeScreenProps) {
-  const { bilingual, t, isFr, isEs } = useLanguage();
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenThoughtGarden, onOpenZenGarden, onOpenVocabulary }: HomeScreenProps) {
+  const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
   const primaryLocale = isFr ? 'fr-FR' : isEs ? 'es-ES' : 'en-US';
@@ -105,6 +108,22 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
                 </div>
               </div>
             </div>
+            {/* Words + badge row */}
+            <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
+              <span className="text-xl">
+                {earnedBadges.length > 0 ? earnedBadges[earnedBadges.length - 1].icon : '✍️'}
+              </span>
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {totalWords} {t('mots écrits', 'words written', 'palabras escritas').primary}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {earnedBadges.length > 0
+                    ? earnedBadges[earnedBadges.length - 1][lang]
+                    : t('Commencez à écrire !', 'Start writing!', '¡Empieza a escribir!').primary}
+                </p>
+              </div>
+            </div>
           </button>
         </div>
 
@@ -123,6 +142,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, onStartJourna
             }
           </Button>
 
+
+          <Button variant="outline" size="full" onClick={onStartFreeWrite}>
+            <PenLine className="w-5 h-5 mr-2" />
+            {bilingual('Écrire librement', 'Free Write', 'Escritura libre')}
+          </Button>
 
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
