@@ -1,14 +1,14 @@
 
 
-# Long-Press to Open Emotion Detail (Remove Info Icons)
+# Add Long-Press Hint on Emotions Screen
 
-Replace the info icon buttons with a long-press gesture on the emotion word pills themselves. A quick tap selects/deselects; a long press (~400ms) opens the detail drawer.
+Add a subtle hint below the "Choose up to X words" instruction text, telling users they can long-press to learn more. Show it only on the first few visits using localStorage, then fade it away.
 
 ## Changes
 
 | File | Change |
 |---|---|
-| `EmotionsScreen.tsx` | Remove the `<Info>` icon button entirely. Add `onPointerDown`/`onPointerUp`/`onPointerLeave` handlers to each emotion button: start a 400ms timer on down, clear on up/leave. If timer fires, open the drawer (and prevent the tap selection). Remove the extra `pr-7` padding. Keep the "new" dot indicator. |
+| `EmotionsScreen.tsx` | Add a small muted hint line below the "Choose up to X words" text: *"Long-press a word to explore it"* (bilingual). Use localStorage to track if the user has opened the drawer at least once — after that, hide the hint permanently. Style: `text-xs text-muted-foreground/70` with a subtle fade-in. |
 
-No new dependencies needed — pure pointer events with a `setTimeout`.
+Single file change, no new dependencies.
 
