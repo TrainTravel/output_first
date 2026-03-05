@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Progress } from '@/components/ui/progress';
-import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, Sprout } from 'lucide-react';
+import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, Sprout, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useJournalEntries, JournalEntryRow } from '@/hooks/useJournalEntries';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
@@ -15,6 +15,7 @@ interface ProgressScreenProps {
   hasJournaledToday: boolean;
   onGoHome: () => void;
   onStartJournal: () => void;
+  onOpenVocabulary?: () => void;
 }
 
 export function ProgressScreen({
@@ -23,6 +24,7 @@ export function ProgressScreen({
   hasJournaledToday,
   onGoHome,
   onStartJournal,
+  onOpenVocabulary,
 }: ProgressScreenProps) {
   const { t, bilingual, isFr, isEs } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -99,12 +101,15 @@ export function ProgressScreen({
 
         {/* Emotion Vocabulary Growth */}
         {stats.totalEncountered > 0 && (
-          <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-3">
+          <button
+            onClick={onOpenVocabulary}
+            className="w-full text-left bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-3 hover:border-primary/30 transition-colors"
+          >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                 <Sprout className="w-4 h-4 text-primary" />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">
                   {isFr ? 'Vocabulaire émotionnel' : isEs ? 'Vocabulario emocional' : 'Emotion vocabulary'}
                 </p>
@@ -112,6 +117,7 @@ export function ProgressScreen({
                   {isFr ? 'Your emotional vocabulary is growing' : isEs ? 'Tu vocabulario emocional crece' : 'Votre vocabulaire émotionnel grandit'}
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </div>
             <div className="flex items-center gap-3">
               <Progress value={vocabPercent} className="h-2 flex-1" />
@@ -128,7 +134,7 @@ export function ProgressScreen({
                     : `${stats.totalUsed} words used in your writing`}
               </p>
             )}
-          </div>
+          </button>
         )}
 
         {/* Calendar */}

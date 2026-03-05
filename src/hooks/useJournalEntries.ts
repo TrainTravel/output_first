@@ -97,7 +97,7 @@ export function useJournalEntries(skip = false) {
           console.error('Migration failed:', error);
           migrationRan.current = false;
         }
-      }).catch((err) => {
+      }).then(undefined, (err: unknown) => {
         console.error('Unexpected migration error:', err);
         migrationRan.current = false;
       });
