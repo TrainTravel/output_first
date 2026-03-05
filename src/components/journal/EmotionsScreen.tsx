@@ -127,13 +127,13 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
                   const isAtMax = !isSelected && selectedEmotions.length >= MAX_EMOTIONS;
                   const isNew = isFirstEncounter(emotion);
 
-                  return (
-                    <div key={emotion.en} className="flex items-center gap-1">
+                    return (
+                    <div key={emotion.en} className="relative">
                       <button
                         onClick={() => handleToggleSelect(emotion)}
                         disabled={isAtMax}
                         className={`
-                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative
+                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative pr-7
                           ${isSelected
                             ? 'bg-primary text-primary-foreground shadow-gentle'
                             : isAtMax
@@ -164,10 +164,10 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
                         )}
                       </button>
                       <button
-                        onClick={() => openDrawer(emotion)}
+                        onClick={(e) => { e.stopPropagation(); openDrawer(emotion); }}
                         aria-label={`Learn more about ${emotion.en}`}
-                        className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors flex-shrink-0
-                          ${isNew && !isSelected ? 'text-primary' : 'text-muted-foreground/40 hover:text-muted-foreground'}
+                        className={`absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center transition-colors bg-card border border-border shadow-sm z-10
+                          ${isNew && !isSelected ? 'text-primary' : 'text-muted-foreground/60 hover:text-muted-foreground'}
                         `}
                       >
                         <Info className="w-3 h-3" />
