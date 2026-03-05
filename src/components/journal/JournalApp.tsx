@@ -14,6 +14,7 @@ import { ThoughtGardenScreen } from './ThoughtGardenScreen';
 import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
 import { ZenGardenScreen } from './zen/ZenGardenScreen';
+import { VocabularyScreen } from './VocabularyScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -57,6 +58,7 @@ export function JournalApp() {
     openClusterDetail,
     activeClusterId,
     openZenGarden,
+    openVocabulary,
     openChatWithContext,
     chatContext,
   } = useJournal();
@@ -146,6 +148,7 @@ export function JournalApp() {
           hasJournaledToday={hasJournaledToday}
           onGoHome={goHome}
           onStartJournal={startJournal}
+          onOpenVocabulary={openVocabulary}
         />
       )}
 
@@ -171,6 +174,10 @@ export function JournalApp() {
 
       {currentStep === 'zengarden' && (
         <ZenGardenScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'vocabulary' && (
+        <VocabularyScreen onBack={goHome} />
       )}
     </div>
   );
