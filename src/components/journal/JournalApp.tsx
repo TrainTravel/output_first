@@ -15,6 +15,7 @@ import { ClustersScreen } from './ClustersScreen';
 import { ClusterDetailScreen } from './ClusterDetailScreen';
 import { ZenGardenScreen } from './zen/ZenGardenScreen';
 import { VocabularyScreen } from './VocabularyScreen';
+import { SandTimerScreen } from './SandTimerScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -58,6 +59,7 @@ export function JournalApp() {
     openClusterDetail,
     activeClusterId,
     openZenGarden,
+    openSandTimer,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
@@ -87,6 +89,7 @@ export function JournalApp() {
           onOpenBrainDump={openBrainDump}
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
+          onOpenSandTimer={openSandTimer}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
@@ -177,6 +180,10 @@ export function JournalApp() {
 
       {currentStep === 'zengarden' && (
         <ZenGardenScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'sandtimer' && (
+        <SandTimerScreen onBack={goHome} />
       )}
 
       {currentStep === 'vocabulary' && (
