@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { EmotionWord } from '@/types/journal';
-import { ArrowRight, ArrowLeft, Sprout, Info } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sprout } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { Progress } from '@/components/ui/progress';
@@ -30,10 +30,32 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
     markEncountered(allWords);
   }, [sessionWords, markEncountered]);
 
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const didLongPress = useRef(false);
+
   const openDrawer = (emotion: EmotionWord) => {
     setDrawerWord(emotion);
     setDrawerOpen(true);
   };
+
+  const clearTimer = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handlePointerDown = useCallback((emotion: EmotionWord) => {
+    didLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      didLongPress.current = true;
+      openDrawer(emotion);
+    }, 400);
+  }, []);
+
+  const handlePointerUpOrLeave = useCallback(() => {
+    clearTimer();
+  }, [clearTimer]);
 
   const handleToggleSelect = (emotion: EmotionWord) => {
     const isSelected = selectedEmotions.some(e => e.en === emotion.en);
@@ -128,51 +150,47 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
                   const isNew = isFirstEncounter(emotion);
 
                     return (
-                    <div key={emotion.en} className="relative">
-                      <button
-                        onClick={() => handleToggleSelect(emotion)}
-                        disabled={isAtMax}
-                        className={`
-                          px-4 py-2 rounded-full text-sm transition-all duration-200 relative pr-7
-                          ${isSelected
-                            ? 'bg-primary text-primary-foreground shadow-gentle'
-                            : isAtMax
-                              ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
-                              : 'bg-card border border-border text-foreground hover:bg-muted'
-                          }
-                          ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
-                        `}
-                      >
-                        {isFr ? (
-                          <>
-                            <span className="font-medium">{emotion.fr}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : isEs ? (
-                          <>
-                            <span className="font-medium">{emotion.es}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="font-medium">{emotion.en}</span>
-                            <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
-                          </>
-                        )}
-                        {isNew && !isSelected && (
-                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-                        )}
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); openDrawer(emotion); }}
-                        aria-label={`Learn more about ${emotion.en}`}
-                        className={`absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center transition-colors bg-card border border-border shadow-sm z-10
-                          ${isNew && !isSelected ? 'text-primary' : 'text-muted-foreground/60 hover:text-muted-foreground'}
-                        `}
-                      >
-                        <Info className="w-3 h-3" />
-                      </button>
-                    </div>
+                    <button
+                      key={emotion.en}
+                      onClick={() => {
+                        if (!didLongPress.current) handleToggleSelect(emotion);
+                      }}
+                      onPointerDown={() => handlePointerDown(emotion)}
+                      onPointerUp={handlePointerUpOrLeave}
+                      onPointerLeave={handlePointerUpOrLeave}
+                      onContextMenu={(e) => e.preventDefault()}
+                      disabled={isAtMax}
+                      className={`
+                        px-4 py-2 rounded-full text-sm transition-all duration-200 relative select-none touch-none
+                        ${isSelected
+                          ? 'bg-primary text-primary-foreground shadow-gentle'
+                          : isAtMax
+                            ? 'bg-muted/50 border border-border/50 text-muted-foreground cursor-not-allowed'
+                            : 'bg-card border border-border text-foreground hover:bg-muted'
+                        }
+                        ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
+                      `}
+                    >
+                      {isFr ? (
+                        <>
+                          <span className="font-medium">{emotion.fr}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : isEs ? (
+                        <>
+                          <span className="font-medium">{emotion.es}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium">{emotion.en}</span>
+                          <span className="text-xs opacity-70 ml-1">({emotion.fr})</span>
+                        </>
+                      )}
+                      {isNew && !isSelected && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                      )}
+                    </button>
                   );
                 })}
               </div>
