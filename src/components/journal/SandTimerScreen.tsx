@@ -10,7 +10,7 @@ interface SandTimerScreenProps {
 const DURATIONS = [
   { minutes: 1, label: '1', color: 'hsl(var(--accent))', bgClass: 'bg-accent text-accent-foreground' },
   { minutes: 2, label: '2', color: 'hsl(var(--primary))', bgClass: 'bg-primary text-primary-foreground' },
-  { minutes: 3, label: '3', color: 'hsl(18 50% 70%)', bgClass: 'bg-[hsl(40_40%_55%)] text-primary-foreground' },
+  { minutes: 3, label: '3', color: 'hsl(32 65% 50%)', bgClass: 'bg-[hsl(32_65%_50%)] text-primary-foreground' },
   { minutes: 5, label: '5', color: 'hsl(145 30% 55%)', bgClass: 'bg-[hsl(145_30%_55%)] text-primary-foreground' },
 ];
 
