@@ -1,36 +1,43 @@
 
 
-# Sand Timer Widget
+# Pomodoro Timer + Sand Timer Physics Fix
 
-A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
+Two changes in one: fix the sand timer's gravity physics and add a Pomodoro mode that integrates into the same screen.
 
-## What it does
+## 1. Sand Physics Fix
 
-- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
-- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
-- User taps a duration → an animated hourglass visualization counts down:
-  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
-  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
-  - Gentle sand particle animation in the neck
-- A subtle arc or progress ring shows remaining time without numeric pressure
-- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
-- Back button returns to Home at any time
+**Current bug**: The top sand rect is anchored at `y=10` and shrinks its height — visually the sand disappears from the bottom up (defying gravity). The bottom sand rect grows downward from the neck. Both are wrong.
 
-## Technical changes
+**Fix**: 
+- **Top chamber**: Keep height = `128 * (1 - progress)` but shift the rect's `y` so it always sits at the *bottom* of the top chamber. As progress increases, the sand surface drops: `y = 10 + 128 * progress`, `height = 128 * (1 - progress)`.
+- **Bottom chamber**: The rect should always be anchored at the bottom (`y = 278 - height`), growing upward. This is already close but needs the y-anchor fixed to `278 - 128 * progress` with height `128 * progress` — which is what's there, so the bottom is mostly correct. The top is the main issue.
+
+## 2. Pomodoro Mode Integration
+
+Add a **Pomodoro tab/toggle** to the existing SandTimerScreen so users can switch between "Sand Timer" (free durations) and "Pomodoro" (structured work/break cycles).
+
+### Pomodoro behaviour
+- **Work interval**: 25 min (customizable: 15, 20, 25)
+- **Short break**: 5 min
+- **Cycle**: Work → Break → Work → Break... up to 4 rounds
+- Visual: reuses the same hourglass SVG, but shows a small **round counter** (e.g. "2 / 4" as dots, not numbers) and a label ("Focus" / "Break") 
+- On work completion: hourglass glows + bilingual "Break time" message, auto-starts break timer
+- On break completion: "Ready to focus?" prompt with a button to start next round or finish
+- After 4 rounds: congratulatory message + done
+
+### UI structure
+- Add a **tab row** at the top of the picking state: "Sablier | Pomodoro"
+- Sablier tab = current duration picker (1/2/3/5 min)
+- Pomodoro tab = round count selector (2 or 4 rounds) + work duration selector (15/20/25 min)
+- Running state reuses the hourglass but adds:
+  - A subtle label above: "Focus" or "Pause" (bilingual)
+  - Dot indicators below for round progress (filled = completed)
+
+### Technical changes
 
 | File | Change |
 |---|---|
-| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
-| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
-| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
-| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
-| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
+| `SandTimerScreen.tsx` | Fix top-chamber sand rect y-position for correct gravity. Add `mode` state (`'sand' | 'pomodoro'`), Pomodoro config (rounds, work/break durations), round tracking, auto-transition between work/break phases. Add tab switcher in picking state. Add round dots + phase label in running state. |
 
-## Design details
-
-- **No numeric countdown** — uses visual fill level only (time blindness friendly)
-- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
-- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
-- Completion reward: the hourglass glows briefly + a bilingual message fades in
-- Mobile-first, centered layout consistent with BreatheScreen
+Single file change — all logic stays in SandTimerScreen.
 
