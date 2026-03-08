@@ -85,6 +85,48 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           </div>
         )}
 
+        {/* Inline Progress Card */}
+        <button
+          onClick={onViewProgress}
+          className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm p-4 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Flame className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
+                <p className="text-xs text-muted-foreground">{t('Série', 'Streak', 'Racha').primary}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-accent/30 p-2">
+                <CalendarDays className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
+                <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days', 'Días totales').primary}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
+            <span className="text-xl">
+              {earnedBadges.length > 0 ? earnedBadges[earnedBadges.length - 1].icon : '✍️'}
+            </span>
+            <div>
+              <p className="text-sm font-medium text-foreground">
+                {totalWords} {t('mots écrits', 'words written', 'palabras escritas').primary}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {earnedBadges.length > 0
+                  ? earnedBadges[earnedBadges.length - 1][lang]
+                  : t('Commencez à écrire !', 'Start writing!', '¡Empieza a escribir!').primary}
+              </p>
+            </div>
+          </div>
+        </button>
+
         {/* Main Actions */}
         <div className="space-y-3">
           <Button
@@ -104,7 +146,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             <Target className="w-5 h-5 mr-2" />
             {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
           </Button>
-
 
           <Button variant="outline" size="full" onClick={onStartFreeWrite}>
             <PenLine className="w-5 h-5 mr-2" />
@@ -126,7 +167,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {bilingual('Jardin de pensées', 'Thought Garden', 'Jardín de pensamientos')}
           </Button>
 
-
           <Button variant="outline" size="full" onClick={onOpenZenGarden}>
             <Mountain className="w-5 h-5 mr-2" />
             {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
@@ -136,7 +176,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             <Hourglass className="w-5 h-5 mr-2" />
             {bilingual('Sablier', 'Sand Timer', 'Reloj de arena')}
           </Button>
-
 
           {/* Vocabulary Progress Card */}
           <button
@@ -159,49 +198,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <p className="text-center text-muted-foreground text-sm pt-2">
             {t('Une ou deux phrases suffisent.', 'One or two sentences is enough.', 'Una o dos frases bastan.').primary}
           </p>
-
-          {/* Inline Progress Card */}
-          <button
-            onClick={onViewProgress}
-            className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm p-4 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left"
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Flame className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
-                  <p className="text-xs text-muted-foreground">{t('Série', 'Streak', 'Racha').primary}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-accent/30 p-2">
-                  <CalendarDays className="w-5 h-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
-                  <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days', 'Días totales').primary}</p>
-                </div>
-              </div>
-            </div>
-            {/* Words + badge row */}
-            <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
-              <span className="text-xl">
-                {earnedBadges.length > 0 ? earnedBadges[earnedBadges.length - 1].icon : '✍️'}
-              </span>
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  {totalWords} {t('mots écrits', 'words written', 'palabras escritas').primary}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {earnedBadges.length > 0
-                    ? earnedBadges[earnedBadges.length - 1][lang]
-                    : t('Commencez à écrire !', 'Start writing!', '¡Empieza a escribir!').primary}
-                </p>
-              </div>
-            </div>
-          </button>
         </div>
 
       </div>
