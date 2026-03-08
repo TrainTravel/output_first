@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw, Play } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FocusPlanTab } from './FocusPlanTab';
 
 interface SandTimerScreenProps {
   onBack: () => void;
