@@ -20,6 +20,7 @@ import { PromptLibraryScreen } from './PromptLibraryScreen';
 import { FreeWriteScreen } from './FreeWriteScreen';
 import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
+import { FocusPlanScreen } from './FocusPlanScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
