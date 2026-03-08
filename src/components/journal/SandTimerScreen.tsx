@@ -309,6 +309,9 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                 <TabsTrigger value="pomodoro" className="flex-1">
                   Pomodoro
                 </TabsTrigger>
+                <TabsTrigger value="focusplan" className="flex-1">
+                  {bilingual('Plan Focus', 'Focus Plan', 'Plan')}
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 
