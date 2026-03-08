@@ -20,6 +20,7 @@ import { PromptLibraryScreen } from './PromptLibraryScreen';
 import { FreeWriteScreen } from './FreeWriteScreen';
 import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
+import { FocusPlanScreen } from './FocusPlanScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -76,6 +77,7 @@ export function JournalApp() {
     openSmallWins,
     openZenGarden,
     openSandTimer,
+    openFocusPlan,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
@@ -110,6 +112,7 @@ export function JournalApp() {
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
           onOpenSandTimer={openSandTimer}
+          onOpenFocusPlan={openFocusPlan}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
@@ -233,6 +236,10 @@ export function JournalApp() {
 
       {currentStep === 'sandtimer' && (
         <SandTimerScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'focusplan' && (
+        <FocusPlanScreen onBack={goHome} />
       )}
 
       {currentStep === 'vocabulary' && (

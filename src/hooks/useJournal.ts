@@ -287,6 +287,7 @@ export function useJournal() {
     openZenGarden: () => setCurrentStep('zengarden'),
     openSmallWins: () => setCurrentStep('smallwins'),
     openSandTimer: () => setCurrentStep('sandtimer'),
+    openFocusPlan: () => setCurrentStep('focusplan'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,
