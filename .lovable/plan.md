@@ -1,67 +1,36 @@
 
 
-# Surge Guardrail: Task Breakdown + Pomodoro Integration
+# Sand Timer Widget
 
-## Problem
-When the user finally overcomes inertia and starts, they try to do *everything at once* (hike + lift + clean). This "surge" leads to exhaustion and crashes. The solution: a gentle **"One Thing" task breaker** that helps decompose a big intention into small, measurable steps — then pairs each step with a Pomodoro/Sand Timer session.
+A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
 
 ## What it does
 
-1. **New tab on SandTimerScreen**: Add a third tab — "Focus Plan" (bilingual: "Plan Focus / Focus Plan") alongside Sablier and Pomodoro
-2. **Step 1 — Name the One Thing**: A single text input asking "What do you want to do?" (e.g. "Go hiking and lifting"). Low friction — just type and press Enter.
-3. **Step 2 — Break it down**: The user taps "+" to add small steps (max 5). Each step is a short text (e.g. "Put on shoes", "Drive to trailhead", "Hike 30 min"). Pre-populated with a gentle suggestion: "What's the *smallest* first step?"
-4. **Step 3 — Pick one & timer**: User taps a step → it highlights as "active" → a duration picker appears (reusing the existing Sand Timer or Pomodoro durations). Tapping start launches the hourglass for that step.
-5. **Step completion**: When timer ends, the step gets a checkmark. The next unchecked step auto-highlights with "Ready for the next one?" prompt. User can stop anytime — no pressure to finish all steps.
-6. **Done state**: Shows completed steps with checkmarks, a gentle "You did ___" summary. Option to save steps as a Brain Dump cluster for later.
-
-## Design principles applied
-- **Surge guardrail**: Forces choosing ONE thing before starting, then ONE step at a time
-- **No numeric pressure**: Steps shown as dots/checkmarks, not "3/5 completed"
-- **PDA-safe language**: "What do you want to do?" not "Set a goal". Steps not "tasks"
-- **Micro-commitment**: Each step should feel trivially small ("just put on shoes")
-- **Exit always available**: Can stop after any step without guilt messaging
+- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
+- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
+- User taps a duration → an animated hourglass visualization counts down:
+  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
+  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
+  - Gentle sand particle animation in the neck
+- A subtle arc or progress ring shows remaining time without numeric pressure
+- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
+- Back button returns to Home at any time
 
 ## Technical changes
 
 | File | Change |
 |---|---|
-| `SandTimerScreen.tsx` | Add `'focusplan'` to `Mode` type. Add third tab "Focus Plan". New state: `planGoal` (string), `planSteps` (array of `{text, done}`), `activeStepIdx` (number). Three sub-states within the focus plan: `naming` → `breaking` → `stepping`. When a step is selected, reuse existing `launchTimerFn` with a duration picker. On timer done, mark step complete and prompt next. Done state shows completed steps with checkmarks. |
+| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
+| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
+| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
+| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
+| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
 
-Single file change — everything stays in SandTimerScreen.tsx. No new routes, types, or hooks needed.
+## Design details
 
-## UI flow sketch
-
-```text
-┌─────────────────────────┐
-│  Sablier │ Pomodoro │ Focus Plan │   ← tabs
-├─────────────────────────┤
-│                         │
-│  What do you want to do?│   ← naming state
-│  ┌───────────────────┐  │
-│  │ Go hiking         │  │
-│  └───────────────────┘  │
-│       [Continue →]      │
-├─────────────────────────┤
-│  Break it into steps:   │   ← breaking state
-│                         │
-│  ○ Put on hiking shoes  │
-│  ○ Drive to trailhead   │
-│  ○ Hike for 30 min      │
-│  [+ Add step]           │
-│                         │
-│  [Start first step →]   │
-├─────────────────────────┤
-│  ● Put on hiking shoes  │   ← stepping state (active)
-│  ○ Drive to trailhead   │
-│  ○ Hike for 30 min      │
-│                         │
-│   (duration picker)     │
-│   ⏳ hourglass runs     │
-│                         │
-│  ✓ Put on hiking shoes  │   ← after timer done
-│  ● Drive to trailhead   │   ← auto-highlights next
-│  ○ Hike for 30 min      │
-│  [Ready for next one?]  │
-└─────────────────────────┘
-```
+- **No numeric countdown** — uses visual fill level only (time blindness friendly)
+- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
+- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
+- Completion reward: the hourglass glows briefly + a bilingual message fades in
+- Mobile-first, centered layout consistent with BreatheScreen
 
