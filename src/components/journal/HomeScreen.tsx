@@ -48,7 +48,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
         {/* Language Toggle */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
-            {user && (
+            {user && !user.is_anonymous && (
               <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
                 <LogOut className="w-4 h-4 mr-1" />
                 {t('Déconnexion', 'Sign out', 'Cerrar sesión').primary}
