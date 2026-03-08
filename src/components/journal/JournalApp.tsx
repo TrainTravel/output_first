@@ -112,6 +112,7 @@ export function JournalApp() {
           onOpenThoughtGarden={openThoughtGarden}
           onOpenZenGarden={openZenGarden}
           onOpenSandTimer={openSandTimer}
+          onOpenFocusPlan={openFocusPlan}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
