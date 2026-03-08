@@ -21,10 +21,11 @@ interface HomeScreenProps {
   onOpenThoughtGarden: () => void;
   onOpenZenGarden: () => void;
   onOpenSandTimer: () => void;
+  onOpenFocusPlan: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
