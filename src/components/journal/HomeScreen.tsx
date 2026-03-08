@@ -103,28 +103,42 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             <span className="text-border">│</span>
             <span className="text-muted-foreground">{totalWords} {t('mots', 'words', 'palabras').primary}</span>
           </div>
-          <div className="flex items-center justify-center gap-2">
-            {BADGES.map((badge) => {
-              const earned = earnedBadges.some((b) => b.id === badge.id);
-              return (
-                <span
-                  key={badge.id}
-                  className={`text-lg transition-all ${earned ? '' : 'opacity-30 grayscale'}`}
-                >
-                  {badge.icon}
-                </span>
-              );
-            })}
-            {(() => {
-              const nextBadge = BADGES.find((b) => totalWords < b.threshold);
-              if (!nextBadge) return null;
-              return (
-                <span className="text-xs text-muted-foreground ml-1">
-                  ({totalWords}/{nextBadge.threshold})
-                </span>
-              );
-            })()}
-          </div>
+          <TooltipProvider delayDuration={200}>
+            <div className="flex items-center justify-center gap-2">
+              {BADGES.map((badge) => {
+                const earned = earnedBadges.some((b) => b.id === badge.id);
+                return (
+                  <Tooltip key={badge.id}>
+                    <TooltipTrigger asChild>
+                      <span
+                        className={`text-lg transition-all cursor-default ${earned ? '' : 'opacity-30 grayscale'}`}
+                      >
+                        {badge.icon}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-center">
+                      <p className="font-medium">{t(badge.fr, badge.en, badge.es).primary}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {earned
+                          ? `✓ ${t('Obtenu', 'Earned', 'Obtenido').primary}`
+                          : `${badge.threshold} ${t('mots', 'words', 'palabras').primary}`
+                        }
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+              {(() => {
+                const nextBadge = BADGES.find((b) => totalWords < b.threshold);
+                if (!nextBadge) return null;
+                return (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    ({totalWords}/{nextBadge.threshold})
+                  </span>
+                );
+              })()}
+            </div>
+          </TooltipProvider>
         </button>
 
         {/* Main Actions */}
