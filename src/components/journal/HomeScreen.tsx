@@ -126,6 +126,32 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               </p>
             </div>
           </div>
+          {/* Badge row */}
+          <div className="mt-3 pt-3 border-t border-primary/10">
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              {BADGES.map((badge) => {
+                const earned = earnedBadges.some((b) => b.id === badge.id);
+                return (
+                  <span
+                    key={badge.id}
+                    className={`text-xl transition-all ${earned ? '' : 'opacity-30 grayscale'}`}
+                    title={`${badge[lang]} — ${badge.threshold} ${t('mots', 'words', 'palabras').primary}`}
+                  >
+                    {badge.icon}
+                  </span>
+                );
+              })}
+            </div>
+            {(() => {
+              const nextBadge = BADGES.find((b) => totalWords < b.threshold);
+              if (!nextBadge) return null;
+              return (
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  {totalWords} / {nextBadge.threshold} {t('mots pour', 'words to', 'palabras para').primary} {nextBadge.icon} {nextBadge[lang]}
+                </p>
+              );
+            })()}
+          </div>
         </button>
 
         {/* Main Actions */}
