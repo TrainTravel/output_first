@@ -48,6 +48,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
 
   const activeColor = mode === 'sand'
     ? (selectedIdx !== null ? SAND_DURATIONS[selectedIdx].color : 'hsl(var(--primary))')
+    : mode === 'focusplan' ? 'hsl(var(--accent))'
     : pomPhase === 'work' ? 'hsl(var(--primary))' : 'hsl(var(--accent))';
 
   /* ── Animation loop ── */
