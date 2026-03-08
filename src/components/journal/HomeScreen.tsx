@@ -111,7 +111,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                   <Tooltip key={badge.id}>
                     <TooltipTrigger asChild>
                       <span
-                        className={`text-lg transition-all cursor-default ${earned ? '' : 'opacity-30 grayscale'}`}
+                        className={`text-lg transition-all cursor-default ${earned ? 'animate-scale-in' : 'opacity-30 grayscale'}`}
                       >
                         {badge.icon}
                       </span>
