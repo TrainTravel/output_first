@@ -86,69 +86,41 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           </div>
         )}
 
-        {/* Inline Progress Card */}
+        {/* Compact Progress Card */}
         <button
           onClick={onViewProgress}
-          className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm p-4 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left"
+          className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm px-4 py-3 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left space-y-2"
         >
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-primary/10 p-2">
-                <Flame className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
-                <p className="text-xs text-muted-foreground">{t('Série', 'Streak', 'Racha').primary}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-accent/30 p-2">
-                <CalendarDays className="w-5 h-5 text-accent-foreground" />
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
-                <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days', 'Días totales').primary}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
-            <span className="text-xl">
-              {earnedBadges.length > 0 ? earnedBadges[earnedBadges.length - 1].icon : '✍️'}
+          <div className="flex items-center justify-center gap-3 text-sm">
+            <span className="flex items-center gap-1 font-semibold text-foreground">
+              <Flame className="w-4 h-4 text-primary" /> {streak}
             </span>
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {totalWords} {t('mots écrits', 'words written', 'palabras escritas').primary}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {earnedBadges.length > 0
-                  ? earnedBadges[earnedBadges.length - 1][lang]
-                  : t('Commencez à écrire !', 'Start writing!', '¡Empieza a escribir!').primary}
-              </p>
-            </div>
+            <span className="text-border">│</span>
+            <span className="flex items-center gap-1 font-semibold text-foreground">
+              <CalendarDays className="w-4 h-4 text-accent-foreground" /> {totalDays}
+            </span>
+            <span className="text-border">│</span>
+            <span className="text-muted-foreground">{totalWords} {t('mots', 'words', 'palabras').primary}</span>
           </div>
-          {/* Badge row */}
-          <div className="mt-3 pt-3 border-t border-primary/10">
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              {BADGES.map((badge) => {
-                const earned = earnedBadges.some((b) => b.id === badge.id);
-                return (
-                  <span
-                    key={badge.id}
-                    className={`text-xl transition-all ${earned ? '' : 'opacity-30 grayscale'}`}
-                    title={`${badge[lang]} — ${badge.threshold} ${t('mots', 'words', 'palabras').primary}`}
-                  >
-                    {badge.icon}
-                  </span>
-                );
-              })}
-            </div>
+          <div className="flex items-center justify-center gap-2">
+            {BADGES.map((badge) => {
+              const earned = earnedBadges.some((b) => b.id === badge.id);
+              return (
+                <span
+                  key={badge.id}
+                  className={`text-lg transition-all ${earned ? '' : 'opacity-30 grayscale'}`}
+                >
+                  {badge.icon}
+                </span>
+              );
+            })}
             {(() => {
               const nextBadge = BADGES.find((b) => totalWords < b.threshold);
               if (!nextBadge) return null;
               return (
-                <p className="text-xs text-muted-foreground text-center mt-1">
-                  {totalWords} / {nextBadge.threshold} {t('mots pour', 'words to', 'palabras para').primary} {nextBadge.icon} {nextBadge[lang]}
-                </p>
+                <span className="text-xs text-muted-foreground ml-1">
+                  ({totalWords}/{nextBadge.threshold})
+                </span>
               );
             })()}
           </div>

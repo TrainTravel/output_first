@@ -1,38 +1,36 @@
 
-## Concise Badge Display Redesign
 
-**Current issues**: 
-- Three separate visual sections (streak/days, word count + latest badge, all badges + progress hint) create vertical bloat
-- Redundant badge information (latest badge displayed + all badges shown again below)
-- Progress hint takes up extra line
+# Sand Timer Widget
 
-**Design goal**: Collapse into a single, elegant compact row that's less space-consuming while maintaining all key information.
+A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
 
-**Proposed layout** (new structure):
-```
-┌─ Progress Card ─────────────────────┐
-│ 🔥 3  │  📅 12  │  ✍️ 143 words    │
-│ 🌱 ✍️ 🎙️ 📖 🌿 🌳  (143/200)      │
-└─────────────────────────────────────┘
-```
+## What it does
 
-**Changes to HomeScreen.tsx**:
+- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
+- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
+- User taps a duration → an animated hourglass visualization counts down:
+  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
+  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
+  - Gentle sand particle animation in the neck
+- A subtle arc or progress ring shows remaining time without numeric pressure
+- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
+- Back button returns to Home at any time
 
-1. **Compress streak/days header** (lines 94–112):
-   - Change from 2-column grid with labels to single-row inline display
-   - Remove labels below numbers; use tooltips on hover instead
-   - Format: `🔥 3  │  📅 12  │  ✍️ 143 words` (compact, one line)
+## Technical changes
 
-2. **Remove redundant badge section** (lines 114–127):
-   - Delete the "current badge + word count" section entirely (it duplicates info shown in badge row)
-   - Keep only the badge row with progress hint
+| File | Change |
+|---|---|
+| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
+| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
+| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
+| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
+| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
 
-3. **Compact badge row** (lines 130–153):
-   - Move all badges + progress hint into a single line with inline progress notation
-   - Format: `🌱 ✍️ 🎙️ 📖 🌿 🌳  (143/200)`
-   - Remove tooltip from badges; let the compact layout speak
+## Design details
 
-**Visual result**: Progress card drops from ~100px to ~60px, two compact lines instead of four sections, same information at a glance.
+- **No numeric countdown** — uses visual fill level only (time blindness friendly)
+- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
+- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
+- Completion reward: the hourglass glows briefly + a bilingual message fades in
+- Mobile-first, centered layout consistent with BreatheScreen
 
-**Files affected**:
-- `src/components/journal/HomeScreen.tsx` (lines 89–154): Restructure the progress card layout
