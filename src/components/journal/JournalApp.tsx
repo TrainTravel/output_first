@@ -238,6 +238,10 @@ export function JournalApp() {
         <SandTimerScreen onBack={goHome} />
       )}
 
+      {currentStep === 'focusplan' && (
+        <FocusPlanScreen onBack={goHome} />
+      )}
+
       {currentStep === 'vocabulary' && (
         <VocabularyScreen onBack={() => {
           if (vocabOrigin === 'emotions') saveEmotion(currentEntry.emotion, currentEntry.emotionFr);
