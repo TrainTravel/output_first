@@ -22,7 +22,7 @@ const WORK_OPTIONS = [15, 20, 25];
 const ROUND_OPTIONS = [2, 4];
 const BREAK_MINUTES = 5;
 
-type Mode = 'sand' | 'pomodoro';
+type Mode = 'sand' | 'pomodoro' | 'focusplan';
 type TimerState = 'picking' | 'running' | 'paused-between' | 'done';
 type PomPhase = 'work' | 'break';
 
