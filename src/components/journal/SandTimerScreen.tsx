@@ -315,7 +315,14 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
               </TabsList>
             </Tabs>
 
-            {mode === 'sand' ? (
+            {mode === 'focusplan' ? (
+              <FocusPlanTab
+                timerState={timerState}
+                launchTimerFn={launchTimerFn}
+                renderHourglass={renderHourglass}
+                resetTimer={resetTimer}
+              />
+            ) : mode === 'sand' ? (
               <>
                 <p className="text-muted-foreground text-sm">
                   {t('Choisissez une durée', 'Choose a duration', 'Elige una duración').primary}
