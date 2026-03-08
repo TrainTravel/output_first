@@ -75,60 +75,15 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           </p>
         </div>
 
-        {/* Status + Progress */}
-        <div className="space-y-4">
-          {hasJournaledToday && (
-            <div className="flex justify-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">{t('Terminé', 'Completed', 'Completado').primary}</span>
-              </div>
+        {/* Status Badge Only */}
+        {hasJournaledToday && (
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="text-sm font-medium">{t('Terminé', 'Completed', 'Completado').primary}</span>
             </div>
-          )}
-
-          {/* Inline Progress Card */}
-          <button
-            onClick={onViewProgress}
-            className="w-full rounded-xl border-2 border-primary/20 bg-primary/5 text-card-foreground shadow-sm p-4 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer text-left"
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Flame className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-2xl font-serif font-semibold text-foreground">{streak}</p>
-                  <p className="text-xs text-muted-foreground">{t('Série', 'Streak', 'Racha').primary}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-accent/30 p-2">
-                  <CalendarDays className="w-5 h-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-2xl font-serif font-semibold text-foreground">{totalDays}</p>
-                  <p className="text-xs text-muted-foreground">{t('Jours au total', 'Total days', 'Días totales').primary}</p>
-                </div>
-              </div>
-            </div>
-            {/* Words + badge row */}
-            <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
-              <span className="text-xl">
-                {earnedBadges.length > 0 ? earnedBadges[earnedBadges.length - 1].icon : '✍️'}
-              </span>
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  {totalWords} {t('mots écrits', 'words written', 'palabras escritas').primary}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {earnedBadges.length > 0
-                    ? earnedBadges[earnedBadges.length - 1][lang]
-                    : t('Commencez à écrire !', 'Start writing!', '¡Empieza a escribir!').primary}
-                </p>
-              </div>
-            </div>
-          </button>
-        </div>
+          </div>
+        )}
 
         {/* Main Actions */}
         <div className="space-y-3">
