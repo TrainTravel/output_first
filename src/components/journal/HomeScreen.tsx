@@ -182,10 +182,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {bilingual('Sablier', 'Sand Timer', 'Reloj de arena')}
           </Button>
 
-          <Button variant="default" size="full" onClick={onOpenFocusPlan} className="bg-accent text-accent-foreground hover:bg-accent/90">
-            <Target className="w-5 h-5 mr-2" />
-            {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
-          </Button>
 
           {/* Vocabulary Progress Card */}
           <button
