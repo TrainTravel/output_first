@@ -77,6 +77,7 @@ export function JournalApp() {
     openSmallWins,
     openZenGarden,
     openSandTimer,
+    openFocusPlan,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
