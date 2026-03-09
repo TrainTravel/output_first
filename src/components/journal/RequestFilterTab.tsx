@@ -14,7 +14,7 @@ import {
   PointerSensor,
 } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 type Phase = 'dumping' | 'sorting' | 'reflecting';
 type Bucket = 'unsorted' | 'yes' | 'expand' | 'notnow';

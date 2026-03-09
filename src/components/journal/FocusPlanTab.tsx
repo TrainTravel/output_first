@@ -26,6 +26,8 @@ interface FocusPlanTabProps {
   renderHourglass: () => React.ReactNode;
   resetTimer: () => void;
   onPlanReset?: () => void;
+  prefillGoal?: string;
+  onPrefillConsumed?: () => void;
 }
 
 export function FocusPlanTab({
