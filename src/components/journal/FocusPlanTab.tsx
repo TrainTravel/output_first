@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Check, Play, ArrowRight, RotateCcw } from 'lucide-react';
@@ -26,6 +26,8 @@ interface FocusPlanTabProps {
   renderHourglass: () => React.ReactNode;
   resetTimer: () => void;
   onPlanReset?: () => void;
+  prefillGoal?: string;
+  onPrefillConsumed?: () => void;
 }
 
 export function FocusPlanTab({
@@ -34,6 +36,8 @@ export function FocusPlanTab({
   renderHourglass,
   resetTimer,
   onPlanReset,
+  prefillGoal,
+  onPrefillConsumed,
 }: FocusPlanTabProps) {
   const { t, bilingual } = useLanguage();
 
@@ -44,6 +48,16 @@ export function FocusPlanTab({
   const [activeStepIdx, setActiveStepIdx] = useState(0);
   const [showDurationPicker, setShowDurationPicker] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Consume prefill goal from Request Filter
+  useEffect(() => {
+    if (prefillGoal) {
+      setGoal(prefillGoal);
+      setPhase('breaking');
+      onPrefillConsumed?.();
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [prefillGoal, onPrefillConsumed]);
 
   const placeholders = [
     t('Mettre mes chaussures', 'Put on my shoes', 'Ponerme los zapatos').primary,

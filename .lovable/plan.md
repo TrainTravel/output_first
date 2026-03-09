@@ -1,52 +1,36 @@
 
 
-# Request Filter Ritual — Inside Focus Plan
+# Sand Timer Widget
 
-A card-sorting exercise that helps users triage incoming demands (from others or themselves) before committing to their "One Thing." Users dump requests onto cards, then sort them into three buckets: **Yes**, **Expand** (negotiate/reframe), and **Not Now**. This acts as a demand-reduction gateway before the existing Focus Plan flow.
+A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
 
-## User Flow
+## What it does
 
-```text
-Focus Plan Screen
-  ├─ [NEW] Tab: "Filter" / "Filtre" / "Filtro"
-  │     Phase 1: DUMP — type requests as cards (Enter to add, up to 8)
-  │     Phase 2: SORT — drag each card into one of 3 columns:
-  │       ✓ Yes (I'll do this)
-  │       ↔ Expand (negotiate scope, reframe, or delay)
-  │       ✕ Not Now (let it go for today)
-  │     Phase 3: REFLECT — summary + gentle prompt:
-  │       "You kept X, let go of Y. Pick your One Thing."
-  │       → Tapping a "Yes" card pre-fills the Focus Plan goal
-  └─ [EXISTING] Tab: "Focus" (current FocusPlanTab)
-```
+- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
+- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
+- User taps a duration → an animated hourglass visualization counts down:
+  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
+  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
+  - Gentle sand particle animation in the neck
+- A subtle arc or progress ring shows remaining time without numeric pressure
+- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
+- Back button returns to Home at any time
 
-## Technical Plan
+## Technical changes
 
-### 1. New component: `src/components/journal/RequestFilterTab.tsx`
+| File | Change |
+|---|---|
+| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
+| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
+| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
+| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
+| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
 
-- **Phase: `dumping`** — Input field + card list. Enter adds a card. Cards show text + subtle fade-in animation. Max 8 cards. Rotating placeholders like Brain Dump ("Reply to boss email", "Finish laundry", "Call dentist").
-- **Phase: `sorting`** — Three drop zones rendered as columns (mobile: stacked). Each card is draggable using `@dnd-kit/core` + `@dnd-kit/sortable` (already installed). Columns: "Yes" (primary), "Expand" (accent), "Not Now" (muted). Cards start in an "unsorted" area at the top.
-- **Phase: `reflecting`** — Summary counts. "Yes" cards listed with a tap-to-select action. Selected card flows into FocusPlanTab as pre-filled goal. "Expand" cards show a gentle prompt: "Can you make this smaller? Set a condition?" "Not Now" cards get a compassionate dismissal: "These will wait. You chose what matters."
-- Bilingual labels throughout using `t()` and `bilingual()`.
-- State is local (useState), no persistence needed — this is a ritual, not a record.
+## Design details
 
-### 2. Modify `src/components/journal/FocusPlanScreen.tsx`
-
-- Add tabs (using shadcn Tabs): "Filter" | "Focus"
-- Default to "Filter" tab when no goal is set
-- When user selects a "Yes" card from the filter, switch to "Focus" tab with goal pre-filled
-- Pass a `prefillGoal` callback to `RequestFilterTab`
-
-### 3. Modify `src/types/journal.ts`
-
-- No changes needed — no new step, this lives inside the existing `focusplan` step.
-
-### ADHD-Friendly Design Decisions
-
-- **No forced order** — users can skip the filter and go straight to Focus tab
-- **Card limit (8)** keeps it bounded — prevents "dumping forever"
-- **Three simple buckets** — no ambiguity, no complex taxonomy
-- **"Not Now" not "No"** — PDA-safe language, removes permanence anxiety
-- **"Expand" not "Maybe"** — action-oriented, encourages reframing rather than indecision
-- **Pre-fill goal** — zero-friction transition from filter to focus
+- **No numeric countdown** — uses visual fill level only (time blindness friendly)
+- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
+- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
+- Completion reward: the hourglass glows briefly + a bilingual message fades in
+- Mobile-first, centered layout consistent with BreatheScreen
 
