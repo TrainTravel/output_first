@@ -31,13 +31,12 @@ interface RequestFilterTabProps {
 
 /* ── Draggable Card ── */
 function DraggableCard({ card, compact }: { card: RequestCard; compact?: boolean }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: card.id,
   });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
+    transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined,
     opacity: isDragging ? 0.4 : 1,
   };
 
