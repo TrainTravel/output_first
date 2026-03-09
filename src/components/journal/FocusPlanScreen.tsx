@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FocusPlanTab } from './FocusPlanTab';
+import { RequestFilterTab } from './RequestFilterTab';
 
 interface FocusPlanScreenProps {
   onBack: () => void;
@@ -15,6 +17,8 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
 
   const [timerState, setTimerState] = useState<TimerState>('picking');
   const [progress, setProgress] = useState(0);
+  const [activeTab, setActiveTab] = useState('filter');
+  const [prefillGoal, setPrefillGoal] = useState('');
   const startTimeRef = useRef(0);
   const durationMsRef = useRef(0);
   const rafRef = useRef<number>(0);
@@ -51,6 +55,11 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
+  const handleSelectGoal = (goal: string) => {
+    setPrefillGoal(goal);
+    setActiveTab('focus');
+  };
+
   const renderHourglass = () => (
     <div className="relative w-40 h-72">
       <svg viewBox="0 0 160 288" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +92,7 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm space-y-8 animate-fade-in-up">
+      <div className="w-full max-w-sm space-y-6 animate-fade-in-up">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={timerState === 'running' ? resetTimer : onBack}>
@@ -96,12 +105,32 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
           <div className="w-16" />
         </div>
 
-        <FocusPlanTab
-          timerState={timerState}
-          launchTimerFn={launchTimerFn}
-          renderHourglass={renderHourglass}
-          resetTimer={resetTimer}
-        />
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="w-full">
+            <TabsTrigger value="filter" className="flex-1">
+              {t('Filtre', 'Filter', 'Filtro').primary}
+            </TabsTrigger>
+            <TabsTrigger value="focus" className="flex-1">
+              {t('Focus', 'Focus', 'Enfoque').primary}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="filter">
+            <RequestFilterTab onSelectGoal={handleSelectGoal} />
+          </TabsContent>
+
+          <TabsContent value="focus">
+            <FocusPlanTab
+              timerState={timerState}
+              launchTimerFn={launchTimerFn}
+              renderHourglass={renderHourglass}
+              resetTimer={resetTimer}
+              prefillGoal={prefillGoal}
+              onPrefillConsumed={() => setPrefillGoal('')}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
