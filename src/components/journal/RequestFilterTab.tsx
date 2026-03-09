@@ -69,8 +69,15 @@ function DropZone({
   cards: RequestCard[];
   colorClass: string;
 }) {
+  const { setNodeRef, isOver } = useDroppable({ id: `zone-${bucket}` });
+
   return (
-    <div className={`flex-1 min-h-[100px] rounded-2xl border-2 border-dashed p-3 space-y-2 transition-colors ${colorClass}`}>
+    <div
+      ref={setNodeRef}
+      className={`flex-1 min-h-[100px] rounded-2xl border-2 border-dashed p-3 space-y-2 transition-colors ${colorClass} ${
+        isOver ? 'ring-2 ring-primary/40 scale-[1.02]' : ''
+      }`}
+    >
       <div className="flex items-center gap-1.5 text-xs font-medium opacity-70 mb-1">
         {icon}
         {label}
