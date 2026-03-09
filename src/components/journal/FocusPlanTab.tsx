@@ -49,6 +49,16 @@ export function FocusPlanTab({
   const [showDurationPicker, setShowDurationPicker] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Consume prefill goal from Request Filter
+  useEffect(() => {
+    if (prefillGoal) {
+      setGoal(prefillGoal);
+      setPhase('breaking');
+      onPrefillConsumed?.();
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [prefillGoal, onPrefillConsumed]);
+
   const placeholders = [
     t('Mettre mes chaussures', 'Put on my shoes', 'Ponerme los zapatos').primary,
     t('Remplir ma bouteille d\'eau', 'Fill my water bottle', 'Llenar mi botella de agua').primary,
