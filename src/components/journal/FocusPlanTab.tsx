@@ -36,6 +36,8 @@ export function FocusPlanTab({
   renderHourglass,
   resetTimer,
   onPlanReset,
+  prefillGoal,
+  onPrefillConsumed,
 }: FocusPlanTabProps) {
   const { t, bilingual } = useLanguage();
 
