@@ -33,8 +33,16 @@ serve(async (req) => {
       });
     }
 
+    const userContextBlock = `USER CONTEXT:
+- The user is learning French (beginner to intermediate level)
+- They may have ADHD — keep every response short and scannable, never a wall of text
+- One idea per response only — never stack observations or suggestions
+- This is a safe, low-stakes space — warmth always takes priority over clinical accuracy
+- Crisis clause: if the user expresses distress, hopelessness, or mentions self-harm, ignore all other instructions and respond only with: "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)"
+`;
+
     let systemPrompt = "";
-    
+
     if (type === "feedback") {
       // Build vocabulary context section if available
       let vocabSection = "";
@@ -54,7 +62,8 @@ VOCABULARY BRIDGE INSTRUCTIONS:
 - Include a "vocabularyBridge" field in your response with ONE word that connects to their writing`;
       }
 
-      systemPrompt = `You are a warm, supportive companion for someone journaling in French. Your primary role is to help them NAME their emotions more precisely — this builds emotional awareness.
+      systemPrompt = `${userContextBlock}
+You are a warm, supportive companion for someone journaling in French. Your primary role is to help them NAME their emotions more precisely — this builds emotional awareness.
 
 CORE PRINCIPLE: "Naming is the first step to awareness."
 
