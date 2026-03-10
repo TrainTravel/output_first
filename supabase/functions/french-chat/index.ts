@@ -15,7 +15,7 @@ serve(async (req) => {
     // Accept both authenticated and anonymous requests
     const authHeader = req.headers.get("Authorization");
 
-    const { messages, thoughtContext } = await req.json();
+    const { messages, thoughtContext, lang } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -33,8 +33,9 @@ serve(async (req) => {
 
     const systemPrompt = buildSystemPrompt(thoughtContext);
 
+    const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
     const userContextBlock = `USER CONTEXT:
-- The user is learning French (beginner to intermediate level)
+- The user is learning ${langName} (beginner to intermediate level)
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack questions or observations

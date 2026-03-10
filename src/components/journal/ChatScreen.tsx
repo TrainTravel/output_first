@@ -26,7 +26,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { isFr, isEs } = useLanguage();
+  const { isFr, isEs, lang } = useLanguage();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -58,7 +58,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
           Authorization: `Bearer ${token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: [], thoughtContext: context }),
+        body: JSON.stringify({ messages: [], thoughtContext: context, lang }),
       });
 
       if (!resp.ok) {
@@ -153,7 +153,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
           Authorization: `Bearer ${token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: newMessages, thoughtContext: context }),
+        body: JSON.stringify({ messages: newMessages, thoughtContext: context, lang }),
       });
 
       if (!resp.ok) {
