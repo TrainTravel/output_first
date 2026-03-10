@@ -21,7 +21,7 @@ export interface JournalEntry {
 export type JournalStep = 'home' | 'breathe' | 'promptchoice' | 'promptlibrary'
   | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete'
   | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters' | 'clusterdetail'
-  | 'zengarden' | 'freewrite' | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan';
+  | 'zengarden' | 'freewrite' | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist';
 
 export const MIN_CYCLES = 1; // Users can choose to stop after first cycle
 export const MAX_CYCLES = 5;

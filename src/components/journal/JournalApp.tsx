@@ -21,6 +21,7 @@ import { FreeWriteScreen } from './FreeWriteScreen';
 import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
+import { TodoListScreen } from './TodoListScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -67,6 +68,7 @@ export function JournalApp() {
     saveGratitude,
     skipToComplete,
     goHome,
+    goBackToWrite,
     viewProgress,
     openChat,
     openBrainDump,
@@ -78,6 +80,7 @@ export function JournalApp() {
     openZenGarden,
     openSandTimer,
     openFocusPlan,
+    openTodoList,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
@@ -113,6 +116,7 @@ export function JournalApp() {
           onOpenZenGarden={openZenGarden}
           onOpenSandTimer={openSandTimer}
           onOpenFocusPlan={openFocusPlan}
+          onOpenTodoList={openTodoList}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
@@ -166,7 +170,8 @@ export function JournalApp() {
       {currentStep === 'emotions' && (
         <EmotionsScreen
           onSave={saveEmotion}
-          onBack={() => startJournal()}
+          onBack={goBackToWrite}
+          onGoHome={goHome}
           onOpenVocabulary={() => openVocabulary('emotions')}
         />
       )}
@@ -240,6 +245,10 @@ export function JournalApp() {
 
       {currentStep === 'focusplan' && (
         <FocusPlanScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'todolist' && (
+        <TodoListScreen onBack={goHome} />
       )}
 
       {currentStep === 'vocabulary' && (

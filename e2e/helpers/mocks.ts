@@ -149,6 +149,17 @@ export async function injectMockSession(page: Page) {
   });
 }
 
+/** Mock todo-triage edge function. Returns priority B by default. */
+export async function mockTodoTriage(page: Page, priority: 'A' | 'B' | 'C' = 'B') {
+  await page.route('**/functions/v1/todo-triage', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ priority, reason: 'Mock AI reason.' }),
+    })
+  );
+}
+
 /** Apply all mocks needed for the full journal flow. */
 export async function setupJournalMocks(page: Page) {
   await mockFeedback(page);
