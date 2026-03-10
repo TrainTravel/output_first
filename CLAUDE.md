@@ -314,6 +314,7 @@ Keep iterating until the mistake rate measurably drops.
 
 - ~~**Free journaling mode**~~ — shipped in `feat/prompts-freewrite-badges` (PR #16). Optional AI and "graduate mode" polish still possible.
 - **Voice input (Whisper)** — infra committed (edge fn + hook + button), UI not wired. Requires `supabase secrets set OPENAI_API_KEY` + `supabase functions deploy speech-to-text` before activation.
+- **5 Whys root-cause analysis** — Claude artifact prototype exists (pasted session 2026-03-10). Uses `window.claude.complete()` → needs Supabase edge function. Natural follow-on to the ABC Todo List: surface as "Why am I avoiding this?" on a stuck/Category-A task. FR translations missing.
 
 ## Important Notes
 

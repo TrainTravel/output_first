@@ -289,6 +289,7 @@ export function useJournal() {
     openSmallWins: () => setCurrentStep('smallwins'),
     openSandTimer: () => setCurrentStep('sandtimer'),
     openFocusPlan: () => setCurrentStep('focusplan'),
+    openTodoList: () => setCurrentStep('todolist'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,

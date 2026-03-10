@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks } from 'lucide-react';
 import { BADGES } from '@/types/journal';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -24,10 +24,11 @@ interface HomeScreenProps {
   onOpenZenGarden: () => void;
   onOpenSandTimer: () => void;
   onOpenFocusPlan: () => void;
+  onOpenTodoList: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
   const today = new Date();
@@ -159,6 +160,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <Button variant="default" size="full" onClick={onOpenFocusPlan} className="bg-accent text-accent-foreground hover:bg-accent/90">
             <Target className="w-5 h-5 mr-2" />
             {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
+          </Button>
+
+          <Button variant="outline" size="full" onClick={onOpenTodoList}>
+            <ListChecks className="w-5 h-5 mr-2" />
+            {bilingual('Liste A/B/C', 'ABC List', 'Lista A/B/C')}
           </Button>
 
           <Button variant="outline" size="full" onClick={onStartFreeWrite}>
