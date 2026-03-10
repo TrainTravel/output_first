@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw, Play } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FocusPlanTab } from './FocusPlanTab';
 
 interface SandTimerScreenProps {
   onBack: () => void;
@@ -22,7 +21,7 @@ const WORK_OPTIONS = [15, 20, 25];
 const ROUND_OPTIONS = [2, 4];
 const BREAK_MINUTES = 5;
 
-type Mode = 'sand' | 'pomodoro' | 'focusplan';
+type Mode = 'sand' | 'pomodoro';
 type TimerState = 'picking' | 'running' | 'paused-between' | 'done';
 type PomPhase = 'work' | 'break';
 
@@ -48,7 +47,6 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
 
   const activeColor = mode === 'sand'
     ? (selectedIdx !== null ? SAND_DURATIONS[selectedIdx].color : 'hsl(var(--primary))')
-    : mode === 'focusplan' ? 'hsl(var(--accent))'
     : pomPhase === 'work' ? 'hsl(var(--primary))' : 'hsl(var(--accent))';
 
   /* ── Animation loop ── */
@@ -309,20 +307,10 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                 <TabsTrigger value="pomodoro" className="flex-1">
                   Pomodoro
                 </TabsTrigger>
-                <TabsTrigger value="focusplan" className="flex-1">
-                  {bilingual('Plan Focus', 'Focus Plan', 'Plan')}
-                </TabsTrigger>
               </TabsList>
             </Tabs>
 
-            {mode === 'focusplan' ? (
-              <FocusPlanTab
-                timerState={timerState}
-                launchTimerFn={launchTimerFn}
-                renderHourglass={renderHourglass}
-                resetTimer={resetTimer}
-              />
-            ) : mode === 'sand' ? (
+            {mode === 'sand' ? (
               <>
                 <p className="text-muted-foreground text-sm">
                   {t('Choisissez une durée', 'Choose a duration', 'Elige una duración').primary}
