@@ -6,6 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// TODO(dynamic-context): enrich with totalEntries, totalWords, streak from frontend for level-aware prompting.
+// See: https://github.com/TrainTravel/quiet-words-grow/issues/22
 function buildUserContextBlock(lang?: string): string {
   const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
   return `USER CONTEXT:

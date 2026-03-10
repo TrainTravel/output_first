@@ -33,6 +33,8 @@ serve(async (req) => {
 
     const systemPrompt = buildSystemPrompt(thoughtContext);
 
+    // TODO(dynamic-context): enrich with totalEntries, totalWords, streak from frontend for level-aware prompting.
+    // See: https://github.com/TrainTravel/quiet-words-grow/issues/22
     const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
     const userContextBlock = `USER CONTEXT:
 - The user is learning ${langName} (beginner to intermediate level)

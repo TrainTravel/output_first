@@ -279,6 +279,19 @@ Branch naming: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/` prefix matching t
 - **Privacy First:** If selling "Cognitive Insights," the data must be processed securely and never sold to third parties.
 - **Transparency:** Clearly distinguish between "Core Utility" (Free) and "Premium Experience" (Paid).
 
+## TODO / Backlog Tracking Convention
+
+Whenever a known limitation, deferred improvement, or future task is identified, always do all three:
+
+1. **GitHub Issue** — open an issue for tracking (gives it a URL and survives context resets)
+2. **TODO comment in code** — place directly above the relevant code, referencing the issue:
+   ```ts
+   // TODO(short-label): description. See: https://github.com/TrainTravel/quiet-words-grow/issues/XX
+   ```
+3. **CLAUDE.md Backlog entry** — add to `## Backlog / Future Ideas` so Claude always sees it at session start
+
+Never defer a known gap without all three in place. This ensures nothing gets lost between sessions, code reviews, or tool switches.
+
 ## Self-Improvement
 
 After every correction or mistake, update this CLAUDE.md with a rule to prevent repeating it.
@@ -314,6 +327,7 @@ Keep iterating until the mistake rate measurably drops.
 
 - ~~**Free journaling mode**~~ — shipped in `feat/prompts-freewrite-badges` (PR #16). Optional AI and "graduate mode" polish still possible.
 - **Voice input (Whisper)** — infra committed (edge fn + hook + button), UI not wired. Requires `supabase secrets set OPENAI_API_KEY` + `supabase functions deploy speech-to-text` before activation.
+- **Enrich AI user context with entry stats** — pass `totalEntries`, `totalWords`, `streak` from frontend to all three edge functions so the model can calibrate language level (beginner vs developing). TODO comments in all 3 edge functions. See: https://github.com/TrainTravel/quiet-words-grow/issues/22
 
 ## Important Notes
 
