@@ -15,7 +15,7 @@ serve(async (req) => {
     // Accept both authenticated and anonymous requests
     const authHeader = req.headers.get("Authorization");
 
-    const { messages, thoughtContext } = await req.json();
+    const { messages, thoughtContext, lang } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -33,8 +33,19 @@ serve(async (req) => {
 
     const systemPrompt = buildSystemPrompt(thoughtContext);
 
+    const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
+    const userContextBlock = `USER CONTEXT:
+- The user is learning ${langName} (beginner to intermediate level)
+- They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
+- Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
+- One idea per response only — never stack questions or observations
+- This is a safe, low-stakes space — warmth always takes priority over clinical accuracy
+- Crisis clause: if the user expresses distress, hopelessness, or mentions self-harm, immediately stop all CBT techniques and respond only with: "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)"
+`;
+
     function buildSystemPrompt(ctx?: { mode: string; label: string; thoughts: Array<{ content: string; createdAt: string; aiTheme: string | null }>; clusterDescription?: string }): string {
-      const basePrompt = `You are a warm, supportive French conversation partner who helps people:
+      const basePrompt = `${userContextBlock}
+You are a warm, supportive French conversation partner who helps people:
 1. Practice expressing themselves in French
 2. Build emotional awareness through reflection
 3. Develop emotional vocabulary granularity

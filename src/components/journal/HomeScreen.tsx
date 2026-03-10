@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -31,6 +32,7 @@ interface HomeScreenProps {
 export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
+  const [showMore, setShowMore] = useState(false);
   const today = new Date();
   const primaryLocale = isFr ? 'fr-FR' : isEs ? 'es-ES' : 'en-US';
   const secondaryLocale = isFr ? 'en-US' : isEs ? 'en-US' : 'fr-FR';
@@ -157,29 +159,9 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             }
           </Button>
 
-          <Button variant="default" size="full" onClick={onOpenFocusPlan} className="bg-accent text-accent-foreground hover:bg-accent/90">
-            <Target className="w-5 h-5 mr-2" />
-            {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
-          </Button>
-
-          <Button variant="outline" size="full" onClick={onOpenTodoList}>
-            <ListChecks className="w-5 h-5 mr-2" />
-            {bilingual('Liste A/B/C', 'ABC List', 'Lista A/B/C')}
-          </Button>
-
-          <Button variant="outline" size="full" onClick={onStartFreeWrite}>
-            <PenLine className="w-5 h-5 mr-2" />
-            {bilingual('Écrire librement', 'Free Write', 'Escritura libre')}
-          </Button>
-
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
             {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
-          </Button>
-
-          <Button variant="outline" size="full" onClick={onOpenSmallWins}>
-            <Trophy className="w-5 h-5 mr-2" />
-            {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
           </Button>
 
           <Button variant="outline" size="full" onClick={onOpenThoughtGarden}>
@@ -187,15 +169,48 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {bilingual('Jardin de pensées', 'Thought Garden', 'Jardín de pensamientos')}
           </Button>
 
-          <Button variant="outline" size="full" onClick={onOpenZenGarden}>
-            <Mountain className="w-5 h-5 mr-2" />
-            {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
-          </Button>
+          {/* More tools toggle */}
+          <button
+            onClick={() => setShowMore(v => !v)}
+            className="w-full flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showMore ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {t('Autres outils', 'More tools', 'Más herramientas').primary}
+          </button>
 
-          <Button variant="outline" size="full" onClick={onOpenSandTimer}>
-            <Hourglass className="w-5 h-5 mr-2" />
-            {bilingual('Sablier', 'Sand Timer', 'Reloj de arena')}
-          </Button>
+          {showMore && (
+            <div className="space-y-3 animate-fade-in-up">
+              <Button variant="outline" size="full" onClick={onStartFreeWrite}>
+                <PenLine className="w-5 h-5 mr-2" />
+                {bilingual('Écrire librement', 'Free Write', 'Escritura libre')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenFocusPlan} className="bg-accent/10 border-accent/30">
+                <Target className="w-5 h-5 mr-2" />
+                {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenTodoList}>
+                <ListChecks className="w-5 h-5 mr-2" />
+                {bilingual('Liste A/B/C', 'ABC List', 'Lista A/B/C')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenSmallWins}>
+                <Trophy className="w-5 h-5 mr-2" />
+                {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenZenGarden}>
+                <Mountain className="w-5 h-5 mr-2" />
+                {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenSandTimer}>
+                <Hourglass className="w-5 h-5 mr-2" />
+                {bilingual('Sablier', 'Sand Timer', 'Reloj de arena')}
+              </Button>
+            </div>
+          )}
 
           {/* Vocabulary Progress Card */}
           <button

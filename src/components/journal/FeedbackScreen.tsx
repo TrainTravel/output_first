@@ -53,7 +53,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t, bilingual, isFr } = useLanguage();
+  const { t, bilingual, isFr, lang } = useLanguage();
   const { getVocabularyContext } = useEmotionVocab();
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         const vocabularyContext = getVocabularyContext();
 
         const { data, error: fnError } = await supabase.functions.invoke('french-feedback', {
-          body: { text: journalContent, type: 'feedback', vocabularyContext },
+          body: { text: journalContent, type: 'feedback', vocabularyContext, lang },
         });
 
         if (fnError) {
@@ -210,10 +210,10 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                       <span className="text-primary">→</span>
                       <span className="text-foreground">{feedback.languageNote.improved}</span>
                     </div>
-                    <p className="text-muted-foreground/50 text-xs">
+                    <p className="text-muted-foreground text-xs">
                       {isFr ? feedback.languageNote.note.fr : feedback.languageNote.note.en}
                     </p>
-                    <p className="text-muted-foreground/35 text-xs italic">
+                    <p className="text-muted-foreground/60 text-xs italic">
                       {isFr ? feedback.languageNote.note.en : feedback.languageNote.note.fr}
                     </p>
                   </div>
