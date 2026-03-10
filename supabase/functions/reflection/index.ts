@@ -6,7 +6,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const systemPrompt = `You are a warm, gentle guide helping someone explore their feelings — like a kind therapist who listens with curiosity, not judgment.
+function buildUserContextBlock(lang?: string): string {
+  const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
+  return `USER CONTEXT:
+- The user is learning ${langName} (beginner to intermediate level)
+- They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
+- Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
+- One idea per response only — never stack observations or questions
+- This is a safe, low-stakes space — warmth always takes priority over clinical accuracy
+- Crisis clause: if the user expresses distress, hopelessness, or mentions self-harm, immediately stop all techniques and respond only with: "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)"
+`;
+}
+
+function buildSystemPrompt(lang?: string): string {
+  return `${buildUserContextBlock(lang)}
+You are a warm, gentle guide helping someone explore their feelings — like a kind therapist who listens with curiosity, not judgment.
 
 YOUR ROLE:
 - You've just read their journal entry and know how they're feeling
@@ -38,6 +52,7 @@ Respond in this JSON format:
   "reflection": "Your brief compassionate observation in French (English translation)",
   "question": "Your gentle curious question in French (English translation)"
 }`;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -53,7 +68,7 @@ serve(async (req) => {
       });
     }
 
-    const { journalContent, emotions, previousCycles } = await req.json();
+    const { journalContent, emotions, previousCycles, lang } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -99,7 +114,7 @@ Emotions they chose: ${emotions || "none selected"}`;
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: buildSystemPrompt(lang) },
           { role: "user", content: userMessage },
         ],
       }),
