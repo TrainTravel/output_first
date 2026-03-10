@@ -12,10 +12,11 @@ const MAX_EMOTIONS = 3;
 interface EmotionsScreenProps {
   onSave: (emotion?: string, emotionFr?: string) => void;
   onBack: () => void;
+  onGoHome: () => void;
   onOpenVocabulary?: () => void;
 }
 
-export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScreenProps) {
+export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: EmotionsScreenProps) {
   const [selectedEmotions, setSelectedEmotions] = useState<EmotionWord[]>([]);
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -92,14 +93,22 @@ export function EmotionsScreen({ onSave, onBack, onOpenVocabulary }: EmotionsScr
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
       <div className="w-full max-w-lg mx-auto flex-1 flex flex-col animate-fade-in-up">
-        {/* Back Button */}
-        <button
-          onClick={onBack}
-          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
-        </button>
+        {/* Navigation */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm">{t('Modifier mon texte', 'Edit my text', 'Editar mi texto').primary}</span>
+          </button>
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-xs"
+          >
+            <span>{t("Retour à l'accueil", 'Back to home', 'Volver al inicio').primary}</span>
+          </button>
+        </div>
 
         {/* Header */}
         <div className="mb-6 space-y-3">

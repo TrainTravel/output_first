@@ -280,6 +280,7 @@ export function useJournal() {
     openChat,
     openChatWithContext,
     chatContext,
+    goBackToWrite: () => setCurrentStep('write'),
     openBrainDump: () => setCurrentStep('braindump'),
     openThoughtGarden: () => setCurrentStep('thoughtgarden'),
     openClusters: () => setCurrentStep('clusters'),

@@ -67,6 +67,7 @@ export function JournalApp() {
     saveGratitude,
     skipToComplete,
     goHome,
+    goBackToWrite,
     viewProgress,
     openChat,
     openBrainDump,
@@ -166,7 +167,8 @@ export function JournalApp() {
       {currentStep === 'emotions' && (
         <EmotionsScreen
           onSave={saveEmotion}
-          onBack={() => startJournal()}
+          onBack={goBackToWrite}
+          onGoHome={goHome}
           onOpenVocabulary={() => openVocabulary('emotions')}
         />
       )}
