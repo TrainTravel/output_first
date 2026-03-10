@@ -96,6 +96,8 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
   const [cards, setCards] = useState<RequestCard[]>([]);
   const [newText, setNewText] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [pickIndex, setPickIndex] = useState(0);
+  const [showAllYes, setShowAllYes] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
