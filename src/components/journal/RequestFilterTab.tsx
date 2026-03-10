@@ -471,6 +471,8 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           onClick={() => {
             setPhase('dumping');
             setCards([]);
+            setPickIndex(0);
+            setShowAllYes(false);
           }}
           className="text-muted-foreground"
         >
