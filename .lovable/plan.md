@@ -1,37 +1,36 @@
 
 
-# Prioritization in the Reflecting Phase — "Which one pulls you?"
+# Sand Timer Widget
 
-## The Problem with Traditional Prioritization
+A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
 
-Asking autistic/ADHD users to **rank** or **compare** items is a high-cost executive function task. It requires holding multiple items in working memory, applying abstract criteria, and making sequential judgments — all of which trigger decision paralysis.
+## What it does
 
-## Approach: Body-First, Not Brain-First
+- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
+- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
+- User taps a duration → an animated hourglass visualization counts down:
+  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
+  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
+  - Gentle sand particle animation in the neck
+- A subtle arc or progress ring shows remaining time without numeric pressure
+- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
+- Back button returns to Home at any time
 
-Instead of ranking, we use a **single embodied question** after the sorting phase. When the user reaches the reflecting phase with multiple "Yes" cards, we don't ask "which is most important?" — we ask:
+## Technical changes
 
-> **"Which one pulls you right now?"**
-> *"Laquelle t'attire là, maintenant ?"*
+| File | Change |
+|---|---|
+| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
+| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
+| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
+| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
+| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
 
-This reframes prioritization from a cognitive task (comparing importance) to an **interoceptive check** (noticing what your body/attention is already drawn to). Monotropic brains already know where the pull is — we just need to give permission to follow it.
+## Design details
 
-## Changes
-
-### `RequestFilterTab.tsx` — Reflecting phase
-
-When the "Yes" bucket has **2+ cards**, add a new sub-phase before showing all cards as equal options:
-
-1. Show a body-anchoring prompt: "Which one pulls you right now?" / "Laquelle t'attire là, maintenant?" / "¿Cuál te atrae ahora mismo?"
-2. Cards appear one at a time (carousel-style tap-through), not as a list — avoids comparison paralysis
-3. Tapping a card selects it as the goal (same as current behavior)
-4. A small "Show all" link at the bottom for users who prefer the list view
-
-When there's only **1 "Yes" card**, skip straight to selection (current behavior).
-
-### Visual treatment
-- Each card appears centered with gentle fade-in, large touch target
-- Left/right navigation dots (not arrows — less demanding)
-- Selected card gets a subtle pulse before transitioning to Focus tab
-
-This is ~40 lines of new UI logic in the reflecting phase, no new components or dependencies needed.
+- **No numeric countdown** — uses visual fill level only (time blindness friendly)
+- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
+- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
+- Completion reward: the hourglass glows briefly + a bilingual message fades in
+- Mobile-first, centered layout consistent with BreatheScreen
 

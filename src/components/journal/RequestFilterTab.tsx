@@ -96,6 +96,8 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
   const [cards, setCards] = useState<RequestCard[]>([]);
   const [newText, setNewText] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [pickIndex, setPickIndex] = useState(0);
+  const [showAllYes, setShowAllYes] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -340,23 +342,81 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         </p>
       </div>
 
-      {/* Yes cards — tappable to select as goal */}
+      {/* Yes cards — body-first prioritization */}
       {yesCards.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            {t('Choisis ton truc', 'Pick your One Thing', 'Elige tu cosa').primary}
-          </p>
-          {yesCards.map((card) => (
-            <button
-              key={card.id}
-              onClick={() => onSelectGoal(card.text)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 text-foreground text-sm text-left hover:bg-primary/20 hover:shadow-md transition-all"
-            >
-              <Check className="w-4 h-4 text-primary flex-shrink-0" />
-              <span className="flex-1">{card.text}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          ))}
+        <div className="space-y-3">
+          {yesCards.length >= 2 && !showAllYes ? (
+            /* ── Carousel: one card at a time ── */
+            <div className="space-y-4">
+              <p className="text-center font-serif text-lg text-foreground">
+                {t(
+                  'Laquelle t\'attire là, maintenant ?',
+                  'Which one pulls you right now?',
+                  '¿Cuál te atrae ahora mismo?'
+                ).primary}
+              </p>
+              <p className="text-center text-sm text-muted-foreground italic">
+                {t(
+                  'Laquelle t\'attire là, maintenant ?',
+                  'Which one pulls you right now?',
+                  '¿Cuál te atrae ahora mismo?'
+                ).secondary}
+              </p>
+
+              {/* Single card display */}
+              <button
+                key={yesCards[pickIndex]?.id}
+                onClick={() => onSelectGoal(yesCards[pickIndex].text)}
+                className="w-full flex items-center gap-3 px-6 py-5 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-base text-left hover:bg-primary/20 hover:shadow-md transition-all animate-fade-in-up"
+              >
+                <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                <span className="flex-1">{yesCards[pickIndex]?.text}</span>
+                <ArrowRight className="w-4 h-4 text-muted-foreground" />
+              </button>
+
+              {/* Navigation dots */}
+              <div className="flex items-center justify-center gap-2">
+                {yesCards.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPickIndex(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      i === pickIndex
+                        ? 'bg-primary scale-125'
+                        : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                    }`}
+                    aria-label={`Card ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Show all fallback */}
+              <button
+                onClick={() => setShowAllYes(true)}
+                className="block mx-auto text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+              >
+                {t('Tout voir', 'Show all', 'Ver todo').primary}
+              </button>
+            </div>
+          ) : (
+            /* ── List view: single card or "show all" mode ── */
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                {t('Choisis ton truc', 'Pick your One Thing', 'Elige tu cosa').primary}
+              </p>
+              {yesCards.map((card) => (
+                <button
+                  key={card.id}
+                  onClick={() => onSelectGoal(card.text)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 text-foreground text-sm text-left hover:bg-primary/20 hover:shadow-md transition-all"
+                >
+                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span className="flex-1">{card.text}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -411,6 +471,8 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           onClick={() => {
             setPhase('dumping');
             setCards([]);
+            setPickIndex(0);
+            setShowAllYes(false);
           }}
           className="text-muted-foreground"
         >
