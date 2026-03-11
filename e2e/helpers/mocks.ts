@@ -160,6 +160,17 @@ export async function mockTodoTriage(page: Page, priority: 'A' | 'B' | 'C' = 'B'
   );
 }
 
+/** Mock todo-from-image edge function. Returns tasks by default, or a question. */
+export async function mockTodoFromImage(page: Page, response: { tasks?: string[]; question?: string } = { tasks: ['Task from image'] }) {
+  await page.route('**/functions/v1/todo-from-image', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(response),
+    })
+  );
+}
+
 /** Apply all mocks needed for the full journal flow. */
 export async function setupJournalMocks(page: Page) {
   await mockFeedback(page);
