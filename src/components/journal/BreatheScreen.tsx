@@ -28,7 +28,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   // Scale changes are deferred one frame via rAF so the correct transition
   // property is already applied before the transform target changes.
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     const cyclePhase = (currentPhase: BreathPhase) => {
       if (currentPhase === 'inhale') {
