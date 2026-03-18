@@ -26,6 +26,7 @@ interface HomeScreenProps {
   onOpenSandTimer: () => void;
   onOpenFocusPlan: () => void;
   onOpenTodoList: () => void;
+  onOpenTinyExperiment: () => void;
   onOpenVocabulary: () => void;
 }
 
