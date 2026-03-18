@@ -34,6 +34,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
     checkIn,
     completeExperiment,
     pauseExperiment,
+    resumeExperiment,
   } = useExperiments();
 
   // Creation state
