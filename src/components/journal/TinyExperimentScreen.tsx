@@ -330,7 +330,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               onClick={handleCreate}
               disabled={!action.trim() || !selectedDuration || creating}
             >
-              <Flask className="w-5 h-5 mr-2" />
+              <FlaskConical className="w-5 h-5 mr-2" />
               {t('Commencer l\'expérience', 'Start experiment', 'Iniciar experimento').primary}
             </Button>
           </div>
