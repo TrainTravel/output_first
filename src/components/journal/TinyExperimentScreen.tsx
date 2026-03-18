@@ -112,7 +112,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               {bilingual('Mes petites expériences', 'My Tiny Experiments', 'Mis pequeños experimentos')}
             </h1>
           </div>
-          <Flask className="w-5 h-5 text-primary" />
+          <FlaskConical className="w-5 h-5 text-primary" />
         </div>
 
         {/* ─── REFLECTION STATE ─── */}
