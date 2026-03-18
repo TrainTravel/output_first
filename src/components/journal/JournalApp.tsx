@@ -22,6 +22,7 @@ import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
+import { TinyExperimentScreen } from './TinyExperimentScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -81,6 +82,7 @@ export function JournalApp() {
     openSandTimer,
     openFocusPlan,
     openTodoList,
+    openTinyExperiment,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
@@ -116,7 +118,8 @@ export function JournalApp() {
           onOpenZenGarden={openZenGarden}
           onOpenSandTimer={openSandTimer}
           onOpenFocusPlan={openFocusPlan}
-          onOpenTodoList={openTodoList}
+           onOpenTodoList={openTodoList}
+           onOpenTinyExperiment={openTinyExperiment}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
@@ -249,6 +252,10 @@ export function JournalApp() {
 
       {currentStep === 'todolist' && (
         <TodoListScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'tinyexperiment' && (
+        <TinyExperimentScreen onBack={goHome} />
       )}
 
       {currentStep === 'vocabulary' && (

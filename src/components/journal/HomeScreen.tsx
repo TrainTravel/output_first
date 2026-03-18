@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -26,10 +26,11 @@ interface HomeScreenProps {
   onOpenSandTimer: () => void;
   onOpenFocusPlan: () => void;
   onOpenTodoList: () => void;
+  onOpenTinyExperiment: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, isFr, isEs, lang } = useLanguage();
   const { signOut, user } = useAuth();
   const [showMore, setShowMore] = useState(false);
@@ -198,6 +199,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               <Button variant="outline" size="full" onClick={onOpenSmallWins}>
                 <Trophy className="w-5 h-5 mr-2" />
                 {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenTinyExperiment}>
+                <FlaskConical className="w-5 h-5 mr-2" />
+                {bilingual('Petites expériences', 'Tiny Experiments', 'Pequeños experimentos')}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenZenGarden}>
