@@ -22,6 +22,7 @@ import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
+import { TinyExperimentScreen } from './TinyExperimentScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
