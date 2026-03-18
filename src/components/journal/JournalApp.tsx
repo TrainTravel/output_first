@@ -82,6 +82,7 @@ export function JournalApp() {
     openSandTimer,
     openFocusPlan,
     openTodoList,
+    openTinyExperiment,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
