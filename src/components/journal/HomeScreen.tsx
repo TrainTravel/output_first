@@ -201,6 +201,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                 {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
               </Button>
 
+              <Button variant="outline" size="full" onClick={onOpenTinyExperiment}>
+                <FlaskConical className="w-5 h-5 mr-2" />
+                {bilingual('Petites expériences', 'Tiny Experiments', 'Pequeños experimentos')}
+              </Button>
+
               <Button variant="outline" size="full" onClick={onOpenZenGarden}>
                 <Mountain className="w-5 h-5 mr-2" />
                 {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
