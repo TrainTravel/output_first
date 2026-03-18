@@ -190,5 +190,6 @@ export function useExperiments() {
     checkIn,
     completeExperiment,
     pauseExperiment,
+    resumeExperiment,
   };
 }
