@@ -1,36 +1,62 @@
 
 
-# Sand Timer Widget
+# Tiny Experiments Tracker
 
-A visual sand timer that users can launch from the Home screen to externalize time — one of the key strategies from the executive dysfunction guide. Inspired by the hourglass image, it uses a CSS-animated "falling sand" effect with preset durations (1, 2, 3, 5 min), fitting the app's warm color palette.
+## Overview
 
-## What it does
+A new screen — **"Mes petites expériences / My Tiny Experiments"** — where users define one small experiment at a time using the format "I will ___ for ___", track daily check-ins, and reflect when it ends using Plus / Minus / Next.
 
-- Appears as a new button on the Home screen (e.g. "Sablier / Sand Timer")
-- Opens a dedicated `SandTimerScreen` with 4 color-coded duration options (matching the reference image: red/1min, blue/2min, yellow/3min, green/5min)
-- User taps a duration → an animated hourglass visualization counts down:
-  - Top chamber empties (CSS `scaleY` shrinking from 1→0)
-  - Bottom chamber fills (CSS `scaleY` growing from 0→1)
-  - Gentle sand particle animation in the neck
-- A subtle arc or progress ring shows remaining time without numeric pressure
-- On completion: a soft chime sound effect + bilingual "Time's up" message + breathing circle invite
-- Back button returns to Home at any time
+## Database
 
-## Technical changes
+Two new tables with RLS scoped to `user_id = auth.uid()::text`:
+
+**`experiments`**: id, user_id, action (text), duration (text), started_at, ends_at, status (active/completed/paused), reflection_plus, reflection_minus, reflection_next, created_at
+
+**`experiment_checkins`**: id, experiment_id (FK → experiments), date (text, unique per experiment), showed_up (boolean), note (text), created_at
+
+RLS policies: users can CRUD their own experiments; checkins accessible via experiment ownership join.
+
+## New Files
+
+| File | Purpose |
+|---|---|
+| `src/hooks/useExperiments.ts` | CRUD hook using Supabase. Exposes `activeExperiment`, `pastExperiments`, `addExperiment`, `checkIn`, `completeExperiment`, `pauseExperiment`. localStorage fallback not needed — uses DB like thoughts/clusters. |
+| `src/components/journal/TinyExperimentScreen.tsx` | Three-state screen: (1) Creation — fill-in "I will ___ for ___" with duration picker, (2) Active — shows experiment, today's check-in button, calendar dots, (3) Reflection — Plus/Minus/Next textareas then archive. |
+
+## Modified Files
 
 | File | Change |
 |---|---|
-| `src/types/journal.ts` | Add `'sandtimer'` to the `JournalStep` union |
-| `src/hooks/useJournal.ts` | Add `openSandTimer: () => setCurrentStep('sandtimer')` |
-| `src/components/journal/SandTimerScreen.tsx` | **New file.** Duration picker (4 pill buttons), animated hourglass SVG/CSS, countdown logic with `requestAnimationFrame`, completion state with gentle reward animation. Bilingual labels. |
-| `src/components/journal/JournalApp.tsx` | Add `sandtimer` case rendering `SandTimerScreen`, pass `onOpenSandTimer` to `HomeScreen` |
-| `src/components/journal/HomeScreen.tsx` | Add a Sand Timer button (using `Timer` or `Hourglass` icon from lucide) in the actions section |
+| `src/types/journal.ts` | Add `'tinyexperiment'` to `JournalStep` union |
+| `src/hooks/useJournal.ts` | Add `openTinyExperiment: () => setCurrentStep('tinyexperiment')` |
+| `src/components/journal/JournalApp.tsx` | Add `tinyexperiment` case rendering `TinyExperimentScreen` |
+| `src/components/journal/HomeScreen.tsx` | Add button with `Flask` icon in the "More tools" section: `bilingual('Petites expériences', 'Tiny Experiments', 'Pequeños experimentos')` |
 
-## Design details
+## Screen Design
 
-- **No numeric countdown** — uses visual fill level only (time blindness friendly)
-- Hourglass shape built with CSS border-radius + clip-path, sand as gradient fills
-- Colors map to the reference: Terracotta (1min), Primary/Sage (2min), Ochre (3min), a soft green (5min)
-- Completion reward: the hourglass glows briefly + a bilingual message fades in
-- Mobile-first, centered layout consistent with BreatheScreen
+**Creation state** (no active experiment):
+- Title: `bilingual('Mes petites expériences', 'My Tiny Experiments', 'Mis pequeños experimentos')`
+- Fill-in prompt: "I will `[text input]` for `[duration picker]`"
+- Duration options: 1 week / 2 weeks / 1 month (pill buttons)
+- Past experiments listed below in a quiet archive section
+
+**Active state** (one running experiment):
+- Experiment statement displayed prominently
+- Days remaining as a gentle visual indicator (progress bar, not numeric countdown)
+- Today's check-in: single tap button — "Did this pull you in today?" (PDA-safe)
+- Calendar-dot grid showing past check-in days (filled = showed up)
+- Pause button available (grace re-entry)
+
+**Reflection state** (experiment duration ended):
+- Plus / Minus / Next textareas (bilingual labels)
+- Complete button archives the experiment
+- Option to start a new experiment from the "Next" reflection
+
+## Design Principles
+
+- One active experiment at a time (monotropism)
+- Check-in is a single tap, not a form
+- No guilt for missed days — dots just stay empty
+- PDA-safe language throughout ("curious about" not "commit to")
+- Bilingual feature name, single-language UI chrome
 
