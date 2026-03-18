@@ -80,6 +80,83 @@ export type Database = {
         }
         Relationships: []
       }
+      experiment_checkins: {
+        Row: {
+          created_at: string
+          date: string
+          experiment_id: string
+          id: string
+          note: string | null
+          showed_up: boolean
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          experiment_id: string
+          id?: string
+          note?: string | null
+          showed_up?: boolean
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          experiment_id?: string
+          id?: string
+          note?: string | null
+          showed_up?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experiment_checkins_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "experiments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiments: {
+        Row: {
+          action: string
+          created_at: string
+          duration: string
+          ends_at: string
+          id: string
+          reflection_minus: string | null
+          reflection_next: string | null
+          reflection_plus: string | null
+          started_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          duration: string
+          ends_at: string
+          id?: string
+          reflection_minus?: string | null
+          reflection_next?: string | null
+          reflection_plus?: string | null
+          started_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          duration?: string
+          ends_at?: string
+          id?: string
+          reflection_minus?: string | null
+          reflection_next?: string | null
+          reflection_plus?: string | null
+          started_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           comment: string | null
