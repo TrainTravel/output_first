@@ -147,6 +147,35 @@ export function useExperiments() {
     return { error };
   };
 
+  const resumeExperiment = async (experimentId: string) => {
+    const exp = experiments.find(e => e.id === experimentId);
+    if (!exp) return { error: new Error('Experiment not found') };
+
+    const durationDays: Record<string, number> = {
+      '1 week': 7, '2 weeks': 14, '1 month': 30,
+    };
+    const days = durationDays[exp.duration] ?? 7;
+    const now = new Date();
+    const endsAt = new Date(now);
+    endsAt.setDate(endsAt.getDate() + days);
+
+    const { error } = await supabase
+      .from('experiments')
+      .update({
+        status: 'active',
+        started_at: now.toISOString(),
+        ends_at: endsAt.toISOString(),
+        reflection_plus: null,
+        reflection_minus: null,
+        reflection_next: null,
+      })
+      .eq('id', experimentId);
+    if (!error) {
+      await fetchExperiments();
+    }
+    return { error };
+  };
+
   return {
     experiments,
     activeExperiment,
