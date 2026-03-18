@@ -118,7 +118,8 @@ export function JournalApp() {
           onOpenZenGarden={openZenGarden}
           onOpenSandTimer={openSandTimer}
           onOpenFocusPlan={openFocusPlan}
-          onOpenTodoList={openTodoList}
+           onOpenTodoList={openTodoList}
+           onOpenTinyExperiment={openTinyExperiment}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
