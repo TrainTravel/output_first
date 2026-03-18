@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, FlaskConical, Check, Pause, Sparkles } from 'lucide-react';
+import { ArrowLeft, FlaskConical, Check, Pause, Play, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useExperiments } from '@/hooks/useExperiments';
 
@@ -34,6 +34,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
     checkIn,
     completeExperiment,
     pauseExperiment,
+    resumeExperiment,
   } = useExperiments();
 
   // Creation state
@@ -344,12 +345,27 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             </h2>
             {pastExperiments.map(exp => (
               <div key={exp.id} className="rounded-lg border border-border bg-card p-3 space-y-1">
-                <p className="text-sm text-foreground">{exp.action}</p>
-                <p className="text-xs text-muted-foreground">
-                  {exp.duration} · {exp.status === 'completed'
-                    ? t('terminé', 'completed', 'completado').primary
-                    : t('en pause', 'paused', 'en pausa').primary}
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm text-foreground">{exp.action}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {exp.duration} · {exp.status === 'completed'
+                        ? t('terminé', 'completed', 'completado').primary
+                        : t('en pause', 'paused', 'en pausa').primary}
+                    </p>
+                  </div>
+                  {exp.status === 'paused' && !activeExperiment && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => resumeExperiment(exp.id)}
+                      className="shrink-0 text-primary hover:text-primary"
+                      title={t('Reprendre', 'Resume', 'Reanudar').primary}
+                    >
+                      <Play className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
                 {exp.reflection_plus && (
                   <p className="text-xs text-muted-foreground mt-1">
                     ➕ {exp.reflection_plus}
