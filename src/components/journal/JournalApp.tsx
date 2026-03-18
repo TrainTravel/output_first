@@ -254,6 +254,10 @@ export function JournalApp() {
         <TodoListScreen onBack={goHome} />
       )}
 
+      {currentStep === 'tinyexperiment' && (
+        <TinyExperimentScreen onBack={goHome} />
+      )}
+
       {currentStep === 'vocabulary' && (
         <VocabularyScreen onBack={() => {
           if (vocabOrigin === 'emotions') saveEmotion(currentEntry.emotion, currentEntry.emotionFr);
