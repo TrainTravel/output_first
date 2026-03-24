@@ -1,37 +1,21 @@
 
 
-# Add AI Feedback to Expressive Writing Flow
+# Blocker: Redeploy `french-chat` Edge Function
 
-## Problem
-Expressive writing entries bypass the FeedbackScreen entirely — `ExpressiveWriteScreen` calls `saveFreeContent` which saves and jumps straight to `complete`. No grammar checking or emotional granularity feedback occurs.
+## Issue
+The `french-chat` edge function is still returning a 500 error (`Cannot access 'userContextBlock' before initialization`). The code on disk is correct, but the **deployed version is stale** — the previous fix was not deployed.
 
-## Solution
-Route expressive writing through the existing feedback flow instead of skipping it. After the self-care phase, save the content via `saveContent` (which stores it in `currentEntry` and navigates to `feedback`) instead of `saveFreeContent`.
+## Fix
+Redeploy the `french-chat` edge function. No code changes needed — just a deployment.
 
-## Changes
+## After deployment — manual test plan for Expressive Writing flow
 
-### `ExpressiveWriteScreen.tsx`
-- In `handleSave`, call `onSave(content)` only when there's content (already does this)
-- No changes needed to this file — the fix is in how it's wired
-
-### `useJournal.ts`
-- Add a new function `saveExpressiveContent(content: string)` that:
-  - Sets `currentEntry` with the content (like `saveContent` does)
-  - Navigates to `'feedback'` step
-- This reuses the existing feedback → emotions → reflection → gratitude flow
-
-### `JournalApp.tsx`
-- Change `ExpressiveWriteScreen`'s `onSave` prop from `saveFreeContent` to `saveExpressiveContent`
-- Wire `saveExpressiveContent` from the hook
-
-### `useJournal.ts` — return value
-- Export `saveExpressiveContent` from the hook
-
-## What this preserves
-- The self-care phase still shows after writing (it's inside `ExpressiveWriteScreen`)
-- Session counter still increments in localStorage
-- After self-care, the user hits "Continue" → entry goes through FeedbackScreen → EmotionsScreen → ReflectionScreen → GratitudeScreen → complete (the full guided flow)
-
-## No new files needed
-Reuses existing `FeedbackScreen` and the guided journal pipeline entirely.
+1. Home → More tools → **Free Write**
+2. Verify `FreeWriteChoiceScreen` shows two options
+3. Choose **Expressive Writing**
+4. Verify the safety intro appears for ~5 seconds
+5. Write some text, then tap **Finish early**
+6. Verify the **self-care card** appears with session counter and 10-second delay
+7. Tap **Continue** → verify the **AI Feedback screen** loads (this is the step currently blocked by the 500)
+8. Continue through Emotions → Reflection → Gratitude → Complete
 
