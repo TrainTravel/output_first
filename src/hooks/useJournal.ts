@@ -275,6 +275,8 @@ export function useJournal() {
     openPromptLibrary,
     pickPrompt,
     startFreeWrite,
+    startPlainFreeWrite,
+    startExpressiveWrite,
     saveFreeContent,
     saveContent,
     skipFeedback,
