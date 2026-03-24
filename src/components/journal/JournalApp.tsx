@@ -62,6 +62,8 @@ export function JournalApp() {
     openPromptLibrary,
     pickPrompt,
     startFreeWrite,
+    startPlainFreeWrite,
+    startExpressiveWrite,
     saveFreeContent,
     saveContent,
     skipFeedback,
