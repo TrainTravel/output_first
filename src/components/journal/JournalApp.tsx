@@ -66,6 +66,7 @@ export function JournalApp() {
     startExpressiveWrite,
     saveFreeContent,
     saveContent,
+    saveExpressiveContent,
     skipFeedback,
     continuePastFeedback,
     saveEmotion,
