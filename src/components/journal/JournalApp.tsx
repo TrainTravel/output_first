@@ -159,8 +159,23 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'freewritechoice' && (
+        <FreeWriteChoiceScreen
+          onChooseFreeWrite={startPlainFreeWrite}
+          onChooseExpressive={startExpressiveWrite}
+          onBack={goHome}
+        />
+      )}
+
       {currentStep === 'freewrite' && (
         <FreeWriteScreen
+          onSave={saveFreeContent}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'expressivewrite' && (
+        <ExpressiveWriteScreen
           onSave={saveFreeContent}
           onBack={goHome}
         />
