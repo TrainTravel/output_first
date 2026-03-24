@@ -137,6 +137,11 @@ export function useJournal() {
     setCurrentStep('feedback');
   };
 
+  const saveExpressiveContent = (content: string) => {
+    setCurrentEntry(prev => ({ ...prev, content }));
+    setCurrentStep('feedback');
+  };
+
   const skipFeedback = () => {
     setCurrentStep('emotions');
   };
@@ -279,6 +284,7 @@ export function useJournal() {
     startExpressiveWrite,
     saveFreeContent,
     saveContent,
+    saveExpressiveContent,
     skipFeedback,
     continuePastFeedback,
     saveEmotion,

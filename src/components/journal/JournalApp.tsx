@@ -66,6 +66,7 @@ export function JournalApp() {
     startExpressiveWrite,
     saveFreeContent,
     saveContent,
+    saveExpressiveContent,
     skipFeedback,
     continuePastFeedback,
     saveEmotion,
@@ -176,7 +177,7 @@ export function JournalApp() {
 
       {currentStep === 'expressivewrite' && (
         <ExpressiveWriteScreen
-          onSave={saveFreeContent}
+          onSave={saveExpressiveContent}
           onBack={goHome}
         />
       )}
