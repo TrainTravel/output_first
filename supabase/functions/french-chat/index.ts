@@ -31,8 +31,6 @@ serve(async (req) => {
 
     console.log("Chat request with messages:", messages.length, "context:", thoughtContext?.mode ?? 'none');
 
-    const systemPrompt = buildSystemPrompt(thoughtContext);
-
     const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
     const userContextBlock = `USER CONTEXT:
 - The user is learning ${langName} (beginner to intermediate level)
@@ -42,6 +40,8 @@ serve(async (req) => {
 - This is a safe, low-stakes space — warmth always takes priority over clinical accuracy
 - Crisis clause: if the user expresses distress, hopelessness, or mentions self-harm, immediately stop all CBT techniques and respond only with: "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)"
 `;
+
+    const systemPrompt = buildSystemPrompt(thoughtContext);
 
     function buildSystemPrompt(ctx?: { mode: string; label: string; thoughts: Array<{ content: string; createdAt: string; aiTheme: string | null }>; clusterDescription?: string }): string {
       const basePrompt = `${userContextBlock}
