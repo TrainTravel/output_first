@@ -108,7 +108,15 @@ export function useJournal() {
   const startFreeWrite = () => {
     setCurrentEntry({ date: today });
     setPromptTemplate('');
+    setCurrentStep('freewritechoice');
+  };
+
+  const startPlainFreeWrite = () => {
     setCurrentStep('freewrite');
+  };
+
+  const startExpressiveWrite = () => {
+    setCurrentStep('expressivewrite');
   };
 
   const saveFreeContent = (content: string) => {
@@ -267,6 +275,8 @@ export function useJournal() {
     openPromptLibrary,
     pickPrompt,
     startFreeWrite,
+    startPlainFreeWrite,
+    startExpressiveWrite,
     saveFreeContent,
     saveContent,
     skipFeedback,

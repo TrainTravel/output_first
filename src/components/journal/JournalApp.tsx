@@ -18,6 +18,8 @@ import { VocabularyScreen } from './VocabularyScreen';
 import { PromptChoiceScreen } from './PromptChoiceScreen';
 import { PromptLibraryScreen } from './PromptLibraryScreen';
 import { FreeWriteScreen } from './FreeWriteScreen';
+import { FreeWriteChoiceScreen } from './FreeWriteChoiceScreen';
+import { ExpressiveWriteScreen } from './ExpressiveWriteScreen';
 import { SmallWinsScreen } from './SmallWinsScreen';
 import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
@@ -60,6 +62,8 @@ export function JournalApp() {
     openPromptLibrary,
     pickPrompt,
     startFreeWrite,
+    startPlainFreeWrite,
+    startExpressiveWrite,
     saveFreeContent,
     saveContent,
     skipFeedback,
@@ -155,8 +159,23 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'freewritechoice' && (
+        <FreeWriteChoiceScreen
+          onChooseFreeWrite={startPlainFreeWrite}
+          onChooseExpressive={startExpressiveWrite}
+          onBack={goHome}
+        />
+      )}
+
       {currentStep === 'freewrite' && (
         <FreeWriteScreen
+          onSave={saveFreeContent}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'expressivewrite' && (
+        <ExpressiveWriteScreen
           onSave={saveFreeContent}
           onBack={goHome}
         />
