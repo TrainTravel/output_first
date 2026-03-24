@@ -284,6 +284,7 @@ export function useJournal() {
     startExpressiveWrite,
     saveFreeContent,
     saveContent,
+    saveExpressiveContent,
     skipFeedback,
     continuePastFeedback,
     saveEmotion,
