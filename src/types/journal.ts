@@ -109,6 +109,19 @@ export const FILL_IN_PROMPTS: FillInPrompt[] = [
   { id: 'hp1', category: 'Hopes', fr: "Je suis reconnaissant(e) pour ___ parce que ___.", en: "I'm grateful for ___ because ___.", es: "Estoy agradecido/a por ___ porque ___." },
   { id: 'hp2', category: 'Hopes', fr: "Cette semaine, j'espère ___. Pour ça je vais ___.", en: "This week, I hope to ___. To do that I will ___.", es: "Esta semana, espero ___. Para eso voy a ___." },
   { id: 'hp3', category: 'Hopes', fr: "Un mot qui décrit où je veux être : ___. Parce que ___.", en: "One word for where I want to be: ___. Because ___.", es: "Una palabra para donde quiero estar: ___. Porque ___." },
+  // Situations
+  { id: 'si1', category: 'Situations', fr: "Décrivez un moment où vous vous êtes senti(e) fier/fière.", en: "Describe a moment you felt proud.", es: "Describe un momento en que te sentiste orgulloso/a.",
+    vocabulary: [{ fr: 'fier/fière', en: 'proud' }, { fr: 'accomplissement', en: 'achievement' }, { fr: 'réussir', en: 'to succeed' }] },
+  { id: 'si2', category: 'Situations', fr: "Racontez un malentendu récent.", en: "Tell about a recent misunderstanding.", es: "Cuenta un malentendido reciente.",
+    vocabulary: [{ fr: 'malentendu', en: 'misunderstanding' }, { fr: 'expliquer', en: 'to explain' }, { fr: 'confus(e)', en: 'confused' }] },
+  { id: 'si3', category: 'Situations', fr: "Décrivez un endroit où vous vous sentez en sécurité.", en: "Describe a place where you feel safe.", es: "Describe un lugar donde te sientes seguro/a.",
+    vocabulary: [{ fr: 'en sécurité', en: 'safe' }, { fr: 'chaleureux/se', en: 'warm' }, { fr: 'refuge', en: 'shelter' }, { fr: 'paisible', en: 'peaceful' }] },
+  { id: 'si4', category: 'Situations', fr: "Parlez d'une fois où vous avez aidé quelqu'un.", en: "Talk about a time you helped someone.", es: "Habla de una vez que ayudaste a alguien.",
+    vocabulary: [{ fr: 'aider', en: 'to help' }, { fr: 'reconnaissant(e)', en: 'grateful' }, { fr: 'soutenir', en: 'to support' }] },
+  { id: 'si5', category: 'Situations', fr: "Racontez un moment où vous avez dû être courageux/se.", en: "Tell about a moment you had to be brave.", es: "Cuenta un momento en que tuviste que ser valiente.",
+    vocabulary: [{ fr: 'courageux/se', en: 'brave' }, { fr: 'surmonter', en: 'to overcome' }, { fr: 'peur', en: 'fear' }, { fr: 'oser', en: 'to dare' }] },
+  { id: 'si6', category: 'Situations', fr: "Décrivez un repas qui vous a rendu(e) heureux/se.", en: "Describe a meal that made you happy.", es: "Describe una comida que te hizo feliz.",
+    vocabulary: [{ fr: 'délicieux/se', en: 'delicious' }, { fr: 'savourer', en: 'to savor' }, { fr: 'partager', en: 'to share' }] },
 ];
 
 export const BADGES: Badge[] = [
