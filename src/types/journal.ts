@@ -139,12 +139,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Calme",
     categoryEs: "Calmado",
     emotions: [
-      { en: "peaceful", fr: "paisible", es: "tranquilo/a", nuance: "A deep stillness, free from disturbance" },
-      { en: "content", fr: "satisfait(e)", es: "contento/a", nuance: "Quietly satisfied with how things are" },
-      { en: "relaxed", fr: "détendu(e)", es: "relajado/a", nuance: "Tension has left your body and mind" },
-      { en: "settled", fr: "apaisé(e)", es: "calmado/a", nuance: "Things feel resolved or in place" },
-      { en: "serene", fr: "serein(e)", es: "sereno/a", nuance: "Calm and untroubled, like still water" },
-      { en: "grounded", fr: "ancré(e)", es: "arraigado/a", nuance: "Connected to the present, stable" },
+      { en: "peaceful", fr: "paisible", es: "tranquilo/a", nuance: "A deep stillness, free from disturbance", collocations: ["une paix intérieure", "un calme paisible"] },
+      { en: "content", fr: "satisfait(e)", es: "contento/a", nuance: "Quietly satisfied with how things are", collocations: ["se sentir satisfait(e)", "un contentement tranquille"] },
+      { en: "relaxed", fr: "détendu(e)", es: "relajado/a", nuance: "Tension has left your body and mind", collocations: ["une atmosphère détendue", "se sentir détendu(e)"] },
+      { en: "settled", fr: "apaisé(e)", es: "calmado/a", nuance: "Things feel resolved or in place", collocations: ["un esprit apaisé", "se sentir apaisé(e)"] },
+      { en: "serene", fr: "serein(e)", es: "sereno/a", nuance: "Calm and untroubled, like still water", collocations: ["une sérénité profonde", "rester serein(e)"] },
+      { en: "grounded", fr: "ancré(e)", es: "arraigado/a", nuance: "Connected to the present, stable", collocations: ["rester ancré(e)", "un sentiment d'ancrage"] },
     ],
   },
   {
