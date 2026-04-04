@@ -62,6 +62,7 @@ export interface EmotionWord {
   fr: string;
   es: string;
   nuance: string;
+  collocations?: string[];
 }
 
 export interface EmotionSuggestion {
