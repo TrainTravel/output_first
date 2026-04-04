@@ -230,12 +230,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Connecté",
     categoryEs: "Conectado",
     emotions: [
-      { en: "belonging", fr: "un sentiment d'appartenance", es: "pertenencia", nuance: "Feeling part of something larger" },
-      { en: "understood", fr: "compris(e)", es: "comprendido/a", nuance: "Someone truly sees what you mean" },
-      { en: "supported", fr: "soutenu(e)", es: "apoyado/a", nuance: "Knowing help is there when you need it" },
-      { en: "warm", fr: "chaleureux/se", es: "cálido/a", nuance: "A gentle glow of human connection" },
-      { en: "included", fr: "inclus(e)", es: "incluido/a", nuance: "Welcomed into a group or conversation" },
-      { en: "cherished", fr: "chéri(e)", es: "querido/a", nuance: "Valued deeply by someone" },
+      { en: "belonging", fr: "un sentiment d'appartenance", es: "pertenencia", nuance: "Feeling part of something larger", collocations: ["un sentiment d'appartenance", "se sentir chez soi"] },
+      { en: "understood", fr: "compris(e)", es: "comprendido/a", nuance: "Someone truly sees what you mean", collocations: ["se sentir compris(e)", "être enfin compris(e)"] },
+      { en: "supported", fr: "soutenu(e)", es: "apoyado/a", nuance: "Knowing help is there when you need it", collocations: ["se sentir soutenu(e)", "un soutien inconditionnel"] },
+      { en: "warm", fr: "chaleureux/se", es: "cálido/a", nuance: "A gentle glow of human connection", collocations: ["un accueil chaleureux", "une chaleur humaine"] },
+      { en: "included", fr: "inclus(e)", es: "incluido/a", nuance: "Welcomed into a group or conversation", collocations: ["se sentir inclus(e)", "un geste d'inclusion"] },
+      { en: "cherished", fr: "chéri(e)", es: "querido/a", nuance: "Valued deeply by someone", collocations: ["un souvenir chéri", "être chéri(e) de tous"] },
     ],
   },
 ];
