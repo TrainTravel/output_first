@@ -178,12 +178,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Léger",
     categoryEs: "Ligero",
     emotions: [
-      { en: "hopeful", fr: "plein(e) d'espoir", es: "esperanzado/a", nuance: "Sensing that something good is possible" },
-      { en: "curious", fr: "curieux/se", es: "curioso/a", nuance: "Drawn to learn or explore something" },
-      { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a", nuance: "Appreciating what you have or received" },
-      { en: "present", fr: "présent(e)", es: "presente", nuance: "Fully here, not lost in past or future" },
-      { en: "energized", fr: "dynamisé(e)", es: "energizado/a", nuance: "Feeling a surge of vitality or motivation" },
-      { en: "inspired", fr: "inspiré(e)", es: "inspirado/a", nuance: "Moved to create or act by something meaningful" },
+      { en: "hopeful", fr: "plein(e) d'espoir", es: "esperanzado/a", nuance: "Sensing that something good is possible", collocations: ["garder l'espoir", "un regard plein d'espoir"] },
+      { en: "curious", fr: "curieux/se", es: "curioso/a", nuance: "Drawn to learn or explore something", collocations: ["une curiosité insatiable", "piquer la curiosité"] },
+      { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a", nuance: "Appreciating what you have or received", collocations: ["être reconnaissant(e) envers", "un cœur reconnaissant"] },
+      { en: "present", fr: "présent(e)", es: "presente", nuance: "Fully here, not lost in past or future", collocations: ["être présent(e) à l'instant", "vivre le moment présent"] },
+      { en: "energized", fr: "dynamisé(e)", es: "energizado/a", nuance: "Feeling a surge of vitality or motivation", collocations: ["se sentir dynamisé(e)", "une énergie débordante"] },
+      { en: "inspired", fr: "inspiré(e)", es: "inspirado/a", nuance: "Moved to create or act by something meaningful", collocations: ["une inspiration soudaine", "se sentir inspiré(e)"] },
     ],
   },
   {
