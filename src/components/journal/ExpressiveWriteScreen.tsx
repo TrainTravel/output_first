@@ -4,6 +4,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { InlineAssistBar } from './InlineAssistBar';
+import { useInlineAssist } from '@/hooks/useInlineAssist';
 
 interface ExpressiveWriteScreenProps {
   onSave: (content: string) => void;
