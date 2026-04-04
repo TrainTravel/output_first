@@ -152,12 +152,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Incertain",
     categoryEs: "Inseguro",
     emotions: [
-      { en: "unsure", fr: "incertain(e)", es: "inseguro/a", nuance: "Lacking confidence about what to do or think" },
-      { en: "hesitant", fr: "hésitant(e)", es: "vacilante", nuance: "Pausing before acting, not quite ready" },
-      { en: "questioning", fr: "interrogatif/ive", es: "cuestionando", nuance: "Actively wondering, seeking clarity" },
-      { en: "searching", fr: "en quête", es: "buscando", nuance: "Looking for something you haven't found yet" },
-      { en: "ambivalent", fr: "ambivalent(e)", es: "ambivalente", nuance: "Pulled in two directions at once" },
-      { en: "torn", fr: "tiraillé(e)", es: "dividido/a", nuance: "Conflicted between competing feelings or choices" },
+      { en: "unsure", fr: "incertain(e)", es: "inseguro/a", nuance: "Lacking confidence about what to do or think", collocations: ["un avenir incertain", "rester dans l'incertitude"] },
+      { en: "hesitant", fr: "hésitant(e)", es: "vacilante", nuance: "Pausing before acting, not quite ready", collocations: ["d'un pas hésitant", "une voix hésitante"] },
+      { en: "questioning", fr: "interrogatif/ive", es: "cuestionando", nuance: "Actively wondering, seeking clarity", collocations: ["un regard interrogateur", "se poser des questions"] },
+      { en: "searching", fr: "en quête", es: "buscando", nuance: "Looking for something you haven't found yet", collocations: ["en quête de sens", "être en quête de soi"] },
+      { en: "ambivalent", fr: "ambivalent(e)", es: "ambivalente", nuance: "Pulled in two directions at once", collocations: ["un sentiment ambivalent", "rester ambivalent(e)"] },
+      { en: "torn", fr: "tiraillé(e)", es: "dividido/a", nuance: "Conflicted between competing feelings or choices", collocations: ["tiraillé(e) entre deux choix", "se sentir tiraillé(e)"] },
     ],
   },
   {
