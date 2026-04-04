@@ -70,7 +70,7 @@ export function PromptLibraryScreen({ onPickPrompt, onBack }: PromptLibraryScree
                     return (
                       <button
                         key={prompt.id}
-                        onClick={() => onPickPrompt(text)}
+                        onClick={() => onPickPrompt(text, prompt.vocabulary)}
                         className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-primary/5 transition-all text-base leading-relaxed"
                       >
                         {renderTemplate(text)}

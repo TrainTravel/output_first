@@ -66,6 +66,25 @@ export function EmotionDetailDrawer({
             <div className="overflow-y-auto px-4 pb-2 flex-1">
               <p className="text-sm italic text-muted-foreground mb-4">{word.nuance}</p>
 
+              {/* Collocations */}
+              {word.collocations && word.collocations.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                    {t('Expressions courantes', 'Common expressions', 'Expresiones comunes').primary}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {word.collocations.map((col, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-full text-xs border border-accent/30 bg-accent/5 text-accent-foreground italic"
+                      >
+                        {col}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {loading ? (
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-full" />
