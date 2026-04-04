@@ -156,6 +156,7 @@ export function JournalApp() {
         <WriteScreen
           prompt={getDailyPrompt()}
           initialContent={promptTemplate}
+          preloadedVocab={promptVocab}
           onSave={saveContent}
           onBack={goHome}
         />
