@@ -93,6 +93,7 @@ export function useJournal() {
   const startJournal = () => {
     setCurrentEntry({ date: today });
     setPromptTemplate('');
+    setPromptVocab(undefined);
     setCurrentStep('breathe');
     setCurrentCycle(0);
     setReflectionCycles([]);
