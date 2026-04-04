@@ -29,6 +29,8 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
   const [canContinue, setCanContinue] = useState(false);
   const startTimeRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { suggestions, loading: assistLoading } = useInlineAssist(content);
 
   const sessionCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
 
