@@ -44,8 +44,18 @@ serve(async (req) => {
 `;
 
     let systemPrompt = "";
+    let useToolCalling = false;
 
-    if (type === "feedback") {
+    if (type === "inline-assist") {
+      useToolCalling = true;
+      systemPrompt = `${userContextBlock}
+You detect two things in a French journal entry:
+1. L1 WORDS: English words mixed into French text. For each, suggest 2-3 French alternatives with brief nuance.
+2. VAGUE WORDS: Imprecise French words (bon, mauvais, bien, mal, chose, truc, content, triste, fatigué, stressé, normal). For each, suggest 2-3 more expressive alternatives with collocations.
+
+Only flag words that are clearly L1 or clearly vague. If the text is good French, return empty arrays.
+Be concise — nuances should be 3-6 words max.`;
+    } else if (type === "feedback") {
       // Build vocabulary context section if available
       let vocabSection = "";
       if (vocabularyContext) {
