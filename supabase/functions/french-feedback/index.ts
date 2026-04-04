@@ -119,19 +119,87 @@ RULES:
       systemPrompt = `You are a supportive French companion. Respond briefly and warmly.`;
     }
 
+    const requestBody: Record<string, unknown> = {
+      model: type === "inline-assist" ? "google/gemini-2.5-flash-lite" : "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: `Here is my French journal entry:\n\n${text}` },
+      ],
+    };
+
+    if (useToolCalling) {
+      requestBody.tools = [
+        {
+          type: "function",
+          function: {
+            name: "inline_assist",
+            description: "Return detected L1 words and vague words with suggestions",
+            parameters: {
+              type: "object",
+              properties: {
+                l1Words: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      original: { type: "string", description: "The English word found" },
+                      suggestions: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            fr: { type: "string" },
+                            nuance: { type: "string", description: "3-6 word nuance" },
+                          },
+                          required: ["fr", "nuance"],
+                          additionalProperties: false,
+                        },
+                      },
+                    },
+                    required: ["original", "suggestions"],
+                    additionalProperties: false,
+                  },
+                },
+                vagueWords: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      original: { type: "string", description: "The vague French word" },
+                      upgrades: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            fr: { type: "string" },
+                            nuance: { type: "string", description: "3-6 word nuance" },
+                          },
+                          required: ["fr", "nuance"],
+                          additionalProperties: false,
+                        },
+                      },
+                    },
+                    required: ["original", "upgrades"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ["l1Words", "vagueWords"],
+              additionalProperties: false,
+            },
+          },
+        },
+      ];
+      requestBody.tool_choice = { type: "function", function: { name: "inline_assist" } };
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `Here is my French journal entry:\n\n${text}` },
-        ],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
