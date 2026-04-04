@@ -244,6 +244,27 @@ RULES:
     }
 
     const data = await response.json();
+
+    // Handle tool-calling response for inline-assist
+    if (useToolCalling) {
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        try {
+          const parsed = JSON.parse(toolCall.function.arguments);
+          return new Response(JSON.stringify(parsed), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } catch {
+          return new Response(JSON.stringify({ l1Words: [], vagueWords: [] }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+      return new Response(JSON.stringify({ l1Words: [], vagueWords: [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const content = data.choices?.[0]?.message?.content;
     
     console.log("AI response:", content);
