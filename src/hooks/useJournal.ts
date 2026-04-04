@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 import { useQueryClient } from '@tanstack/react-query';
-import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge } from '@/types/journal';
+import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge, VocabPair } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 
