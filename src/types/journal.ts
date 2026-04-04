@@ -165,12 +165,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Lourd",
     categoryEs: "Pesado",
     emotions: [
-      { en: "tired", fr: "fatigué(e)", es: "cansado/a", nuance: "Needing rest, energy is low" },
-      { en: "weary", fr: "las/lasse", es: "agotado/a", nuance: "Tired from sustained effort or worry" },
-      { en: "drained", fr: "épuisé(e)", es: "sin energía", nuance: "Emptied out, nothing left to give" },
-      { en: "low", fr: "abattu(e)", es: "decaído/a", nuance: "Spirits are down, subdued mood" },
-      { en: "overwhelmed", fr: "submergé(e)", es: "abrumado/a", nuance: "Too much is happening to process" },
-      { en: "burdened", fr: "accablé(e)", es: "agobiado/a", nuance: "Carrying a weight that feels too heavy" },
+      { en: "tired", fr: "fatigué(e)", es: "cansado/a", nuance: "Needing rest, energy is low", collocations: ["une fatigue profonde", "mort(e) de fatigue"] },
+      { en: "weary", fr: "las/lasse", es: "agotado/a", nuance: "Tired from sustained effort or worry", collocations: ["las/lasse de tout", "un regard las"] },
+      { en: "drained", fr: "épuisé(e)", es: "sin energía", nuance: "Emptied out, nothing left to give", collocations: ["complètement épuisé(e)", "à bout de forces"] },
+      { en: "low", fr: "abattu(e)", es: "decaído/a", nuance: "Spirits are down, subdued mood", collocations: ["se sentir abattu(e)", "un air abattu"] },
+      { en: "overwhelmed", fr: "submergé(e)", es: "abrumado/a", nuance: "Too much is happening to process", collocations: ["submergé(e) de travail", "se sentir submergé(e)"] },
+      { en: "burdened", fr: "accablé(e)", es: "agobiado/a", nuance: "Carrying a weight that feels too heavy", collocations: ["accablé(e) de soucis", "un poids accablant"] },
     ],
   },
   {
