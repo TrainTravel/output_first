@@ -104,7 +104,7 @@ export function useJournal() {
 
   const chooseDirect = () => setCurrentStep('write');
   const openPromptLibrary = () => setCurrentStep('promptlibrary');
-  const pickPrompt = (template: string) => { setPromptTemplate(template); setCurrentStep('write'); };
+  const pickPrompt = (template: string, vocabulary?: VocabPair[]) => { setPromptTemplate(template); setPromptVocab(vocabulary); setCurrentStep('write'); };
 
   const startFreeWrite = () => {
     setCurrentEntry({ date: today });
