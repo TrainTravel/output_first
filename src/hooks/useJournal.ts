@@ -271,6 +271,7 @@ export function useJournal() {
     totalWords,
     earnedBadges,
     promptTemplate,
+    promptVocab,
     currentCycle,
     reflectionCycles,
     canMoveToGratitude,

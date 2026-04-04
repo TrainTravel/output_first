@@ -61,6 +61,7 @@ export function JournalApp() {
     chooseDirect,
     openPromptLibrary,
     pickPrompt,
+    promptVocab,
     startFreeWrite,
     startPlainFreeWrite,
     startExpressiveWrite,
