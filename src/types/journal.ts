@@ -204,12 +204,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Frustré",
     categoryEs: "Frustrado",
     emotions: [
-      { en: "irritated", fr: "irrité(e)", es: "irritado/a", nuance: "Mildly angered by something small but persistent" },
-      { en: "impatient", fr: "impatient(e)", es: "impaciente", nuance: "Wanting something to happen faster" },
-      { en: "stuck", fr: "bloqué(e)", es: "atascado/a", nuance: "Unable to move forward despite effort" },
-      { en: "restless", fr: "agité(e)", es: "inquieto/a", nuance: "Can't settle, needing change or movement" },
-      { en: "exasperated", fr: "exaspéré(e)", es: "exasperado/a", nuance: "Frustrated to the point of giving up" },
-      { en: "defeated", fr: "vaincu(e)", es: "derrotado/a", nuance: "Feeling like your efforts haven't been enough" },
+      { en: "irritated", fr: "irrité(e)", es: "irritado/a", nuance: "Mildly angered by something small but persistent", collocations: ["une irritation croissante", "être irrité(e) par"] },
+      { en: "impatient", fr: "impatient(e)", es: "impaciente", nuance: "Wanting something to happen faster", collocations: ["brûler d'impatience", "un geste impatient"] },
+      { en: "stuck", fr: "bloqué(e)", es: "atascado/a", nuance: "Unable to move forward despite effort", collocations: ["se sentir bloqué(e)", "rester bloqué(e)"] },
+      { en: "restless", fr: "agité(e)", es: "inquieto/a", nuance: "Can't settle, needing change or movement", collocations: ["une nuit agitée", "un esprit agité"] },
+      { en: "exasperated", fr: "exaspéré(e)", es: "exasperado/a", nuance: "Frustrated to the point of giving up", collocations: ["pousser un soupir d'exaspération", "être exaspéré(e) par"] },
+      { en: "defeated", fr: "vaincu(e)", es: "derrotado/a", nuance: "Feeling like your efforts haven't been enough", collocations: ["un air vaincu", "s'avouer vaincu(e)"] },
     ],
   },
   {
