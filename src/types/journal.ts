@@ -32,7 +32,12 @@ export interface BilingualPrompt {
   fr: string;
 }
 
-export type FillInCategory = 'Emotions' | 'Daily Life' | 'Observations' | 'Challenges' | 'Hopes';
+export type FillInCategory = 'Emotions' | 'Daily Life' | 'Observations' | 'Challenges' | 'Hopes' | 'Situations';
+
+export interface VocabPair {
+  fr: string;
+  en: string;
+}
 
 export interface FillInPrompt {
   id: string;
@@ -40,6 +45,7 @@ export interface FillInPrompt {
   fr: string;
   en: string;
   es: string;
+  vocabulary?: VocabPair[];
 }
 
 export interface Badge {
@@ -56,6 +62,7 @@ export interface EmotionWord {
   fr: string;
   es: string;
   nuance: string;
+  collocations?: string[];
 }
 
 export interface EmotionSuggestion {
@@ -102,6 +109,19 @@ export const FILL_IN_PROMPTS: FillInPrompt[] = [
   { id: 'hp1', category: 'Hopes', fr: "Je suis reconnaissant(e) pour ___ parce que ___.", en: "I'm grateful for ___ because ___.", es: "Estoy agradecido/a por ___ porque ___." },
   { id: 'hp2', category: 'Hopes', fr: "Cette semaine, j'espère ___. Pour ça je vais ___.", en: "This week, I hope to ___. To do that I will ___.", es: "Esta semana, espero ___. Para eso voy a ___." },
   { id: 'hp3', category: 'Hopes', fr: "Un mot qui décrit où je veux être : ___. Parce que ___.", en: "One word for where I want to be: ___. Because ___.", es: "Una palabra para donde quiero estar: ___. Porque ___." },
+  // Situations
+  { id: 'si1', category: 'Situations', fr: "Décrivez un moment où vous vous êtes senti(e) fier/fière.", en: "Describe a moment you felt proud.", es: "Describe un momento en que te sentiste orgulloso/a.",
+    vocabulary: [{ fr: 'fier/fière', en: 'proud' }, { fr: 'accomplissement', en: 'achievement' }, { fr: 'réussir', en: 'to succeed' }] },
+  { id: 'si2', category: 'Situations', fr: "Racontez un malentendu récent.", en: "Tell about a recent misunderstanding.", es: "Cuenta un malentendido reciente.",
+    vocabulary: [{ fr: 'malentendu', en: 'misunderstanding' }, { fr: 'expliquer', en: 'to explain' }, { fr: 'confus(e)', en: 'confused' }] },
+  { id: 'si3', category: 'Situations', fr: "Décrivez un endroit où vous vous sentez en sécurité.", en: "Describe a place where you feel safe.", es: "Describe un lugar donde te sientes seguro/a.",
+    vocabulary: [{ fr: 'en sécurité', en: 'safe' }, { fr: 'chaleureux/se', en: 'warm' }, { fr: 'refuge', en: 'shelter' }, { fr: 'paisible', en: 'peaceful' }] },
+  { id: 'si4', category: 'Situations', fr: "Parlez d'une fois où vous avez aidé quelqu'un.", en: "Talk about a time you helped someone.", es: "Habla de una vez que ayudaste a alguien.",
+    vocabulary: [{ fr: 'aider', en: 'to help' }, { fr: 'reconnaissant(e)', en: 'grateful' }, { fr: 'soutenir', en: 'to support' }] },
+  { id: 'si5', category: 'Situations', fr: "Racontez un moment où vous avez dû être courageux/se.", en: "Tell about a moment you had to be brave.", es: "Cuenta un momento en que tuviste que ser valiente.",
+    vocabulary: [{ fr: 'courageux/se', en: 'brave' }, { fr: 'surmonter', en: 'to overcome' }, { fr: 'peur', en: 'fear' }, { fr: 'oser', en: 'to dare' }] },
+  { id: 'si6', category: 'Situations', fr: "Décrivez un repas qui vous a rendu(e) heureux/se.", en: "Describe a meal that made you happy.", es: "Describe una comida que te hizo feliz.",
+    vocabulary: [{ fr: 'délicieux/se', en: 'delicious' }, { fr: 'savourer', en: 'to savor' }, { fr: 'partager', en: 'to share' }] },
 ];
 
 export const BADGES: Badge[] = [
@@ -119,12 +139,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Calme",
     categoryEs: "Calmado",
     emotions: [
-      { en: "peaceful", fr: "paisible", es: "tranquilo/a", nuance: "A deep stillness, free from disturbance" },
-      { en: "content", fr: "satisfait(e)", es: "contento/a", nuance: "Quietly satisfied with how things are" },
-      { en: "relaxed", fr: "détendu(e)", es: "relajado/a", nuance: "Tension has left your body and mind" },
-      { en: "settled", fr: "apaisé(e)", es: "calmado/a", nuance: "Things feel resolved or in place" },
-      { en: "serene", fr: "serein(e)", es: "sereno/a", nuance: "Calm and untroubled, like still water" },
-      { en: "grounded", fr: "ancré(e)", es: "arraigado/a", nuance: "Connected to the present, stable" },
+      { en: "peaceful", fr: "paisible", es: "tranquilo/a", nuance: "A deep stillness, free from disturbance", collocations: ["une paix intérieure", "un calme paisible"] },
+      { en: "content", fr: "satisfait(e)", es: "contento/a", nuance: "Quietly satisfied with how things are", collocations: ["se sentir satisfait(e)", "un contentement tranquille"] },
+      { en: "relaxed", fr: "détendu(e)", es: "relajado/a", nuance: "Tension has left your body and mind", collocations: ["une atmosphère détendue", "se sentir détendu(e)"] },
+      { en: "settled", fr: "apaisé(e)", es: "calmado/a", nuance: "Things feel resolved or in place", collocations: ["un esprit apaisé", "se sentir apaisé(e)"] },
+      { en: "serene", fr: "serein(e)", es: "sereno/a", nuance: "Calm and untroubled, like still water", collocations: ["une sérénité profonde", "rester serein(e)"] },
+      { en: "grounded", fr: "ancré(e)", es: "arraigado/a", nuance: "Connected to the present, stable", collocations: ["rester ancré(e)", "un sentiment d'ancrage"] },
     ],
   },
   {
@@ -132,12 +152,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Incertain",
     categoryEs: "Inseguro",
     emotions: [
-      { en: "unsure", fr: "incertain(e)", es: "inseguro/a", nuance: "Lacking confidence about what to do or think" },
-      { en: "hesitant", fr: "hésitant(e)", es: "vacilante", nuance: "Pausing before acting, not quite ready" },
-      { en: "questioning", fr: "interrogatif/ive", es: "cuestionando", nuance: "Actively wondering, seeking clarity" },
-      { en: "searching", fr: "en quête", es: "buscando", nuance: "Looking for something you haven't found yet" },
-      { en: "ambivalent", fr: "ambivalent(e)", es: "ambivalente", nuance: "Pulled in two directions at once" },
-      { en: "torn", fr: "tiraillé(e)", es: "dividido/a", nuance: "Conflicted between competing feelings or choices" },
+      { en: "unsure", fr: "incertain(e)", es: "inseguro/a", nuance: "Lacking confidence about what to do or think", collocations: ["un avenir incertain", "rester dans l'incertitude"] },
+      { en: "hesitant", fr: "hésitant(e)", es: "vacilante", nuance: "Pausing before acting, not quite ready", collocations: ["d'un pas hésitant", "une voix hésitante"] },
+      { en: "questioning", fr: "interrogatif/ive", es: "cuestionando", nuance: "Actively wondering, seeking clarity", collocations: ["un regard interrogateur", "se poser des questions"] },
+      { en: "searching", fr: "en quête", es: "buscando", nuance: "Looking for something you haven't found yet", collocations: ["en quête de sens", "être en quête de soi"] },
+      { en: "ambivalent", fr: "ambivalent(e)", es: "ambivalente", nuance: "Pulled in two directions at once", collocations: ["un sentiment ambivalent", "rester ambivalent(e)"] },
+      { en: "torn", fr: "tiraillé(e)", es: "dividido/a", nuance: "Conflicted between competing feelings or choices", collocations: ["tiraillé(e) entre deux choix", "se sentir tiraillé(e)"] },
     ],
   },
   {
@@ -145,12 +165,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Lourd",
     categoryEs: "Pesado",
     emotions: [
-      { en: "tired", fr: "fatigué(e)", es: "cansado/a", nuance: "Needing rest, energy is low" },
-      { en: "weary", fr: "las/lasse", es: "agotado/a", nuance: "Tired from sustained effort or worry" },
-      { en: "drained", fr: "épuisé(e)", es: "sin energía", nuance: "Emptied out, nothing left to give" },
-      { en: "low", fr: "abattu(e)", es: "decaído/a", nuance: "Spirits are down, subdued mood" },
-      { en: "overwhelmed", fr: "submergé(e)", es: "abrumado/a", nuance: "Too much is happening to process" },
-      { en: "burdened", fr: "accablé(e)", es: "agobiado/a", nuance: "Carrying a weight that feels too heavy" },
+      { en: "tired", fr: "fatigué(e)", es: "cansado/a", nuance: "Needing rest, energy is low", collocations: ["une fatigue profonde", "mort(e) de fatigue"] },
+      { en: "weary", fr: "las/lasse", es: "agotado/a", nuance: "Tired from sustained effort or worry", collocations: ["las/lasse de tout", "un regard las"] },
+      { en: "drained", fr: "épuisé(e)", es: "sin energía", nuance: "Emptied out, nothing left to give", collocations: ["complètement épuisé(e)", "à bout de forces"] },
+      { en: "low", fr: "abattu(e)", es: "decaído/a", nuance: "Spirits are down, subdued mood", collocations: ["se sentir abattu(e)", "un air abattu"] },
+      { en: "overwhelmed", fr: "submergé(e)", es: "abrumado/a", nuance: "Too much is happening to process", collocations: ["submergé(e) de travail", "se sentir submergé(e)"] },
+      { en: "burdened", fr: "accablé(e)", es: "agobiado/a", nuance: "Carrying a weight that feels too heavy", collocations: ["accablé(e) de soucis", "un poids accablant"] },
     ],
   },
   {
@@ -158,12 +178,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Léger",
     categoryEs: "Ligero",
     emotions: [
-      { en: "hopeful", fr: "plein(e) d'espoir", es: "esperanzado/a", nuance: "Sensing that something good is possible" },
-      { en: "curious", fr: "curieux/se", es: "curioso/a", nuance: "Drawn to learn or explore something" },
-      { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a", nuance: "Appreciating what you have or received" },
-      { en: "present", fr: "présent(e)", es: "presente", nuance: "Fully here, not lost in past or future" },
-      { en: "energized", fr: "dynamisé(e)", es: "energizado/a", nuance: "Feeling a surge of vitality or motivation" },
-      { en: "inspired", fr: "inspiré(e)", es: "inspirado/a", nuance: "Moved to create or act by something meaningful" },
+      { en: "hopeful", fr: "plein(e) d'espoir", es: "esperanzado/a", nuance: "Sensing that something good is possible", collocations: ["garder l'espoir", "un regard plein d'espoir"] },
+      { en: "curious", fr: "curieux/se", es: "curioso/a", nuance: "Drawn to learn or explore something", collocations: ["une curiosité insatiable", "piquer la curiosité"] },
+      { en: "grateful", fr: "reconnaissant(e)", es: "agradecido/a", nuance: "Appreciating what you have or received", collocations: ["être reconnaissant(e) envers", "un cœur reconnaissant"] },
+      { en: "present", fr: "présent(e)", es: "presente", nuance: "Fully here, not lost in past or future", collocations: ["être présent(e) à l'instant", "vivre le moment présent"] },
+      { en: "energized", fr: "dynamisé(e)", es: "energizado/a", nuance: "Feeling a surge of vitality or motivation", collocations: ["se sentir dynamisé(e)", "une énergie débordante"] },
+      { en: "inspired", fr: "inspiré(e)", es: "inspirado/a", nuance: "Moved to create or act by something meaningful", collocations: ["une inspiration soudaine", "se sentir inspiré(e)"] },
     ],
   },
   {
@@ -171,12 +191,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Tendre",
     categoryEs: "Tierno",
     emotions: [
-      { en: "vulnerable", fr: "vulnérable", es: "vulnerable", nuance: "Open and exposed, emotionally unguarded" },
-      { en: "moved", fr: "ému(e)", es: "conmovido/a", nuance: "Touched deeply by something you witnessed or felt" },
-      { en: "nostalgic", fr: "nostalgique", es: "nostálgico/a", nuance: "A bittersweet longing for something past" },
-      { en: "tender", fr: "attendri(e)", es: "enternecido/a", nuance: "Softened by affection or compassion" },
-      { en: "compassionate", fr: "compatissant(e)", es: "compasivo/a", nuance: "Feeling for another's pain or struggle" },
-      { en: "wistful", fr: "mélancolique", es: "melancólico/a", nuance: "Gently sad, wishing for something distant" },
+      { en: "vulnerable", fr: "vulnérable", es: "vulnerable", nuance: "Open and exposed, emotionally unguarded", collocations: ["se sentir vulnérable", "un moment de vulnérabilité"] },
+      { en: "moved", fr: "ému(e)", es: "conmovido/a", nuance: "Touched deeply by something you witnessed or felt", collocations: ["ému(e) aux larmes", "profondément ému(e)"] },
+      { en: "nostalgic", fr: "nostalgique", es: "nostálgico/a", nuance: "A bittersweet longing for something past", collocations: ["une nostalgie douce", "un souvenir nostalgique"] },
+      { en: "tender", fr: "attendri(e)", es: "enternecido/a", nuance: "Softened by affection or compassion", collocations: ["un regard attendri", "un geste de tendresse"] },
+      { en: "compassionate", fr: "compatissant(e)", es: "compasivo/a", nuance: "Feeling for another's pain or struggle", collocations: ["faire preuve de compassion", "un cœur compatissant"] },
+      { en: "wistful", fr: "mélancolique", es: "melancólico/a", nuance: "Gently sad, wishing for something distant", collocations: ["une mélancolie douce", "un air mélancolique"] },
     ],
   },
   {
@@ -184,12 +204,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Frustré",
     categoryEs: "Frustrado",
     emotions: [
-      { en: "irritated", fr: "irrité(e)", es: "irritado/a", nuance: "Mildly angered by something small but persistent" },
-      { en: "impatient", fr: "impatient(e)", es: "impaciente", nuance: "Wanting something to happen faster" },
-      { en: "stuck", fr: "bloqué(e)", es: "atascado/a", nuance: "Unable to move forward despite effort" },
-      { en: "restless", fr: "agité(e)", es: "inquieto/a", nuance: "Can't settle, needing change or movement" },
-      { en: "exasperated", fr: "exaspéré(e)", es: "exasperado/a", nuance: "Frustrated to the point of giving up" },
-      { en: "defeated", fr: "vaincu(e)", es: "derrotado/a", nuance: "Feeling like your efforts haven't been enough" },
+      { en: "irritated", fr: "irrité(e)", es: "irritado/a", nuance: "Mildly angered by something small but persistent", collocations: ["une irritation croissante", "être irrité(e) par"] },
+      { en: "impatient", fr: "impatient(e)", es: "impaciente", nuance: "Wanting something to happen faster", collocations: ["brûler d'impatience", "un geste impatient"] },
+      { en: "stuck", fr: "bloqué(e)", es: "atascado/a", nuance: "Unable to move forward despite effort", collocations: ["se sentir bloqué(e)", "rester bloqué(e)"] },
+      { en: "restless", fr: "agité(e)", es: "inquieto/a", nuance: "Can't settle, needing change or movement", collocations: ["une nuit agitée", "un esprit agité"] },
+      { en: "exasperated", fr: "exaspéré(e)", es: "exasperado/a", nuance: "Frustrated to the point of giving up", collocations: ["pousser un soupir d'exaspération", "être exaspéré(e) par"] },
+      { en: "defeated", fr: "vaincu(e)", es: "derrotado/a", nuance: "Feeling like your efforts haven't been enough", collocations: ["un air vaincu", "s'avouer vaincu(e)"] },
     ],
   },
   {
@@ -197,12 +217,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Anxieux",
     categoryEs: "Ansioso",
     emotions: [
-      { en: "nervous", fr: "nerveux/se", es: "nervioso/a", nuance: "On edge about something upcoming" },
-      { en: "apprehensive", fr: "appréhensif/ive", es: "aprensivo/a", nuance: "Anticipating something with unease" },
-      { en: "on-edge", fr: "sur les nerfs", es: "al límite", nuance: "Hyper-alert, easily startled" },
-      { en: "scattered", fr: "dispersé(e)", es: "disperso/a", nuance: "Thoughts racing in many directions" },
-      { en: "uneasy", fr: "mal à l'aise", es: "incómodo/a", nuance: "Something feels off but hard to name" },
-      { en: "panicked", fr: "paniqué(e)", es: "en pánico", nuance: "Overwhelmed by sudden fear or urgency" },
+      { en: "nervous", fr: "nerveux/se", es: "nervioso/a", nuance: "On edge about something upcoming", collocations: ["une nervosité palpable", "un rire nerveux"] },
+      { en: "apprehensive", fr: "appréhensif/ive", es: "aprensivo/a", nuance: "Anticipating something with unease", collocations: ["un regard appréhensif", "appréhender l'avenir"] },
+      { en: "on-edge", fr: "sur les nerfs", es: "al límite", nuance: "Hyper-alert, easily startled", collocations: ["être à bout de nerfs", "avoir les nerfs à vif"] },
+      { en: "scattered", fr: "dispersé(e)", es: "disperso/a", nuance: "Thoughts racing in many directions", collocations: ["un esprit dispersé", "se sentir dispersé(e)"] },
+      { en: "uneasy", fr: "mal à l'aise", es: "incómodo/a", nuance: "Something feels off but hard to name", collocations: ["un malaise profond", "mettre mal à l'aise"] },
+      { en: "panicked", fr: "paniqué(e)", es: "en pánico", nuance: "Overwhelmed by sudden fear or urgency", collocations: ["une crise de panique", "pris(e) de panique"] },
     ],
   },
   {
@@ -210,12 +230,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Connecté",
     categoryEs: "Conectado",
     emotions: [
-      { en: "belonging", fr: "un sentiment d'appartenance", es: "pertenencia", nuance: "Feeling part of something larger" },
-      { en: "understood", fr: "compris(e)", es: "comprendido/a", nuance: "Someone truly sees what you mean" },
-      { en: "supported", fr: "soutenu(e)", es: "apoyado/a", nuance: "Knowing help is there when you need it" },
-      { en: "warm", fr: "chaleureux/se", es: "cálido/a", nuance: "A gentle glow of human connection" },
-      { en: "included", fr: "inclus(e)", es: "incluido/a", nuance: "Welcomed into a group or conversation" },
-      { en: "cherished", fr: "chéri(e)", es: "querido/a", nuance: "Valued deeply by someone" },
+      { en: "belonging", fr: "un sentiment d'appartenance", es: "pertenencia", nuance: "Feeling part of something larger", collocations: ["un sentiment d'appartenance", "se sentir chez soi"] },
+      { en: "understood", fr: "compris(e)", es: "comprendido/a", nuance: "Someone truly sees what you mean", collocations: ["se sentir compris(e)", "être enfin compris(e)"] },
+      { en: "supported", fr: "soutenu(e)", es: "apoyado/a", nuance: "Knowing help is there when you need it", collocations: ["se sentir soutenu(e)", "un soutien inconditionnel"] },
+      { en: "warm", fr: "chaleureux/se", es: "cálido/a", nuance: "A gentle glow of human connection", collocations: ["un accueil chaleureux", "une chaleur humaine"] },
+      { en: "included", fr: "inclus(e)", es: "incluido/a", nuance: "Welcomed into a group or conversation", collocations: ["se sentir inclus(e)", "un geste d'inclusion"] },
+      { en: "cherished", fr: "chéri(e)", es: "querido/a", nuance: "Valued deeply by someone", collocations: ["un souvenir chéri", "être chéri(e) de tous"] },
     ],
   },
 ];

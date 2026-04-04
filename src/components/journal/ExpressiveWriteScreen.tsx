@@ -4,6 +4,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { InlineAssistBar } from './InlineAssistBar';
+import { useInlineAssist } from '@/hooks/useInlineAssist';
 
 interface ExpressiveWriteScreenProps {
   onSave: (content: string) => void;
@@ -27,6 +29,8 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
   const [canContinue, setCanContinue] = useState(false);
   const startTimeRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { suggestions, loading: assistLoading } = useInlineAssist(content);
 
   const sessionCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
 
@@ -179,6 +183,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
 
         <div className="flex-1 flex flex-col space-y-3">
           <Textarea
+            ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={t(
@@ -188,6 +193,28 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
             ).primary}
             className="flex-1 min-h-[300px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
             autoFocus
+          />
+
+          <InlineAssistBar
+            suggestions={suggestions}
+            loading={assistLoading}
+            onInsert={(word) => {
+              const el = textareaRef.current;
+              if (!el) {
+                setContent(prev => prev + (prev.endsWith(' ') || prev.length === 0 ? '' : ' ') + word + ' ');
+                return;
+              }
+              const start = el.selectionStart;
+              const before = content.slice(0, start);
+              const after = content.slice(el.selectionEnd);
+              const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
+              setContent(before + space + word + ' ' + after);
+              requestAnimationFrame(() => {
+                const pos = start + space.length + word.length + 1;
+                el.focus();
+                el.setSelectionRange(pos, pos);
+              });
+            }}
           />
 
           <div className="flex items-center justify-between text-sm text-muted-foreground">

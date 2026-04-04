@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 import { useQueryClient } from '@tanstack/react-query';
-import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge } from '@/types/journal';
+import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge, VocabPair } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 
@@ -22,6 +22,7 @@ export function useJournal() {
   const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
   const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
   const [promptTemplate, setPromptTemplate] = useState('');
+  const [promptVocab, setPromptVocab] = useState<VocabPair[] | undefined>(undefined);
 
   // Load entries from localStorage
   useEffect(() => {
@@ -92,6 +93,7 @@ export function useJournal() {
   const startJournal = () => {
     setCurrentEntry({ date: today });
     setPromptTemplate('');
+    setPromptVocab(undefined);
     setCurrentStep('breathe');
     setCurrentCycle(0);
     setReflectionCycles([]);
@@ -103,7 +105,7 @@ export function useJournal() {
 
   const chooseDirect = () => setCurrentStep('write');
   const openPromptLibrary = () => setCurrentStep('promptlibrary');
-  const pickPrompt = (template: string) => { setPromptTemplate(template); setCurrentStep('write'); };
+  const pickPrompt = (template: string, vocabulary?: VocabPair[]) => { setPromptTemplate(template); setPromptVocab(vocabulary); setCurrentStep('write'); };
 
   const startFreeWrite = () => {
     setCurrentEntry({ date: today });
@@ -269,6 +271,7 @@ export function useJournal() {
     totalWords,
     earnedBadges,
     promptTemplate,
+    promptVocab,
     currentCycle,
     reflectionCycles,
     canMoveToGratitude,

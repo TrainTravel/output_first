@@ -44,8 +44,18 @@ serve(async (req) => {
 `;
 
     let systemPrompt = "";
+    let useToolCalling = false;
 
-    if (type === "feedback") {
+    if (type === "inline-assist") {
+      useToolCalling = true;
+      systemPrompt = `${userContextBlock}
+You detect two things in a French journal entry:
+1. L1 WORDS: English words mixed into French text. For each, suggest 2-3 French alternatives with brief nuance.
+2. VAGUE WORDS: Imprecise French words (bon, mauvais, bien, mal, chose, truc, content, triste, fatigué, stressé, normal). For each, suggest 2-3 more expressive alternatives with collocations.
+
+Only flag words that are clearly L1 or clearly vague. If the text is good French, return empty arrays.
+Be concise — nuances should be 3-6 words max.`;
+    } else if (type === "feedback") {
       // Build vocabulary context section if available
       let vocabSection = "";
       if (vocabularyContext) {
@@ -109,19 +119,87 @@ RULES:
       systemPrompt = `You are a supportive French companion. Respond briefly and warmly.`;
     }
 
+    const requestBody: Record<string, unknown> = {
+      model: type === "inline-assist" ? "google/gemini-2.5-flash-lite" : "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: `Here is my French journal entry:\n\n${text}` },
+      ],
+    };
+
+    if (useToolCalling) {
+      requestBody.tools = [
+        {
+          type: "function",
+          function: {
+            name: "inline_assist",
+            description: "Return detected L1 words and vague words with suggestions",
+            parameters: {
+              type: "object",
+              properties: {
+                l1Words: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      original: { type: "string", description: "The English word found" },
+                      suggestions: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            fr: { type: "string" },
+                            nuance: { type: "string", description: "3-6 word nuance" },
+                          },
+                          required: ["fr", "nuance"],
+                          additionalProperties: false,
+                        },
+                      },
+                    },
+                    required: ["original", "suggestions"],
+                    additionalProperties: false,
+                  },
+                },
+                vagueWords: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      original: { type: "string", description: "The vague French word" },
+                      upgrades: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            fr: { type: "string" },
+                            nuance: { type: "string", description: "3-6 word nuance" },
+                          },
+                          required: ["fr", "nuance"],
+                          additionalProperties: false,
+                        },
+                      },
+                    },
+                    required: ["original", "upgrades"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ["l1Words", "vagueWords"],
+              additionalProperties: false,
+            },
+          },
+        },
+      ];
+      requestBody.tool_choice = { type: "function", function: { name: "inline_assist" } };
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `Here is my French journal entry:\n\n${text}` },
-        ],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -166,6 +244,27 @@ RULES:
     }
 
     const data = await response.json();
+
+    // Handle tool-calling response for inline-assist
+    if (useToolCalling) {
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        try {
+          const parsed = JSON.parse(toolCall.function.arguments);
+          return new Response(JSON.stringify(parsed), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } catch {
+          return new Response(JSON.stringify({ l1Words: [], vagueWords: [] }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+      return new Response(JSON.stringify({ l1Words: [], vagueWords: [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const content = data.choices?.[0]?.message?.content;
     
     console.log("AI response:", content);

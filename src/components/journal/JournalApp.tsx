@@ -61,6 +61,7 @@ export function JournalApp() {
     chooseDirect,
     openPromptLibrary,
     pickPrompt,
+    promptVocab,
     startFreeWrite,
     startPlainFreeWrite,
     startExpressiveWrite,
@@ -155,6 +156,7 @@ export function JournalApp() {
         <WriteScreen
           prompt={getDailyPrompt()}
           initialContent={promptTemplate}
+          preloadedVocab={promptVocab}
           onSave={saveContent}
           onBack={goHome}
         />

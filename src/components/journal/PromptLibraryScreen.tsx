@@ -1,9 +1,9 @@
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FILL_IN_PROMPTS, FillInCategory } from '@/types/journal';
+import { FILL_IN_PROMPTS, FillInCategory, FillInPrompt } from '@/types/journal';
 
 interface PromptLibraryScreenProps {
-  onPickPrompt: (template: string) => void;
+  onPickPrompt: (template: string, vocabulary?: FillInPrompt['vocabulary']) => void;
   onBack: () => void;
 }
 
@@ -13,9 +13,10 @@ const CATEGORY_LABELS: Record<FillInCategory, { fr: string; en: string; es: stri
   'Observations':{ fr: 'Observations', en: 'Observations', es: 'Observaciones'},
   'Challenges':  { fr: 'Défis',        en: 'Challenges',   es: 'Desafíos'     },
   'Hopes':       { fr: 'Espoirs',      en: 'Hopes',        es: 'Esperanzas'   },
+  'Situations':  { fr: 'Situations',   en: 'Situations',   es: 'Situaciones'  },
 };
 
-const CATEGORIES: FillInCategory[] = ['Emotions', 'Daily Life', 'Observations', 'Challenges', 'Hopes'];
+const CATEGORIES: FillInCategory[] = ['Emotions', 'Daily Life', 'Observations', 'Challenges', 'Hopes', 'Situations'];
 
 // Highlight ___ blanks with a styled span
 function renderTemplate(text: string) {
@@ -69,7 +70,7 @@ export function PromptLibraryScreen({ onPickPrompt, onBack }: PromptLibraryScree
                     return (
                       <button
                         key={prompt.id}
-                        onClick={() => onPickPrompt(text)}
+                        onClick={() => onPickPrompt(text, prompt.vocabulary)}
                         className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-primary/5 transition-all text-base leading-relaxed"
                       >
                         {renderTemplate(text)}

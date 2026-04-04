@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { InlineAssistBar } from './InlineAssistBar';
+import { useInlineAssist } from '@/hooks/useInlineAssist';
 
 interface FreeWriteScreenProps {
   onSave: (content: string) => void;
@@ -15,11 +17,32 @@ const countWords = (text: string): number =>
 export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
   const [content, setContent] = useState('');
   const { t, bilingual } = useLanguage();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { suggestions, loading: assistLoading } = useInlineAssist(content);
 
   const wordCount = countWords(content);
 
   const handleSubmit = () => {
     if (content.trim()) onSave(content.trim());
+  };
+
+  const insertWord = (word: string) => {
+    const el = textareaRef.current;
+    if (!el) {
+      setContent(prev => prev + (prev.endsWith(' ') || prev.length === 0 ? '' : ' ') + word + ' ');
+      return;
+    }
+    const start = el.selectionStart;
+    const before = content.slice(0, start);
+    const after = content.slice(el.selectionEnd);
+    const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
+    const newContent = before + space + word + ' ' + after;
+    setContent(newContent);
+    requestAnimationFrame(() => {
+      const pos = start + space.length + word.length + 1;
+      el.focus();
+      el.setSelectionRange(pos, pos);
+    });
   };
 
   return (
@@ -44,10 +67,17 @@ export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
 
         <div className="flex-1 flex flex-col space-y-3">
           <Textarea
+            ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={t('Écrivez ce qui vous vient...', 'Write whatever comes...', 'Escribe lo que te venga...').primary}
             className="flex-1 min-h-[300px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
+          />
+
+          <InlineAssistBar
+            suggestions={suggestions}
+            loading={assistLoading}
+            onInsert={insertWord}
           />
 
           <div className="flex items-center justify-between">
