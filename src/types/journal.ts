@@ -191,12 +191,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Tendre",
     categoryEs: "Tierno",
     emotions: [
-      { en: "vulnerable", fr: "vulnérable", es: "vulnerable", nuance: "Open and exposed, emotionally unguarded" },
-      { en: "moved", fr: "ému(e)", es: "conmovido/a", nuance: "Touched deeply by something you witnessed or felt" },
-      { en: "nostalgic", fr: "nostalgique", es: "nostálgico/a", nuance: "A bittersweet longing for something past" },
-      { en: "tender", fr: "attendri(e)", es: "enternecido/a", nuance: "Softened by affection or compassion" },
-      { en: "compassionate", fr: "compatissant(e)", es: "compasivo/a", nuance: "Feeling for another's pain or struggle" },
-      { en: "wistful", fr: "mélancolique", es: "melancólico/a", nuance: "Gently sad, wishing for something distant" },
+      { en: "vulnerable", fr: "vulnérable", es: "vulnerable", nuance: "Open and exposed, emotionally unguarded", collocations: ["se sentir vulnérable", "un moment de vulnérabilité"] },
+      { en: "moved", fr: "ému(e)", es: "conmovido/a", nuance: "Touched deeply by something you witnessed or felt", collocations: ["ému(e) aux larmes", "profondément ému(e)"] },
+      { en: "nostalgic", fr: "nostalgique", es: "nostálgico/a", nuance: "A bittersweet longing for something past", collocations: ["une nostalgie douce", "un souvenir nostalgique"] },
+      { en: "tender", fr: "attendri(e)", es: "enternecido/a", nuance: "Softened by affection or compassion", collocations: ["un regard attendri", "un geste de tendresse"] },
+      { en: "compassionate", fr: "compatissant(e)", es: "compasivo/a", nuance: "Feeling for another's pain or struggle", collocations: ["faire preuve de compassion", "un cœur compatissant"] },
+      { en: "wistful", fr: "mélancolique", es: "melancólico/a", nuance: "Gently sad, wishing for something distant", collocations: ["une mélancolie douce", "un air mélancolique"] },
     ],
   },
   {
