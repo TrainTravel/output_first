@@ -217,12 +217,12 @@ export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
     categoryFr: "Anxieux",
     categoryEs: "Ansioso",
     emotions: [
-      { en: "nervous", fr: "nerveux/se", es: "nervioso/a", nuance: "On edge about something upcoming" },
-      { en: "apprehensive", fr: "appréhensif/ive", es: "aprensivo/a", nuance: "Anticipating something with unease" },
-      { en: "on-edge", fr: "sur les nerfs", es: "al límite", nuance: "Hyper-alert, easily startled" },
-      { en: "scattered", fr: "dispersé(e)", es: "disperso/a", nuance: "Thoughts racing in many directions" },
-      { en: "uneasy", fr: "mal à l'aise", es: "incómodo/a", nuance: "Something feels off but hard to name" },
-      { en: "panicked", fr: "paniqué(e)", es: "en pánico", nuance: "Overwhelmed by sudden fear or urgency" },
+      { en: "nervous", fr: "nerveux/se", es: "nervioso/a", nuance: "On edge about something upcoming", collocations: ["une nervosité palpable", "un rire nerveux"] },
+      { en: "apprehensive", fr: "appréhensif/ive", es: "aprensivo/a", nuance: "Anticipating something with unease", collocations: ["un regard appréhensif", "appréhender l'avenir"] },
+      { en: "on-edge", fr: "sur les nerfs", es: "al límite", nuance: "Hyper-alert, easily startled", collocations: ["être à bout de nerfs", "avoir les nerfs à vif"] },
+      { en: "scattered", fr: "dispersé(e)", es: "disperso/a", nuance: "Thoughts racing in many directions", collocations: ["un esprit dispersé", "se sentir dispersé(e)"] },
+      { en: "uneasy", fr: "mal à l'aise", es: "incómodo/a", nuance: "Something feels off but hard to name", collocations: ["un malaise profond", "mettre mal à l'aise"] },
+      { en: "panicked", fr: "paniqué(e)", es: "en pánico", nuance: "Overwhelmed by sudden fear or urgency", collocations: ["une crise de panique", "pris(e) de panique"] },
     ],
   },
   {
