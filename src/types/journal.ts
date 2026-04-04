@@ -32,7 +32,12 @@ export interface BilingualPrompt {
   fr: string;
 }
 
-export type FillInCategory = 'Emotions' | 'Daily Life' | 'Observations' | 'Challenges' | 'Hopes';
+export type FillInCategory = 'Emotions' | 'Daily Life' | 'Observations' | 'Challenges' | 'Hopes' | 'Situations';
+
+export interface VocabPair {
+  fr: string;
+  en: string;
+}
 
 export interface FillInPrompt {
   id: string;
@@ -40,6 +45,7 @@ export interface FillInPrompt {
   fr: string;
   en: string;
   es: string;
+  vocabulary?: VocabPair[];
 }
 
 export interface Badge {
