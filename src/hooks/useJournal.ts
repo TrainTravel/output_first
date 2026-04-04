@@ -22,6 +22,7 @@ export function useJournal() {
   const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
   const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
   const [promptTemplate, setPromptTemplate] = useState('');
+  const [promptVocab, setPromptVocab] = useState<VocabPair[] | undefined>(undefined);
 
   // Load entries from localStorage
   useEffect(() => {
