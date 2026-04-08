@@ -55,14 +55,18 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const resp = await fetch(CHAT_URL, {
+      const chatUrl = getChatUrl(lang);
+      const bodyPayload: Record<string, unknown> = { messages: [], thoughtContext: context, lang };
+      if (isZh) bodyPayload.variant = zhVariant;
+
+      const resp = await fetch(chatUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: [], thoughtContext: context, lang }),
+        body: JSON.stringify(bodyPayload),
       });
 
       if (!resp.ok) {
