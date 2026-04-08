@@ -86,7 +86,7 @@ export function VoiceMicButton({ onTranscript, language, disabled, className }: 
       type="button"
       onClick={handleClick}
       disabled={isTranscribing || disabled}
-      aria-label={ARIA_LABELS[state][language]}
+      aria-label={ARIA_LABELS[state][language] || ARIA_LABELS[state].en || ''}
       className={[
         'flex items-center justify-center w-8 h-8 rounded-full transition-colors',
         state === 'idle' && 'text-muted-foreground hover:bg-muted hover:text-foreground',
