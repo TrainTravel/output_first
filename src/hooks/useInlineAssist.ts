@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export interface InlineSuggestion {
   type: 'l1' | 'vague';
@@ -25,6 +26,7 @@ export function useInlineAssist(text: string) {
   const [loading, setLoading] = useState(false);
   const cacheRef = useRef<Map<string, InlineSuggestion[]>>(new Map());
   const abortRef = useRef<AbortController | null>(null);
+  const { lang, isZh, zhVariant } = useLanguage();
 
   useEffect(() => {
     const wordCount = text.trim().split(/\s+/).length;
@@ -47,9 +49,11 @@ export function useInlineAssist(text: string) {
 
       setLoading(true);
       try {
-        const { data, error } = await supabase.functions.invoke('french-feedback', {
-          body: { text: text.trim(), type: 'inline-assist', lang: 'fr' },
-        });
+        const fnName = isZh ? 'chinese-feedback' : 'french-feedback';
+        const body: Record<string, unknown> = { text: text.trim(), type: 'inline-assist', lang };
+        if (isZh) body.variant = zhVariant;
+
+        const { data, error } = await supabase.functions.invoke(fnName, { body });
 
         if (controller.signal.aborted) return;
 
@@ -95,7 +99,7 @@ export function useInlineAssist(text: string) {
     return () => {
       clearTimeout(timer);
     };
-  }, [text]);
+  }, [text, lang, isZh, zhVariant]);
 
   return { suggestions, loading };
 }
