@@ -17,7 +17,7 @@ interface WriteScreenProps {
 
 export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedVocab }: WriteScreenProps) {
   const [content, setContent] = useState(initialContent ?? '');
-  const { t } = useLanguage();
+  const { t, isZh, zhVariant } = useLanguage();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { suggestions, loading: assistLoading } = useInlineAssist(content);
 
@@ -80,11 +80,21 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
               {preloadedVocab.map((v) => (
                 <button
                   key={v.fr}
-                  onClick={() => insertWord(v.fr)}
+                  onClick={() => insertWord(isZh ? (zhVariant === 'Hant' ? v.zhHant || v.fr : v.zhHans || v.fr) : v.fr)}
                   className="px-3 py-1.5 rounded-full text-sm border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all"
                   title={v.en}
                 >
-                  {v.fr} <span className="text-muted-foreground text-xs ml-1">({v.en})</span>
+                  {isZh ? (
+                    <>
+                      {zhVariant === 'Hant' ? v.zhHant : v.zhHans}
+                      {v.pinyin && <span className="text-muted-foreground text-xs ml-1">({v.pinyin})</span>}
+                      <span className="text-muted-foreground text-xs ml-1">· {v.en}</span>
+                    </>
+                  ) : (
+                    <>
+                      {v.fr} <span className="text-muted-foreground text-xs ml-1">({v.en})</span>
+                    </>
+                  )}
                 </button>
               ))}
             </div>
