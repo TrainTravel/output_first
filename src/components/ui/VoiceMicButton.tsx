@@ -57,7 +57,7 @@ export function VoiceMicButton({ onTranscript, language, disabled, className }: 
   // Show localised toast whenever error changes
   useEffect(() => {
     if (error) {
-      toast.error(ERROR_MESSAGES[error][language]);
+      toast.error(ERROR_MESSAGES[error][language] || ERROR_MESSAGES[error].en || 'An error occurred.');
     }
   }, [error, language]);
 
