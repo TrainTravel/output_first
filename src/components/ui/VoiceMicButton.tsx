@@ -11,7 +11,7 @@ interface VoiceMicButtonProps {
   className?: string;
 }
 
-const ERROR_MESSAGES: Record<VoiceRecordingError, Record<Language, string>> = {
+const ERROR_MESSAGES: Record<VoiceRecordingError, Partial<Record<Language, string>>> = {
   permission_denied: {
     fr: 'Accès au microphone refusé.',
     en: 'Microphone access denied.',
@@ -44,7 +44,7 @@ const ERROR_MESSAGES: Record<VoiceRecordingError, Record<Language, string>> = {
   },
 };
 
-const ARIA_LABELS: Record<'idle' | 'recording' | 'transcribing', Record<Language, string>> = {
+const ARIA_LABELS: Record<'idle' | 'recording' | 'transcribing', Partial<Record<Language, string>>> = {
   idle: { fr: 'Démarrer la dictée', en: 'Start voice input', es: 'Iniciar dictado' },
   recording: { fr: 'Arrêter la dictée', en: 'Stop recording', es: 'Detener grabación' },
   transcribing: { fr: 'Transcription…', en: 'Transcribing…', es: 'Transcribiendo…' },
