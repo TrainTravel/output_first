@@ -64,7 +64,6 @@ export function EmotionDetailDrawer({
                   </>
                 ) : bilingual(word.fr, word.en, word.es)}
               </DrawerTitle>
-              </DrawerTitle>
               <DrawerDescription className="sr-only">
                 {word.nuance}
               </DrawerDescription>
