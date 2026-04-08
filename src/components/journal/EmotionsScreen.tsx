@@ -21,7 +21,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showHint, setShowHint] = useState(() => !localStorage.getItem('emotion_drawer_used'));
-  const { t, isFr, isEs, lang } = useLanguage();
+  const { t, isFr, isEs, isZh, zhVariant, lang } = useLanguage();
   const { getSessionWords, markEncountered, markUsed, isFirstEncounter, stats } = useEmotionVocab();
 
   const sessionWords = useMemo(() => getSessionWords(), [getSessionWords]);
@@ -154,7 +154,12 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
           {sessionWords.map((group) => (
             <div key={group.category} className="space-y-3">
               <p className="text-sm text-muted-foreground font-medium tracking-wide">
-                {isFr ? (
+                {isZh ? (
+                  <>
+                    {zhVariant === 'Hant' ? group.categoryZhHant : group.categoryZhHans}
+                    {' '}<span className="text-muted-foreground/60">/ {group.category}</span>
+                  </>
+                ) : isFr ? (
                   <>{group.categoryFr} <span className="text-muted-foreground/60">/ {group.category}</span></>
                 ) : isEs ? (
                   <>{group.categoryEs} <span className="text-muted-foreground/60">/ {group.category}</span></>
@@ -190,7 +195,15 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
                         ${isNew && !isSelected ? 'ring-1 ring-primary/30' : ''}
                       `}
                     >
-                      {isFr ? (
+                      {isZh ? (
+                        <>
+                          <span className="font-medium">
+                            {zhVariant === 'Hant' ? emotion.zhHant : emotion.zhHans}
+                          </span>
+                          {emotion.pinyin && <span className="text-xs opacity-60 ml-1">({emotion.pinyin})</span>}
+                          <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
+                        </>
+                      ) : isFr ? (
                         <>
                           <span className="font-medium">{emotion.fr}</span>
                           <span className="text-xs opacity-70 ml-1">({emotion.en})</span>
