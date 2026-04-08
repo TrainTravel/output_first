@@ -17,7 +17,11 @@ interface ChatScreenProps {
   context?: ThoughtContext | null;
 }
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/french-chat`;
+function getChatUrl(lang: string) {
+  const base = import.meta.env.VITE_SUPABASE_URL;
+  if (lang === 'zh-Hans' || lang === 'zh-Hant') return `${base}/functions/v1/chinese-chat`;
+  return `${base}/functions/v1/french-chat`;
+}
 
 export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,7 +30,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { isFr, isEs, lang } = useLanguage();
+  const { isFr, isEs, lang, isZh, zhVariant } = useLanguage();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
