@@ -11,7 +11,7 @@ interface VoiceMicButtonProps {
   className?: string;
 }
 
-const ERROR_MESSAGES: Record<VoiceRecordingError, Record<Language, string>> = {
+const ERROR_MESSAGES: Record<VoiceRecordingError, Partial<Record<Language, string>>> = {
   permission_denied: {
     fr: 'Accès au microphone refusé.',
     en: 'Microphone access denied.',
@@ -44,7 +44,7 @@ const ERROR_MESSAGES: Record<VoiceRecordingError, Record<Language, string>> = {
   },
 };
 
-const ARIA_LABELS: Record<'idle' | 'recording' | 'transcribing', Record<Language, string>> = {
+const ARIA_LABELS: Record<'idle' | 'recording' | 'transcribing', Partial<Record<Language, string>>> = {
   idle: { fr: 'Démarrer la dictée', en: 'Start voice input', es: 'Iniciar dictado' },
   recording: { fr: 'Arrêter la dictée', en: 'Stop recording', es: 'Detener grabación' },
   transcribing: { fr: 'Transcription…', en: 'Transcribing…', es: 'Transcribiendo…' },
@@ -57,7 +57,7 @@ export function VoiceMicButton({ onTranscript, language, disabled, className }: 
   // Show localised toast whenever error changes
   useEffect(() => {
     if (error) {
-      toast.error(ERROR_MESSAGES[error][language]);
+      toast.error(ERROR_MESSAGES[error][language] || ERROR_MESSAGES[error].en || 'An error occurred.');
     }
   }, [error, language]);
 
@@ -86,7 +86,7 @@ export function VoiceMicButton({ onTranscript, language, disabled, className }: 
       type="button"
       onClick={handleClick}
       disabled={isTranscribing || disabled}
-      aria-label={ARIA_LABELS[state][language]}
+      aria-label={ARIA_LABELS[state][language] || ARIA_LABELS[state].en || ''}
       className={[
         'flex items-center justify-center w-8 h-8 rounded-full transition-colors',
         state === 'idle' && 'text-muted-foreground hover:bg-muted hover:text-foreground',

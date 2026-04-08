@@ -31,7 +31,7 @@ export function EmotionDetailDrawer({
   onToggleSelect,
   language,
 }: EmotionDetailDrawerProps) {
-  const { t, bilingual } = useLanguage();
+  const { t, bilingual, isZh, zhVariant } = useLanguage();
   const fetchWord = isOpen && word ? word.en : null;
   const { examples, loading } = useDictionaryExamples(fetchWord);
 
@@ -42,7 +42,7 @@ export function EmotionDetailDrawer({
           <>
             <DrawerHeader>
               <div className="flex gap-2 mb-2">
-                {(['en', 'fr', 'es'] as const).map(code => (
+                {(['en', 'fr', 'es', 'zh-Hans', 'zh-Hant'] as const).map(code => (
                   <span
                     key={code}
                     className={`px-2 py-0.5 rounded-full text-xs font-medium border ${
@@ -51,12 +51,18 @@ export function EmotionDetailDrawer({
                         : 'bg-muted text-muted-foreground border-border'
                     }`}
                   >
-                    {code}
+                    {code === 'zh-Hans' ? '简' : code === 'zh-Hant' ? '繁' : code}
                   </span>
                 ))}
               </div>
               <DrawerTitle className="font-serif text-2xl text-foreground text-left">
-                {bilingual(word.fr, word.en, word.es)}
+                {isZh ? (
+                  <>
+                    {zhVariant === 'Hant' ? word.zhHant : word.zhHans}
+                    {word.pinyin && <span className="text-base font-sans text-muted-foreground ml-2">({word.pinyin})</span>}
+                    <span className="text-base font-sans text-muted-foreground ml-2">/ {word.en}</span>
+                  </>
+                ) : bilingual(word.fr, word.en, word.es)}
               </DrawerTitle>
               <DrawerDescription className="sr-only">
                 {word.nuance}
@@ -66,8 +72,27 @@ export function EmotionDetailDrawer({
             <div className="overflow-y-auto px-4 pb-2 flex-1">
               <p className="text-sm italic text-muted-foreground mb-4">{word.nuance}</p>
 
-              {/* Collocations */}
-              {word.collocations && word.collocations.length > 0 && (
+              {/* Chinese Collocations */}
+              {isZh && word.zhCollocations && word.zhCollocations.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                    {t('Expressions courantes', 'Common expressions', 'Expresiones comunes', '常见表达', '常見表達').primary}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {word.zhCollocations.map((col, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-full text-xs border border-accent/30 bg-accent/5 text-accent-foreground"
+                      >
+                        {col}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* French/Spanish Collocations */}
+              {!isZh && word.collocations && word.collocations.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
                     {t('Expressions courantes', 'Common expressions', 'Expresiones comunes').primary}

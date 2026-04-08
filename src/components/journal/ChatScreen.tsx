@@ -17,7 +17,11 @@ interface ChatScreenProps {
   context?: ThoughtContext | null;
 }
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/french-chat`;
+function getChatUrl(lang: string) {
+  const base = import.meta.env.VITE_SUPABASE_URL;
+  if (lang === 'zh-Hans' || lang === 'zh-Hant') return `${base}/functions/v1/chinese-chat`;
+  return `${base}/functions/v1/french-chat`;
+}
 
 export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,7 +30,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { isFr, isEs, lang } = useLanguage();
+  const { isFr, isEs, lang, isZh, zhVariant } = useLanguage();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,14 +55,18 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const resp = await fetch(CHAT_URL, {
+      const chatUrl = getChatUrl(lang);
+      const bodyPayload: Record<string, unknown> = { messages: [], thoughtContext: context, lang };
+      if (isZh) bodyPayload.variant = zhVariant;
+
+      const resp = await fetch(chatUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: [], thoughtContext: context, lang }),
+        body: JSON.stringify(bodyPayload),
       });
 
       if (!resp.ok) {
@@ -146,14 +154,18 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const resp = await fetch(CHAT_URL, {
+      const chatUrl = getChatUrl(lang);
+      const bodyPayload2: Record<string, unknown> = { messages: newMessages, thoughtContext: context, lang };
+      if (isZh) bodyPayload2.variant = zhVariant;
+
+      const resp = await fetch(chatUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: newMessages, thoughtContext: context, lang }),
+        body: JSON.stringify(bodyPayload2),
       });
 
       if (!resp.ok) {

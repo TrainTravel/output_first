@@ -53,7 +53,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t, bilingual, isFr, lang } = useLanguage();
+  const { t, bilingual, isFr, lang, isZh, zhVariant } = useLanguage();
   const { getVocabularyContext } = useEmotionVocab();
 
   useEffect(() => {
@@ -64,8 +64,12 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
 
         const vocabularyContext = getVocabularyContext();
 
-        const { data, error: fnError } = await supabase.functions.invoke('french-feedback', {
-          body: { text: journalContent, type: 'feedback', vocabularyContext, lang },
+        const functionName = isZh ? 'chinese-feedback' : 'french-feedback';
+        const body: Record<string, unknown> = { text: journalContent, type: 'feedback', vocabularyContext, lang };
+        if (isZh) body.variant = zhVariant;
+
+        const { data, error: fnError } = await supabase.functions.invoke(functionName, {
+          body,
         });
 
         if (fnError) {

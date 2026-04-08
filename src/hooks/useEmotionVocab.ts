@@ -52,6 +52,8 @@ export interface SessionCategory {
   category: string;
   categoryFr: string;
   categoryEs: string;
+  categoryZhHans?: string;
+  categoryZhHant?: string;
   emotions: EmotionWord[];
 }
 
@@ -99,6 +101,8 @@ export function useEmotionVocab() {
         category: group.category,
         categoryFr: group.categoryFr,
         categoryEs: group.categoryEs,
+        categoryZhHans: group.categoryZhHans,
+        categoryZhHant: group.categoryZhHant,
         emotions: selected,
       };
     });

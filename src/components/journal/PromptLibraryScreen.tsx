@@ -66,7 +66,9 @@ export function PromptLibraryScreen({ onPickPrompt, onBack }: PromptLibraryScree
                 </p>
                 <div className="space-y-2">
                   {prompts.map(prompt => {
-                    const text = prompt[lang];
+                    const text = (lang === 'zh-Hans' && prompt.zhHans) ? prompt.zhHans
+                      : (lang === 'zh-Hant' && prompt.zhHant) ? prompt.zhHant
+                      : prompt[lang as 'fr' | 'en' | 'es'] || prompt.en;
                     return (
                       <button
                         key={prompt.id}
