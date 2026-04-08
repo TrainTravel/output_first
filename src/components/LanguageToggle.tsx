@@ -1,6 +1,14 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Globe } from 'lucide-react';
 
+const LABELS: Record<string, string> = {
+  fr: 'FR',
+  en: 'EN',
+  es: 'ES',
+  'zh-Hans': '简',
+  'zh-Hant': '繁',
+};
+
 export function LanguageToggle() {
   const { lang, toggleLanguage } = useLanguage();
 
@@ -11,7 +19,7 @@ export function LanguageToggle() {
       aria-label="Toggle language"
     >
       <Globe className="w-3.5 h-3.5" />
-      {lang === 'fr' ? 'FR' : lang === 'es' ? 'ES' : 'EN'}
+      {LABELS[lang] ?? 'EN'}
     </button>
   );
 }
