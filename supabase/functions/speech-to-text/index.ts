@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuth } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,12 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
+
 
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) {
@@ -36,6 +34,12 @@ serve(async (req) => {
 
     if (!audio) {
       return new Response(JSON.stringify({ error: "No audio file provided", code: "INTERNAL_ERROR" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    // Cap upload at 25MB (OpenAI Whisper limit).
+    if (audio.size > 25 * 1024 * 1024) {
+      return new Response(JSON.stringify({ error: "Audio file too large (max 25MB)", code: "INVALID_INPUT" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
