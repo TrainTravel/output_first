@@ -144,15 +144,12 @@ Rules:
       throw new Error("Invalid theme in tool call response");
     }
 
-    // Store theme in the thoughts table
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { error: updateError } = await supabase
+    // Store theme — ownership already verified above, reuse admin client.
+    const { error: updateError } = await admin
       .from("thoughts")
       .update({ ai_theme: theme.trim() })
-      .eq("id", thoughtId);
+      .eq("id", thoughtId)
+      .eq("user_anonymous_id", auth.userId);
 
     if (updateError) {
       console.error("DB update error:", updateError);
