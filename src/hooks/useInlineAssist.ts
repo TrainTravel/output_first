@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export interface InlineSuggestion {
   type: 'l1' | 'vague';
   original: string;
-  suggestions: Array<{ fr: string; nuance: string }>;
+  suggestions: Array<{ fr?: string; zh?: string; pinyin?: string; nuance: string }>;
 }
 
 const DEBOUNCE_MS = 1500;
