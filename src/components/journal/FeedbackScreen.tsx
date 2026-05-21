@@ -6,19 +6,23 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 
 interface EmotionAlternative {
-  fr: string;
+  fr?: string;
   en: string;
+  zh?: string;
+  pinyin?: string;
   nuance: string;
 }
 
 interface VocabularyBridge {
-  word: { fr: string; en: string };
+  word: { fr?: string; en: string; zh?: string; pinyin?: string };
   connection: string;
   isRevisit: boolean;
 }
 
+interface BilingualNote { fr?: string; en: string; zh?: string }
+
 interface FeedbackResponse {
-  acknowledgment?: { fr: string; en: string };
+  acknowledgment?: BilingualNote;
   emotionalGranularity?: {
     detected: string | null;
     alternatives: EmotionAlternative[];
@@ -26,17 +30,17 @@ interface FeedbackResponse {
   languageNote?: {
     original: string;
     improved: string;
-    note: { fr: string; en: string };
+    note: BilingualNote;
   } | null;
-  encouragement?: { fr: string; en: string };
+  encouragement?: BilingualNote;
   suggestions?: Array<{
     original: string;
     improved: string;
-    explanation: { fr: string; en: string };
+    explanation: BilingualNote;
   }>;
   vocabulary?: {
-    word: { fr: string; en: string };
-    example: { fr: string; en: string };
+    word: { fr?: string; en: string; zh?: string };
+    example: { fr?: string; en: string; zh?: string };
   };
   vocabularyBridge?: VocabularyBridge;
   raw?: string;
