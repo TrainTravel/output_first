@@ -37,6 +37,12 @@ serve(async (req) => {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    // Cap upload at 25MB (OpenAI Whisper limit).
+    if (audio.size > 25 * 1024 * 1024) {
+      return new Response(JSON.stringify({ error: "Audio file too large (max 25MB)", code: "INVALID_INPUT" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Forward to OpenAI Whisper — do NOT set Content-Type, fetch sets the multipart boundary
     const whisperForm = new FormData();
