@@ -12,7 +12,9 @@ interface ClusterDetailScreenProps {
 }
 
 export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }: ClusterDetailScreenProps) {
-  const { bilingual, t, isFr, isEs } = useLanguage();
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { clusters, fetchClusterThoughts } = useClusters();
   const [thoughts, setThoughts] = useState<ClusterThought[]>([]);
   const [loading, setLoading] = useState(true);

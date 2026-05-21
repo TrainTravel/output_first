@@ -31,7 +31,10 @@ export function EmotionDetailDrawer({
   onToggleSelect,
   language,
 }: EmotionDetailDrawerProps) {
-  const { t, bilingual, isZh, zhVariant } = useLanguage();
+  const { t, bilingual, targetLang } = useLanguage();
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
   const fetchWord = isOpen && word ? word.en : null;
   const { examples, loading } = useDictionaryExamples(fetchWord);
 

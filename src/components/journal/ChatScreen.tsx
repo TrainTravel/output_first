@@ -30,7 +30,12 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { isFr, isEs, lang, isZh, zhVariant } = useLanguage();
+  const { targetLang, primaryLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,8 +60,8 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const chatUrl = getChatUrl(lang);
-      const bodyPayload: Record<string, unknown> = { messages: [], thoughtContext: context, lang };
+      const chatUrl = getChatUrl(targetLang);
+      const bodyPayload: Record<string, unknown> = { messages: [], thoughtContext: context, lang: targetLang, primaryLang };
       if (isZh) bodyPayload.variant = zhVariant;
 
       const resp = await fetch(chatUrl, {
@@ -154,8 +159,8 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const chatUrl = getChatUrl(lang);
-      const bodyPayload2: Record<string, unknown> = { messages: newMessages, thoughtContext: context, lang };
+      const chatUrl = getChatUrl(targetLang);
+      const bodyPayload2: Record<string, unknown> = { messages: newMessages, thoughtContext: context, lang: targetLang, primaryLang };
       if (isZh) bodyPayload2.variant = zhVariant;
 
       const resp = await fetch(chatUrl, {

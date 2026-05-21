@@ -18,9 +18,10 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { messages, thoughtContext, lang } = body as {
-      messages?: unknown; thoughtContext?: unknown; lang?: unknown;
+    const { messages, thoughtContext, lang, primaryLang } = body as {
+      messages?: unknown; thoughtContext?: unknown; lang?: unknown; primaryLang?: unknown;
     };
+    void lang; // target is always French in this fn — kept for forward-compat
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
       return badRequest("messages must be an array of 1-100 items", corsHeaders);
     }
@@ -50,9 +51,9 @@ serve(async (req) => {
 
     console.log("Chat request with messages:", messages.length, "context:", thoughtContext?.mode ?? 'none');
 
-    const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
+    const primaryName = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
     const userContextBlock = `USER CONTEXT:
-- The user is learning ${langName} (beginner to intermediate level)
+- The user is a native ${primaryName} speaker learning French (beginner to intermediate level)
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack questions or observations

@@ -18,10 +18,11 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { text, type, vocabularyContext, lang } = body as {
-      text?: unknown; type?: unknown; vocabularyContext?: unknown; lang?: unknown;
+    const { text, type, vocabularyContext, lang, primaryLang } = body as {
+      text?: unknown; type?: unknown; vocabularyContext?: unknown; lang?: unknown; primaryLang?: unknown;
     };
     if (!isStringWithin(text, 1, 10000)) return badRequest("text must be 1-10000 chars", corsHeaders);
+    void lang; // target is always French in this fn — kept for forward-compat
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
@@ -36,9 +37,9 @@ serve(async (req) => {
       });
     }
 
-    const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
+    const primaryName = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
     const userContextBlock = `USER CONTEXT:
-- The user is learning ${langName} (beginner to intermediate level)
+- The user is a native ${primaryName} speaker learning French (beginner to intermediate level)
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack observations or suggestions

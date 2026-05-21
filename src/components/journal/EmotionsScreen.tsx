@@ -21,7 +21,12 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showHint, setShowHint] = useState(() => !localStorage.getItem('emotion_drawer_used'));
-  const { t, isFr, isEs, isZh, zhVariant, lang } = useLanguage();
+  const { t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
   const { getSessionWords, markEncountered, markUsed, isFirstEncounter, stats } = useEmotionVocab();
 
   const sessionWords = useMemo(() => getSessionWords(), [getSessionWords]);
@@ -269,7 +274,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
         atMax={selectedEmotions.length >= MAX_EMOTIONS}
         onClose={() => setDrawerOpen(false)}
         onToggleSelect={handleToggleSelect}
-        language={lang}
+        language={targetLang}
       />
     </div>
   );

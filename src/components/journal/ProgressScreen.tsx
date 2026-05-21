@@ -32,7 +32,10 @@ export function ProgressScreen({
   onStartJournal,
   onOpenVocabulary,
 }: ProgressScreenProps) {
-  const { t, bilingual, isFr, isEs, lang } = useLanguage();
+  const { t, bilingual, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
+  const lang = targetLang;
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const { entries, isLoading } = useJournalEntries();

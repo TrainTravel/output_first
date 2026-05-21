@@ -35,7 +35,8 @@ export function FeedbackWidget() {
   const [platform, setPlatform] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const { t, isFr } = useLanguage();
+  const { t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
   const { user } = useAuth();
 
   const reset = () => {

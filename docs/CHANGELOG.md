@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased] - 2026-05-21
+
+### Language Pair Setting
+
+**Split the single `lang` state into two independent preferences**
+
+The app no longer conflates "what I'm learning" with "what I already speak." Each user now configures a pair:
+
+- `targetLang` — the language being learned (`fr`, `es`, `zh-Hans`, `zh-Hant`)
+- `primaryLang` — the fluent/native language used for chrome + glosses (`en`, `fr`, `es`)
+
+Invariant: `targetLang !== primaryLang`, enforced at three layers (UI filter, single `setLangPair` setter with swap-or-fallback, Zod-style hydration validator that resets to default on conflict/malformed input).
+
+**Defaults:**
+- New users: `{ primary: 'en', target: 'fr' }`
+- Storage key migrated from `outputfirst_language` to `outputfirst_lang_pair` (no in-place migration — no existing users on prod)
+
+**New screen:** `LanguageSettingsScreen` reachable from a gear icon next to the language toggle on Home. Two sections (I'm learning / I already speak); the option that equals the other section's value is filtered out so the user cannot pick a conflicting pair. Commits on tap, no Save button.
+
+**`LanguageToggle`:** kept as a one-tap shortcut, but now flips only `primaryLang` (cycles en→fr→es, skipping the current target). The pair invariant holds across every toggle. Gear icon opens the full settings.
+
+**Edge functions:** `chinese-feedback`, `chinese-chat`, `french-feedback`, `french-chat`, `reflection` now accept `primaryLang` in the request body and thread it into the system prompt as `native ${primaryName} speaker`. Defense-in-depth fallback to `'en'` if the field is missing.
+
+**ADHD-Friendly:**
+- One screen, one decision per row, commit on tap — no multi-step form, no Save button
+- Structural prevention of invalid state (the conflicting card is *not rendered*, not just disabled) avoids the "find what's wrong and fix it" friction
+- One-tap primary flip preserved on the home toggle — the cheap action stays cheap
+- Default pair (`en`/`fr`) chosen to put the learning language (French) as the visual anchor with English chrome — fewer cold-start decisions
+
+---
+
 ## [Unreleased] - 2026-02-27
 
 ### Spanish Language Support

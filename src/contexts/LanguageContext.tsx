@@ -1,96 +1,151 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
 
-export type Language = 'fr' | 'en' | 'es' | 'zh-Hans' | 'zh-Hant';
+export type TargetLang = 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
+export type PrimaryLang = 'en' | 'fr' | 'es';
+export type Language = TargetLang | PrimaryLang;
+
+export interface LangPair {
+  primary: PrimaryLang;
+  target: TargetLang;
+}
+
+const TARGET_LANGS: readonly TargetLang[] = ['fr', 'es', 'zh-Hans', 'zh-Hant'];
+const PRIMARY_LANGS: readonly PrimaryLang[] = ['en', 'fr', 'es'];
+
+export const DEFAULT_PAIR: LangPair = { primary: 'en', target: 'fr' };
+const STORAGE_KEY = 'outputfirst_lang_pair';
 
 interface LanguageContextType {
-  lang: Language;
+  pair: LangPair;
+  targetLang: TargetLang;
+  primaryLang: PrimaryLang;
+  setLangPair: (next: LangPair) => void;
+  /** Cheap one-tap flip: cycles primaryLang through valid options (skips target). */
   toggleLanguage: () => void;
-  /** Returns primary then secondary text based on current language.
-   *  Chinese params are optional — falls back to English when omitted. */
+  /** Available primary options that don't conflict with the current target. */
+  availablePrimaries: readonly PrimaryLang[];
+  /** Available target options that don't conflict with the current primary. */
+  availableTargets: readonly TargetLang[];
+  /** Returns { primary: target-language string, secondary: primary-language string }. */
   t: (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => { primary: string; secondary: string };
-  /** Returns the bilingual string "Primary / Secondary" */
+  /** Returns "{target-string} / {primary-string}". */
   bilingual: (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => string;
-  isFr: boolean;
-  isEs: boolean;
-  isZh: boolean;
-  /** True when the active language is any Chinese variant */
-  zhVariant: 'Hans' | 'Hant' | null;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'outputfirst_language';
+function isTargetLang(v: unknown): v is TargetLang {
+  return typeof v === 'string' && (TARGET_LANGS as readonly string[]).includes(v);
+}
 
-const LANG_CYCLE: Language[] = ['fr', 'en', 'es', 'zh-Hans', 'zh-Hant'];
+function isPrimaryLang(v: unknown): v is PrimaryLang {
+  return typeof v === 'string' && (PRIMARY_LANGS as readonly string[]).includes(v);
+}
 
-function isValidLang(v: string | null): v is Language {
-  return v === 'fr' || v === 'en' || v === 'es' || v === 'zh-Hans' || v === 'zh-Hant';
+function validatePair(raw: unknown): LangPair {
+  if (!raw || typeof raw !== 'object') return DEFAULT_PAIR;
+  const obj = raw as Record<string, unknown>;
+  if (!isPrimaryLang(obj.primary) || !isTargetLang(obj.target)) return DEFAULT_PAIR;
+  if ((obj.primary as string) === (obj.target as string)) return DEFAULT_PAIR;
+  return { primary: obj.primary, target: obj.target };
+}
+
+function hydrate(): LangPair {
+  return pipe(
+    O.fromNullable(localStorage.getItem(STORAGE_KEY)),
+    O.flatMap(raw => {
+      try { return O.some(JSON.parse(raw) as unknown); }
+      catch { return O.none; }
+    }),
+    O.map(validatePair),
+    O.getOrElse((): LangPair => DEFAULT_PAIR),
+  );
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Language>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return isValidLang(stored) ? stored : 'fr';
-  });
+  const [pair, setPairState] = useState<LangPair>(hydrate);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, lang);
-  }, [lang]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pair));
+  }, [pair]);
 
-  const toggleLanguage = () =>
-    setLang(prev => {
-      const idx = LANG_CYCLE.indexOf(prev);
-      return LANG_CYCLE[(idx + 1) % LANG_CYCLE.length];
-    });
-
-  const isFr = lang === 'fr';
-  const isEs = lang === 'es';
-  const isZh = lang === 'zh-Hans' || lang === 'zh-Hant';
-  const zhVariant = lang === 'zh-Hans' ? 'Hans' : lang === 'zh-Hant' ? 'Hant' : null;
-
-  const t = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => {
-    let primary: string;
-    let secondary: string;
-
-    switch (lang) {
-      case 'fr':
-        primary = fr;
-        secondary = en;
-        break;
-      case 'es':
-        primary = es;
-        secondary = en;
-        break;
-      case 'zh-Hans':
-        primary = zhHans || en;
-        secondary = en;
-        break;
-      case 'zh-Hant':
-        primary = zhHant || en;
-        secondary = en;
-        break;
-      default: // 'en'
-        primary = en;
-        secondary = fr;
-        break;
+  const setLangPair = (next: LangPair) => {
+    if ((next.primary as string) !== (next.target as string)) {
+      setPairState(next);
+      return;
     }
-
-    return { primary, secondary };
+    // Conflict: swap-or-fallback so the invariant always holds at every render.
+    const primaryChanged = next.primary !== pair.primary;
+    if (primaryChanged) {
+      const oldPrimary = pair.primary;
+      const swapped: TargetLang = isTargetLang(oldPrimary)
+        ? oldPrimary
+        : (TARGET_LANGS.find(t => (t as string) !== (next.primary as string)) as TargetLang);
+      setPairState({ primary: next.primary, target: swapped });
+    } else {
+      const oldTarget = pair.target;
+      const swapped: PrimaryLang = isPrimaryLang(oldTarget)
+        ? oldTarget
+        : (PRIMARY_LANGS.find(p => (p as string) !== (next.target as string)) as PrimaryLang);
+      setPairState({ primary: swapped, target: next.target });
+    }
   };
 
-  const bilingual = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => {
-    switch (lang) {
-      case 'fr': return `${fr} / ${en}`;
-      case 'es': return `${es} / ${en}`;
-      // Chinese MVP is for native-English learners — never mix French in.
-      case 'zh-Hans': return zhHans ? `${zhHans} / ${en}` : en;
-      case 'zh-Hant': return zhHant ? `${zhHant} / ${en}` : en;
-      default: return `${en} / ${fr}`;
+  const toggleLanguage = () => {
+    const idx = PRIMARY_LANGS.indexOf(pair.primary);
+    for (let i = 1; i <= PRIMARY_LANGS.length; i++) {
+      const candidate = PRIMARY_LANGS[(idx + i) % PRIMARY_LANGS.length];
+      if ((candidate as string) !== (pair.target as string)) {
+        setPairState({ ...pair, primary: candidate });
+        return;
+      }
     }
+  };
+
+  const availablePrimaries = PRIMARY_LANGS.filter(p => (p as string) !== (pair.target as string));
+  const availableTargets = TARGET_LANGS.filter(t => (t as string) !== (pair.primary as string));
+
+  const stringFor = (
+    lang: Language,
+    fr: string, en: string, es: string,
+    zhHans?: string, zhHant?: string,
+  ): string => {
+    switch (lang) {
+      case 'fr': return fr;
+      case 'en': return en;
+      case 'es': return es;
+      case 'zh-Hans': return zhHans || en;
+      case 'zh-Hant': return zhHant || en;
+    }
+  };
+
+  const t = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => ({
+    primary: stringFor(pair.target, fr, en, es, zhHans, zhHant),
+    secondary: stringFor(pair.primary, fr, en, es, zhHans, zhHant),
+  });
+
+  const bilingual = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => {
+    const tgt = stringFor(pair.target, fr, en, es, zhHans, zhHant);
+    const prm = stringFor(pair.primary, fr, en, es, zhHans, zhHant);
+    return `${tgt} / ${prm}`;
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, toggleLanguage, t, bilingual, isFr, isEs, isZh, zhVariant }}>
+    <LanguageContext.Provider
+      value={{
+        pair,
+        targetLang: pair.target,
+        primaryLang: pair.primary,
+        setLangPair,
+        toggleLanguage,
+        availablePrimaries,
+        availableTargets,
+        t,
+        bilingual,
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

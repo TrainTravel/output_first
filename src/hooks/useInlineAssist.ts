@@ -26,7 +26,10 @@ export function useInlineAssist(text: string) {
   const [loading, setLoading] = useState(false);
   const cacheRef = useRef<Map<string, InlineSuggestion[]>>(new Map());
   const abortRef = useRef<AbortController | null>(null);
-  const { lang, isZh, zhVariant } = useLanguage();
+  const { targetLang, primaryLang } = useLanguage();
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
 
   useEffect(() => {
     const wordCount = text.trim().split(/\s+/).length;
@@ -50,7 +53,7 @@ export function useInlineAssist(text: string) {
       setLoading(true);
       try {
         const fnName = isZh ? 'chinese-feedback' : 'french-feedback';
-        const body: Record<string, unknown> = { text: text.trim(), type: 'inline-assist', lang };
+        const body: Record<string, unknown> = { text: text.trim(), type: 'inline-assist', lang: targetLang, primaryLang };
         if (isZh) body.variant = zhVariant;
 
         const { data, error } = await supabase.functions.invoke(fnName, { body });
@@ -99,7 +102,7 @@ export function useInlineAssist(text: string) {
     return () => {
       clearTimeout(timer);
     };
-  }, [text, lang, isZh, zhVariant]);
+  }, [text, targetLang, primaryLang, isZh, zhVariant]);
 
   return { suggestions, loading };
 }

@@ -33,7 +33,9 @@ const PLACEHOLDERS_ES = [
 ];
 
 export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
-  const { isFr, isEs, bilingual, t } = useLanguage();
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { addWin, winsToday } = useSmallWins();
   const [input, setInput] = useState('');
   const [recentlyAdded, setRecentlyAdded] = useState<SmallWin[]>([]);

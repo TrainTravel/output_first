@@ -310,6 +310,7 @@ export function useJournal() {
     openFocusPlan: () => setCurrentStep('focusplan'),
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
+    openLanguageSettings: () => setCurrentStep('languagesettings'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,

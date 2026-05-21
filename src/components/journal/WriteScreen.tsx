@@ -17,7 +17,10 @@ interface WriteScreenProps {
 
 export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedVocab }: WriteScreenProps) {
   const [content, setContent] = useState(initialContent ?? '');
-  const { t, isZh, zhVariant } = useLanguage();
+  const { t, targetLang } = useLanguage();
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { suggestions, loading: assistLoading } = useInlineAssist(content);
 

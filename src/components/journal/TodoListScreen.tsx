@@ -113,7 +113,7 @@ function ClarificationCard({
 // --- Main component ---
 
 export function TodoListScreen({ onBack }: TodoListScreenProps) {
-  const { t, bilingual, lang } = useLanguage();
+  const { t, bilingual, targetLang, primaryLang } = useLanguage();
   const { items, addItem, resolveAI, setPriority, toggleComplete, deleteItem } = useTodoList();
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -151,7 +151,8 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
           body: JSON.stringify({
             task: text,
             existingTasks: items.filter(i => !i.pendingAI).map(i => ({ text: i.text, priority: i.priority })),
-            lang,
+            lang: targetLang,
+            primaryLang,
           }),
         },
       );
@@ -193,7 +194,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
-          body: JSON.stringify({ imageBase64, mimeType, lang, clarification }),
+          body: JSON.stringify({ imageBase64, mimeType, lang: targetLang, primaryLang, clarification }),
         },
       );
 

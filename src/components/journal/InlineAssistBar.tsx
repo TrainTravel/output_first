@@ -8,7 +8,8 @@ interface InlineAssistBarProps {
 }
 
 export function InlineAssistBar({ suggestions, loading, onInsert }: InlineAssistBarProps) {
-  const { t, isZh } = useLanguage();
+  const { t, targetLang } = useLanguage();
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
 
   if (suggestions.length === 0 && !loading) return null;
 

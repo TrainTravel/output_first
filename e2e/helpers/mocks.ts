@@ -116,18 +116,27 @@ export async function mockGenerateEmbedding(page: Page) {
   );
 }
 
-/** Set French language preference in localStorage before page load. */
-export async function setFrenchLanguage(page: Page) {
-  await page.addInitScript(() => {
-    localStorage.setItem('outputfirst_language', 'fr');
-  });
+/**
+ * Seed the language pair before page load.
+ * Default behavior: primary=en, target=fr (matches the app's first-run default).
+ */
+export async function setLanguagePair(
+  page: Page,
+  pair: { primary: 'en' | 'fr' | 'es'; target: 'fr' | 'es' | 'zh-Hans' | 'zh-Hant' },
+) {
+  await page.addInitScript((p) => {
+    localStorage.setItem('outputfirst_lang_pair', JSON.stringify(p));
+  }, pair);
 }
 
-/** Set Spanish language preference in localStorage before page load. */
+/** Seed target=French, primary=English (the app default). */
+export async function setFrenchLanguage(page: Page) {
+  await setLanguagePair(page, { primary: 'en', target: 'fr' });
+}
+
+/** Seed target=Spanish, primary=English. */
 export async function setSpanishLanguage(page: Page) {
-  await page.addInitScript(() => {
-    localStorage.setItem('outputfirst_language', 'es');
-  });
+  await setLanguagePair(page, { primary: 'en', target: 'es' });
 }
 
 /** Inject a mock authenticated Supabase session. */

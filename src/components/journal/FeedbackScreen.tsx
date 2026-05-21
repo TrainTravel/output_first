@@ -57,7 +57,11 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t, bilingual, isFr, lang, isZh, zhVariant } = useLanguage();
+  const { t, bilingual, targetLang, primaryLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
+  const zhVariant: 'Hans' | 'Hant' | null =
+    targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
   const { getVocabularyContext } = useEmotionVocab();
 
   useEffect(() => {
@@ -69,7 +73,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         const vocabularyContext = getVocabularyContext();
 
         const functionName = isZh ? 'chinese-feedback' : 'french-feedback';
-        const body: Record<string, unknown> = { text: journalContent, type: 'feedback', vocabularyContext, lang };
+        const body: Record<string, unknown> = { text: journalContent, type: 'feedback', vocabularyContext, lang: targetLang, primaryLang };
         if (isZh) body.variant = zhVariant;
 
         const { data, error: fnError } = await supabase.functions.invoke(functionName, {
@@ -112,7 +116,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
     };
 
     if (journalContent) fetchFeedback();
-  }, [journalContent, getVocabularyContext]);
+  }, [journalContent, getVocabularyContext, isZh, zhVariant, targetLang, primaryLang]);
 
   const acknowledgment = feedback?.acknowledgment || feedback?.encouragement;
   const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected &&

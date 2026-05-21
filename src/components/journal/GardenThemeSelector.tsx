@@ -6,7 +6,8 @@ import { Palette, Check } from 'lucide-react';
 import { useState, forwardRef } from 'react';
 
 const ThemeCard = forwardRef<HTMLButtonElement, { info: GardenThemeInfo; isActive: boolean; onSelect: () => void }>(({ info, isActive, onSelect }, ref) => {
-  const { isFr } = useLanguage();
+  const { targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
 
   return (
     <button

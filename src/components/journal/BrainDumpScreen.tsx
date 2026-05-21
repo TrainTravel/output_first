@@ -33,7 +33,9 @@ const PLACEHOLDERS_ES = [
 ];
 
 export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
-  const { isFr, isEs, bilingual, t } = useLanguage();
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { addThought, thoughts } = useThoughts();
   const [input, setInput] = useState('');
   const [recentlyAdded, setRecentlyAdded] = useState<Thought[]>([]);

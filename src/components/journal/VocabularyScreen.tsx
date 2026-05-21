@@ -13,7 +13,9 @@ interface VocabularyScreenProps {
 }
 
 export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
-  const { t, isFr, isEs, lang } = useLanguage();
+  const { t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { stats, isFirstEncounter } = useEmotionVocab();
   const [filter, setFilter] = useState<FilterMode>('all');
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
@@ -210,7 +212,7 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
         atMax={true}
         onClose={() => setDrawerOpen(false)}
         onToggleSelect={() => {}}
-        language={lang}
+        language={targetLang}
       />
     </div>
   );

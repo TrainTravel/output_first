@@ -22,7 +22,8 @@ export type JournalStep = 'home' | 'breathe' | 'promptchoice' | 'promptlibrary'
   | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete'
   | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters' | 'clusterdetail'
   | 'zengarden' | 'freewrite' | 'freewritechoice' | 'expressivewrite'
-  | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment';
+  | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment'
+  | 'languagesettings';
 
 export const MIN_CYCLES = 1;
 export const MAX_CYCLES = 5;
