@@ -61,15 +61,21 @@ serve(async (req) => {
   }
 
   try {
-    // Allow both authenticated users and anon-key requests (guests)
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // Validate auth (anonymous or authenticated JWT).
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
 
-    const { journalContent, emotions, previousCycles, lang } = await req.json();
+    const parsed = await req.json().catch(() => null);
+    if (!parsed || typeof parsed !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { journalContent, emotions, previousCycles, lang } = parsed as {
+      journalContent?: unknown; emotions?: unknown; previousCycles?: unknown; lang?: unknown;
+    };
+    if (!isStringWithin(journalContent, 1, 10000)) {
+      return badRequest("journalContent must be 1-10000 chars", corsHeaders);
+    }
+    if (emotions !== undefined && emotions !== null && (typeof emotions !== "string" || emotions.length > 500)) {
+      return badRequest("emotions must be ≤500 chars", corsHeaders);
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
