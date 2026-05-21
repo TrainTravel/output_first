@@ -311,6 +311,7 @@ export function useJournal() {
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
     openLanguageSettings: () => setCurrentStep('languagesettings'),
+    goBackToEmotions: () => setCurrentStep('emotions'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
     activeClusterId,
