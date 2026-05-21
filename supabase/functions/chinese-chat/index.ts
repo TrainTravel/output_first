@@ -17,9 +17,10 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { messages, thoughtContext, variant } = body as {
-      messages?: unknown; thoughtContext?: unknown; variant?: unknown;
+    const { messages, thoughtContext, variant, primaryLang } = body as {
+      messages?: unknown; thoughtContext?: unknown; variant?: unknown; primaryLang?: unknown;
     };
+    const primary = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
       return badRequest("messages must be an array of 1-100 items", corsHeaders);
     }
@@ -48,7 +49,7 @@ serve(async (req) => {
     const variantName = variant === 'Hant' ? 'Traditional Chinese' : 'Simplified Chinese';
 
     const userContextBlock = `USER CONTEXT:
-- The user is a native English speaker learning ${variantName} (beginner to intermediate level)
+- The user is a native ${primary} speaker learning ${variantName} (beginner to intermediate level)
 - They may have ADHD and/or autism — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language
 - One idea per response only

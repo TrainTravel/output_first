@@ -17,10 +17,13 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { text, type, vocabularyContext, variant } = body as {
-      text?: unknown; type?: unknown; vocabularyContext?: unknown; variant?: unknown;
+    const { text, type, vocabularyContext, variant, primaryLang } = body as {
+      text?: unknown; type?: unknown; vocabularyContext?: unknown; variant?: unknown; primaryLang?: unknown;
     };
     if (!isStringWithin(text, 1, 10000)) return badRequest("text must be 1-10000 chars", corsHeaders);
+
+    // Defense-in-depth: 'en' fallback if missing/unknown so the prompt never reads "native undefined speaker"
+    const primary = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
@@ -36,7 +39,7 @@ serve(async (req) => {
     const variantName = variant === 'Hant' ? 'Traditional Chinese' : 'Simplified Chinese';
 
     const userContextBlock = `USER CONTEXT:
-- The user is a native English speaker learning ${variantName} (beginner to intermediate level)
+- The user is a native ${primary} speaker learning ${variantName} (beginner to intermediate level)
 - They may have ADHD and/or autism — keep every response short and scannable
 - Prefer literal, clear language
 - One idea per response only

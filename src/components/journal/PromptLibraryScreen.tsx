@@ -32,7 +32,8 @@ function renderTemplate(text: string) {
 }
 
 export function PromptLibraryScreen({ onPickPrompt, onBack }: PromptLibraryScreenProps) {
-  const { lang, t } = useLanguage();
+  const { targetLang, t } = useLanguage();
+  const lang = targetLang;
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">

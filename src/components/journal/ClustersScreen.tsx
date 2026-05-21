@@ -11,7 +11,9 @@ interface ClustersScreenProps {
 }
 
 export function ClustersScreen({ onBack, onOpenCluster }: ClustersScreenProps) {
-  const { bilingual, t, isFr, isEs } = useLanguage();
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { clusters, loading, createCluster } = useClusters();
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState('');

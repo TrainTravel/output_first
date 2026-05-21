@@ -27,11 +27,14 @@ interface HomeScreenProps {
   onOpenFocusPlan: () => void;
   onOpenTodoList: () => void;
   onOpenTinyExperiment: () => void;
+  onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenVocabulary }: HomeScreenProps) {
-  const { bilingual, t, isFr, isEs, lang } = useLanguage();
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { signOut, user } = useAuth();
   const [showMore, setShowMore] = useState(false);
   const today = new Date();
@@ -62,7 +65,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             )}
             <GardenThemeSelector />
           </div>
-          <LanguageToggle />
+          <LanguageToggle onOpenSettings={onOpenLanguageSettings} />
         </div>
 
         {/* Date */}

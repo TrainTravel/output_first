@@ -37,7 +37,9 @@ export function ReflectionScreen({
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState('');
   const [showQuestion, setShowQuestion] = useState(false);
-  const { bilingual, t, isFr, isEs, lang } = useLanguage();
+  const { bilingual, t, targetLang, primaryLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
 
   useEffect(() => {
     generateReflection();
@@ -69,7 +71,8 @@ export function ReflectionScreen({
             journalContent,
             emotions: emotionsFr || emotions || 'none selected',
             previousCycles: reflectionCycles.length > 0 ? reflectionCycles : undefined,
-            lang,
+            lang: targetLang,
+            primaryLang,
           }),
         }
       );

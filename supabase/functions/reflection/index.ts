@@ -7,10 +7,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-function buildUserContextBlock(lang?: string): string {
-  const langName = lang === 'es' ? 'Spanish' : lang === 'en' ? 'English' : 'French';
+function buildUserContextBlock(targetLang?: string, primaryLang?: string): string {
+  const targetName =
+    targetLang === 'es' ? 'Spanish'
+    : targetLang === 'zh-Hans' ? 'Simplified Chinese'
+    : targetLang === 'zh-Hant' ? 'Traditional Chinese'
+    : 'French';
+  const primaryName = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
   return `USER CONTEXT:
-- The user is learning ${langName} (beginner to intermediate level)
+- The user is a native ${primaryName} speaker learning ${targetName} (beginner to intermediate level)
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack observations or questions
@@ -19,8 +24,8 @@ function buildUserContextBlock(lang?: string): string {
 `;
 }
 
-function buildSystemPrompt(lang?: string): string {
-  return `${buildUserContextBlock(lang)}
+function buildSystemPrompt(targetLang?: string, primaryLang?: string): string {
+  return `${buildUserContextBlock(targetLang, primaryLang)}
 You are a warm, gentle guide helping someone explore their feelings — like a kind therapist who listens with curiosity, not judgment.
 
 YOUR ROLE:
@@ -67,8 +72,8 @@ serve(async (req) => {
 
     const parsed = await req.json().catch(() => null);
     if (!parsed || typeof parsed !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { journalContent, emotions, previousCycles, lang } = parsed as {
-      journalContent?: unknown; emotions?: unknown; previousCycles?: unknown; lang?: unknown;
+    const { journalContent, emotions, previousCycles, lang, primaryLang } = parsed as {
+      journalContent?: unknown; emotions?: unknown; previousCycles?: unknown; lang?: unknown; primaryLang?: unknown;
     };
     if (!isStringWithin(journalContent, 1, 10000)) {
       return badRequest("journalContent must be 1-10000 chars", corsHeaders);
@@ -121,7 +126,10 @@ Emotions they chose: ${emotions || "none selected"}`;
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: buildSystemPrompt(lang) },
+          { role: "system", content: buildSystemPrompt(
+            typeof lang === 'string' ? lang : undefined,
+            typeof primaryLang === 'string' ? primaryLang : undefined,
+          ) },
           { role: "user", content: userMessage },
         ],
       }),

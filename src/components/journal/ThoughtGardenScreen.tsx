@@ -38,7 +38,9 @@ function groupByTheme(thoughts: Thought[]): ThemeGroup[] {
 }
 
 export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenCluster }: ThoughtGardenScreenProps) {
-  const { bilingual, t, isFr, isEs } = useLanguage();
+  const { bilingual, t, targetLang } = useLanguage();
+  const isFr = targetLang === 'fr';
+  const isEs = targetLang === 'es';
   const { thoughts, loading, archiveThought, moveThoughtToTheme, retagUntagged, retagAll } = useThoughts();
   const { clusters, loading: clustersLoading, createCluster, addThoughtToCluster, fetchClusters } = useClusters();
   const [search, setSearch] = useState('');
