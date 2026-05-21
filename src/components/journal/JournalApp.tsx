@@ -91,6 +91,7 @@ export function JournalApp() {
     openTodoList,
     openTinyExperiment,
     openLanguageSettings,
+    goBackToEmotions,
     openVocabulary,
     vocabOrigin,
     openChatWithContext,
@@ -213,7 +214,7 @@ export function JournalApp() {
           canMoveToGratitude={canMoveToGratitude}
           reflectionCycles={reflectionCycles}
           onContinue={continueFromReflection}
-          onBack={() => saveEmotion(currentEntry.emotion, currentEntry.emotionFr)}
+          onBack={goBackToEmotions}
         />
       )}
 
