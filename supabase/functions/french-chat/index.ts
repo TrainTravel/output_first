@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAuth, badRequest } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,10 +13,28 @@ serve(async (req) => {
   }
 
   try {
-    // Accept both authenticated and anonymous requests
-    const authHeader = req.headers.get("Authorization");
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
 
-    const { messages, thoughtContext, lang } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { messages, thoughtContext, lang } = body as {
+      messages?: unknown; thoughtContext?: unknown; lang?: unknown;
+    };
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
+      return badRequest("messages must be an array of 1-100 items", corsHeaders);
+    }
+    for (const m of messages) {
+      if (!m || typeof m !== "object") return badRequest("invalid message", corsHeaders);
+      const { role, content } = m as { role?: unknown; content?: unknown };
+      if (role !== "user" && role !== "assistant" && role !== "system") {
+        return badRequest("invalid message role", corsHeaders);
+      }
+      if (typeof content !== "string" || content.length === 0 || content.length > 10000) {
+        return badRequest("message content must be 1-10000 chars", corsHeaders);
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
