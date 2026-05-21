@@ -82,8 +82,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     switch (lang) {
       case 'fr': return `${fr} / ${en}`;
       case 'es': return `${es} / ${en}`;
-      case 'zh-Hans': return zhHans ? `${zhHans} / ${en}` : `${en} / ${fr}`;
-      case 'zh-Hant': return zhHant ? `${zhHant} / ${en}` : `${en} / ${fr}`;
+      // Chinese MVP is for native-English learners — never mix French in.
+      case 'zh-Hans': return zhHans ? `${zhHans} / ${en}` : en;
+      case 'zh-Hant': return zhHant ? `${zhHant} / ${en}` : en;
       default: return `${en} / ${fr}`;
     }
   };
