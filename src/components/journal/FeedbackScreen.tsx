@@ -162,11 +162,18 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
               {acknowledgment && (
                 <div className="bg-primary/5 border border-primary/10 rounded-xl p-5">
                   <p className="text-foreground">
-                    {isFr ? acknowledgment.fr : acknowledgment.en}
+                    {isZh ? (acknowledgment.zh || acknowledgment.en) : (isFr ? acknowledgment.fr : acknowledgment.en)}
                   </p>
-                  <p className="text-muted-foreground text-sm italic mt-2">
-                    {isFr ? acknowledgment.en : acknowledgment.fr}
-                  </p>
+                  {!isZh && (
+                    <p className="text-muted-foreground text-sm italic mt-2">
+                      {isFr ? acknowledgment.en : acknowledgment.fr}
+                    </p>
+                  )}
+                  {isZh && acknowledgment.zh && acknowledgment.en && (
+                    <p className="text-muted-foreground text-sm italic mt-2">
+                      {acknowledgment.en}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -176,7 +183,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                   <div className="flex items-center gap-2 text-foreground">
                     <Sparkles className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      {bilingual('Nommer avec précision', 'Naming with precision', 'Nombrar con precisión')}
+                      {bilingual('Nommer avec précision', 'Naming with precision', 'Nombrar con precisión', '精准命名', '精準命名')}
                     </span>
                   </div>
 
@@ -189,9 +196,16 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                     <div className="space-y-3">
                       {feedback.emotionalGranularity!.alternatives.map((alt, index) => (
                         <div key={index} className="bg-background/50 rounded-lg p-3 border border-border/50">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-foreground font-medium">{isFr ? alt.fr : alt.en}</span>
-                            <span className="text-muted-foreground text-sm">({isFr ? alt.en : alt.fr})</span>
+                          <div className="flex items-baseline gap-2 flex-wrap">
+                            <span className="text-foreground font-medium">
+                              {isZh ? (alt.zh || alt.en) : (isFr ? alt.fr : alt.en)}
+                            </span>
+                            {isZh && alt.pinyin && (
+                              <span className="text-muted-foreground text-sm">{alt.pinyin}</span>
+                            )}
+                            <span className="text-muted-foreground text-sm">
+                              ({isZh ? alt.en : (isFr ? alt.en : alt.fr)})
+                            </span>
                           </div>
                           <p className="text-muted-foreground/80 text-xs mt-1 italic">{alt.nuance}</p>
                         </div>
@@ -210,20 +224,22 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota')}</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota', '小提示', '小提示')}</span>
                   </div>
                   <div className="bg-card border border-border rounded-xl p-4 space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm flex-wrap">
                       <span className="text-muted-foreground">{feedback.languageNote.original}</span>
                       <span className="text-primary">→</span>
                       <span className="text-foreground">{feedback.languageNote.improved}</span>
                     </div>
                     <p className="text-muted-foreground text-xs">
-                      {isFr ? feedback.languageNote.note.fr : feedback.languageNote.note.en}
+                      {isZh ? (feedback.languageNote.note.zh || feedback.languageNote.note.en) : (isFr ? feedback.languageNote.note.fr : feedback.languageNote.note.en)}
                     </p>
-                    <p className="text-muted-foreground/60 text-xs italic">
-                      {isFr ? feedback.languageNote.note.en : feedback.languageNote.note.fr}
-                    </p>
+                    {!isZh && (
+                      <p className="text-muted-foreground/60 text-xs italic">
+                        {isFr ? feedback.languageNote.note.en : feedback.languageNote.note.fr}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -233,7 +249,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota')}</span>
+                    <span className="text-sm">{bilingual('Une petite note', 'A small note', 'Una pequeña nota', '小提示', '小提示')}</span>
                   </div>
                   {feedback.suggestions.slice(0, 1).map((suggestion, index) => (
                     <div key={index} className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -243,11 +259,13 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                         <span className="text-foreground">{suggestion.improved}</span>
                       </div>
                       <p className="text-muted-foreground/50 text-xs">
-                        {isFr ? suggestion.explanation.fr : suggestion.explanation.en}
+                        {isZh ? (suggestion.explanation.zh || suggestion.explanation.en) : (isFr ? suggestion.explanation.fr : suggestion.explanation.en)}
                       </p>
-                      <p className="text-muted-foreground/35 text-xs italic">
-                        {isFr ? suggestion.explanation.en : suggestion.explanation.fr}
-                      </p>
+                      {!isZh && (
+                        <p className="text-muted-foreground/35 text-xs italic">
+                          {isFr ? suggestion.explanation.en : suggestion.explanation.fr}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -259,7 +277,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                   <div className="flex items-center gap-2 text-foreground">
                     <BookOpen className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      {bilingual('Pont de vocabulaire', 'Vocabulary bridge', 'Puente de vocabulario')}
+                      {bilingual('Pont de vocabulaire', 'Vocabulary bridge', 'Puente de vocabulario', '词汇桥梁', '詞彙橋樑')}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       feedback.vocabularyBridge.isRevisit 
@@ -267,15 +285,20 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                         : 'bg-primary/10 text-primary'
                     }`}>
                       {feedback.vocabularyBridge.isRevisit
-                        ? (isFr ? 'Déjà vu' : 'Seen before')
-                        : (isFr ? 'Nouveau mot' : 'New word')}
+                        ? (isZh ? '复习' : isFr ? 'Déjà vu' : 'Seen before')
+                        : (isZh ? '新词' : isFr ? 'Nouveau mot' : 'New word')}
                     </span>
                   </div>
                   <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 space-y-2">
                     <p className="text-foreground font-medium">
-                      {isFr ? feedback.vocabularyBridge.word.fr : feedback.vocabularyBridge.word.en}
+                      {isZh ? (feedback.vocabularyBridge.word.zh || feedback.vocabularyBridge.word.en) : (isFr ? feedback.vocabularyBridge.word.fr : feedback.vocabularyBridge.word.en)}
+                      {isZh && feedback.vocabularyBridge.word.pinyin && (
+                        <span className="text-muted-foreground text-sm font-normal ml-2">
+                          {feedback.vocabularyBridge.word.pinyin}
+                        </span>
+                      )}
                       <span className="text-muted-foreground text-sm font-normal ml-2">
-                        ({isFr ? feedback.vocabularyBridge.word.en : feedback.vocabularyBridge.word.fr})
+                        ({isZh ? feedback.vocabularyBridge.word.en : (isFr ? feedback.vocabularyBridge.word.en : feedback.vocabularyBridge.word.fr)})
                       </span>
                     </p>
                     <p className="text-muted-foreground text-sm italic">
