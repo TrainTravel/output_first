@@ -25,14 +25,18 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
 
-    const { task, existingTasks, lang } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { task, existingTasks, lang } = body as {
+      task?: unknown; existingTasks?: unknown; lang?: unknown;
+    };
+    if (!isStringWithin(task, 1, 500)) return badRequest("task must be 1-500 chars", corsHeaders);
+    if (existingTasks !== undefined && (!Array.isArray(existingTasks) || existingTasks.length > 200)) {
+      return badRequest("existingTasks must be array ≤200", corsHeaders);
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
