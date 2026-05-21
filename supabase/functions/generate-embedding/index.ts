@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAuth, badRequest, isUuid, isStringWithin } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,19 +14,41 @@ serve(async (req) => {
   }
 
   try {
-    const { thoughtId, content } = await req.json();
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
 
-    if (!thoughtId || !content) {
-      return new Response(
-        JSON.stringify({ error: "thoughtId and content are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { thoughtId, content } = body as { thoughtId?: unknown; content?: unknown };
+
+    if (!isUuid(thoughtId)) return badRequest("thoughtId must be a UUID", corsHeaders);
+    if (!isStringWithin(content, 1, 5000)) {
+      return badRequest("content must be 1-5000 chars", corsHeaders);
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const admin = createClient(supabaseUrl, serviceKey);
+
+    // Verify the caller owns this thought before doing anything else.
+    const { data: row, error: ownErr } = await admin
+      .from("thoughts")
+      .select("user_anonymous_id")
+      .eq("id", thoughtId)
+      .maybeSingle();
+    if (ownErr || !row) return badRequest("Thought not found", corsHeaders);
+    if (row.user_anonymous_id !== auth.userId) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
+
 
     // Use AI to generate a short thematic tag for this thought
     const response = await fetch(
