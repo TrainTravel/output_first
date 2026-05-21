@@ -2,25 +2,9 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
-const CLAIMED_KEY = 'outputfirst_claimed';
-
-/** One-time: claim all existing thoughts/clusters for the current user (single-user app) */
-async function claimAllData(userId: string) {
-  if (localStorage.getItem(CLAIMED_KEY)) return;
-
-  const { error } = await supabase.rpc('claim_all_thoughts', {
-    new_user_id: userId,
-  } as any);
-
-  if (error) {
-    console.error('Claim failed:', error);
-  } else {
-    localStorage.setItem(CLAIMED_KEY, 'true');
-    // Clean up old keys
-    localStorage.removeItem('outputfirst_anon_id');
-    localStorage.removeItem('outputfirst_migrated');
-  }
-}
+// Note: the previous `claim_all_thoughts` RPC was removed for security reasons
+// (it allowed any authenticated user to reassign every row in the database).
+// Per-user data is now scoped strictly via RLS using auth.uid().
 
 interface AuthContextType {
   user: User | null;
