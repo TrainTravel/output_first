@@ -37,8 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session.user);
         setLoading(false);
-        // Claim all existing data for this user (single-user migration)
-        claimAllData(session.user.id);
       } else {
         // Auto sign-in anonymously so every visitor gets a real auth.uid()
         const { data, error } = await supabase.auth.signInAnonymously();
