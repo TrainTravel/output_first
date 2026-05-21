@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAuth, badRequest } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,28 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, thoughtContext, variant } = await req.json();
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
+
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { messages, thoughtContext, variant } = body as {
+      messages?: unknown; thoughtContext?: unknown; variant?: unknown;
+    };
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
+      return badRequest("messages must be an array of 1-100 items", corsHeaders);
+    }
+    for (const m of messages) {
+      if (!m || typeof m !== "object") return badRequest("invalid message", corsHeaders);
+      const { role, content } = m as { role?: unknown; content?: unknown };
+      if (role !== "user" && role !== "assistant" && role !== "system") {
+        return badRequest("invalid message role", corsHeaders);
+      }
+      if (typeof content !== "string" || content.length === 0 || content.length > 10000) {
+        return badRequest("message content must be 1-10000 chars", corsHeaders);
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
