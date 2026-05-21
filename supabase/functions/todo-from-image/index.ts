@@ -61,15 +61,25 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const auth = await requireAuth(req, corsHeaders);
+    if (!auth.ok) return auth.response;
+
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
+    const { imageBase64, mimeType, lang, clarification } = body as {
+      imageBase64?: unknown; mimeType?: unknown; lang?: unknown; clarification?: unknown;
+    };
+    // Cap base64 image at ~8MB (raw image ~6MB).
+    if (!isStringWithin(imageBase64, 1, 8_000_000)) {
+      return badRequest("imageBase64 must be 1-8000000 chars", corsHeaders);
+    }
+    if (mimeType !== undefined && (typeof mimeType !== "string" || mimeType.length > 100)) {
+      return badRequest("invalid mimeType", corsHeaders);
+    }
+    if (clarification !== undefined && (typeof clarification !== "string" || clarification.length > 1000)) {
+      return badRequest("clarification must be ≤1000 chars", corsHeaders);
     }
 
-    const { imageBase64, mimeType, lang, clarification } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
