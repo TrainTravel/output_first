@@ -38,23 +38,19 @@ export function EmotionFrequencyNudge({ onOpenVocabulary }: EmotionFrequencyNudg
         <div className="flex-1 min-w-0 space-y-1">
           <p className="text-sm text-foreground leading-relaxed">
             {t(
-              `Vous vous êtes décrit·e comme « ${word} » ${count} fois ce mois-ci.`,
-              `You've named yourself "${word}" ${count} times this month.`,
-              `Te has descrito como "${word}" ${count} veces este mes.`,
+              { fr: `Vous vous êtes décrit·e comme « ${word} » ${count} fois ce mois-ci.`, en: `You've named yourself "${word}" ${count} times this month.`, es: `Te has descrito como "${word}" ${count} veces este mes.` },
             ).primary}
           </p>
           <p className="text-xs text-muted-foreground italic">
             {t(
-              'Un mot plus précis pourrait aider.',
-              'A more precise word might help.',
-              'Una palabra más precisa podría ayudar.',
+              { fr: 'Un mot plus précis pourrait aider.', en: 'A more precise word might help.', es: 'Una palabra más precisa podría ayudar.' },
             ).primary}
           </p>
         </div>
         <button
           onClick={handleDismiss}
           data-testid="freq-mirror-dismiss"
-          aria-label={t('Ignorer', 'Dismiss', 'Descartar').primary}
+          aria-label={t({ fr: 'Ignorer', en: 'Dismiss', es: 'Descartar' }).primary}
           className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
         >
           <X className="w-4 h-4" />
@@ -66,7 +62,7 @@ export function EmotionFrequencyNudge({ onOpenVocabulary }: EmotionFrequencyNudg
           data-testid="freq-mirror-alternatives"
           className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
         >
-          {t('Voir des alternatives', 'See alternatives', 'Ver alternativas').primary} →
+          {t({ fr: 'Voir des alternatives', en: 'See alternatives', es: 'Ver alternativas' }).primary} →
         </button>
       </div>
     </div>
