@@ -20,7 +20,12 @@ serve(async (req) => {
     const { messages, thoughtContext, variant, primaryLang } = body as {
       messages?: unknown; thoughtContext?: unknown; variant?: unknown; primaryLang?: unknown;
     };
-    const primary = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
+    const primary =
+      primaryLang === 'fr' ? 'French' :
+      primaryLang === 'es' ? 'Spanish' :
+      primaryLang === 'zh-Hans' ? 'Simplified Chinese' :
+      primaryLang === 'zh-Hant' ? 'Traditional Chinese' :
+      'English';
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
       return badRequest("messages must be an array of 1-100 items", corsHeaders);
     }

@@ -51,6 +51,25 @@ describe('hydration', () => {
     expect(result.current.pair).toEqual({ primary: 'fr', target: 'zh-Hans' });
   });
 
+  it('accepts primary=zh-Hans paired with a non-Chinese target', () => {
+    // target='en' is rejected (en cannot be a learning language) — use fr instead.
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hans', target: 'fr' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual({ primary: 'zh-Hans', target: 'fr' });
+  });
+
+  it('accepts primary=zh-Hant paired with a non-Chinese target', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hant', target: 'es' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual({ primary: 'zh-Hant', target: 'es' });
+  });
+
+  it('falls back to DEFAULT_PAIR when primary=zh-Hans equals target=zh-Hans (invariant violation)', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hans', target: 'zh-Hans' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual(DEFAULT_PAIR);
+  });
+
   it('rejects target=en (en cannot be a learning language in this model)', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'fr', target: 'en' }));
     const { result } = renderHook(() => useLanguage(), { wrapper });
@@ -114,8 +133,8 @@ describe('setLangPair — persistence', () => {
 });
 
 describe('toggleLanguage — cheap one-tap flip of primary', () => {
-  it('cycles primary through en → fr → es, skipping the current target', () => {
-    // pair starts as { primary: 'en', target: 'fr' }. Cycle is [en, fr, es].
+  it('cycles primary through en → fr → es → zh-Hans → zh-Hant, skipping the current target', () => {
+    // pair starts as { primary: 'en', target: 'fr' }. Cycle is [en, fr, es, zh-Hans, zh-Hant].
     // From en, next non-target is 'es' (skip 'fr' which equals target).
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.pair).toEqual({ primary: 'en', target: 'fr' });
@@ -125,9 +144,23 @@ describe('toggleLanguage — cheap one-tap flip of primary', () => {
     expect(result.current.pair.target).toBe('fr');
   });
 
+  it('cycles through all 5 primaries when target does not conflict', () => {
+    // Start: primary=en, target=fr. From this state, cycling should visit: es, zh-Hans, zh-Hant, en, es...
+    // (Each step skips the current target 'fr'.)
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const visited: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      act(() => result.current.toggleLanguage());
+      visited.push(result.current.pair.primary);
+    }
+    // The four non-'fr' primaries appear, none of them equal target='fr'.
+    expect(visited).toEqual(['es', 'zh-Hans', 'zh-Hant', 'en', 'es']);
+    expect(visited.every(p => p !== 'fr')).toBe(true);
+  });
+
   it('preserves the invariant after every toggle', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
       act(() => result.current.toggleLanguage());
       expect(result.current.pair.primary).not.toBe(result.current.pair.target);
     }
@@ -140,6 +173,19 @@ describe('availablePrimaries / availableTargets — UI-layer filters', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.availablePrimaries).not.toContain('fr');
     expect(result.current.availablePrimaries).toContain('en');
+    expect(result.current.availablePrimaries).toContain('es');
+    expect(result.current.availablePrimaries).toContain('zh-Hans');
+    expect(result.current.availablePrimaries).toContain('zh-Hant');
+  });
+
+  it('availablePrimaries excludes the current target when primary is Chinese', () => {
+    // primary=zh-Hans, target=zh-Hant — zh-Hant must be excluded from primary options.
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hans', target: 'zh-Hant' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.availablePrimaries).not.toContain('zh-Hant');
+    expect(result.current.availablePrimaries).toContain('zh-Hans');
+    expect(result.current.availablePrimaries).toContain('en');
+    expect(result.current.availablePrimaries).toContain('fr');
     expect(result.current.availablePrimaries).toContain('es');
   });
 

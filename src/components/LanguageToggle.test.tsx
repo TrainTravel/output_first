@@ -56,4 +56,20 @@ describe('LanguageToggle', () => {
     const button = screen.getByRole('button', { name: /Hablo/ });
     expect(button.getAttribute('title')).toBe('hablo ES · aprendo FR');
   });
+
+  it('localizes verbs + title for primary=zh-Hans', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hans', target: 'fr' }));
+    render(<LanguageProvider><LanguageToggle /></LanguageProvider>);
+    const button = screen.getByRole('button', { name: /说/ });
+    expect(button.getAttribute('title')).toBe('说 简 · 学 FR');
+    expect(button.getAttribute('aria-label')).toBe('说简，学FR。点击切换。');
+  });
+
+  it('localizes verbs + title for primary=zh-Hant', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hant', target: 'es' }));
+    render(<LanguageProvider><LanguageToggle /></LanguageProvider>);
+    const button = screen.getByRole('button', { name: /說/ });
+    expect(button.getAttribute('title')).toBe('說 繁 · 學 ES');
+    expect(button.getAttribute('aria-label')).toBe('說繁，學ES。點擊切換。');
+  });
 });

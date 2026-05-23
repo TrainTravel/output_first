@@ -23,7 +23,12 @@ serve(async (req) => {
     if (!isStringWithin(text, 1, 10000)) return badRequest("text must be 1-10000 chars", corsHeaders);
 
     // Defense-in-depth: 'en' fallback if missing/unknown so the prompt never reads "native undefined speaker"
-    const primary = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
+    const primary =
+      primaryLang === 'fr' ? 'French' :
+      primaryLang === 'es' ? 'Spanish' :
+      primaryLang === 'zh-Hans' ? 'Simplified Chinese' :
+      primaryLang === 'zh-Hant' ? 'Traditional Chinese' :
+      'English';
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 

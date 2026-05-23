@@ -3,7 +3,7 @@ import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 
 export type TargetLang = 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
-export type PrimaryLang = 'en' | 'fr' | 'es';
+export type PrimaryLang = 'en' | 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
 export type Language = TargetLang | PrimaryLang;
 
 export interface LangPair {
@@ -12,7 +12,7 @@ export interface LangPair {
 }
 
 const TARGET_LANGS: readonly TargetLang[] = ['fr', 'es', 'zh-Hans', 'zh-Hant'];
-const PRIMARY_LANGS: readonly PrimaryLang[] = ['en', 'fr', 'es'];
+const PRIMARY_LANGS: readonly PrimaryLang[] = ['en', 'fr', 'es', 'zh-Hans', 'zh-Hant'];
 
 export const DEFAULT_PAIR: LangPair = { primary: 'en', target: 'fr' };
 const STORAGE_KEY = 'outputfirst_lang_pair';
