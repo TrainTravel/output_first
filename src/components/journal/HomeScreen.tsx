@@ -8,6 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
 import { FontPicker } from '@/components/FontPicker';
+import { SelfCompassionSeed } from './SelfCompassionSeed';
 import { Badge } from '@/types/journal';
 
 interface HomeScreenProps {
@@ -95,6 +96,9 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           </div>
         )}
 
+        {/* Daily self-compassion seed */}
+        <SelfCompassionSeed lang={targetLang} />
+
         {/* Compact Progress Card */}
         <button
           onClick={onViewProgress}
@@ -162,8 +166,8 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           >
             <Feather className="w-5 h-5 mr-2" />
             {hasJournaledToday
-              ? t('Écrire encore', 'Write another', 'Escribir más').primary
-              : t("Écrire aujourd'hui", 'Write today', 'Escribir hoy').primary
+              ? bilingual('Écrire encore', 'Write another', 'Escribir más')
+              : bilingual("Écrire aujourd'hui", 'Write today', 'Escribir hoy')
             }
           </Button>
 
