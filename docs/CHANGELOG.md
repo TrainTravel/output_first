@@ -2,6 +2,28 @@
 
 ## [Unreleased] - 2026-05-23
 
+### Self-Compassion Practice — Neff's 3-step framework, wired into the journal flow
+
+**Refocused on the core goal: improving emotional granularity by offering precise reframes for hard feelings.**
+
+Kristin Neff's three-step self-compassion model is now woven into three surfaces:
+
+- **HomeScreen** — daily "seed" card showing one phrase from today's step (Mindfulness, Common Humanity, or Self-Kindness). Dismissable for the day; returns tomorrow with a new phrase. Day-of-year-deterministic.
+- **ProgressScreen** — collapsible practice card listing all 3 steps with prev/next navigation across all 24 phrases per language.
+- **ReflectionScreen** — practice card opens automatically (`defaultOpen={true}`) when the user's emotion is in `HARD_EMOTIONS` (18 heavy/anxious/frustrated words). Hidden when the emotion is light.
+
+**Defensive language handling:** phrase data covers fr/en/es. A new `asCompassionLang` helper falls back to `en` so the card still renders for `zh-Hans`/`zh-Hant` primary users without crashing. Chinese phrases are a future translation pass.
+
+**Journal CTA bilingualism:** the "Écrire aujourd'hui" / "Write today" button now shows both target and primary languages (e.g. "Écrire aujourd'hui / Write today"), matching the bilingual treatment already used by Vide-tête / Brain Dump and Jardin de pensées / Thought Garden. Removes the inconsistency where the main CTA was the only single-language action.
+
+**Why this serves emotional granularity:**
+- Self-compassion phrases ARE granular reframes of "I feel bad" — "This is a hard moment. I notice it without judgment." names a texture that "bad" hides.
+- `isStruggling()` is a vague-word detector: when the user picks a heavy word, the system responds with a more nuanced framing rather than just acknowledging.
+
+**Coverage:** 28 pre-existing unit tests now wired; 6 E2E tests now passing (seed visibility + dismissal + reload, practice trigger + expansion, struggling-emotion-driven defaultOpen on ReflectionScreen).
+
+---
+
 ### Garden Themes — ADHD/ASD-aware metadata, validation, and calm-first sort
 
 **Three new metadata dimensions on every theme + runtime hydration validator**

@@ -6,6 +6,7 @@ import { Home, Feather, Flame, Calendar as CalendarIcon, BookOpen, Sprout, Arrow
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useJournalEntries, JournalEntryRow } from '@/hooks/useJournalEntries';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
+import { SelfCompassionPractice } from './SelfCompassionPractice';
 import { format } from 'date-fns';
 import { fr as frLocale, enUS } from 'date-fns/locale';
 
@@ -237,6 +238,9 @@ export function ProgressScreen({
             {isFr ? '"Showing up counts."' : isEs ? '"Showing up counts."' : '« Se montrer, c\'est déjà réussir. »'}
           </p>
         </div>
+
+        {/* Self-compassion practice (collapsed by default) */}
+        <SelfCompassionPractice lang={lang} />
 
         {/* Actions */}
         <div className="space-y-3">
