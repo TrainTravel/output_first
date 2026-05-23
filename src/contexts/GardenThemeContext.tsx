@@ -115,7 +115,7 @@ export function GardenThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, theme);
     const root = document.documentElement;
     // Remove all theme classes
-    root.classList.remove('theme-provence', 'theme-zen', 'theme-northern', 'theme-denim', 'theme-solar');
+    root.classList.remove('theme-provence', 'theme-zen', 'theme-northern', 'theme-denim', 'theme-solar', 'theme-sakura', 'theme-forest', 'theme-moonstone', 'theme-seaglass');
     // Apply new theme class (default has no class)
     if (theme !== 'default') {
       root.classList.add(`theme-${theme}`);
