@@ -60,6 +60,38 @@ export const GARDEN_THEMES: GardenThemeInfo[] = [
     descriptionFr: 'Ambre chaud & terre de Sienne',
     preview: { primary: 'hsl(32 65% 50%)', accent: 'hsl(12 55% 52%)', bg: 'hsl(38 35% 96%)' },
   },
+  {
+    id: 'sakura',
+    name: 'Sakura',
+    nameFr: 'Sakura',
+    description: 'Cherry blossom pink & soft sage',
+    descriptionFr: 'Rose cerisier & sauge douce',
+    preview: { primary: 'hsl(345 45% 65%)', accent: 'hsl(130 22% 58%)', bg: 'hsl(350 40% 97%)' },
+  },
+  {
+    id: 'forest',
+    name: 'Forest Mist',
+    nameFr: 'Brume forestière',
+    description: 'Deep evergreen & soft fog',
+    descriptionFr: 'Conifère profond & brume douce',
+    preview: { primary: 'hsl(160 32% 38%)', accent: 'hsl(35 22% 55%)', bg: 'hsl(150 14% 96%)' },
+  },
+  {
+    id: 'moonstone',
+    name: 'Moonstone',
+    nameFr: 'Pierre de lune',
+    description: 'Cool lavender-grey & pearl',
+    descriptionFr: 'Gris lavande & perle',
+    preview: { primary: 'hsl(245 20% 55%)', accent: 'hsl(195 14% 60%)', bg: 'hsl(240 12% 96%)' },
+  },
+  {
+    id: 'seaglass',
+    name: 'Sea Glass',
+    nameFr: 'Verre de mer',
+    description: 'Soft teal & warm sand',
+    descriptionFr: 'Bleu-vert doux & sable chaud',
+    preview: { primary: 'hsl(185 35% 48%)', accent: 'hsl(35 35% 70%)', bg: 'hsl(180 22% 96%)' },
+  },
 ];
 
 interface GardenThemeContextType {
