@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { GardenThemeProvider } from "@/contexts/GardenThemeContext";
+import { FontProvider } from "@/contexts/FontContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -29,6 +30,7 @@ function AuthRedirect({ children }: { children: React.ReactNode }) {
 const App = () => (
   <HelmetProvider>
     <LanguageProvider>
+      <FontProvider>
       <GardenThemeProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
