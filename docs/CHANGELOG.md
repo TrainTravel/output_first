@@ -1,5 +1,26 @@
 # Changelog
 
+## [Unreleased] - 2026-05-23
+
+### Language Toggle — visual refresh
+
+**Stacked layout replaces the "EN → FR" arrow**
+
+The previous toggle ("EN → FR") read as "translate from English to French" — the wrong mental model. The toggle now shows a stacked target/primary pair (target letter large, primary letter as small caption), with no arrow. On hover or keyboard focus, the toggle expands a labeled popover: "speak EN · learn FR" (verbs localized by primary lang: en/fr/es).
+
+- Idle: 48×48 stacked button. Target dominant, primary as small uppercase caption.
+- Hover / `:focus-within`: popover reveals via absolute positioning (no layout shift).
+- Verbs localized by primary lang: en→{speak, learn}, fr→{parle, apprend}, es→{hablo, aprendo}.
+- Aria-label and title contain no `→` character anywhere.
+- One-tap flip behavior unchanged (still calls `toggleLanguage`).
+
+**ADHD-Friendly:**
+- The arrow implied directional transformation; the new layout reads as a *pair* — what you speak, what you're learning
+- Target is the visual focal point (large letter), reinforcing "what this app is teaching me"
+- Progressive disclosure: compact by default, expanded only on intent — doesn't compete for attention while writing
+
+---
+
 ## [Unreleased] - 2026-05-21
 
 ### Language Pair Setting
