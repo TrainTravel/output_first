@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type GardenTheme = 'default' | 'provence' | 'zen' | 'northern' | 'denim' | 'solar';
+export type GardenTheme = 'default' | 'provence' | 'zen' | 'northern' | 'denim' | 'solar' | 'sakura' | 'forest' | 'moonstone' | 'seaglass';
 
 export interface GardenThemeInfo {
   id: GardenTheme;
