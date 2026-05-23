@@ -61,6 +61,19 @@ Tie-break is highest count, then most-recent `lastSeen`. Only one nudge shows at
 
 **Tests:** 21 unit tests in `useFrequencyMirror.test.ts` (picker, threshold, recency, dismissal window, tie-break), 6 component tests in `EmotionFrequencyNudge.test.tsx` (render, dismiss persistence, alternatives callback, a11y), 4 E2E tests in `freq-mirror.spec.ts` (visibility on seeded vocab, dismiss, reload persistence, empty-state).
 ---
+---
+### GDPR Data Export — download all user data as JSON (Article 20)
+
+**Right-to-portability surfaced from the same AccountScreen.**
+
+- New "Download my data" button on `AccountScreen` invokes the `export-user-data` edge function.
+- Returns a single versioned JSON payload (`schema_version: 1`) containing `journal_entries`, `thoughts`, `clusters`, `cluster_thoughts`, `proposals`, `experiments`, and `experiment_checkins` — every row tagged with the caller's `user_id`.
+- The browser writes the JSON to disk via a `Blob` + `<a download>` trick, naming the file `outputfirst-export-YYYY-MM-DD.json`. No new dependency.
+- Feedback is intentionally omitted (stored anonymously, no read policy).
+- Edge function uses the service-role client server-side only — never exposed to the browser.
+
+---
+
 ### GDPR Account Deletion — 30-day soft-delete grace (Article 17)
 
 **Right-to-erasure surfaced from a new AccountScreen.**

@@ -45,6 +45,29 @@ async function mockCancelDeletion(page: Page) {
   );
 }
 
+async function mockExportUserData(page: Page) {
+  await page.route('**/functions/v1/export-user-data', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        exported_at: new Date().toISOString(),
+        user_id: 'test-user-id',
+        schema_version: 1,
+        data: {
+          journal_entries: [{ id: 'je-1', content: 'sample' }],
+          thoughts: [],
+          clusters: [],
+          cluster_thoughts: [],
+          proposals: [],
+          experiments: [],
+          experiment_checkins: [],
+        },
+      }),
+    }),
+  );
+}
+
 test.describe('GDPR — account deletion', () => {
   test.beforeEach(async ({ page }) => {
     await setFrenchLanguage(page);
@@ -73,6 +96,18 @@ test.describe('GDPR — account deletion', () => {
     await page.getByTestId('delete-confirm').click();
     const req = await callPromise;
     expect(req.method()).toBe('POST');
+  });
+
+  test('download button triggers a .json file download', async ({ page }) => {
+    await mockProfilesGet(page, null);
+    await mockExportUserData(page);
+    await page.goto('/');
+    await page.getByRole('button', { name: /Compte et données|Account & data/i }).click();
+
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByTestId('export-button').click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^outputfirst-export-\d{4}-\d{2}-\d{2}\.json$/);
   });
 
   test('shows banner and cancel button when deletion is already scheduled', async ({ page }) => {

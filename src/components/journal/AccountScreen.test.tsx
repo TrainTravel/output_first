@@ -122,6 +122,59 @@ describe('AccountScreen — delete confirmation', () => {
   });
 });
 
+describe('AccountScreen — data export', () => {
+  beforeEach(() => {
+    mockSignOut.mockClear();
+    mockMaybeSingle.mockReset();
+    mockInvoke.mockReset();
+    mockMaybeSingle.mockResolvedValue({ data: { scheduled_deletion_at: null }, error: null });
+  });
+
+  it('clicking the download button invokes export-user-data', async () => {
+    const payload = {
+      exported_at: '2026-05-23T00:00:00Z',
+      user_id: 'test-user-id',
+      schema_version: 1,
+      data: { journal_entries: [], thoughts: [], clusters: [], cluster_thoughts: [], proposals: [] },
+    };
+    mockInvoke.mockResolvedValue({ data: payload, error: null });
+
+    // Stub URL.createObjectURL / revokeObjectURL since happy-dom does not.
+    const createObjectURL = vi.fn(() => 'blob:mock');
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, 'createObjectURL', { value: createObjectURL, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: revokeObjectURL, configurable: true });
+
+    renderScreen();
+    const btn = await screen.findByTestId('export-button');
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      expect(mockInvoke).toHaveBeenCalledWith('export-user-data');
+    });
+    await waitFor(() => {
+      expect(createObjectURL).toHaveBeenCalled();
+    });
+  });
+
+  it('export button is disabled while in flight (Loader2 swap renders)', async () => {
+    // Hold the promise open so the button stays in submitting state.
+    let resolveFn: (v: unknown) => void;
+    const inFlight = new Promise((res) => { resolveFn = res; });
+    mockInvoke.mockReturnValue(inFlight);
+
+    renderScreen();
+    const btn = await screen.findByTestId('export-button');
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      expect((btn as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    resolveFn!({ data: null, error: { message: 'mock' } });
+  });
+});
+
 describe('AccountScreen — scheduled-deletion banner', () => {
   beforeEach(() => {
     mockSignOut.mockClear();
