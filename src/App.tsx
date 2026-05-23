@@ -49,6 +49,7 @@ const App = () => (
           </TooltipProvider>
         </QueryClientProvider>
       </GardenThemeProvider>
+      </FontProvider>
     </LanguageProvider>
   </HelmetProvider>
 );

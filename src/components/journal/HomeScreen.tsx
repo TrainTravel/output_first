@@ -7,6 +7,7 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
+import { FontPicker } from '@/components/FontPicker';
 import { Badge } from '@/types/journal';
 
 interface HomeScreenProps {
@@ -147,6 +148,9 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             </div>
           </TooltipProvider>
         </button>
+
+        {/* Font Picker (a11y) */}
+        <FontPicker />
 
         {/* Main Actions */}
         <div className="space-y-3">
