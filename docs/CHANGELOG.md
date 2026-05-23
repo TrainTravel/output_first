@@ -2,6 +2,37 @@
 
 ## [Unreleased] - 2026-05-23
 
+### Garden Themes — ADHD/ASD-aware metadata, validation, and calm-first sort
+
+**Three new metadata dimensions on every theme + runtime hydration validator**
+
+The 10 garden themes are unchanged in identity, but every theme now carries three sensory-load tags so neurodivergent users can choose by load, not by aesthetic name alone:
+
+- `arousal` — visual stimulation level (`low` / `medium` / `high`), proxied by HSL saturation and the primary-vs-accent gap
+- `contrast` — perceived primary-vs-bg contrast (`low` / `standard` / `high`), relevant for photosensitivity and visual fatigue
+- `intent` — emotional use case (`calming` / `balanced` / `energizing`)
+
+Hydration is now validator-gated: a stored id like `"comic-sans"` (or any unknown string) falls back to `default` rather than poisoning state. Mirrors the `validatePair` pattern in `LanguageContext.tsx`. `localStorage.getItem` throwing (private mode, quota error) also falls back cleanly via `fp-ts` `Option`.
+
+The selector gained a **sort mode toggle** persisted in `outputfirst_theme_sort_mode`:
+
+- `palette` (default) — declaration order, the curated/creative ordering
+- `calm-first` — themes sorted by `arousal` ascending then `intent` ascending, so a dysregulated user doesn't have to scan past saturated options to reach a soothing one
+
+Each swatch now exposes `data-arousal` / `data-intent` attributes and an `aria-label` that includes intent and arousal verbally for screen readers. A small color-coded arousal dot is also rendered in the swatch.
+
+**Reduced-motion respect:** `prefers-reduced-motion: reduce` now disables `animate-fade-in/up/scale-in/gentle-pulse/breathe/celebrate` plus the `.theme-card` hover scale transition. Color changes still apply instantly — only motion is suppressed.
+
+**Tests:** 34 new tests covering hydration (default, valid, malformed/unknown, localStorage throws), `setTheme` persistence + classList management, sort mode persistence, calm-first ordering invariants, metadata population, and selector rendering / click behaviour.
+
+**ADHD/ASD-Friendly:**
+- Calm-first sort lets a dysregulated user find low-arousal options without scanning past saturated ones (decision fatigue ↓)
+- Validator + Option-based hydration removes a class of "ghost state" bugs where an invalid stored value silently corrupted the theme system
+- Reduced-motion support is table stakes for vestibular sensitivity and ASD sensory overwhelm
+- `aria-label` exposes the sensory profile verbally so users on screen readers get the same affordance, not a downgraded one
+
+---
+
 ### Language Toggle — visual refresh
 
 **Stacked layout replaces the "EN → FR" arrow**
