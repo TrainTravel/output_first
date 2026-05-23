@@ -60,10 +60,10 @@ export function FocusPlanTab({
   }, [prefillGoal, onPrefillConsumed]);
 
   const placeholders = [
-    t('Mettre mes chaussures', 'Put on my shoes', 'Ponerme los zapatos').primary,
-    t('Remplir ma bouteille d\'eau', 'Fill my water bottle', 'Llenar mi botella de agua').primary,
-    t('Sortir de la maison', 'Walk out the front door', 'Salir por la puerta').primary,
-    t('Conduire au sentier', 'Drive to the trailhead', 'Conducir al sendero').primary,
+    t({ fr: 'Mettre mes chaussures', en: 'Put on my shoes', es: 'Ponerme los zapatos' }).primary,
+    t({ fr: 'Remplir ma bouteille d\'eau', en: 'Fill my water bottle', es: 'Llenar mi botella de agua' }).primary,
+    t({ fr: 'Sortir de la maison', en: 'Walk out the front door', es: 'Salir por la puerta' }).primary,
+    t({ fr: 'Conduire au sentier', en: 'Drive to the trailhead', es: 'Conducir al sendero' }).primary,
   ];
 
   const handleGoalSubmit = () => {
@@ -123,10 +123,10 @@ export function FocusPlanTab({
     return (
       <div className="space-y-6 text-center animate-fade-in-up">
         <p className="font-serif text-lg text-foreground">
-          {t('Qu\'est-ce que tu veux faire ?', 'What do you want to do?', '¿Qué quieres hacer?').primary}
+          {t({ fr: 'Qu\'est-ce que tu veux faire ?', en: 'What do you want to do?', es: '¿Qué quieres hacer?' }).primary}
         </p>
         <p className="text-sm text-muted-foreground italic">
-          {t('Qu\'est-ce que tu veux faire ?', 'What do you want to do?', '¿Qué quieres hacer?').secondary}
+          {t({ fr: 'Qu\'est-ce que tu veux faire ?', en: 'What do you want to do?', es: '¿Qué quieres hacer?' }).secondary}
         </p>
 
         <div className="space-y-3">
@@ -134,7 +134,7 @@ export function FocusPlanTab({
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleGoalSubmit()}
-            placeholder={t('Aller randonner', 'Go hiking', 'Ir a caminar').primary}
+            placeholder={t({ fr: 'Aller randonner', en: 'Go hiking', es: 'Ir a caminar' }).primary}
             className="text-center font-serif text-lg h-12"
             autoFocus
           />
@@ -144,15 +144,13 @@ export function FocusPlanTab({
             disabled={!goal.trim()}
           >
             <ArrowRight className="w-4 h-4 mr-1" />
-            {t('Continuer', 'Continue', 'Continuar').primary}
+            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
           </Button>
         </div>
 
         <p className="text-xs text-muted-foreground/60">
           {t(
-            'Une seule chose — on la découpe après',
-            'One thing — we\'ll break it down next',
-            'Una sola cosa — la dividimos después'
+            { fr: 'Une seule chose — on la découpe après', en: 'One thing — we\'ll break it down next', es: 'Una sola cosa — la dividimos después' }
           ).primary}
         </p>
       </div>
@@ -166,7 +164,7 @@ export function FocusPlanTab({
         {/* Goal display */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            {t('Ton truc', 'Your thing', 'Tu cosa').primary}:
+            {t({ fr: 'Ton truc', en: 'Your thing', es: 'Tu cosa' }).primary}:
           </p>
           <p className="font-serif text-xl text-foreground">{goal}</p>
         </div>
@@ -174,9 +172,7 @@ export function FocusPlanTab({
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground text-center">
             {t(
-              'Quel est le plus petit premier pas ?',
-              'What\'s the smallest first step?',
-              '¿Cuál es el paso más pequeño?'
+              { fr: 'Quel est le plus petit premier pas ?', en: 'What\'s the smallest first step?', es: '¿Cuál es el paso más pequeño?' }
             ).primary}
           </p>
 
@@ -218,7 +214,7 @@ export function FocusPlanTab({
 
           {steps.length >= 5 && (
             <p className="text-xs text-muted-foreground/60 text-center">
-              {t('5 pas maximum — on garde ça simple', '5 steps max — keeping it simple', '5 pasos máximo — manteniéndolo simple').primary}
+              {t({ fr: '5 pas maximum — on garde ça simple', en: '5 steps max — keeping it simple', es: '5 pasos máximo — manteniéndolo simple' }).primary}
             </p>
           )}
         </div>
@@ -228,7 +224,7 @@ export function FocusPlanTab({
           <div className="text-center">
             <Button variant="default" onClick={startStepping}>
               <Play className="w-4 h-4 mr-1" />
-              {t('Premier pas', 'First step', 'Primer paso').primary}
+              {t({ fr: 'Premier pas', en: 'First step', es: 'Primer paso' }).primary}
             </Button>
           </div>
         )}
@@ -275,7 +271,7 @@ export function FocusPlanTab({
       {showDurationPicker && timerState === 'picking' && (
         <div className="space-y-3 text-center animate-fade-in-up">
           <p className="text-sm text-muted-foreground">
-            {t('Combien de temps ?', 'How long?', '¿Cuánto tiempo?').primary}
+            {t({ fr: 'Combien de temps ?', en: 'How long?', es: '¿Cuánto tiempo?' }).primary}
           </p>
           <div className="flex justify-center gap-3">
             {STEP_DURATIONS.map((d) => (
@@ -306,15 +302,15 @@ export function FocusPlanTab({
       {timerState === 'done' && !allDone && (
         <div className="text-center space-y-4 animate-fade-in-up">
           <p className="font-serif text-xl text-foreground">
-            {t('Bien joué !', 'Nice one!', '¡Bien hecho!').primary}
+            {t({ fr: 'Bien joué !', en: 'Nice one!', es: '¡Bien hecho!' }).primary}
           </p>
           <Button variant="default" onClick={handleStepComplete}>
             <ArrowRight className="w-4 h-4 mr-1" />
-            {t('Prêt(e) pour la suite ?', 'Ready for the next one?', '¿Listo/a para el siguiente?').primary}
+            {t({ fr: 'Prêt(e) pour la suite ?', en: 'Ready for the next one?', es: '¿Listo/a para el siguiente?' }).primary}
           </Button>
           <div>
             <Button variant="calm" size="sm" onClick={fullReset}>
-              {t('Arrêter ici', 'Stop here', 'Parar aquí').primary}
+              {t({ fr: 'Arrêter ici', en: 'Stop here', es: 'Parar aquí' }).primary}
             </Button>
           </div>
         </div>
@@ -324,15 +320,15 @@ export function FocusPlanTab({
       {(allDone || (timerState === 'done' && activeStepIdx >= steps.length - 1 && steps[activeStepIdx]?.done)) && (
         <div className="text-center space-y-4 animate-fade-in-up">
           <p className="font-serif text-2xl text-foreground">
-            {t('Tu as fait tout ça !', 'You did all of that!', '¡Hiciste todo eso!').primary}
+            {t({ fr: 'Tu as fait tout ça !', en: 'You did all of that!', es: '¡Hiciste todo eso!' }).primary}
           </p>
           <p className="text-sm text-muted-foreground italic">
-            {t('Tu as fait tout ça !', 'You did all of that!', '¡Hiciste todo eso!').secondary}
+            {t({ fr: 'Tu as fait tout ça !', en: 'You did all of that!', es: '¡Hiciste todo eso!' }).secondary}
           </p>
           <div className="flex gap-3 justify-center pt-2">
             <Button variant="calm" onClick={fullReset}>
               <RotateCcw className="w-4 h-4 mr-1" />
-              {t('Encore', 'Again', 'Otra vez').primary}
+              {t({ fr: 'Encore', en: 'Again', es: 'Otra vez' }).primary}
             </Button>
           </div>
         </div>

@@ -2,6 +2,38 @@
 
 ## [Unreleased] - 2026-05-23
 
+### t() / bilingual() — positional args → single Translations object
+
+**API refactor — same return shape, self-documenting call sites.**
+
+Replaced the positional signatures of `t` and `bilingual` with a single object keyed by language code. `t()` still returns `{ primary, secondary }`; `bilingual()` still returns `"{target} / {primary}"`.
+
+Before:
+```typescript
+t('Continuer', 'Continue', 'Continuar', '继续', '繼續').primary
+```
+
+After:
+```typescript
+t({ fr: 'Continuer', en: 'Continue', es: 'Continuar', 'zh-Hans': '继续', 'zh-Hant': '繼續' }).primary
+```
+
+Why object form:
+- Call sites are self-documenting — the key states which language each string is.
+- Order mistakes (es vs zh-Hans) are now impossible.
+- Adding a sixth language no longer ripples through every call site; just add a new optional key.
+
+Scope:
+- `LanguageContext.tsx` — new exported `Translations` type, single-arg signatures for both helpers.
+- `LanguageContext.test.tsx` — 3 call sites updated; all language tests still pass.
+- **350 call sites across 35 files** rewritten via AST codemod.
+- Codemod kept at `scripts/codemod-t-object-form.mjs` for future similar refactors.
+- `CLAUDE.md` "Bilingual System" examples updated to object form.
+
+Single break, single PR — explicit decision to skip a dual-signature transition. This is the deferred follow-up from the language-pair refactor (PRs #25, #26).
+
+---
+
 ### Self-Compassion Practice — Neff's 3-step framework, wired into the journal flow
 
 **Refocused on the core goal: improving emotional granularity by offering precise reframes for hard feelings.**

@@ -97,10 +97,10 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={timerState === 'running' ? resetTimer : onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" />
-            {t('Retour', 'Back', 'Volver').primary}
+            {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
           </Button>
           <h2 className="font-serif text-xl text-foreground">
-            {bilingual('Un truc à la fois', 'One Thing', 'Una cosa')}
+            {bilingual({ fr: 'Un truc à la fois', en: 'One Thing', es: 'Una cosa' })}
           </h2>
           <div className="w-16" />
         </div>
@@ -109,10 +109,10 @@ export function FocusPlanScreen({ onBack }: FocusPlanScreenProps) {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full">
             <TabsTrigger value="filter" className="flex-1">
-              {t('Filtre', 'Filter', 'Filtro').primary}
+              {t({ fr: 'Filtre', en: 'Filter', es: 'Filtro' }).primary}
             </TabsTrigger>
             <TabsTrigger value="focus" className="flex-1">
-              {t('Focus', 'Focus', 'Enfoque').primary}
+              {t({ fr: 'Focus', en: 'Focus', es: 'Enfoque' }).primary}
             </TabsTrigger>
           </TabsList>
 

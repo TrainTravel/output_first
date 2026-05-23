@@ -48,19 +48,20 @@ npm run preview      # Preview production build
   - `useClusters()` - thought clustering
 
 **Bilingual System:**
-- Use `t(fr, en).primary` for UI chrome (buttons, labels, helper text) — shows single language
-- Use `bilingual(fr, en)` for vocabulary anchors (feature names, emotion terms, key concepts) — shows both languages
+- Use `t({ fr, en, es }).primary` for UI chrome (buttons, labels, helper text) — shows single language
+- Use `bilingual({ fr, en, es })` for vocabulary anchors (feature names, emotion terms, key concepts) — shows both languages
 - Journaling prompts use `t().primary` (large) + `t().secondary` (italic) for structured display
 - Language preference stored in localStorage and Context
+- `t` and `bilingual` take a single `Translations` object; `zh-Hans` / `zh-Hant` keys are optional and fall back to English
 
 **When to use which:**
 ```typescript
 // Navigation, actions, status — single language
-t('Continuer', 'Continue').primary
+t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary
 
 // Feature names, mental health terms — bilingual anchors
-bilingual('Vide-tête', 'Brain Dump')
-bilingual('Jardin de pensées', 'Thought Garden')
+bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' })
+bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pensamientos' })
 ```
 
 **Component Organization:**

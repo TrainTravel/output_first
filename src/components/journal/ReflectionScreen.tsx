@@ -122,7 +122,7 @@ export function ReflectionScreen({
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+            <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
           </button>
 
           {/* Cycle dots */}
@@ -143,7 +143,7 @@ export function ReflectionScreen({
           <div className="flex-1 flex flex-col items-center justify-center space-y-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary/60" />
             <p className="text-muted-foreground text-sm">
-              {t('Prenant un moment pour réfléchir...', 'Taking a moment to reflect...', 'Tomando un momento para reflexionar...').primary}
+              {t({ fr: 'Prenant un moment pour réfléchir...', en: 'Taking a moment to reflect...', es: 'Tomando un momento para reflexionar...' }).primary}
             </p>
           </div>
         )}
@@ -157,7 +157,7 @@ export function ReflectionScreen({
             <div className="mt-auto">
               <Button variant="default" size="full" onClick={handleSkip}>
                 <ArrowRight className="w-5 h-5 mr-2" />
-                {t('Continuer', 'Continue', 'Continuar').primary}
+                {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
               </Button>
             </div>
           </div>
@@ -194,11 +194,11 @@ export function ReflectionScreen({
                   <Textarea
                     value={response}
                     onChange={(e) => setResponse(e.target.value)}
-                    placeholder={t('Prenez votre temps...', 'Take your time...', 'Tómate tu tiempo...').primary}
+                    placeholder={t({ fr: 'Prenez votre temps...', en: 'Take your time...', es: 'Tómate tu tiempo...' }).primary}
                     className="min-h-[120px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
                   />
                   <p className="text-muted-foreground text-xs mt-2">
-                    {t("C'est optionnel. Passez si vous préférez.", 'This is optional. Skip if you prefer.', 'Es opcional. Omite si prefieres.').primary}
+                    {t({ fr: "C'est optionnel. Passez si vous préférez.", en: 'This is optional. Skip if you prefer.', es: 'Es opcional. Omite si prefieres.' }).primary}
                   </p>
                 </div>
 
@@ -215,7 +215,7 @@ export function ReflectionScreen({
                   </p>
                   <Button variant="default" size="full" onClick={handleMoveToGratitude}>
                     <Heart className="w-5 h-5 mr-2" />
-                    {bilingual('Terminer avec la gratitude', 'Finish with gratitude', 'Terminar con gratitud')}
+                    {bilingual({ fr: 'Terminer avec la gratitude', en: 'Finish with gratitude', es: 'Terminar con gratitud' })}
                   </Button>
                 </div>
               ) : (

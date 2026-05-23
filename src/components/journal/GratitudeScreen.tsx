@@ -20,7 +20,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
     onSave(gratitude.trim() || undefined);
   };
 
-  const promptText = t(prompt.fr, prompt.en, prompt.en);
+  const promptText = t({ fr: prompt.fr, en: prompt.en, es: prompt.en });
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
@@ -31,7 +31,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         {/* Header */}
@@ -43,7 +43,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
             {promptText.secondary}
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            {t("C'est optionnel. Passez si rien ne vous vient.", 'This is optional. Skip if nothing comes to mind.', 'Es opcional. Omite si no se te ocurre nada.').primary}
+            {t({ fr: "C'est optionnel. Passez si rien ne vous vient.", en: 'This is optional. Skip if nothing comes to mind.', es: 'Es opcional. Omite si no se te ocurre nada.' }).primary}
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           <Textarea
             value={gratitude}
             onChange={(e) => setGratitude(e.target.value)}
-            placeholder={t('Quelque chose de petit suffit...', 'Something small is perfect...', 'Algo pequeño es suficiente...').primary}
+            placeholder={t({ fr: 'Quelque chose de petit suffit...', en: 'Something small is perfect...', es: 'Algo pequeño es suficiente...' }).primary}
             className="min-h-[150px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
         </div>
@@ -61,11 +61,11 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
         <div className="mt-8 space-y-3">
           <Button variant="default" size="full" onClick={handleSave}>
             <Check className="w-5 h-5 mr-2" />
-            {t('Terminer le journal', 'Complete journal', 'Terminar el diario').primary}
+            {t({ fr: 'Terminer le journal', en: 'Complete journal', es: 'Terminar el diario' }).primary}
           </Button>
 
           <Button variant="skip" size="full" onClick={onSkip}>
-            {t('Passer et terminer', 'Skip and finish', 'Omitir y terminar').primary}
+            {t({ fr: 'Passer et terminer', en: 'Skip and finish', es: 'Omitir y terminar' }).primary}
           </Button>
         </div>
       </div>

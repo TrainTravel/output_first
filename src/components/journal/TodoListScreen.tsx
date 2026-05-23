@@ -90,7 +90,7 @@ function ClarificationCard({
           value={answer}
           onChange={e => setAnswer(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && answer.trim()) onSubmit(answer.trim()); }}
-          placeholder={t('Votre réponse...', 'Your answer...', 'Tu respuesta...').primary}
+          placeholder={t({ fr: 'Votre réponse...', en: 'Your answer...', es: 'Tu respuesta...' }).primary}
           className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/50 text-sm"
           autoFocus
         />
@@ -100,10 +100,10 @@ function ClarificationCard({
           onClick={() => { if (answer.trim()) onSubmit(answer.trim()); }}
           disabled={!answer.trim()}
         >
-          {t('Ajouter', 'Add', 'Añadir').primary}
+          {t({ fr: 'Ajouter', en: 'Add', es: 'Añadir' }).primary}
         </Button>
         <Button variant="ghost" size="sm" onClick={onSkip}>
-          {t('Passer', 'Skip', 'Saltar').primary}
+          {t({ fr: 'Passer', en: 'Skip', es: 'Saltar' }).primary}
         </Button>
       </div>
     </div>
@@ -180,7 +180,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
       await callImageExtract(base64, file.type);
     } catch (err) {
       console.error('Image upload error:', err);
-      toast.error(t('Erreur lors du traitement de l\'image', 'Error processing image', 'Error al procesar la imagen').primary);
+      toast.error(t({ fr: 'Erreur lors du traitement de l\'image', en: 'Error processing image', es: 'Error al procesar la imagen' }).primary);
       setImageProcessing(false);
     }
   };
@@ -200,7 +200,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        toast.error((errData as { error?: string }).error || t('Erreur du service IA', 'AI service error', 'Error del servicio IA').primary);
+        toast.error((errData as { error?: string }).error || t({ fr: 'Erreur du service IA', en: 'AI service error', es: 'Error del servicio IA' }).primary);
         setImageProcessing(false);
         return;
       }
@@ -223,19 +223,17 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         }
         toast.success(
           t(
-            `${data.tasks.length} tâche(s) ajoutée(s)`,
-            `${data.tasks.length} task(s) added`,
-            `${data.tasks.length} tarea(s) añadida(s)`,
+            { fr: `${data.tasks.length} tâche(s) ajoutée(s)`, en: `${data.tasks.length} task(s) added`, es: `${data.tasks.length} tarea(s) añadida(s)` },
           ).primary,
         );
       } else {
-        toast(t('Aucune tâche détectée', 'No tasks detected', 'No se detectaron tareas').primary);
+        toast(t({ fr: 'Aucune tâche détectée', en: 'No tasks detected', es: 'No se detectaron tareas' }).primary);
       }
 
       clearImageState();
     } catch (err) {
       console.error('Image extract error:', err);
-      toast.error(t('Erreur lors du traitement', 'Processing error', 'Error de procesamiento').primary);
+      toast.error(t({ fr: 'Erreur lors du traitement', en: 'Processing error', es: 'Error de procesamiento' }).primary);
       setImageProcessing(false);
     }
   };
@@ -257,9 +255,9 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
   // --- Render helpers ---
   const priorities: Priority[] = ['A', 'B', 'C'];
   const sectionLabels: Record<Priority, string> = {
-    A: t('Urgent + Important', 'Urgent + Important', 'Urgente + Importante').primary,
-    B: t('Important', 'Important', 'Importante').primary,
-    C: t('Le reste', 'Everything else', 'Todo lo demás').primary,
+    A: t({ fr: 'Urgent + Important', en: 'Urgent + Important', es: 'Urgente + Importante' }).primary,
+    B: t({ fr: 'Important', en: 'Important', es: 'Importante' }).primary,
+    C: t({ fr: 'Le reste', en: 'Everything else', es: 'Todo lo demás' }).primary,
   };
 
   const isEmpty = items.length === 0;
@@ -272,10 +270,10 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" />
-            {t('Retour', 'Back', 'Volver').primary}
+            {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
           </Button>
           <h2 className="font-serif text-xl text-foreground">
-            {bilingual('Liste A/B/C', 'ABC List', 'Lista A/B/C')}
+            {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C' })}
           </h2>
           <div className="w-16" />
         </div>
@@ -288,7 +286,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleAdd(); }}
-            placeholder={t('Nouvelle tâche...', 'New task...', 'Nueva tarea...').primary}
+            placeholder={t({ fr: 'Nouvelle tâche...', en: 'New task...', es: 'Nueva tarea...' }).primary}
             className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/50 text-sm"
             autoFocus
           />
@@ -299,7 +297,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
             onClick={() => fileInputRef.current?.click()}
             disabled={imageProcessing}
             className="h-12 w-12 rounded-xl flex-shrink-0"
-            title={t('Ajouter depuis une image', 'Add from image', 'Añadir desde imagen').primary}
+            title={t({ fr: 'Ajouter depuis une image', en: 'Add from image', es: 'Añadir desde imagen' }).primary}
           >
             {imageProcessing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -340,7 +338,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         <div className="space-y-1">
           {isEmpty && (
             <p className="text-center text-muted-foreground/60 text-sm italic py-4">
-              {t('Aucune tâche — la tête est libre.', 'No tasks — mind is clear.', 'Sin tareas — mente libre.').primary}
+              {t({ fr: 'Aucune tâche — la tête est libre.', en: 'No tasks — mind is clear.', es: 'Sin tareas — mente libre.' }).primary}
             </p>
           )}
           {priorities.map(priority => {
@@ -354,7 +352,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
                 <SectionHeader priority={priority} label={sectionLabels[priority]} />
                 {filtered.length === 0 ? (
                   <p className="text-xs text-muted-foreground/40 italic pl-4 py-1">
-                    {t('Vide', 'Empty', 'Vacío').primary}
+                    {t({ fr: 'Vide', en: 'Empty', es: 'Vacío' }).primary}
                   </p>
                 ) : (
                   <ul className="space-y-1 mt-1">

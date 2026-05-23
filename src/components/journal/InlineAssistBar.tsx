@@ -17,7 +17,7 @@ export function InlineAssistBar({ suggestions, loading, onInsert }: InlineAssist
     <div className="animate-fade-in-up space-y-2">
       {loading && suggestions.length === 0 && (
         <p className="text-xs text-muted-foreground italic animate-gentle-pulse">
-          {t('Analyse en cours...', 'Analyzing...', 'Analizando...', '分析中...', '分析中...').primary}
+          {t({ fr: 'Analyse en cours...', en: 'Analyzing...', es: 'Analizando...', 'zh-Hans': '分析中...', 'zh-Hant': '分析中...' }).primary}
         </p>
       )}
       {suggestions.map((s, i) => (
@@ -25,16 +25,16 @@ export function InlineAssistBar({ suggestions, loading, onInsert }: InlineAssist
           <p className="text-muted-foreground mb-1.5">
             {s.type === 'l1' ? (
               <>
-                {t('Vous avez écrit', 'You wrote', 'Escribiste', '你写了', '你寫了').primary}{' '}
+                {t({ fr: 'Vous avez écrit', en: 'You wrote', es: 'Escribiste', 'zh-Hans': '你写了', 'zh-Hant': '你寫了' }).primary}{' '}
                 <span className="font-semibold text-foreground">{s.original}</span>
                 {' → '}
-                {t('essayez', 'try', 'prueba', '试试', '試試').primary}
+                {t({ fr: 'essayez', en: 'try', es: 'prueba', 'zh-Hans': '试试', 'zh-Hant': '試試' }).primary}
               </>
             ) : (
               <>
                 <span className="font-semibold text-foreground">{s.original}</span>
                 {' → '}
-                {t('plus précis', 'more precise', 'más preciso', '更精准', '更精準').primary}
+                {t({ fr: 'plus précis', en: 'more precise', es: 'más preciso', 'zh-Hans': '更精准', 'zh-Hant': '更精準' }).primary}
               </>
             )}
           </p>

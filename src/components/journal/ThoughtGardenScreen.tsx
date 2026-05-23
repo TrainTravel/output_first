@@ -62,7 +62,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
   const handleChatAllThoughts = () => {
     const context: ThoughtContext = {
       mode: 'all',
-      label: bilingual('Mon jardin', 'My garden', 'Mi jardín'),
+      label: bilingual({ fr: 'Mon jardin', en: 'My garden', es: 'Mi jardín' }),
       thoughts: thoughts.slice(0, 20).map(th => ({ content: th.content, createdAt: th.createdAt, aiTheme: th.aiTheme })),
     };
     onOpenChatWithContext(context);
@@ -81,9 +81,9 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     setRetagging(true);
     try {
       const count = all ? await retagAll() : await retagUntagged();
-      toast.success(bilingual(`${count} pensées étiquetées`, `${count} thoughts tagged`, `${count} pensamientos etiquetados`));
+      toast.success(bilingual({ fr: `${count} pensées étiquetées`, en: `${count} thoughts tagged`, es: `${count} pensamientos etiquetados` }));
     } catch {
-      toast.error(bilingual('Échec de l\'étiquetage', 'Tagging failed', 'Error al etiquetar'));
+      toast.error(bilingual({ fr: 'Échec de l\'étiquetage', en: 'Tagging failed', es: 'Error al etiquetar' }));
     }
     setRetagging(false);
   };
@@ -96,19 +96,19 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     setCreatingCluster(false);
     setNewClusterTitle('');
     setShowCreateCluster(false);
-    if (cluster) toast.success(bilingual('Cluster créé', 'Cluster created', 'Cluster creado'));
+    if (cluster) toast.success(bilingual({ fr: 'Cluster créé', en: 'Cluster created', es: 'Cluster creado' }));
   };
 
   const handleLinkThought = async (thoughtId: string, clusterId: string) => {
     await addThoughtToCluster(clusterId, thoughtId);
-    toast.success(bilingual('Pensée ajoutée au cluster', 'Thought added to cluster', 'Pensamiento añadido al cluster'));
+    toast.success(bilingual({ fr: 'Pensée ajoutée au cluster', en: 'Thought added to cluster', es: 'Pensamiento añadido al cluster' }));
   };
 
   const handleCreateAndLink = async (title: string, thoughtId: string) => {
     const cluster = await createCluster(title);
     if (cluster) {
       await addThoughtToCluster(cluster.id, thoughtId);
-      toast.success(bilingual('Cluster créé et pensée ajoutée', 'Cluster created & thought added', 'Cluster creado y pensamiento añadido'));
+      toast.success(bilingual({ fr: 'Cluster créé et pensée ajoutée', en: 'Cluster created & thought added', es: 'Cluster creado y pensamiento añadido' }));
     }
   };
 
@@ -116,7 +116,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     for (const id of selectedIds) {
       await addThoughtToCluster(clusterId, id);
     }
-    toast.success(bilingual(`${selectedIds.size} pensées ajoutées`, `${selectedIds.size} thoughts added`, `${selectedIds.size} pensamientos añadidos`));
+    toast.success(bilingual({ fr: `${selectedIds.size} pensées ajoutées`, en: `${selectedIds.size} thoughts added`, es: `${selectedIds.size} pensamientos añadidos` }));
     setSelectedIds(new Set());
   };
 
@@ -126,7 +126,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       for (const id of selectedIds) {
         await addThoughtToCluster(cluster.id, id);
       }
-      toast.success(bilingual(`Cluster créé avec ${selectedIds.size} pensées`, `Cluster created with ${selectedIds.size} thoughts`, `Cluster creado con ${selectedIds.size} pensamientos`));
+      toast.success(bilingual({ fr: `Cluster créé avec ${selectedIds.size} pensées`, en: `Cluster created with ${selectedIds.size} thoughts`, es: `Cluster creado con ${selectedIds.size} pensamientos` }));
       setSelectedIds(new Set());
     }
   };
@@ -139,9 +139,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
         await addThoughtToCluster(cluster.id, th.id);
       }
       toast.success(bilingual(
-        `Cluster "${group.label}" créé avec ${group.thoughts.length} pensées`,
-        `Cluster "${group.label}" created with ${group.thoughts.length} thoughts`,
-        `Cluster "${group.label}" creado con ${group.thoughts.length} pensamientos`
+        { fr: `Cluster "${group.label}" créé avec ${group.thoughts.length} pensées`, en: `Cluster "${group.label}" created with ${group.thoughts.length} thoughts`, es: `Cluster "${group.label}" creado con ${group.thoughts.length} pensamientos` }
       ));
     }
     setConvertingTheme(null);
@@ -190,7 +188,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
     const currentTheme = thought.aiTheme || 'Uncategorized';
     if (currentTheme === targetTheme) return;
     moveThoughtToTheme(thoughtId, targetTheme === 'Uncategorized' ? '' : targetTheme);
-    toast.success(bilingual(`Déplacé vers "${targetTheme}"`, `Moved to "${targetTheme}"`, `Movido a "${targetTheme}"`));
+    toast.success(bilingual({ fr: `Déplacé vers "${targetTheme}"`, en: `Moved to "${targetTheme}"`, es: `Movido a "${targetTheme}"` }));
   };
 
   return (
@@ -199,7 +197,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back', 'Volver').primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
         </Button>
         <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
@@ -211,13 +209,13 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
                 trigger={
                   <Button variant="outline" size="sm">
                     <Layers className="w-4 h-4 mr-1" />
-                    {t('Ajouter au cluster', 'Add to cluster', 'Añadir al cluster').primary} ({selectedIds.size})
+                    {t({ fr: 'Ajouter au cluster', en: 'Add to cluster', es: 'Añadir al cluster' }).primary} ({selectedIds.size})
                   </Button>
                 }
               />
               <Button variant="destructive" size="sm" onClick={archiveSelected}>
                 <Archive className="w-4 h-4 mr-1" />
-                {t('Archiver', 'Archive', 'Archivar').primary} ({selectedIds.size})
+                {t({ fr: 'Archiver', en: 'Archive', es: 'Archivar' }).primary} ({selectedIds.size})
               </Button>
             </>
           )}
@@ -231,29 +229,29 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       <div className="text-center mb-6">
         <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
           <Sprout className="w-7 h-7 text-primary" />
-          {bilingual('Jardin de pensées', 'Thought Garden', 'Jardín de pensamientos')}
+          {bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pensamientos' })}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
-          {t(`${thoughts.length} pensées capturées`, `${thoughts.length} thoughts captured`, `${thoughts.length} pensamientos capturados`).primary}
+          {t({ fr: `${thoughts.length} pensées capturées`, en: `${thoughts.length} thoughts captured`, es: `${thoughts.length} pensamientos capturados` }).primary}
           {groups.length > 1 && (
-            <span className="ml-1">· {groups.length} {t('thèmes', 'themes', 'temas').primary}</span>
+            <span className="ml-1">· {groups.length} {t({ fr: 'thèmes', en: 'themes', es: 'temas' }).primary}</span>
           )}
         </p>
         {!loading && thoughts.length > 0 && (
           <div className="flex gap-2 mt-3 flex-wrap justify-center">
             <Button variant="default" size="sm" onClick={handleChatAllThoughts}>
               <MessageCircle className="w-4 h-4 mr-1.5" />
-              {bilingual('Discuter', 'Discuss', 'Discutir')}
+              {bilingual({ fr: 'Discuter', en: 'Discuss', es: 'Discutir' })}
             </Button>
             {untaggedCount > 0 && (
               <Button variant="outline" size="sm" onClick={() => handleRetag(false)} disabled={retagging}>
                 {retagging ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
-                {t(`Étiqueter ${untaggedCount} nouvelles`, `Tag ${untaggedCount} new`, `Etiquetar ${untaggedCount} nuevos`).primary}
+                {t({ fr: `Étiqueter ${untaggedCount} nouvelles`, en: `Tag ${untaggedCount} new`, es: `Etiquetar ${untaggedCount} nuevos` }).primary}
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => handleRetag(true)} disabled={retagging}>
               {retagging ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
-              {t('Tout ré-étiqueter', 'Re-tag all', 'Re-etiquetar todo').primary}
+              {t({ fr: 'Tout ré-étiqueter', en: 'Re-tag all', es: 'Re-etiquetar todo' }).primary}
             </Button>
           </div>
         )}
@@ -262,7 +260,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       {/* Search */}
       {showSearch && (
         <div className="max-w-lg mx-auto w-full mb-6 animate-fade-in-up">
-          <Input placeholder={t('Rechercher…', 'Search…', 'Buscar…').primary} value={search} onChange={e => setSearch(e.target.value)} autoFocus />
+          <Input placeholder={t({ fr: 'Rechercher…', en: 'Search…', es: 'Buscar…' }).primary} value={search} onChange={e => setSearch(e.target.value)} autoFocus />
         </div>
       )}
 
@@ -271,35 +269,35 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-serif text-lg text-foreground flex items-center gap-2">
             <Layers className="w-5 h-5 text-primary" />
-            {bilingual('Mes Clusters', 'My Clusters', 'Mis Clusters')}
+            {bilingual({ fr: 'Mes Clusters', en: 'My Clusters', es: 'Mis Clusters' })}
           </h3>
           <Button variant="ghost" size="sm" onClick={() => setShowCreateCluster(s => !s)}>
             {showCreateCluster ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 mr-1" />}
-            {!showCreateCluster && t('Nouveau', 'New', 'Nuevo').primary}
+            {!showCreateCluster && t({ fr: 'Nouveau', en: 'New', es: 'Nuevo' }).primary}
           </Button>
         </div>
 
         {showCreateCluster && (
           <div className="flex gap-2 mb-3 animate-fade-in-up">
             <Input
-              placeholder={t('Nom du cluster…', 'Cluster name…', 'Nombre del cluster…').primary}
+              placeholder={t({ fr: 'Nom du cluster…', en: 'Cluster name…', es: 'Nombre del cluster…' }).primary}
               value={newClusterTitle}
               onChange={e => setNewClusterTitle(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreateCluster()}
               autoFocus
             />
             <Button onClick={handleCreateCluster} disabled={!newClusterTitle.trim() || creatingCluster} size="sm">
-              {creatingCluster ? '…' : t('Créer', 'Create', 'Crear').primary}
+              {creatingCluster ? '…' : t({ fr: 'Créer', en: 'Create', es: 'Crear' }).primary}
             </Button>
           </div>
         )}
 
         {clustersLoading ? (
-          <p className="text-muted-foreground text-sm animate-gentle-pulse">{t('Chargement…', 'Loading…', 'Cargando…').primary}</p>
+          <p className="text-muted-foreground text-sm animate-gentle-pulse">{t({ fr: 'Chargement…', en: 'Loading…', es: 'Cargando…' }).primary}</p>
         ) : clusters.length === 0 ? (
           <div className="bg-muted/50 rounded-xl p-4 text-center border border-border">
             <p className="text-muted-foreground text-sm">
-              {t('Pas encore de clusters. Créez-en un pour regrouper vos pensées.', 'No clusters yet. Create one to group your thoughts.', 'Aún no hay clusters. Crea uno para agrupar tus pensamientos.').primary}
+              {t({ fr: 'Pas encore de clusters. Créez-en un pour regrouper vos pensées.', en: 'No clusters yet. Create one to group your thoughts.', es: 'Aún no hay clusters. Crea uno para agrupar tus pensamientos.' }).primary}
             </p>
           </div>
         ) : (
@@ -320,15 +318,15 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
       <div className="flex-1 max-w-lg mx-auto w-full">
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <p className="text-muted-foreground animate-gentle-pulse">{t('Chargement…', 'Loading…', 'Cargando…').primary}</p>
+            <p className="text-muted-foreground animate-gentle-pulse">{t({ fr: 'Chargement…', en: 'Loading…', es: 'Cargando…' }).primary}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Sprout className="w-12 h-12 text-muted-foreground/30 mb-4" />
             <p className="text-muted-foreground">
               {search
-                ? t('Aucun résultat trouvé.', 'No results found.', 'No se encontraron resultados.').primary
-                : t('Votre jardin est vide. Commencez par un vide-tête !', 'Your garden is empty. Start with a brain dump!', '¡Tu jardín está vacío. Comienza con un volcado mental!').primary}
+                ? t({ fr: 'Aucun résultat trouvé.', en: 'No results found.', es: 'No se encontraron resultados.' }).primary
+                : t({ fr: 'Votre jardin est vide. Commencez par un vide-tête !', en: 'Your garden is empty. Start with a brain dump!', es: '¡Tu jardín está vacío. Comienza con un volcado mental!' }).primary}
             </p>
           </div>
         ) : (
@@ -348,7 +346,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
                             onClick={() => handleConvertTheme(group)}
                             disabled={convertingTheme === group.label}
                             className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors disabled:opacity-50"
-                            title={bilingual('Convertir en cluster', 'Convert to cluster', 'Convertir a cluster')}
+                            title={bilingual({ fr: 'Convertir en cluster', en: 'Convert to cluster', es: 'Convertir a cluster' })}
                           >
                             {convertingTheme === group.label ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -359,7 +357,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
                           <button
                             onClick={() => handleChatTheme(group)}
                             className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
-                            title={bilingual('Discuter ce thème', 'Discuss this theme', 'Discutir este tema')}
+                            title={bilingual({ fr: 'Discuter ce thème', en: 'Discuss this theme', es: 'Discutir este tema' })}
                           >
                             <MessageCircle className="w-4 h-4" />
                           </button>
@@ -378,7 +376,7 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
                           onArchive={() => archiveThought(thought.id)}
                           onMoveToTheme={(theme) => {
                             moveThoughtToTheme(thought.id, theme);
-                            toast.success(bilingual(`Déplacé vers "${theme}"`, `Moved to "${theme}"`, `Movido a "${theme}"`));
+                            toast.success(bilingual({ fr: `Déplacé vers "${theme}"`, en: `Moved to "${theme}"`, es: `Movido a "${theme}"` }));
                           }}
                           onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
                           onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}

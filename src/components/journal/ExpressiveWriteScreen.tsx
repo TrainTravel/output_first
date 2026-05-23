@@ -89,23 +89,17 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
         <div className="w-full max-w-md text-center space-y-6">
           <p className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
             {t(
-              'Écrivez sur quelque chose de profondément personnel.',
-              'Write about something deeply personal.',
-              'Escribe sobre algo profundamente personal.'
+              { fr: 'Écrivez sur quelque chose de profondément personnel.', en: 'Write about something deeply personal.', es: 'Escribe sobre algo profundamente personal.' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-base italic">
             {t(
-              'Ceci est privé et uniquement pour vous.',
-              'This is private and only for you.',
-              'Esto es privado y solo para ti.'
+              { fr: 'Ceci est privé et uniquement pour vous.', en: 'This is private and only for you.', es: 'Esto es privado y solo para ti.' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-sm">
             {t(
-              'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.',
-              'Don\'t worry about grammar or spelling — just let it flow.',
-              'No te preocupes por la gramática o la ortografía — déjalo fluir.'
+              { fr: 'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.', en: 'Don\'t worry about grammar or spelling — just let it flow.', es: 'No te preocupes por la gramática o la ortografía — déjalo fluir.' }
             ).primary}
           </p>
           <div className="pt-4">
@@ -113,7 +107,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               onClick={() => setPhase('writing')}
               className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
             >
-              {t('Commencer maintenant', 'Start now', 'Empezar ahora').primary}
+              {t({ fr: 'Commencer maintenant', en: 'Start now', es: 'Empezar ahora' }).primary}
             </button>
           </div>
         </div>
@@ -129,20 +123,16 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
         <div className="w-full max-w-md text-center space-y-6">
           <p className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
             {t(
-              'Il est normal de ressentir des émotions intenses.',
-              'It\'s normal to feel intense emotions.',
-              'Es normal sentir emociones intensas.'
+              { fr: 'Il est normal de ressentir des émotions intenses.', en: 'It\'s normal to feel intense emotions.', es: 'Es normal sentir emociones intensas.' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-base italic">
             {t(
-              'Prenez un moment pour respirer.',
-              'Take a moment to breathe.',
-              'Tómate un momento para respirar.'
+              { fr: 'Prenez un moment pour respirer.', en: 'Take a moment to breathe.', es: 'Tómate un momento para respirar.' }
             ).primary}
           </p>
           <p className="text-sm text-muted-foreground mt-4">
-            {t('Session', 'Session', 'Sesión').primary} {newCount} / 4
+            {t({ fr: 'Session', en: 'Session', es: 'Sesión' }).primary} {newCount} / 4
           </p>
           <div className="pt-6">
             <Button
@@ -152,12 +142,12 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               disabled={!canContinue}
               className={!canContinue ? 'opacity-40' : ''}
             >
-              {t('Continuer', 'Continue', 'Continuar').primary}
+              {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             {!canContinue && (
               <p className="text-xs text-muted-foreground mt-3 animate-gentle-pulse">
-                {t('Un moment...', 'One moment...', 'Un momento...').primary}
+                {t({ fr: 'Un moment...', en: 'One moment...', es: 'Un momento...' }).primary}
               </p>
             )}
           </div>
@@ -178,7 +168,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="flex-1 flex flex-col space-y-3">
@@ -187,9 +177,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={t(
-              'Laissez vos pensées et émotions couler librement...',
-              'Let your thoughts and emotions flow freely...',
-              'Deja fluir tus pensamientos y emociones libremente...'
+              { fr: 'Laissez vos pensées et émotions couler librement...', en: 'Let your thoughts and emotions flow freely...', es: 'Deja fluir tus pensamientos y emociones libremente...' }
             ).primary}
             className="flex-1 min-h-[300px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
             autoFocus
@@ -222,7 +210,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               {wordCount > 0 && (
                 <>
                   <span className="font-medium text-foreground">{wordCount}</span>{' '}
-                  {t('mots', 'words', 'palabras').primary}
+                  {t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}
                 </>
               )}
             </span>
@@ -239,7 +227,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
             onClick={handleFinishEarly}
             className="text-muted-foreground"
           >
-            {t('Terminer maintenant', 'Finish early', 'Terminar ahora').primary}
+            {t({ fr: 'Terminer maintenant', en: 'Finish early', es: 'Terminar ahora' }).primary}
           </Button>
         </div>
       </div>

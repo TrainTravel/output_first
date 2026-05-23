@@ -201,7 +201,7 @@ describe('availablePrimaries / availableTargets — UI-layer filters', () => {
 describe('t() — string lookup', () => {
   it('primary = target-language string, secondary = primary-language string', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    const out = result.current.t('Continuer', 'Continue', 'Continuar');
+    const out = result.current.t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' });
     expect(out.primary).toBe('Continuer');   // target = fr
     expect(out.secondary).toBe('Continue');  // primary = en
   });
@@ -209,7 +209,7 @@ describe('t() — string lookup', () => {
   it('falls back to English for zh-* when zhHans/zhHant arg is omitted', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'zh-Hans' }));
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    const out = result.current.t('Bonjour', 'Hello', 'Hola');
+    const out = result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
     expect(out.primary).toBe('Hello'); // fallback
     expect(out.secondary).toBe('Hello');
   });
@@ -218,7 +218,7 @@ describe('t() — string lookup', () => {
 describe('bilingual() — formatted pair', () => {
   it('returns "{target} / {primary}"', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    expect(result.current.bilingual('Vide-tête', 'Brain Dump', 'Volcado mental'))
+    expect(result.current.bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' }))
       .toBe('Vide-tête / Brain Dump');
   });
 });

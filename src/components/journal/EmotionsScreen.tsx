@@ -92,7 +92,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
     onSave(undefined, undefined);
   };
 
-  const header = t('Un mot pour ce que vous ressentez', 'A word for how you feel', 'Una palabra para lo que sientes');
+  const header = t({ fr: 'Un mot pour ce que vous ressentez', en: 'A word for how you feel', es: 'Una palabra para lo que sientes' });
   const growthPercent = stats.totalAvailable > 0 ? Math.round((stats.totalEncountered / stats.totalAvailable) * 100) : 0;
 
   return (
@@ -105,13 +105,13 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span className="text-sm">{t('Modifier mon texte', 'Edit my text', 'Editar mi texto').primary}</span>
+            <span className="text-sm">{t({ fr: 'Modifier mon texte', en: 'Edit my text', es: 'Editar mi texto' }).primary}</span>
           </button>
           <button
             onClick={onGoHome}
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-xs"
           >
-            <span>{t("Retour à l'accueil", 'Back to home', 'Volver al inicio').primary}</span>
+            <span>{t({ fr: "Retour à l'accueil", en: 'Back to home', es: 'Volver al inicio' }).primary}</span>
           </button>
         </div>
 
@@ -124,14 +124,14 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             {header.secondary}
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            {t(`Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, `Choose up to ${MAX_EMOTIONS} words.`, `Elige hasta ${MAX_EMOTIONS} palabras.`).primary}
+            {t({ fr: `Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, en: `Choose up to ${MAX_EMOTIONS} words.`, es: `Elige hasta ${MAX_EMOTIONS} palabras.` }).primary}
             {selectedEmotions.length > 0 && (
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
           </p>
           {showHint && (
             <p className="text-xs text-muted-foreground/70 animate-fade-in-up">
-              {t('Appui long pour explorer un mot', 'Long-press a word to explore it', 'Mantén pulsado para explorar una palabra').primary}
+              {t({ fr: 'Appui long pour explorer un mot', en: 'Long-press a word to explore it', es: 'Mantén pulsado para explorar una palabra' }).primary}
             </p>
           )}
         </div>
@@ -143,7 +143,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground">
-              {t('Vocabulaire exploré', 'Words explored', 'Vocabulario explorado').primary}
+              {t({ fr: 'Vocabulaire exploré', en: 'Words explored', es: 'Vocabulario explorado' }).primary}
             </p>
             <div className="flex items-center gap-2 mt-1">
               <Progress value={growthPercent} className="h-1.5 flex-1" />
@@ -242,7 +242,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
           >
             <Sprout className="w-3.5 h-3.5" />
-            {t('Explorer les 48 mots', 'Explore all 48 words', 'Explorar las 48 palabras').primary} →
+            {t({ fr: 'Explorer les 48 mots', en: 'Explore all 48 words', es: 'Explorar las 48 palabras' }).primary} →
           </button>
         )}
 
@@ -253,7 +253,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             size="full"
             onClick={handleContinue}
           >
-            {t('Continuer', 'Continue', 'Continuar').primary}
+            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
 
@@ -262,7 +262,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             size="full"
             onClick={handleSkip}
           >
-            {t('Passer cette étape', 'Skip this step', 'Omitir este paso').primary}
+            {t({ fr: 'Passer cette étape', en: 'Skip this step', es: 'Omitir este paso' }).primary}
           </Button>
         </div>
       </div>

@@ -62,7 +62,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {user && !user.is_anonymous && (
               <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
                 <LogOut className="w-4 h-4 mr-1" />
-                {t('Déconnexion', 'Sign out', 'Cerrar sesión').primary}
+                {t({ fr: 'Déconnexion', en: 'Sign out', es: 'Cerrar sesión' }).primary}
               </Button>
             )}
             <GardenThemeSelector />
@@ -82,7 +82,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             OutputFirst
           </h1>
           <p className="text-muted-foreground text-sm italic">
-            {t('Journaling en français', 'French journaling practice', 'Práctica de journaling en francés').primary}
+            {t({ fr: 'Journaling en français', en: 'French journaling practice', es: 'Práctica de journaling en francés' }).primary}
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-sm font-medium">{t('Terminé', 'Completed', 'Completado').primary}</span>
+              <span className="text-sm font-medium">{t({ fr: 'Terminé', en: 'Completed', es: 'Completado' }).primary}</span>
             </div>
           </div>
         )}
@@ -113,7 +113,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               <CalendarDays className="w-4 h-4 text-accent-foreground" /> {totalDays}
             </span>
             <span className="text-border">│</span>
-            <span className="text-muted-foreground">{totalWords} {t('mots', 'words', 'palabras').primary}</span>
+            <span className="text-muted-foreground">{totalWords} {t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}</span>
           </div>
           <TooltipProvider delayDuration={200}>
             <div className="flex items-center justify-center gap-2">
@@ -129,11 +129,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                       </span>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="text-center">
-                      <p className="font-medium">{t(badge.fr, badge.en, badge.es).primary}</p>
+                      <p className="font-medium">{t({ fr: badge.fr, en: badge.en, es: badge.es }).primary}</p>
                       <p className="text-xs text-muted-foreground">
                         {earned
-                          ? `✓ ${t('Obtenu', 'Earned', 'Obtenido').primary}`
-                          : `${badge.threshold} ${t('mots', 'words', 'palabras').primary}`
+                          ? `✓ ${t({ fr: 'Obtenu', en: 'Earned', es: 'Obtenido' }).primary}`
+                          : `${badge.threshold} ${t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}`
                         }
                       </p>
                     </TooltipContent>
@@ -166,19 +166,19 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           >
             <Feather className="w-5 h-5 mr-2" />
             {hasJournaledToday
-              ? bilingual('Écrire encore', 'Write another', 'Escribir más')
-              : bilingual("Écrire aujourd'hui", 'Write today', 'Escribir hoy')
+              ? bilingual({ fr: 'Écrire encore', en: 'Write another', es: 'Escribir más' })
+              : bilingual({ fr: "Écrire aujourd'hui", en: 'Write today', es: 'Escribir hoy' })
             }
           </Button>
 
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
-            {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
+            {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' })}
           </Button>
 
           <Button variant="outline" size="full" onClick={onOpenThoughtGarden}>
             <Sprout className="w-5 h-5 mr-2" />
-            {bilingual('Jardin de pensées', 'Thought Garden', 'Jardín de pensamientos')}
+            {bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pensamientos' })}
           </Button>
 
           {/* More tools toggle */}
@@ -187,44 +187,44 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             className="w-full flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {showMore ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            {t('Autres outils', 'More tools', 'Más herramientas').primary}
+            {t({ fr: 'Autres outils', en: 'More tools', es: 'Más herramientas' }).primary}
           </button>
 
           {showMore && (
             <div className="space-y-3 animate-fade-in-up">
               <Button variant="outline" size="full" onClick={onStartFreeWrite}>
                 <PenLine className="w-5 h-5 mr-2" />
-                {bilingual('Écrire librement', 'Free Write', 'Escritura libre')}
+                {bilingual({ fr: 'Écrire librement', en: 'Free Write', es: 'Escritura libre' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenFocusPlan} className="bg-accent/10 border-accent/30">
                 <Target className="w-5 h-5 mr-2" />
-                {bilingual('Un truc à la fois', 'One Thing at a Time', 'Una cosa a la vez')}
+                {bilingual({ fr: 'Un truc à la fois', en: 'One Thing at a Time', es: 'Una cosa a la vez' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenTodoList}>
                 <ListChecks className="w-5 h-5 mr-2" />
-                {bilingual('Liste A/B/C', 'ABC List', 'Lista A/B/C')}
+                {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenSmallWins}>
                 <Trophy className="w-5 h-5 mr-2" />
-                {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
+                {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenTinyExperiment}>
                 <FlaskConical className="w-5 h-5 mr-2" />
-                {bilingual('Petites expériences', 'Tiny Experiments', 'Pequeños experimentos')}
+                {bilingual({ fr: 'Petites expériences', en: 'Tiny Experiments', es: 'Pequeños experimentos' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenZenGarden}>
                 <Mountain className="w-5 h-5 mr-2" />
-                {bilingual('Jardin Zen', 'Zen Garden', 'Jardín Zen')}
+                {bilingual({ fr: 'Jardin Zen', en: 'Zen Garden', es: 'Jardín Zen' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenSandTimer}>
                 <Hourglass className="w-5 h-5 mr-2" />
-                {bilingual('Sablier', 'Sand Timer', 'Reloj de arena')}
+                {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena' })}
               </Button>
             </div>
           )}
@@ -239,16 +239,16 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground font-medium">
-                {t('Vocabulaire émotionnel', 'Emotion vocabulary', 'Vocabulario emocional').primary}
+                {t({ fr: 'Vocabulaire émotionnel', en: 'Emotion vocabulary', es: 'Vocabulario emocional' }).primary}
               </p>
               <p className="text-xs text-muted-foreground">
-                {t('Explorer vos mots', 'Explore your words', 'Explora tus palabras').primary} →
+                {t({ fr: 'Explorer vos mots', en: 'Explore your words', es: 'Explora tus palabras' }).primary} →
               </p>
             </div>
           </button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
-            {t('Une ou deux phrases suffisent.', 'One or two sentences is enough.', 'Una o dos frases bastan.').primary}
+            {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.' }).primary}
           </p>
         </div>
 

@@ -23,9 +23,7 @@ export function SelfCompassionPractice({ lang, defaultOpen = false }: SelfCompas
   const phrase = getDailyPhrase(activeStep, lang);
   const stepLabel = getDailyStepLabel(activeStep, lang);
   const triggerLabel = bilingual(
-    'Moment de bienveillance',
-    'Self-compassion',
-    'Momento de bondad',
+    { fr: 'Moment de bienveillance', en: 'Self-compassion', es: 'Momento de bondad' },
   );
 
   const prevStep = () => setActiveStep(s => ((s + 2) % 3) as NeffStep);
@@ -79,21 +77,19 @@ export function SelfCompassionPractice({ lang, defaultOpen = false }: SelfCompas
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <button
               onClick={prevStep}
-              aria-label={t('Étape précédente', 'Previous step', 'Paso anterior').primary}
+              aria-label={t({ fr: 'Étape précédente', en: 'Previous step', es: 'Paso anterior' }).primary}
               className="p-1 hover:text-foreground transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span>
               {t(
-                `Étape ${activeStep + 1} sur 3`,
-                `Step ${activeStep + 1} of 3`,
-                `Paso ${activeStep + 1} de 3`,
+                { fr: `Étape ${activeStep + 1} sur 3`, en: `Step ${activeStep + 1} of 3`, es: `Paso ${activeStep + 1} de 3` },
               ).primary}
             </span>
             <button
               onClick={nextStep}
-              aria-label={t('Étape suivante', 'Next step', 'Paso siguiente').primary}
+              aria-label={t({ fr: 'Étape suivante', en: 'Next step', es: 'Paso siguiente' }).primary}
               className="p-1 hover:text-foreground transition-colors"
             >
               <ChevronRight className="w-4 h-4" />

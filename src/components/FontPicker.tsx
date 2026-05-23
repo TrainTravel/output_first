@@ -8,7 +8,7 @@ export function FontPicker() {
   return (
     <div className="w-full space-y-2">
       <p className="text-xs text-muted-foreground text-center tracking-wide">
-        {t('Police de lecture', 'Reading font', 'Fuente de lectura').primary}
+        {t({ fr: 'Police de lecture', en: 'Reading font', es: 'Fuente de lectura' }).primary}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-2">
         {options.map((opt) => {

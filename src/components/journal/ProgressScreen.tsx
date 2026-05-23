@@ -68,7 +68,7 @@ export function ProgressScreen({
               {isFr ? 'You showed up today' : isEs ? 'You showed up today' : 'Vous êtes venu(e) aujourd\'hui'}
             </p>
             <p className="text-muted-foreground text-sm">
-              {t("C'est ce qui compte le plus.", "That's what matters most.", 'Es lo que más importa.').primary}
+              {t({ fr: "C'est ce qui compte le plus.", en: "That's what matters most.", es: 'Es lo que más importa.' }).primary}
             </p>
           </div>
         )}
@@ -151,10 +151,10 @@ export function ProgressScreen({
         <div className="bg-card rounded-2xl p-5 shadow-gentle border border-border space-y-4">
           <div>
             <p className="text-sm font-medium text-foreground">
-              {t('Badges', 'Badges', 'Insignias').primary}
+              {t({ fr: 'Badges', en: 'Badges', es: 'Insignias' }).primary}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {totalWords} {t('mots écrits au total', 'words written in total', 'palabras escritas en total').primary}
+              {totalWords} {t({ fr: 'mots écrits au total', en: 'words written in total', es: 'palabras escritas en total' }).primary}
             </p>
           </div>
           <div className="flex gap-4 flex-wrap">
@@ -177,12 +177,12 @@ export function ProgressScreen({
             const next = BADGES.find(b => totalWords < b.threshold);
             if (!next) return (
               <p className="text-xs text-primary">
-                {t('Tous les badges obtenus !', 'All badges earned!', '¡Todas las insignias obtenidas!').primary}
+                {t({ fr: 'Tous les badges obtenus !', en: 'All badges earned!', es: '¡Todas las insignias obtenidas!' }).primary}
               </p>
             );
             return (
               <p className="text-xs text-muted-foreground">
-                {next.icon} {next[lang]} — {next.threshold - totalWords} {t('mots restants', 'words to go', 'palabras restantes').primary}
+                {next.icon} {next[lang]} — {next.threshold - totalWords} {t({ fr: 'mots restants', en: 'words to go', es: 'palabras restantes' }).primary}
               </p>
             );
           })()}
@@ -193,7 +193,7 @@ export function ProgressScreen({
           <div className="flex items-center gap-2 mb-3 px-2">
             <BookOpen className="w-4 h-4 text-primary" />
             <p className="text-sm font-medium text-foreground">
-              {t('Journal passé', 'Past entries', 'Entradas pasadas').primary}
+              {t({ fr: 'Journal passé', en: 'Past entries', es: 'Entradas pasadas' }).primary}
             </p>
           </div>
           <Calendar
@@ -218,7 +218,7 @@ export function ProgressScreen({
             {selectedEntries.length === 0 ? (
               <div className="bg-muted/50 rounded-2xl p-5 text-center border border-border">
                 <p className="text-muted-foreground text-sm">
-                  {t('Aucune entrée ce jour-là', 'No entry on this day', 'Sin entrada ese día').primary}
+                  {t({ fr: 'Aucune entrée ce jour-là', en: 'No entry on this day', es: 'Sin entrada ese día' }).primary}
                 </p>
               </div>
             ) : (
@@ -247,13 +247,13 @@ export function ProgressScreen({
           {!hasJournaledToday && (
             <Button variant="default" size="full" onClick={onStartJournal}>
               <Feather className="w-5 h-5 mr-2" />
-              {t("Écrire aujourd'hui", 'Write today', 'Escribir hoy').primary}
+              {t({ fr: "Écrire aujourd'hui", en: 'Write today', es: 'Escribir hoy' }).primary}
             </Button>
           )}
 
           <Button variant="gentle" size="full" onClick={onGoHome}>
             <Home className="w-5 h-5 mr-2" />
-            {t("Retour à l'accueil", 'Return home', 'Volver al inicio').primary}
+            {t({ fr: "Retour à l'accueil", en: 'Return home', es: 'Volver al inicio' }).primary}
           </Button>
         </div>
       </div>

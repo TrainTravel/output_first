@@ -105,14 +105,14 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
   );
 
   const placeholders = [
-    t('Répondre au courriel du patron', 'Reply to boss email', 'Responder al correo del jefe').primary,
-    t('Finir le ménage', 'Finish laundry', 'Terminar la colada').primary,
-    t('Appeler le dentiste', 'Call the dentist', 'Llamar al dentista').primary,
-    t('Préparer le souper', 'Make dinner', 'Preparar la cena').primary,
-    t('Payer les factures', 'Pay bills', 'Pagar las facturas').primary,
-    t('Répondre à ce message', 'Reply to that text', 'Responder a ese mensaje').primary,
-    t('Ranger le bureau', 'Tidy the desk', 'Ordenar el escritorio').primary,
-    t('Acheter des courses', 'Buy groceries', 'Comprar comestibles').primary,
+    t({ fr: 'Répondre au courriel du patron', en: 'Reply to boss email', es: 'Responder al correo del jefe' }).primary,
+    t({ fr: 'Finir le ménage', en: 'Finish laundry', es: 'Terminar la colada' }).primary,
+    t({ fr: 'Appeler le dentiste', en: 'Call the dentist', es: 'Llamar al dentista' }).primary,
+    t({ fr: 'Préparer le souper', en: 'Make dinner', es: 'Preparar la cena' }).primary,
+    t({ fr: 'Payer les factures', en: 'Pay bills', es: 'Pagar las facturas' }).primary,
+    t({ fr: 'Répondre à ce message', en: 'Reply to that text', es: 'Responder a ese mensaje' }).primary,
+    t({ fr: 'Ranger le bureau', en: 'Tidy the desk', es: 'Ordenar el escritorio' }).primary,
+    t({ fr: 'Acheter des courses', en: 'Buy groceries', es: 'Comprar comestibles' }).primary,
   ];
 
   const addCard = () => {
@@ -167,16 +167,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         <div>
           <p className="font-serif text-lg text-foreground">
             {t(
-              'Qu\'est-ce qui pèse en ce moment ?',
-              'What\'s weighing on you right now?',
-              '¿Qué te pesa en este momento?'
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?' }
             ).primary}
           </p>
           <p className="text-sm text-muted-foreground italic mt-1">
             {t(
-              'Qu\'est-ce qui pèse en ce moment ?',
-              'What\'s weighing on you right now?',
-              '¿Qué te pesa en este momento?'
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?' }
             ).secondary}
           </p>
         </div>
@@ -220,7 +216,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
 
         {cards.length >= 8 && (
           <p className="text-xs text-muted-foreground/60">
-            {t('8 max — on garde ça gérable', '8 max — keeping it manageable', '8 máx — manteniéndolo manejable').primary}
+            {t({ fr: '8 max — on garde ça gérable', en: '8 max — keeping it manageable', es: '8 máx — manteniéndolo manejable' }).primary}
           </p>
         )}
 
@@ -228,15 +224,13 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         {cards.length >= 2 && (
           <Button variant="default" onClick={() => setPhase('sorting')}>
             <ArrowRight className="w-4 h-4 mr-1" />
-            {t('Trier', 'Sort', 'Clasificar').primary}
+            {t({ fr: 'Trier', en: 'Sort', es: 'Clasificar' }).primary}
           </Button>
         )}
 
         <p className="text-xs text-muted-foreground/50">
           {t(
-            'Demandes des autres, obligations perso, tout ce qui flotte',
-            'Requests from others, self-imposed tasks, anything floating around',
-            'Peticiones de otros, tareas propias, todo lo que flota'
+            { fr: 'Demandes des autres, obligations perso, tout ce qui flotte', en: 'Requests from others, self-imposed tasks, anything floating around', es: 'Peticiones de otros, tareas propias, todo lo que flota' }
           ).primary}
         </p>
       </div>
@@ -249,9 +243,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       <div className="space-y-4 animate-fade-in-up">
         <p className="text-center text-sm text-muted-foreground">
           {t(
-            'Glisse chaque carte dans sa colonne',
-            'Drag each card to its column',
-            'Arrastra cada carta a su columna'
+            { fr: 'Glisse chaque carte dans sa colonne', en: 'Drag each card to its column', es: 'Arrastra cada carta a su columna' }
           ).primary}
         </p>
 
@@ -274,21 +266,21 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           <div className="grid grid-cols-3 gap-2">
             <DropZone
               bucket="yes"
-              label={t('Oui', 'Yes', 'Sí').primary}
+              label={t({ fr: 'Oui', en: 'Yes', es: 'Sí' }).primary}
               icon={<Check className="w-3.5 h-3.5" />}
               cards={byBucket('yes')}
               colorClass="border-primary/40 bg-primary/5"
             />
             <DropZone
               bucket="expand"
-              label={t('Élargir', 'Expand', 'Expandir').primary}
+              label={t({ fr: 'Élargir', en: 'Expand', es: 'Expandir' }).primary}
               icon={<Sparkles className="w-3.5 h-3.5" />}
               cards={byBucket('expand')}
               colorClass="border-accent/40 bg-accent/5"
             />
             <DropZone
               bucket="notnow"
-              label={t('Pas maintenant', 'Not Now', 'Ahora no').primary}
+              label={t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no' }).primary}
               icon={<Pause className="w-3.5 h-3.5" />}
               cards={byBucket('notnow')}
               colorClass="border-muted-foreground/20 bg-muted/20"
@@ -309,7 +301,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           <div className="text-center pt-2 animate-fade-in-up">
             <Button variant="default" onClick={() => setPhase('reflecting')}>
               <ArrowRight className="w-4 h-4 mr-1" />
-              {t('Voir le résultat', 'See the result', 'Ver el resultado').primary}
+              {t({ fr: 'Voir le résultat', en: 'See the result', es: 'Ver el resultado' }).primary}
             </Button>
           </div>
         )}
@@ -328,16 +320,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       <div className="text-center space-y-1">
         <p className="font-serif text-xl text-foreground">
           {t(
-            `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`,
-            `You kept ${yesCards.length}, let go of ${notNowCards.length}`,
-            `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}`
+            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}` }
           ).primary}
         </p>
         <p className="text-sm text-muted-foreground italic">
           {t(
-            `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`,
-            `You kept ${yesCards.length}, let go of ${notNowCards.length}`,
-            `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}`
+            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}` }
           ).secondary}
         </p>
       </div>
@@ -350,16 +338,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
             <div className="space-y-4">
               <p className="text-center font-serif text-lg text-foreground">
                 {t(
-                  'Laquelle t\'attire là, maintenant ?',
-                  'Which one pulls you right now?',
-                  '¿Cuál te atrae ahora mismo?'
+                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?' }
                 ).primary}
               </p>
               <p className="text-center text-sm text-muted-foreground italic">
                 {t(
-                  'Laquelle t\'attire là, maintenant ?',
-                  'Which one pulls you right now?',
-                  '¿Cuál te atrae ahora mismo?'
+                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?' }
                 ).secondary}
               </p>
 
@@ -395,14 +379,14 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
                 onClick={() => setShowAllYes(true)}
                 className="block mx-auto text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
               >
-                {t('Tout voir', 'Show all', 'Ver todo').primary}
+                {t({ fr: 'Tout voir', en: 'Show all', es: 'Ver todo' }).primary}
               </button>
             </div>
           ) : (
             /* ── List view: single card or "show all" mode ── */
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                {t('Choisis ton truc', 'Pick your One Thing', 'Elige tu cosa').primary}
+                {t({ fr: 'Choisis ton truc', en: 'Pick your One Thing', es: 'Elige tu cosa' }).primary}
               </p>
               {yesCards.map((card) => (
                 <button
@@ -424,7 +408,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       {expandCards.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            {t('À reformuler', 'To reframe', 'Para reformular').primary}
+            {t({ fr: 'À reformuler', en: 'To reframe', es: 'Para reformular' }).primary}
           </p>
           {expandCards.map((card) => (
             <div
@@ -434,9 +418,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
               <span>{card.text}</span>
               <p className="text-xs text-muted-foreground mt-1 italic">
                 {t(
-                  'Peux-tu le rendre plus petit ? Poser une condition ?',
-                  'Can you make it smaller? Set a condition?',
-                  '¿Puedes hacerlo más pequeño? ¿Poner una condición?'
+                  { fr: 'Peux-tu le rendre plus petit ? Poser une condition ?', en: 'Can you make it smaller? Set a condition?', es: '¿Puedes hacerlo más pequeño? ¿Poner una condición?' }
                 ).primary}
               </p>
             </div>
@@ -448,15 +430,13 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       {notNowCards.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            {t('Pas maintenant', 'Not Now', 'Ahora no').primary}
+            {t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no' }).primary}
           </p>
           <div className="px-4 py-3 rounded-xl bg-muted/30 border border-border text-sm text-muted-foreground">
             {notNowCards.map((c) => c.text).join(' · ')}
             <p className="text-xs mt-2 italic">
               {t(
-                'Ça peut attendre. Tu as choisi ce qui compte.',
-                'These will wait. You chose what matters.',
-                'Pueden esperar. Elegiste lo que importa.'
+                { fr: 'Ça peut attendre. Tu as choisi ce qui compte.', en: 'These will wait. You chose what matters.', es: 'Pueden esperar. Elegiste lo que importa.' }
               ).primary}
             </p>
           </div>
@@ -476,7 +456,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           }}
           className="text-muted-foreground"
         >
-          {t('Recommencer', 'Start over', 'Empezar de nuevo').primary}
+          {t({ fr: 'Recommencer', en: 'Start over', es: 'Empezar de nuevo' }).primary}
         </Button>
       </div>
     </div>
