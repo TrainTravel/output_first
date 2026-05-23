@@ -50,10 +50,10 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
     ? Math.round((stats.totalEncountered / stats.totalAvailable) * 100) : 0;
 
   const filters: { key: FilterMode; label: string; count: number }[] = [
-    { key: 'all', label: t('Tous', 'All', 'Todos').primary, count: stats.totalAvailable },
-    { key: 'encountered', label: t('Vus', 'Seen', 'Vistos').primary, count: stats.totalEncountered },
-    { key: 'used', label: t('Utilisés', 'Used', 'Usados').primary, count: stats.totalUsed },
-    { key: 'new', label: t('Nouveaux', 'New', 'Nuevos').primary, count: stats.totalAvailable - stats.totalEncountered },
+    { key: 'all', label: t({ fr: 'Tous', en: 'All', es: 'Todos' }).primary, count: stats.totalAvailable },
+    { key: 'encountered', label: t({ fr: 'Vus', en: 'Seen', es: 'Vistos' }).primary, count: stats.totalEncountered },
+    { key: 'used', label: t({ fr: 'Utilisés', en: 'Used', es: 'Usados' }).primary, count: stats.totalUsed },
+    { key: 'new', label: t({ fr: 'Nouveaux', en: 'New', es: 'Nuevos' }).primary, count: stats.totalAvailable - stats.totalEncountered },
   ];
 
   return (
@@ -65,16 +65,16 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         {/* Header */}
         <div className="mb-6 space-y-2">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-            {t('Votre vocabulaire émotionnel', 'Your emotion vocabulary', 'Tu vocabulario emocional').primary}
+            {t({ fr: 'Votre vocabulaire émotionnel', en: 'Your emotion vocabulary', es: 'Tu vocabulario emocional' }).primary}
           </h2>
           <p className="text-muted-foreground italic text-sm">
-            {t('Your emotion vocabulary', 'Votre vocabulaire émotionnel', 'Your emotion vocabulary').primary}
+            {t({ fr: 'Your emotion vocabulary', en: 'Votre vocabulaire émotionnel', es: 'Your emotion vocabulary' }).primary}
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground">
-                {t('Vocabulaire exploré', 'Words explored', 'Vocabulario explorado').primary}
+                {t({ fr: 'Vocabulaire exploré', en: 'Words explored', es: 'Vocabulario explorado' }).primary}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <Progress value={vocabPercent} className="h-2 flex-1" />
@@ -98,13 +98,13 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
           </div>
           <div className="flex gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
-              <Eye className="w-3 h-3" /> {stats.totalEncountered} {t('vus', 'seen', 'vistos').primary}
+              <Eye className="w-3 h-3" /> {stats.totalEncountered} {t({ fr: 'vus', en: 'seen', es: 'vistos' }).primary}
             </span>
             <span className="flex items-center gap-1">
-              <Check className="w-3 h-3" /> {stats.totalUsed} {t('utilisés', 'used', 'usados').primary}
+              <Check className="w-3 h-3" /> {stats.totalUsed} {t({ fr: 'utilisés', en: 'used', es: 'usados' }).primary}
             </span>
             <span className="flex items-center gap-1">
-              <BookOpen className="w-3 h-3" /> {stats.totalAvailable - stats.totalEncountered} {t('à découvrir', 'to discover', 'por descubrir').primary}
+              <BookOpen className="w-3 h-3" /> {stats.totalAvailable - stats.totalEncountered} {t({ fr: 'à découvrir', en: 'to discover', es: 'por descubrir' }).primary}
             </span>
           </div>
         </div>
@@ -132,10 +132,10 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
             <div className="text-center py-12">
               <p className="text-muted-foreground text-sm">
                 {filter === 'used'
-                  ? t("Vous n'avez pas encore utilisé de mots.", "You haven't used any words yet.", "Aún no has usado ninguna palabra.").primary
+                  ? t({ fr: "Vous n'avez pas encore utilisé de mots.", en: "You haven't used any words yet.", es: "Aún no has usado ninguna palabra." }).primary
                   : filter === 'new'
-                    ? t('Tous les mots ont été découverts !', 'All words have been discovered!', '¡Todas las palabras han sido descubiertas!').primary
-                    : t('Aucun mot à afficher.', 'No words to show.', 'No hay palabras para mostrar.').primary}
+                    ? t({ fr: 'Tous les mots ont été découverts !', en: 'All words have been discovered!', es: '¡Todas las palabras han sido descubiertas!' }).primary
+                    : t({ fr: 'Aucun mot à afficher.', en: 'No words to show.', es: 'No hay palabras para mostrar.' }).primary}
               </p>
             </div>
           ) : (

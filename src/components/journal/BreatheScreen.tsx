@@ -65,10 +65,10 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
   }, []);
 
   const phaseText = phase === 'inhale'
-    ? t('Inspirez...', 'Breathe in...', 'Inhala...')
+    ? t({ fr: 'Inspirez...', en: 'Breathe in...', es: 'Inhala...' })
     : phase === 'hold'
-    ? t('Retenez...', 'Hold...', 'Mantén...')
-    : t('Expirez...', 'Breathe out...', 'Exhala...');
+    ? t({ fr: 'Retenez...', en: 'Hold...', es: 'Mantén...' })
+    : t({ fr: 'Expirez...', en: 'Breathe out...', es: 'Exhala...' });
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 animate-fade-in">
@@ -79,7 +79,7 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         {/* Breathing circle */}
@@ -130,16 +130,12 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
           <div className="text-center space-y-1">
             <p className="text-muted-foreground text-sm">
               {t(
-                'Prenez un moment pour vous ancrer.',
-                'Take a moment to ground yourself.',
-                'Tómate un momento para centrarte.'
+                { fr: 'Prenez un moment pour vous ancrer.', en: 'Take a moment to ground yourself.', es: 'Tómate un momento para centrarte.' }
               ).primary}
             </p>
             <p className="text-muted-foreground/60 text-xs italic">
               {t(
-                'Prenez un moment pour vous ancrer.',
-                'Take a moment to ground yourself.',
-                'Tómate un momento para centrarte.'
+                { fr: 'Prenez un moment pour vous ancrer.', en: 'Take a moment to ground yourself.', es: 'Tómate un momento para centrarte.' }
               ).secondary}
             </p>
           </div>
@@ -155,10 +151,10 @@ export function BreatheScreen({ onReady, onBack }: BreatheScreenProps) {
           }}
         >
           <Button variant="default" size="full" onClick={onReady}>
-            {t('Je suis prêt(e)', "I'm ready", 'Estoy listo/a').primary}
+            {t({ fr: 'Je suis prêt(e)', en: "I'm ready", es: 'Estoy listo/a' }).primary}
           </Button>
           <p className="text-center text-muted-foreground/50 text-xs mt-2 italic">
-            {t('Je suis prêt(e)', "I'm ready", 'Estoy listo/a').secondary}
+            {t({ fr: 'Je suis prêt(e)', en: "I'm ready", es: 'Estoy listo/a' }).secondary}
           </p>
         </div>
       </div>

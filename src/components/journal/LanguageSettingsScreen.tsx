@@ -35,21 +35,21 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="mb-10 space-y-2">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-            {t('Réglages de langue', 'Language settings', 'Ajustes de idioma').primary}
+            {t({ fr: 'Réglages de langue', en: 'Language settings', es: 'Ajustes de idioma' }).primary}
           </h2>
           <p className="text-muted-foreground italic">
-            {t('Réglages de langue', 'Language settings', 'Ajustes de idioma').secondary}
+            {t({ fr: 'Réglages de langue', en: 'Language settings', es: 'Ajustes de idioma' }).secondary}
           </p>
         </div>
 
         <section className="mb-10" data-testid="learn-section">
           <h3 className="font-medium text-foreground mb-3">
-            {bilingual("J'apprends", "I'm learning", 'Estoy aprendiendo')}
+            {bilingual({ fr: "J'apprends", en: "I'm learning", es: 'Estoy aprendiendo' })}
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {TARGET_OPTIONS
@@ -80,7 +80,7 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
 
         <section className="mb-10" data-testid="speak-section">
           <h3 className="font-medium text-foreground mb-3">
-            {bilingual('Je parle déjà', 'I already speak', 'Ya hablo')}
+            {bilingual({ fr: 'Je parle déjà', en: 'I already speak', es: 'Ya hablo' })}
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {PRIMARY_OPTIONS
@@ -111,14 +111,14 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
 
         <section className="mt-auto">
           <p className="text-xs text-muted-foreground mb-2">
-            {t('Aperçu', 'Preview', 'Vista previa').primary}
+            {t({ fr: 'Aperçu', en: 'Preview', es: 'Vista previa' }).primary}
           </p>
           <div className="rounded-xl border border-border bg-card/50 p-4">
             <p className="font-serif text-base text-foreground">
-              {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental', '清空大脑', '清空大腦')}
+              {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental', 'zh-Hans': '清空大脑', 'zh-Hant': '清空大腦' })}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {t('cible / familière', 'target / primary', 'objetivo / familiar').primary}
+              {t({ fr: 'cible / familière', en: 'target / primary', es: 'objetivo / familiar' }).primary}
             </p>
           </div>
         </section>

@@ -17,6 +17,18 @@ const PRIMARY_LANGS: readonly PrimaryLang[] = ['en', 'fr', 'es', 'zh-Hans', 'zh-
 export const DEFAULT_PAIR: LangPair = { primary: 'en', target: 'fr' };
 const STORAGE_KEY = 'outputfirst_lang_pair';
 
+/**
+ * Translations keyed by language code. `zh-Hans` / `zh-Hant` are optional;
+ * when omitted, the lookup falls back to English.
+ */
+export interface Translations {
+  fr: string;
+  en: string;
+  es: string;
+  'zh-Hans'?: string;
+  'zh-Hant'?: string;
+}
+
 interface LanguageContextType {
   pair: LangPair;
   targetLang: TargetLang;
@@ -29,9 +41,9 @@ interface LanguageContextType {
   /** Available target options that don't conflict with the current primary. */
   availableTargets: readonly TargetLang[];
   /** Returns { primary: target-language string, secondary: primary-language string }. */
-  t: (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => { primary: string; secondary: string };
+  t: (translations: Translations) => { primary: string; secondary: string };
   /** Returns "{target-string} / {primary-string}". */
-  bilingual: (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => string;
+  bilingual: (translations: Translations) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -107,28 +119,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const availablePrimaries = PRIMARY_LANGS.filter(p => (p as string) !== (pair.target as string));
   const availableTargets = TARGET_LANGS.filter(t => (t as string) !== (pair.primary as string));
 
-  const stringFor = (
-    lang: Language,
-    fr: string, en: string, es: string,
-    zhHans?: string, zhHant?: string,
-  ): string => {
+  const stringFor = (lang: Language, translations: Translations): string => {
     switch (lang) {
-      case 'fr': return fr;
-      case 'en': return en;
-      case 'es': return es;
-      case 'zh-Hans': return zhHans || en;
-      case 'zh-Hant': return zhHant || en;
+      case 'fr': return translations.fr;
+      case 'en': return translations.en;
+      case 'es': return translations.es;
+      case 'zh-Hans': return translations['zh-Hans'] || translations.en;
+      case 'zh-Hant': return translations['zh-Hant'] || translations.en;
     }
   };
 
-  const t = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => ({
-    primary: stringFor(pair.target, fr, en, es, zhHans, zhHant),
-    secondary: stringFor(pair.primary, fr, en, es, zhHans, zhHant),
+  const t = (translations: Translations) => ({
+    primary: stringFor(pair.target, translations),
+    secondary: stringFor(pair.primary, translations),
   });
 
-  const bilingual = (fr: string, en: string, es: string, zhHans?: string, zhHant?: string) => {
-    const tgt = stringFor(pair.target, fr, en, es, zhHans, zhHant);
-    const prm = stringFor(pair.primary, fr, en, es, zhHans, zhHant);
+  const bilingual = (translations: Translations) => {
+    const tgt = stringFor(pair.target, translations);
+    const prm = stringFor(pair.primary, translations);
     return `${tgt} / ${prm}`;
   };
 

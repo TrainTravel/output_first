@@ -49,9 +49,9 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
   const [completing, setCompleting] = useState(false);
 
   const durationLabels: Record<number, string> = {
-    7: t('1 semaine', '1 week', '1 semana').primary,
-    14: t('2 semaines', '2 weeks', '2 semanas').primary,
-    30: t('1 mois', '1 month', '1 mes').primary,
+    7: t({ fr: '1 semaine', en: '1 week', es: '1 semana' }).primary,
+    14: t({ fr: '2 semaines', en: '2 weeks', es: '2 semanas' }).primary,
+    30: t({ fr: '1 mois', en: '1 month', es: '1 mes' }).primary,
   };
 
   const handleCreate = async () => {
@@ -89,7 +89,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground animate-gentle-pulse">
-          {t('Chargement…', 'Loading…', 'Cargando…').primary}
+          {t({ fr: 'Chargement…', en: 'Loading…', es: 'Cargando…' }).primary}
         </p>
       </div>
     );
@@ -110,7 +110,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
           </Button>
           <div className="flex-1">
             <h1 className="font-serif text-2xl text-foreground">
-              {bilingual('Mes petites expériences', 'My Tiny Experiments', 'Mis pequeños experimentos')}
+              {bilingual({ fr: 'Mes petites expériences', en: 'My Tiny Experiments', es: 'Mis pequeños experimentos' })}
             </h1>
           </div>
           <FlaskConical className="w-5 h-5 text-primary" />
@@ -122,7 +122,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-center space-y-2">
               <Sparkles className="w-6 h-6 text-primary mx-auto" />
               <p className="font-serif text-lg text-foreground">
-                {t('Votre expérience est terminée !', 'Your experiment is complete!', '¡Tu experimento terminó!').primary}
+                {t({ fr: 'Votre expérience est terminée !', en: 'Your experiment is complete!', es: '¡Tu experimento terminó!' }).primary}
               </p>
               <p className="text-sm text-muted-foreground italic">
                 "{activeExperiment.action}"
@@ -132,15 +132,13 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  ➕ {bilingual('Ce qui a marché', 'What worked', 'Lo que funcionó')}
+                  ➕ {bilingual({ fr: 'Ce qui a marché', en: 'What worked', es: 'Lo que funcionó' })}
                 </label>
                 <Textarea
                   value={reflPlus}
                   onChange={e => setReflPlus(e.target.value)}
                   placeholder={t(
-                    "Qu'est-ce qui vous a plu ?",
-                    'What did you enjoy?',
-                    '¿Qué disfrutaste?'
+                    { fr: "Qu'est-ce qui vous a plu ?", en: 'What did you enjoy?', es: '¿Qué disfrutaste?' }
                   ).primary}
                   className="min-h-[80px]"
                 />
@@ -148,15 +146,13 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  ➖ {bilingual('Ce qui manquait', 'What was missing', 'Lo que faltó')}
+                  ➖ {bilingual({ fr: 'Ce qui manquait', en: 'What was missing', es: 'Lo que faltó' })}
                 </label>
                 <Textarea
                   value={reflMinus}
                   onChange={e => setReflMinus(e.target.value)}
                   placeholder={t(
-                    "Qu'est-ce qui a été difficile ?",
-                    'What was difficult?',
-                    '¿Qué fue difícil?'
+                    { fr: "Qu'est-ce qui a été difficile ?", en: 'What was difficult?', es: '¿Qué fue difícil?' }
                   ).primary}
                   className="min-h-[80px]"
                 />
@@ -164,15 +160,13 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  ➡️ {bilingual('Et maintenant', 'What next', 'Y ahora')}
+                  ➡️ {bilingual({ fr: 'Et maintenant', en: 'What next', es: 'Y ahora' })}
                 </label>
                 <Textarea
                   value={reflNext}
                   onChange={e => setReflNext(e.target.value)}
                   placeholder={t(
-                    'Quelle est la prochaine étape ?',
-                    "What's the next step?",
-                    '¿Cuál es el siguiente paso?'
+                    { fr: 'Quelle est la prochaine étape ?', en: "What's the next step?", es: '¿Cuál es el siguiente paso?' }
                   ).primary}
                   className="min-h-[80px]"
                 />
@@ -186,7 +180,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               disabled={completing}
             >
               <Check className="w-5 h-5 mr-2" />
-              {t('Terminer et archiver', 'Complete & archive', 'Completar y archivar').primary}
+              {t({ fr: 'Terminer et archiver', en: 'Complete & archive', es: 'Completar y archivar' }).primary}
             </Button>
           </div>
         )}
@@ -197,13 +191,13 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             {/* Experiment statement */}
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-center space-y-3">
               <p className="text-sm text-muted-foreground">
-                {t('Je vais...', 'I will...', 'Yo voy a...').primary}
+                {t({ fr: 'Je vais...', en: 'I will...', es: 'Yo voy a...' }).primary}
               </p>
               <p className="font-serif text-xl text-foreground">
                 {activeExperiment.action}
               </p>
               <p className="text-sm text-muted-foreground">
-                {t('pendant', 'for', 'durante').primary} {activeExperiment.duration}
+                {t({ fr: 'pendant', en: 'for', es: 'durante' }).primary} {activeExperiment.duration}
               </p>
             </div>
 
@@ -212,9 +206,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               <Progress value={daysTotal > 0 ? (daysElapsed / daysTotal) * 100 : 0} className="h-2" />
               <p className="text-xs text-muted-foreground text-center">
                 {t(
-                  `Jour ${daysElapsed} sur ${daysTotal}`,
-                  `Day ${daysElapsed} of ${daysTotal}`,
-                  `Día ${daysElapsed} de ${daysTotal}`
+                  { fr: `Jour ${daysElapsed} sur ${daysTotal}`, en: `Day ${daysElapsed} of ${daysTotal}`, es: `Día ${daysElapsed} de ${daysTotal}` }
                 ).primary}
               </p>
             </div>
@@ -253,13 +245,11 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               {checkedInToday ? (
                 <>
                   <Check className="w-5 h-5 mr-2" />
-                  {t('Déjà noté aujourd\'hui', 'Checked in today', 'Ya registrado hoy').primary}
+                  {t({ fr: 'Déjà noté aujourd\'hui', en: 'Checked in today', es: 'Ya registrado hoy' }).primary}
                 </>
               ) : (
                 t(
-                  'Est-ce que ça vous a attiré·e aujourd\'hui ?',
-                  'Did this pull you in today?',
-                  '¿Te atrajo hoy?'
+                  { fr: 'Est-ce que ça vous a attiré·e aujourd\'hui ?', en: 'Did this pull you in today?', es: '¿Te atrajo hoy?' }
                 ).primary
               )}
             </Button>
@@ -267,7 +257,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             {/* Pause button */}
             <Button variant="ghost" size="sm" onClick={handlePause} className="w-full text-muted-foreground">
               <Pause className="w-4 h-4 mr-1" />
-              {t('Mettre en pause', 'Pause', 'Pausar').primary}
+              {t({ fr: 'Mettre en pause', en: 'Pause', es: 'Pausar' }).primary}
             </Button>
           </div>
         )}
@@ -277,9 +267,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
           <div className="space-y-6">
             <p className="text-center text-muted-foreground text-sm">
               {t(
-                "De quoi êtes-vous curieux·se ?",
-                "What are you curious about?",
-                "¿De qué tienes curiosidad?"
+                { fr: "De quoi êtes-vous curieux·se ?", en: "What are you curious about?", es: "¿De qué tienes curiosidad?" }
               ).primary}
             </p>
 
@@ -287,15 +275,13 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
             <div className="space-y-4 rounded-xl border border-border bg-card p-5">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">
-                  {t('Je vais...', 'I will...', 'Yo voy a...').primary}
+                  {t({ fr: 'Je vais...', en: 'I will...', es: 'Yo voy a...' }).primary}
                 </label>
                 <Input
                   value={action}
                   onChange={e => setAction(e.target.value)}
                   placeholder={t(
-                    'méditer 5 minutes chaque matin',
-                    'meditate 5 minutes each morning',
-                    'meditar 5 minutos cada mañana'
+                    { fr: 'méditer 5 minutes chaque matin', en: 'meditate 5 minutes each morning', es: 'meditar 5 minutos cada mañana' }
                   ).primary}
                   onKeyDown={e => {
                     if (e.key === 'Enter' && action.trim() && selectedDuration) handleCreate();
@@ -305,7 +291,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
 
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">
-                  {t('pendant...', 'for...', 'durante...').primary}
+                  {t({ fr: 'pendant...', en: 'for...', es: 'durante...' }).primary}
                 </label>
                 <div className="flex gap-2">
                   {DURATIONS.map(d => (
@@ -332,7 +318,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
               disabled={!action.trim() || !selectedDuration || creating}
             >
               <FlaskConical className="w-5 h-5 mr-2" />
-              {t('Commencer l\'expérience', 'Start experiment', 'Iniciar experimento').primary}
+              {t({ fr: 'Commencer l\'expérience', en: 'Start experiment', es: 'Iniciar experimento' }).primary}
             </Button>
           </div>
         )}
@@ -341,7 +327,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
         {pastExperiments.length > 0 && (
           <div className="space-y-3 pt-4 border-t border-border">
             <h2 className="text-sm font-medium text-muted-foreground">
-              {t('Expériences passées', 'Past experiments', 'Experimentos pasados').primary}
+              {t({ fr: 'Expériences passées', en: 'Past experiments', es: 'Experimentos pasados' }).primary}
             </h2>
             {pastExperiments.map(exp => (
               <div key={exp.id} className="rounded-lg border border-border bg-card p-3 space-y-1">
@@ -350,8 +336,8 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
                     <p className="text-sm text-foreground">{exp.action}</p>
                     <p className="text-xs text-muted-foreground">
                       {exp.duration} · {exp.status === 'completed'
-                        ? t('terminé', 'completed', 'completado').primary
-                        : t('en pause', 'paused', 'en pausa').primary}
+                        ? t({ fr: 'terminé', en: 'completed', es: 'completado' }).primary
+                        : t({ fr: 'en pause', en: 'paused', es: 'en pausa' }).primary}
                     </p>
                   </div>
                   {exp.status === 'paused' && !activeExperiment && (
@@ -360,7 +346,7 @@ export function TinyExperimentScreen({ onBack }: TinyExperimentScreenProps) {
                       size="icon"
                       onClick={() => resumeExperiment(exp.id)}
                       className="shrink-0 text-primary hover:text-primary"
-                      title={t('Reprendre', 'Resume', 'Reanudar').primary}
+                      title={t({ fr: 'Reprendre', en: 'Resume', es: 'Reanudar' }).primary}
                     >
                       <Play className="w-4 h-4" />
                     </Button>

@@ -18,15 +18,15 @@ export function FreeWriteChoiceScreen({ onChooseFreeWrite, onChooseExpressive, o
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-10 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="mb-10">
           <h2 className="font-serif text-3xl text-foreground leading-relaxed">
-            {t('Quel type d\'écriture ?', 'What kind of writing?', '¿Qué tipo de escritura?').primary}
+            {t({ fr: 'Quel type d\'écriture ?', en: 'What kind of writing?', es: '¿Qué tipo de escritura?' }).primary}
           </h2>
           <p className="text-muted-foreground text-sm italic mt-2">
-            {t('What kind of writing?', 'Quel type d\'écriture ?', '¿Qué tipo de escritura?').secondary}
+            {t({ fr: 'What kind of writing?', en: 'Quel type d\'écriture ?', es: '¿Qué tipo de escritura?' }).secondary}
           </p>
         </div>
 
@@ -40,12 +40,10 @@ export function FreeWriteChoiceScreen({ onChooseFreeWrite, onChooseExpressive, o
             </div>
             <div>
               <p className="font-medium text-foreground text-lg leading-snug">
-                {t('Écriture libre', 'Free Write', 'Escritura libre').primary}
+                {t({ fr: 'Écriture libre', en: 'Free Write', es: 'Escritura libre' }).primary}
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                {t('Pas de structure, pas de chrono. Juste vos mots.',
-                  'No structure, no timer. Just your words.',
-                  'Sin estructura, sin cronómetro. Solo tus palabras.').primary}
+                {t({ fr: 'Pas de structure, pas de chrono. Juste vos mots.', en: 'No structure, no timer. Just your words.', es: 'Sin estructura, sin cronómetro. Solo tus palabras.' }).primary}
               </p>
             </div>
           </button>
@@ -59,12 +57,10 @@ export function FreeWriteChoiceScreen({ onChooseFreeWrite, onChooseExpressive, o
             </div>
             <div>
               <p className="font-medium text-foreground text-lg leading-snug">
-                {t('Écriture expressive', 'Expressive Writing', 'Escritura expresiva').primary}
+                {t({ fr: 'Écriture expressive', en: 'Expressive Writing', es: 'Escritura expresiva' }).primary}
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                {t('Session guidée de 20 min. Explorez vos émotions profondes en toute sécurité.',
-                  'Guided 20-min session. Safely explore your deepest emotions.',
-                  'Sesión guiada de 20 min. Explora tus emociones más profundas.').primary}
+                {t({ fr: 'Session guidée de 20 min. Explorez vos émotions profondes en toute sécurité.', en: 'Guided 20-min session. Safely explore your deepest emotions.', es: 'Sesión guiada de 20 min. Explora tus emociones más profundas.' }).primary}
               </p>
             </div>
           </button>

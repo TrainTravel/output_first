@@ -65,7 +65,7 @@ export function EmotionDetailDrawer({
                     {word.pinyin && <span className="text-base font-sans text-muted-foreground ml-2">({word.pinyin})</span>}
                     <span className="text-base font-sans text-muted-foreground ml-2">/ {word.en}</span>
                   </>
-                ) : bilingual(word.fr, word.en, word.es)}
+                ) : bilingual({ fr: word.fr, en: word.en, es: word.es })}
               </DrawerTitle>
               <DrawerDescription className="sr-only">
                 {word.nuance}
@@ -79,7 +79,7 @@ export function EmotionDetailDrawer({
               {isZh && word.zhCollocations && word.zhCollocations.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t('Expressions courantes', 'Common expressions', 'Expresiones comunes', '常见表达', '常見表達').primary}
+                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes', 'zh-Hans': '常见表达', 'zh-Hant': '常見表達' }).primary}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {word.zhCollocations.map((col, i) => (
@@ -98,7 +98,7 @@ export function EmotionDetailDrawer({
               {!isZh && word.collocations && word.collocations.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t('Expressions courantes', 'Common expressions', 'Expresiones comunes').primary}
+                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes' }).primary}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {word.collocations.map((col, i) => (
@@ -121,7 +121,7 @@ export function EmotionDetailDrawer({
               ) : examples.length > 0 ? (
                 <>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t('Exemples', 'Examples', 'Ejemplos').primary}
+                    {t({ fr: 'Exemples', en: 'Examples', es: 'Ejemplos' }).primary}
                   </p>
                   <ul className="space-y-1.5">
                     {examples.map((ex, i) => (
@@ -146,8 +146,8 @@ export function EmotionDetailDrawer({
                 }}
               >
                 {isSelected
-                  ? t('Désélectionner', 'Deselect', 'Deseleccionar').primary
-                  : t('Sélectionner', 'Select', 'Seleccionar').primary}
+                  ? t({ fr: 'Désélectionner', en: 'Deselect', es: 'Deseleccionar' }).primary
+                  : t({ fr: 'Sélectionner', en: 'Select', es: 'Seleccionar' }).primary}
               </Button>
             </DrawerFooter>
           </>

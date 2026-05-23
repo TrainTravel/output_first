@@ -18,15 +18,15 @@ export function PromptChoiceScreen({ onChooseDirect, onOpenLibrary, onBack }: Pr
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-10 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="mb-10">
           <h2 className="font-serif text-3xl text-foreground leading-relaxed">
-            {t('Comment voulez-vous commencer ?', 'How would you like to start?', '¿Cómo quieres empezar?').primary}
+            {t({ fr: 'Comment voulez-vous commencer ?', en: 'How would you like to start?', es: '¿Cómo quieres empezar?' }).primary}
           </h2>
           <p className="text-muted-foreground text-sm italic mt-2">
-            {t('Comment would you like to start?', 'Comment voulez-vous commencer ?', 'Comment voulez-vous commencer ?').secondary}
+            {t({ fr: 'Comment would you like to start?', en: 'Comment voulez-vous commencer ?', es: 'Comment voulez-vous commencer ?' }).secondary}
           </p>
         </div>
 
@@ -40,10 +40,10 @@ export function PromptChoiceScreen({ onChooseDirect, onOpenLibrary, onBack }: Pr
             </div>
             <div>
               <p className="font-medium text-foreground text-lg leading-snug">
-                {t('Je sais ce que j\'écris', 'I know what I want to write', 'Sé lo que quiero escribir').primary}
+                {t({ fr: 'Je sais ce que j\'écris', en: 'I know what I want to write', es: 'Sé lo que quiero escribir' }).primary}
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                {t('Commencer directement', 'Start writing directly', 'Empezar a escribir directamente').primary}
+                {t({ fr: 'Commencer directement', en: 'Start writing directly', es: 'Empezar a escribir directamente' }).primary}
               </p>
             </div>
           </button>
@@ -57,10 +57,10 @@ export function PromptChoiceScreen({ onChooseDirect, onOpenLibrary, onBack }: Pr
             </div>
             <div>
               <p className="font-medium text-foreground text-lg leading-snug">
-                {t('J\'ai besoin d\'inspiration', 'I need some inspiration', 'Necesito inspiración').primary}
+                {t({ fr: 'J\'ai besoin d\'inspiration', en: 'I need some inspiration', es: 'Necesito inspiración' }).primary}
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                {t('Choisir un modèle de phrase', 'Choose a sentence template', 'Elegir una plantilla de frase').primary}
+                {t({ fr: 'Choisir un modèle de phrase', en: 'Choose a sentence template', es: 'Elegir una plantilla de frase' }).primary}
               </p>
             </div>
           </button>

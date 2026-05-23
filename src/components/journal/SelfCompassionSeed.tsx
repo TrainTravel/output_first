@@ -20,7 +20,7 @@ export function SelfCompassionSeed({ lang }: SelfCompassionSeedProps) {
 
   const step = getDailyStep();
   const phrase = getDailyPhrase(step, lang);
-  const bilingualLabel = bilingual(STEP_FR[step], STEP_EN[step], STEP_ES[step]);
+  const bilingualLabel = bilingual({ fr: STEP_FR[step], en: STEP_EN[step], es: STEP_ES[step] });
 
   const handleDismiss = () => {
     dismissSeedToday();

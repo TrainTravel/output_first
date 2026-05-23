@@ -83,12 +83,12 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back', 'Volver').primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Trophy className="w-4 h-4" />
           <span>
-            {winsToday.length} {t('victoire(s) aujourd\'hui', 'win(s) today', 'logro(s) hoy').primary}
+            {winsToday.length} {t({ fr: 'victoire(s) aujourd\'hui', en: 'win(s) today', es: 'logro(s) hoy' }).primary}
           </span>
         </div>
       </div>
@@ -96,13 +96,11 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual('Petites Victoires', 'Small Wins', 'Pequeños Logros')}
+          {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros' })}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
-            'Même les choses déjà faites comptent.',
-            'Even things you already did count.',
-            'Incluso lo que ya hiciste cuenta.'
+            { fr: 'Même les choses déjà faites comptent.', en: 'Even things you already did count.', es: 'Incluso lo que ya hiciste cuenta.' }
           ).primary}
         </p>
 
@@ -122,7 +120,7 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving ? '…' : t('Ajouter', 'Add', 'Agregar').primary}
+            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar' }).primary}
           </Button>
         </div>
 

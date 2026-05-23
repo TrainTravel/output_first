@@ -53,15 +53,15 @@ export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="mb-8">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed">
-            {bilingual('Écrire librement', 'Free Write', 'Escritura libre')}
+            {bilingual({ fr: 'Écrire librement', en: 'Free Write', es: 'Escritura libre' })}
           </h2>
           <p className="text-muted-foreground text-sm italic mt-2">
-            {t('Pas de structure. Juste vous et vos mots.', 'No structure. Just you and your words.', 'Sin estructura. Solo tú y tus palabras.').primary}
+            {t({ fr: 'Pas de structure. Juste vous et vos mots.', en: 'No structure. Just you and your words.', es: 'Sin estructura. Solo tú y tus palabras.' }).primary}
           </p>
         </div>
 
@@ -70,7 +70,7 @@ export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
             ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={t('Écrivez ce qui vous vient...', 'Write whatever comes...', 'Escribe lo que te venga...').primary}
+            placeholder={t({ fr: 'Écrivez ce qui vous vient...', en: 'Write whatever comes...', es: 'Escribe lo que te venga...' }).primary}
             className="flex-1 min-h-[300px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
 
@@ -85,10 +85,10 @@ export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
               {wordCount > 0 ? (
                 <span>
                   <span className="font-medium text-foreground">{wordCount}</span>{' '}
-                  {t('mots', 'words', 'palabras').primary}
+                  {t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}
                 </span>
               ) : (
-                t('Une ou deux phrases suffisent.', 'One or two sentences is enough.', 'Una o dos frases bastan.').primary
+                t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.' }).primary
               )}
             </p>
           </div>
@@ -101,7 +101,7 @@ export function FreeWriteScreen({ onSave, onBack }: FreeWriteScreenProps) {
             onClick={handleSubmit}
             disabled={!content.trim()}
           >
-            {t('Terminer', 'Finish', 'Terminar').primary}
+            {t({ fr: 'Terminer', en: 'Finish', es: 'Terminar' }).primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

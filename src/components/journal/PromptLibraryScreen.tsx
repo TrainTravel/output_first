@@ -43,15 +43,15 @@ export function PromptLibraryScreen({ onPickPrompt, onBack }: PromptLibraryScree
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t('Retour', 'Back', 'Volver').primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
         </button>
 
         <div className="mb-8">
           <h2 className="font-serif text-2xl text-foreground">
-            {t('Choisissez un modèle', 'Choose a template', 'Elige una plantilla').primary}
+            {t({ fr: 'Choisissez un modèle', en: 'Choose a template', es: 'Elige una plantilla' }).primary}
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
-            {t('Tapez pour commencer avec ce modèle', 'Tap to start with this template', 'Toca para empezar con esta plantilla').primary}
+            {t({ fr: 'Tapez pour commencer avec ce modèle', en: 'Tap to start with this template', es: 'Toca para empezar con esta plantilla' }).primary}
           </p>
         </div>
 

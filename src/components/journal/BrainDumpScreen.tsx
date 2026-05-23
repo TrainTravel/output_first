@@ -87,24 +87,22 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t('Retour', 'Back', 'Volver').primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Zap className="w-4 h-4" />
-          <span>{thoughts.length} {t('pensées', 'thoughts', 'pensamientos').primary}</span>
+          <span>{thoughts.length} {t({ fr: 'pensées', en: 'thoughts', es: 'pensamientos' }).primary}</span>
         </div>
       </div>
 
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual('Vide-tête', 'Brain Dump', 'Volcado mental')}
+          {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' })}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
-            'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.',
-            'One thought at a time. Press Enter to save.',
-            'Un pensamiento a la vez. Presiona Enter para guardar.'
+            { fr: 'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.', en: 'One thought at a time. Press Enter to save.', es: 'Un pensamiento a la vez. Presiona Enter para guardar.' }
           ).primary}
         </p>
 
@@ -124,7 +122,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving ? '…' : t('Ajouter', 'Add', 'Agregar').primary}
+            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar' }).primary}
           </Button>
         </div>
 

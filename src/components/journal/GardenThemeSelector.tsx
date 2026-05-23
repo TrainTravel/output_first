@@ -76,8 +76,8 @@ export function GardenThemeSelector() {
   };
 
   const sortLabel = sortMode === 'calm-first'
-    ? t('Doux d\'abord', 'Calm first', 'Calma primero').primary
-    : t('Palette', 'Palette', 'Paleta').primary;
+    ? t({ fr: 'Doux d\'abord', en: 'Calm first', es: 'Calma primero' }).primary
+    : t({ fr: 'Palette', en: 'Palette', es: 'Paleta' }).primary;
 
   return (
     <>
@@ -88,17 +88,17 @@ export function GardenThemeSelector() {
         className="text-muted-foreground hover:text-foreground"
       >
         <Palette className="w-4 h-4 mr-1" />
-        {t('Thème', 'Theme', 'Tema').primary}
+        {t({ fr: 'Thème', en: 'Theme', es: 'Tema' }).primary}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl">
-              {t('Choisir un jardin', 'Choose a garden', 'Elegir un jardín').primary}
+              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín' }).primary}
             </DialogTitle>
             <DialogDescription className="text-sm italic">
-              {t('Choisir un jardin', 'Choose a garden', 'Elegir un jardín').secondary}
+              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín' }).secondary}
             </DialogDescription>
           </DialogHeader>
 
@@ -110,9 +110,7 @@ export function GardenThemeSelector() {
               onClick={toggleSortMode}
               data-sort-mode={sortMode}
               aria-label={t(
-                `Tri : ${sortLabel}. Basculer.`,
-                `Sort: ${sortLabel}. Toggle.`,
-                `Orden: ${sortLabel}. Cambiar.`,
+                { fr: `Tri : ${sortLabel}. Basculer.`, en: `Sort: ${sortLabel}. Toggle.`, es: `Orden: ${sortLabel}. Cambiar.` },
               ).primary}
               className="text-xs text-muted-foreground hover:text-foreground gap-1"
             >
