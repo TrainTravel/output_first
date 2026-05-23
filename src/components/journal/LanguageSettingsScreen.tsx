@@ -13,9 +13,11 @@ const TARGET_OPTIONS: ReadonlyArray<{ code: TargetLang; native: string; en: stri
 ];
 
 const PRIMARY_OPTIONS: ReadonlyArray<{ code: PrimaryLang; native: string; en: string }> = [
-  { code: 'en', native: 'English',  en: 'English' },
-  { code: 'fr', native: 'Français', en: 'French'  },
-  { code: 'es', native: 'Español',  en: 'Spanish' },
+  { code: 'en',      native: 'English',  en: 'English'              },
+  { code: 'fr',      native: 'Français', en: 'French'               },
+  { code: 'es',      native: 'Español',  en: 'Spanish'              },
+  { code: 'zh-Hans', native: '简体中文',  en: 'Chinese (Simplified)' },
+  { code: 'zh-Hant', native: '繁體中文',  en: 'Chinese (Traditional)'},
 ];
 
 export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) {

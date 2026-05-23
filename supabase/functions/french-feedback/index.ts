@@ -37,7 +37,12 @@ serve(async (req) => {
       });
     }
 
-    const primaryName = primaryLang === 'fr' ? 'French' : primaryLang === 'es' ? 'Spanish' : 'English';
+    const primaryName =
+      primaryLang === 'fr' ? 'French' :
+      primaryLang === 'es' ? 'Spanish' :
+      primaryLang === 'zh-Hans' ? 'Simplified Chinese' :
+      primaryLang === 'zh-Hant' ? 'Traditional Chinese' :
+      'English';
     const userContextBlock = `USER CONTEXT:
 - The user is a native ${primaryName} speaker learning French (beginner to intermediate level)
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text

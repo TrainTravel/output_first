@@ -14,12 +14,16 @@ const VERBS: Record<PrimaryLang, { speak: string; learn: string }> = {
   en: { speak: 'speak', learn: 'learn' },
   fr: { speak: 'parle', learn: 'apprend' },
   es: { speak: 'hablo', learn: 'aprendo' },
+  'zh-Hans': { speak: '说', learn: '学' },
+  'zh-Hant': { speak: '說', learn: '學' },
 };
 
 const ARIA: Record<PrimaryLang, (p: string, t: string) => string> = {
   en: (p, t) => `Speaking ${p}, learning ${t}. Tap to switch.`,
   fr: (p, t) => `Parle ${p}, apprend ${t}. Touche pour changer.`,
   es: (p, t) => `Hablo ${p}, aprendo ${t}. Toca para cambiar.`,
+  'zh-Hans': (p, t) => `说${p}，学${t}。点击切换。`,
+  'zh-Hant': (p, t) => `說${p}，學${t}。點擊切換。`,
 };
 
 interface LanguageToggleProps {
