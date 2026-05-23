@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, UserCog } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -31,10 +31,11 @@ interface HomeScreenProps {
   onOpenTodoList: () => void;
   onOpenTinyExperiment: () => void;
   onOpenLanguageSettings: () => void;
+  onOpenAccount: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenLanguageSettings, onOpenAccount, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
@@ -254,6 +255,18 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <p className="text-center text-muted-foreground text-sm pt-2">
             {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.' }).primary}
           </p>
+        </div>
+
+        {/* Footer — account / data controls */}
+        <div className="flex justify-center pt-4">
+          <button
+            onClick={onOpenAccount}
+            aria-label={t('Compte', 'Account', 'Cuenta').primary}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <UserCog className="w-3.5 h-3.5" />
+            {t('Compte et données', 'Account & data', 'Cuenta y datos').primary}
+          </button>
         </div>
 
       </div>

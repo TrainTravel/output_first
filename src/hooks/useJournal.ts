@@ -311,6 +311,7 @@ export function useJournal() {
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
     openLanguageSettings: () => setCurrentStep('languagesettings'),
+    openAccount: () => setCurrentStep('account'),
     goBackToEmotions: () => setCurrentStep('emotions'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
