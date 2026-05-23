@@ -496,3 +496,203 @@
   --soft-glow: 0 0 40px hsl(32 70% 55% / 0.22);
   --paper-texture: linear-gradient(135deg, hsl(28 18% 9%) 0%, hsl(28 15% 11%) 100%);
 }
+
+/* Sakura — Cherry blossom pink & soft sage (gentle, low-arousal) */
+.theme-sakura {
+  --background: 350 40% 97%;
+  --foreground: 345 20% 25%;
+  --card: 350 32% 94%;
+  --card-foreground: 345 20% 25%;
+  --popover: 350 40% 97%;
+  --popover-foreground: 345 20% 25%;
+  --primary: 345 45% 65%;
+  --primary-foreground: 350 40% 97%;
+  --primary-muted: 345 35% 88%;
+  --accent: 130 22% 58%;
+  --accent-foreground: 350 40% 97%;
+  --accent-muted: 130 18% 88%;
+  --secondary: 350 22% 92%;
+  --secondary-foreground: 345 20% 25%;
+  --muted: 350 15% 89%;
+  --muted-foreground: 345 12% 50%;
+  --border: 350 20% 86%;
+  --input: 350 25% 93%;
+  --ring: 345 45% 65%;
+  --gentle-shadow: 0 4px 20px -4px hsl(345 20% 25% / 0.07);
+  --soft-glow: 0 0 40px hsl(345 45% 65% / 0.18);
+  --paper-texture: linear-gradient(135deg, hsl(350 40% 97%) 0%, hsl(350 32% 94%) 100%);
+}
+.dark.theme-sakura {
+  --background: 345 18% 10%;
+  --foreground: 350 18% 88%;
+  --card: 345 15% 14%;
+  --card-foreground: 350 18% 88%;
+  --popover: 345 18% 10%;
+  --popover-foreground: 350 18% 88%;
+  --primary: 345 40% 62%;
+  --primary-foreground: 345 18% 10%;
+  --primary-muted: 345 20% 24%;
+  --accent: 130 22% 50%;
+  --accent-foreground: 345 18% 10%;
+  --accent-muted: 130 14% 20%;
+  --secondary: 345 12% 17%;
+  --secondary-foreground: 350 18% 88%;
+  --muted: 345 10% 19%;
+  --muted-foreground: 345 10% 58%;
+  --border: 345 12% 22%;
+  --input: 345 12% 17%;
+  --ring: 345 40% 62%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+  --soft-glow: 0 0 40px hsl(345 40% 62% / 0.2);
+  --paper-texture: linear-gradient(135deg, hsl(345 18% 10%) 0%, hsl(345 15% 12%) 100%);
+}
+
+/* Forest Mist — Deep evergreen & soft fog (grounding, monochromatic) */
+.theme-forest {
+  --background: 150 14% 96%;
+  --foreground: 160 18% 18%;
+  --card: 150 12% 92%;
+  --card-foreground: 160 18% 18%;
+  --popover: 150 14% 96%;
+  --popover-foreground: 160 18% 18%;
+  --primary: 160 32% 38%;
+  --primary-foreground: 150 14% 96%;
+  --primary-muted: 160 20% 84%;
+  --accent: 35 22% 55%;
+  --accent-foreground: 150 14% 96%;
+  --accent-muted: 35 18% 88%;
+  --secondary: 150 10% 90%;
+  --secondary-foreground: 160 18% 18%;
+  --muted: 150 8% 87%;
+  --muted-foreground: 160 10% 45%;
+  --border: 150 10% 83%;
+  --input: 150 10% 91%;
+  --ring: 160 32% 38%;
+  --gentle-shadow: 0 4px 20px -4px hsl(160 18% 18% / 0.08);
+  --soft-glow: 0 0 40px hsl(160 32% 38% / 0.14);
+  --paper-texture: linear-gradient(135deg, hsl(150 14% 96%) 0%, hsl(150 12% 92%) 100%);
+}
+.dark.theme-forest {
+  --background: 160 18% 8%;
+  --foreground: 150 12% 85%;
+  --card: 160 15% 12%;
+  --card-foreground: 150 12% 85%;
+  --popover: 160 18% 8%;
+  --popover-foreground: 150 12% 85%;
+  --primary: 160 35% 48%;
+  --primary-foreground: 160 18% 8%;
+  --primary-muted: 160 20% 22%;
+  --accent: 35 25% 52%;
+  --accent-foreground: 160 18% 8%;
+  --accent-muted: 35 15% 18%;
+  --secondary: 160 12% 16%;
+  --secondary-foreground: 150 12% 85%;
+  --muted: 160 10% 18%;
+  --muted-foreground: 150 8% 55%;
+  --border: 160 10% 20%;
+  --input: 160 10% 16%;
+  --ring: 160 35% 48%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.32);
+  --soft-glow: 0 0 40px hsl(160 35% 48% / 0.18);
+  --paper-texture: linear-gradient(135deg, hsl(160 18% 8%) 0%, hsl(160 15% 10%) 100%);
+}
+
+/* Moonstone — Cool lavender-grey & pearl (very low saturation, ASD-safe) */
+.theme-moonstone {
+  --background: 240 12% 96%;
+  --foreground: 240 10% 22%;
+  --card: 240 10% 93%;
+  --card-foreground: 240 10% 22%;
+  --popover: 240 12% 96%;
+  --popover-foreground: 240 10% 22%;
+  --primary: 245 20% 55%;
+  --primary-foreground: 240 12% 96%;
+  --primary-muted: 245 14% 85%;
+  --accent: 195 14% 60%;
+  --accent-foreground: 240 12% 96%;
+  --accent-muted: 195 12% 88%;
+  --secondary: 240 8% 90%;
+  --secondary-foreground: 240 10% 22%;
+  --muted: 240 6% 87%;
+  --muted-foreground: 240 6% 48%;
+  --border: 240 8% 84%;
+  --input: 240 10% 91%;
+  --ring: 245 20% 55%;
+  --gentle-shadow: 0 4px 20px -4px hsl(240 10% 22% / 0.06);
+  --soft-glow: 0 0 40px hsl(245 20% 55% / 0.12);
+  --paper-texture: linear-gradient(135deg, hsl(240 12% 96%) 0%, hsl(240 10% 93%) 100%);
+}
+.dark.theme-moonstone {
+  --background: 240 12% 10%;
+  --foreground: 240 10% 86%;
+  --card: 240 10% 14%;
+  --card-foreground: 240 10% 86%;
+  --popover: 240 12% 10%;
+  --popover-foreground: 240 10% 86%;
+  --primary: 245 25% 62%;
+  --primary-foreground: 240 12% 10%;
+  --primary-muted: 245 15% 23%;
+  --accent: 195 18% 55%;
+  --accent-foreground: 240 12% 10%;
+  --accent-muted: 195 12% 19%;
+  --secondary: 240 8% 17%;
+  --secondary-foreground: 240 10% 86%;
+  --muted: 240 6% 19%;
+  --muted-foreground: 240 6% 56%;
+  --border: 240 8% 21%;
+  --input: 240 8% 17%;
+  --ring: 245 25% 62%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+  --soft-glow: 0 0 40px hsl(245 25% 62% / 0.18);
+  --paper-texture: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(240 10% 12%) 100%);
+}
+
+/* Sea Glass — Soft teal & sand (calming, ocean-inspired) */
+.theme-seaglass {
+  --background: 180 22% 96%;
+  --foreground: 195 22% 20%;
+  --card: 180 18% 92%;
+  --card-foreground: 195 22% 20%;
+  --popover: 180 22% 96%;
+  --popover-foreground: 195 22% 20%;
+  --primary: 185 35% 48%;
+  --primary-foreground: 180 22% 96%;
+  --primary-muted: 185 22% 85%;
+  --accent: 35 35% 70%;
+  --accent-foreground: 195 22% 20%;
+  --accent-muted: 35 28% 90%;
+  --secondary: 180 14% 90%;
+  --secondary-foreground: 195 22% 20%;
+  --muted: 180 10% 87%;
+  --muted-foreground: 195 12% 48%;
+  --border: 180 14% 83%;
+  --input: 180 16% 91%;
+  --ring: 185 35% 48%;
+  --gentle-shadow: 0 4px 20px -4px hsl(195 22% 20% / 0.07);
+  --soft-glow: 0 0 40px hsl(185 35% 48% / 0.16);
+  --paper-texture: linear-gradient(135deg, hsl(180 22% 96%) 0%, hsl(180 18% 92%) 100%);
+}
+.dark.theme-seaglass {
+  --background: 195 22% 9%;
+  --foreground: 180 14% 86%;
+  --card: 195 18% 13%;
+  --card-foreground: 180 14% 86%;
+  --popover: 195 22% 9%;
+  --popover-foreground: 180 14% 86%;
+  --primary: 185 40% 55%;
+  --primary-foreground: 195 22% 9%;
+  --primary-muted: 185 22% 22%;
+  --accent: 35 30% 62%;
+  --accent-foreground: 195 22% 9%;
+  --accent-muted: 35 18% 20%;
+  --secondary: 195 14% 17%;
+  --secondary-foreground: 180 14% 86%;
+  --muted: 195 10% 19%;
+  --muted-foreground: 180 10% 56%;
+  --border: 195 12% 21%;
+  --input: 195 12% 17%;
+  --ring: 185 40% 55%;
+  --gentle-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.32);
+  --soft-glow: 0 0 40px hsl(185 40% 55% / 0.2);
+  --paper-texture: linear-gradient(135deg, hsl(195 22% 9%) 0%, hsl(195 18% 11%) 100%);
+}
