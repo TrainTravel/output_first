@@ -35,7 +35,7 @@ npm run preview      # Preview production build
 
 **Stack:** React 18 + TypeScript + Vite + Supabase + Tailwind CSS + shadcn/ui
 
-**Application:** OutputFirst - A bilingual (English/French) journaling app for emotional awareness, gratitude practice, and thought organization. Designed with ADHD-friendly, low-friction UX principles.
+**Application:** OutputFirst - A multilingual journaling app for emotional awareness, gratitude practice, and thought organization. Supports English, French, Spanish, and Mandarin Chinese (Simplified + Traditional). Designed with ADHD-friendly, low-friction UX principles.
 
 ### Key Architectural Patterns
 
@@ -47,11 +47,17 @@ npm run preview      # Preview production build
   - `useThoughts()` - brain dump thoughts management
   - `useClusters()` - thought clustering
 
-**Bilingual System:**
+**Language Pair System:**
+- Language config is split into two independent preferences: `targetLang` (language being learned: `fr`, `es`, `zh-Hans`, `zh-Hant`) and `primaryLang` (native/fluent language for UI chrome: `en`, `fr`, `es`)
+- Invariant: `targetLang !== primaryLang`, enforced in the UI, in the `setLangPair` setter, and by a hydration validator
+- Stored in `localStorage` under `outputfirst_lang_pair`; defaults to `{ primary: 'en', target: 'fr' }`
+- `LanguageSettingsScreen` (reachable via gear icon on HomeScreen) lets users change the pair without a Save button — commits on tap
+- `LanguageToggle` is a one-tap shortcut that cycles `primaryLang` (en → fr → es, skipping current target)
+
+**Bilingual Display:**
 - Use `t({ fr, en, es }).primary` for UI chrome (buttons, labels, helper text) — shows single language
 - Use `bilingual({ fr, en, es })` for vocabulary anchors (feature names, emotion terms, key concepts) — shows both languages
 - Journaling prompts use `t().primary` (large) + `t().secondary` (italic) for structured display
-- Language preference stored in localStorage and Context
 - `t` and `bilingual` take a single `Translations` object; `zh-Hans` / `zh-Hant` keys are optional and fall back to English
 
 **When to use which:**
@@ -65,16 +71,20 @@ bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pens
 ```
 
 **Component Organization:**
-- `src/components/journal/` - 13 screen components (HomeScreen, WriteScreen, etc.)
+- `src/components/journal/` - screen components (HomeScreen, WriteScreen, LanguageSettingsScreen, etc.)
 - `src/components/ui/` - shadcn/ui components (40+ Radix primitives)
 - Screen components are pure UI; `JournalApp.tsx` handles orchestration
 - `<ProtectedRoute>` wraps authenticated pages
 
 **Journaling Flow:**
 ```typescript
-type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' |
-                   'gratitude' | 'complete' | 'chat' | 'braindump' |
-                   'thoughtgarden' | 'clusters' | 'clusterdetail'
+type JournalStep =
+  | 'home' | 'breathe' | 'promptchoice' | 'promptlibrary'
+  | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete'
+  | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters' | 'clusterdetail'
+  | 'zengarden' | 'freewrite' | 'freewritechoice' | 'expressivewrite'
+  | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment'
+  | 'languagesettings';
 ```
 
 ### Supabase Backend
@@ -89,7 +99,14 @@ type JournalStep = 'home' | 'write' | 'feedback' | 'emotions' | 'reflection' |
 - `reflection` - Generates compassionate reflections using Gemini 2.5 Flash
 - `french-chat` - French conversation practice
 - `french-feedback` - Feedback on French writing
+- `chinese-chat` - Mandarin conversation partner (responds with pinyin + English gloss for key vocab)
+- `chinese-feedback` - Feedback on Chinese writing (character corrections, grammar, vocab upgrades)
 - `generate-embedding` - Vector embeddings for thoughts
+- `speech-to-text` - Whisper-powered voice input (infra deployed, UI not yet wired; needs `OPENAI_API_KEY`)
+- `todo-from-image` - Extract to-do items from an image
+- `todo-triage` - AI-assisted task prioritisation
+
+All edge functions accept `primaryLang` in the request body and thread it into the system prompt; fall back to `'en'` if missing.
 
 Uses `LOVABLE_API_KEY` for AI integration via Lovable's AI gateway.
 
@@ -316,10 +333,11 @@ Keep iterating until the mistake rate measurably drops.
 - ~~**Free journaling mode**~~ — shipped in `feat/prompts-freewrite-badges` (PR #16). Optional AI and "graduate mode" polish still possible.
 - **Voice input (Whisper)** — infra committed (edge fn + hook + button), UI not wired. Requires `supabase secrets set OPENAI_API_KEY` + `supabase functions deploy speech-to-text` before activation.
 - **5 Whys root-cause analysis** — Claude artifact prototype exists (pasted session 2026-03-10). Uses `window.claude.complete()` → needs Supabase edge function. Natural follow-on to the ABC Todo List: surface as "Why am I avoiding this?" on a stuck/Category-A task. FR translations missing.
+- **Chinese Learner MVP** — full plan in `.lovable/plan.md`. 5 phases: (1) language infra already done (zh-Hans/zh-Hant in `LanguageContext`, toggle, font stack); (2) Chinese emotion vocabulary (48 words with pinyin, `src/data/chinese-emotions.ts`); (3) journaling prompts + situation vocab chips (`src/data/chinese-prompts.ts`); (4) edge functions `chinese-feedback` + `chinese-chat` already deployed; (5) inline vocab assist (`chinese-inline-assist` edge fn + `InlineAssistBar` adaptation). Phases 2–5 still needed.
 
 ## Important Notes
 
-- Playwright E2E test suite in `e2e/` (25 tests, run with `npm run test:e2e`)
+- Playwright E2E test suite in `e2e/` (11 spec files: braindump, freq-mirror, home, journal-flow, language, navigation, prompts-freewrite, self-compassion, small-wins, todo-list; run with `npm run test:e2e`)
 - CI workflow at `.github/workflows/e2e.yml` — runs on push/PR to main
 - Dev server runs on `localhost:8080`
 - Component tagging via `lovable-tagger` active in dev mode

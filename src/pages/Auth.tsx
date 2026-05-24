@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Feather, ArrowLeft } from 'lucide-react';
 
 type AuthMode = 'signin' | 'signup' | 'forgot';
@@ -143,6 +143,16 @@ export default function Auth() {
             >
               {mode === 'signup' ? 'Sign In' : 'Sign Up'}
             </button>
+          </p>
+        )}
+
+        {mode === 'signup' && (
+          <p className="text-center text-xs text-muted-foreground">
+            By signing up you agree to our{' '}
+            <Link to="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </Link>
+            .
           </p>
         )}
       </div>
