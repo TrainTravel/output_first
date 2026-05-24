@@ -31,6 +31,35 @@ Scope:
 - `CLAUDE.md` "Bilingual System" examples updated to object form.
 
 Single break, single PR — explicit decision to skip a dual-signature transition. This is the deferred follow-up from the language-pair refactor (PRs #25, #26).
+---
+### Vague-word frequency mirror — HomeScreen nudge for emotional granularity
+
+**Surfaces a soft "you've named yourself X this many times this month" card when a user reaches for the same vague emotion word too often.**
+
+The mirror reads from the existing `useEmotionVocab` storage (no new tracking system) and surfaces above the existing Vocabulary card on HomeScreen. It picks the top-qualifying word by:
+
+1. Cumulative use count `>= 5`
+2. Last used within the past 30 days
+3. Word is in a curated `VAGUE_EMOTIONS` set (`tired`, `low`, `overwhelmed`, plus forward-compat: `fine`, `okay`, `good`, `bad`, `stressed`, `sad`, `happy`, `angry`, `anxious`, `numb`, `empty`)
+4. Not currently in an active dismissal window
+
+Tie-break is highest count, then most-recent `lastSeen`. Only one nudge shows at a time.
+
+**Dismissal:** per-word, persisted in `outputfirst_freq_mirror_dismissed` as a `Record<word, ISO date>`. Suppresses that word for 14 days; other words can still surface.
+
+**Routing:** "See alternatives →" reuses the existing `onOpenVocabulary` handler — no new screens, just a thematic on-ramp to the Vocabulary surface that already does the alternative-word work.
+
+**Why this serves emotional granularity:**
+- The mirror externalizes a pattern users can't see ("I've defaulted to 'tired' six times this month") without judging it — pattern-recognition without shame.
+- Pairs naturally with the existing self-compassion seed: that one widens range from "bad" to "this is a hard moment"; this one widens range from "tired" to a more precise texture.
+- Dismissable per-word (not global) because some weeks `tired` IS the right word, and forcing a global mute would punish self-knowledge.
+
+**ADHD-Friendly:**
+- Externalizes a slow-moving pattern that's invisible day-to-day (frequency over a month), addressing time blindness around emotional habits.
+- One sentence, two clear actions, no forced action — matches the "one thing at a time" rule.
+- Sits next to the Vocabulary card, so the cognitive jump from "I'm in a rut" to "browse alternatives" is one tap.
+
+**Tests:** 21 unit tests in `useFrequencyMirror.test.ts` (picker, threshold, recency, dismissal window, tie-break), 6 component tests in `EmotionFrequencyNudge.test.tsx` (render, dismiss persistence, alternatives callback, a11y), 4 E2E tests in `freq-mirror.spec.ts` (visibility on seeded vocab, dismiss, reload persistence, empty-state).
 
 ---
 

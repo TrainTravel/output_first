@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
 import { FontPicker } from '@/components/FontPicker';
 import { SelfCompassionSeed } from './SelfCompassionSeed';
+import { EmotionFrequencyNudge } from './EmotionFrequencyNudge';
 import { Badge } from '@/types/journal';
 
 interface HomeScreenProps {
@@ -228,6 +229,9 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               </Button>
             </div>
           )}
+
+          {/* Vague-word frequency mirror — nudges toward higher emotional granularity */}
+          <EmotionFrequencyNudge onOpenVocabulary={() => onOpenVocabulary?.()} />
 
           {/* Vocabulary Progress Card */}
           <button
