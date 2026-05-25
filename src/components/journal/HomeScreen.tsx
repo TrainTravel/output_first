@@ -261,11 +261,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
         <div className="flex justify-center pt-4">
           <button
             onClick={onOpenAccount}
-            aria-label={t('Compte', 'Account', 'Cuenta').primary}
+            aria-label={t({ fr: 'Compte', en: 'Account', es: 'Cuenta' }).primary}
             className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <UserCog className="w-3.5 h-3.5" />
-            {t('Compte et données', 'Account & data', 'Cuenta y datos').primary}
+            {t({ fr: 'Compte et données', en: 'Account & data', es: 'Cuenta y datos' }).primary}
           </button>
         </div>
 
