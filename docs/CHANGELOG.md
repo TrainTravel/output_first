@@ -2,6 +2,19 @@
 
 ## [Unreleased] - 2026-05-26
 
+### Spanish CBT scaffolding — fixes a latent routing bug
+
+**Spanish learners were previously coached using French phrases.** Before this PR, `targetLang === 'es'` users fell into the French branch of the `cbtBlock` and `granularityBlock` in `language-chat` (a behavior preserved during the PR #36 consolidation, NOT introduced by it). Spanish journal entries would receive Cognitive Behavioral Therapy prompts in French (`"Quand ça s'est passé, quelle a été ta première pensée ?"`).
+
+This PR adds a proper Spanish branch in both blocks:
+
+- **granularityBlock** — Spanish vague-emotion examples (`mal → agotado, desanimado, abrumado`; `estresado → ansioso, desbordado, tenso`; etc.) instead of the French defaults.
+- **cbtBlock** — the full 6-technique CBT scaffolding translated into Spanish, plus an explicit instruction to use `tú` (informal) rather than `usted` for the journaling/coaching register.
+
+French CBT scaffolding stays as the explicit default fallback. No behavior change for any other language.
+
+**Why:** Spanish was target-language #2 added to the app, but the original French edge function was never split. The bug only surfaced when the language-* consolidation reorganized the file. Catching it now keeps the granularity goal honest — coaching prompts should be in the target language, full stop.
+
 ### Japanese language support — target-only
 
 **You can now pick Japanese (日本語) as a learning target. Japanese is intentionally NOT offered as a primary/UI-chrome language yet — that requires a translation sweep across the codebase.**
