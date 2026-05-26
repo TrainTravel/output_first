@@ -165,7 +165,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const bilingual = (translations: Translations) => {
     const tgt = stringFor(pair.target, translations);
     const prm = stringFor(pair.primary, translations);
-    return `${tgt} / ${prm}`;
+    // Dedupe: when target and primary resolve to the same string (typically
+    // because both fell back to en), render once instead of "X / X".
+    return tgt === prm ? tgt : `${tgt} / ${prm}`;
   };
 
   return (
