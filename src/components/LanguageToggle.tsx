@@ -8,6 +8,7 @@ const LABELS: Record<string, string> = {
   es: 'ES',
   'zh-Hans': '简',
   'zh-Hant': '繁',
+  ja: '日',
 };
 
 const VERBS: Record<PrimaryLang, { speak: string; learn: string }> = {

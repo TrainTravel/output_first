@@ -1,5 +1,44 @@
 # Changelog
 
+## [Unreleased] - 2026-05-26
+
+### Japanese language support — target-only
+
+**You can now pick Japanese (日本語) as a learning target. Japanese is intentionally NOT offered as a primary/UI-chrome language yet — that requires a translation sweep across the codebase.**
+
+What's wired:
+- `日本語` appears as a card in "I'm learning" inside `LanguageSettingsScreen`.
+- `LanguageToggle` displays `日` when target=ja, with English (or another primary) on the side.
+- `t({ ..., ja: '...' })` and `bilingual({ ..., ja: '...' })` accept an optional `ja` key — when present, it is used; when absent, the lookup gracefully falls back to English.
+- Edge functions (`language-feedback`, `language-chat`, `reflection`) recognize `targetLang: 'ja'` and prompt the model as a "Japanese learner" with readings (hiragana / romaji) for new vocabulary.
+
+What's deferred (acceptable for v1):
+- **Chrome stays English when target=ja.** Existing `t()` / `bilingual()` call sites have not yet been swept to add `ja:` keys — those return English via fallback. A future PR will translate the chrome.
+- **IME composition handling** on text inputs is a separate follow-up. Pressing Enter mid-IME-composition (e.g. while picking a kanji candidate) will currently submit prematurely. Will be addressed in a focused PR.
+- **Honorific tuning** in the AI prompts is intentionally simple ("Japanese learner" framing, plain/neutral register). Tone polish lives in the future translation pass.
+- **Japanese-specific font** is not loaded — system fonts handle Japanese acceptably.
+
+---
+
+### Edge function consolidation — language-feedback + language-chat (was: french-* / chinese-*)
+
+**Four edge functions collapsed into two generic ones parameterized by `targetLang`.**
+
+Before: `french-feedback`, `french-chat`, `chinese-feedback`, `chinese-chat` — picked by the client based on the active target.
+After: `language-feedback`, `language-chat` — single endpoints that branch internally on `targetLang` (`fr | es | zh-Hans | zh-Hant | ja`).
+
+Behavior is preserved for fr/es/zh users; the language-specific prompt branches (pinyin guidance for Chinese, four-character idioms, French CBT scaffolding) are intact inside the consolidated functions.
+
+**Deployment step (manual):**
+```bash
+supabase functions deploy language-feedback language-chat
+supabase functions delete french-feedback french-chat chinese-feedback chinese-chat
+```
+
+The body shape is unchanged on the client side — old code paths kept `lang` in the body alongside the new `targetLang` field for forward-compat with any in-flight deployments.
+
+---
+
 ## [Unreleased] - 2026-05-23
 
 ### t() / bilingual() — positional args → single Translations object

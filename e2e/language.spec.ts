@@ -147,3 +147,38 @@ test.describe('LanguageSettingsScreen — foolproof invariant', () => {
       .toBeVisible();
   });
 });
+
+test.describe('Japanese — target-only language', () => {
+  test('picking Japanese as target persists pair { primary: "en", target: "ja" }', async ({ page }) => {
+    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Language settings' }).click();
+
+    const learnSection = page.getByTestId('learn-section');
+    await learnSection.getByRole('button', { name: /日本語/ }).click();
+
+    const pair = await getStoredPair(page);
+    expect(pair).toEqual({ primary: 'en', target: 'ja' });
+  });
+
+  test('toggle shows 日 character when target=ja', async ({ page }) => {
+    await setLanguagePair(page, { primary: 'en', target: 'ja' });
+    await page.goto('/');
+    // The toggle's aria-label follows the same pattern as the other tests in
+    // this file (Speaking EN, learning JA...). Use the same selector style.
+    const toggle = page.getByRole('button', { name: /Speaking|Toggle primary language/ });
+    await expect(toggle).toContainText('日');
+    // Primary is still English
+    await expect(toggle).toContainText('EN');
+  });
+
+  test('Japanese is not offered as a primary option (target-only)', async ({ page }) => {
+    await setLanguagePair(page, { primary: 'en', target: 'ja' });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Language settings' }).click();
+
+    const speakSection = page.getByTestId('speak-section');
+    // "I already speak" must not list Japanese / 日本語
+    await expect(speakSection.getByRole('button', { name: /日本語/ })).toHaveCount(0);
+  });
+});

@@ -75,6 +75,26 @@ describe('hydration', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.pair).toEqual(DEFAULT_PAIR);
   });
+
+  it('accepts target=ja paired with primary=en (Japanese is target-only)', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual({ primary: 'en', target: 'ja' });
+  });
+
+  it('rejects primary=ja (Japanese is not a valid primary)', () => {
+    // 'ja' is intentionally absent from PRIMARY_LANGS — a stored pair with
+    // primary=ja must hydrate back to DEFAULT_PAIR.
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'ja', target: 'fr' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual(DEFAULT_PAIR);
+  });
+
+  it('rejects pair with both primary=ja and target=ja (invariant + ja-as-primary violation)', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'ja', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.pair).toEqual(DEFAULT_PAIR);
+  });
 });
 
 describe('setLangPair — invariant enforcement', () => {
@@ -196,6 +216,12 @@ describe('availablePrimaries / availableTargets — UI-layer filters', () => {
     expect(result.current.availableTargets).toContain('es');
     expect(result.current.availableTargets).toContain('zh-Hans');
   });
+
+  it('availableTargets includes ja regardless of primary', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'fr' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.availableTargets).toContain('ja');
+  });
 });
 
 describe('t() — string lookup', () => {
@@ -211,6 +237,22 @@ describe('t() — string lookup', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     const out = result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
     expect(out.primary).toBe('Hello'); // fallback
+    expect(out.secondary).toBe('Hello');
+  });
+
+  it('falls back to English for ja when the ja key is omitted (graceful chrome fallback)', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const out = result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    expect(out.primary).toBe('Hello'); // graceful fallback, chrome stays English
+    expect(out.secondary).toBe('Hello');
+  });
+
+  it('uses the ja string when provided', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const out = result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola', ja: 'こんにちは' });
+    expect(out.primary).toBe('こんにちは');
     expect(out.secondary).toBe('Hello');
   });
 });

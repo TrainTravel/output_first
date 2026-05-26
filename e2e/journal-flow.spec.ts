@@ -167,7 +167,7 @@ test.describe('BreatheScreen - clock control', () => {
     await page.clock.install({ now: Date.now() });
     await page.goto('/');
     // Mock AI calls after navigation (routes persist)
-    await page.route('**/functions/v1/french-feedback', (route) =>
+    await page.route('**/functions/v1/language-feedback', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
     );
 

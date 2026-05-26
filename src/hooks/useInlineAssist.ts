@@ -52,11 +52,16 @@ export function useInlineAssist(text: string) {
 
       setLoading(true);
       try {
-        const fnName = isZh ? 'chinese-feedback' : 'french-feedback';
-        const body: Record<string, unknown> = { text: text.trim(), type: 'inline-assist', lang: targetLang, primaryLang };
+        const body: Record<string, unknown> = {
+          text: text.trim(),
+          type: 'inline-assist',
+          targetLang,
+          lang: targetLang, // legacy field, kept for forward-compat with older deployments
+          primaryLang,
+        };
         if (isZh) body.variant = zhVariant;
 
-        const { data, error } = await supabase.functions.invoke(fnName, { body });
+        const { data, error } = await supabase.functions.invoke('language-feedback', { body });
 
         if (controller.signal.aborted) return;
 
