@@ -166,6 +166,32 @@ import * as E from 'fp-ts/Either';
 
 ---
 
+### Duplication Watch — Rule of Three
+
+**Rule:** Before copying an entire file as a sibling (e.g. `french-feedback/` → `chinese-feedback/`, `ScreenA.tsx` → `ScreenB.tsx` with the same shape), STOP and check: **is this the 3rd instance of a pattern?**
+
+- **1st instance:** write it. No abstraction visible yet.
+- **2nd instance:** tolerate the duplication. Two siblings might still diverge.
+- **3rd instance:** STOP. Refactor to parameterize FIRST, then add the new instance as a config change instead of a new file.
+
+**Why:** Late consolidations are expensive — they touch every existing copy, every caller, every test, and usually surface latent bugs (e.g. the Spanish-using-the-French-edge-function bug exposed during the 2026-05-26 `language-*` consolidation). Catching the pattern at copy #3 costs minutes; catching it at copy #5 costs hours and a risky migration.
+
+**Don't generalize on copy #2.** "Duplication is far cheaper than the wrong abstraction" (Sandi Metz). Two near-twins may diverge in ways that defeat the abstraction. Wait for the third before lifting.
+
+**Known parameterized patterns in this repo (extend, don't clone):**
+- `supabase/functions/language-feedback/` + `language-chat/` — parameterized by `targetLang`. Adding a new target language = add to the `targetName` ladder, **NOT** a new edge function file.
+- `LanguageContext.tsx` `Translations` type — adding a new language = one optional key, **NOT** a new helper.
+- `COMPASSION_PHRASES`, `EMOTION_SUGGESTIONS`, `VAGUE_EMOTIONS`, `GARDEN_THEMES` — language/variant content lives in config arrays, not separate code paths.
+
+**Spec / plan checklist question:** Every spec or plan for a non-trivial change must answer: *"Does this create a 3rd instance of an existing pattern? If yes, list the siblings and decide: parameterize OR justify the divergence."*
+
+**Examples that would catch this rule:**
+- "Add Korean as a target language" → DON'T create `korean-feedback`; extend the existing `language-feedback` `targetName` ladder.
+- "Add a 4th cluster type" → DON'T copy `ClusterDetailScreen`; pass a config.
+- "Add a 6th color theme" → already correct (themes live in `GARDEN_THEMES` config).
+
+---
+
 ## ADHD-Friendly UX Principles
 
 This app is designed for neurodivergent users. Follow these principles when adding features:
