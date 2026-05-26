@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased] - 2026-05-27
+
+### Dev-mode warning for missing i18n translations
+
+**Surfaces every `t()` / `bilingual()` call site that's silently falling back to English.**
+
+`stringFor()` now logs `[i18n] Missing {lang} translation, falling back to en: "{en-value}"` to the dev console whenever a `ja`, `zh-Hans`, or `zh-Hant` key is requested but not present on the Translations object. Memoized per `(lang, en-value)` pair so the console isn't flooded by re-renders.
+
+**Prod is unaffected.** The warning is gated on `import.meta.env.DEV`; the fallback string is still returned in both environments. This is purely an in-development visibility lever — not a behavior change.
+
+**Why:** the "Write today / Write today" bug in PR #39 + the Spanish-using-French-CBT bug in PR #38 + the chrome-stays-English problem from PR #36 all share a root cause — silent fallbacks hiding incomplete translations. PR #39 fixed the most visible symptom (`bilingual()` dedupe). This PR adds the surveillance layer so future fallbacks are immediately visible during development, not discovered later by a user screenshot.
+
+**Roadmap (not in this PR):** once Tier 2 and Tier 3 chrome translations land and CI is green for a sprint, the `ja` / `zh-Hans` / `zh-Hant` keys on the `Translations` type can be promoted from optional to required and the fallback branch deleted entirely. Until then, the warning is the early-warning system.
+
+**Tests:** 5 new tests in `LanguageContext.test.tsx` cover: warning fires for missing ja key, warning fires for missing zh-Hant key, no warning when key is present, no warning for fr/en/es lookups, and dedupe behavior (3 lookups → 1 warning).
+
+---
+
 ## [Unreleased] - 2026-05-26
 
 ### Spanish CBT scaffolding — fixes a latent routing bug
