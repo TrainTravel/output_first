@@ -167,8 +167,22 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           >
             <Feather className="w-5 h-5 mr-2" />
             {hasJournaledToday
-              ? bilingual({ fr: 'Écrire encore', en: 'Write another', es: 'Escribir más' })
-              : bilingual({ fr: "Écrire aujourd'hui", en: 'Write today', es: 'Escribir hoy' })
+              ? bilingual({
+                  fr: 'Écrire encore',
+                  en: 'Write another',
+                  es: 'Escribir más',
+                  ja: 'もう一度書きましょう',
+                  'zh-Hans': '再写一篇',
+                  'zh-Hant': '再寫一篇',
+                })
+              : bilingual({
+                  fr: "Écrire aujourd'hui",
+                  en: 'Write today',
+                  es: 'Escribir hoy',
+                  ja: '今日書きましょう',
+                  'zh-Hans': '今天写日记',
+                  'zh-Hant': '今天寫日記',
+                })
             }
           </Button>
 

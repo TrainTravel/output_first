@@ -59,6 +59,21 @@ This PR adds a proper Spanish branch in both blocks:
 French CBT scaffolding stays as the explicit default fallback. No behavior change for any other language.
 
 **Why:** Spanish was target-language #2 added to the app, but the original French edge function was never split. The bug only surfaced when the language-* consolidation reorganized the file. Catching it now keeps the granularity goal honest — coaching prompts should be in the target language, full stop.
+---
+### Bilingual rendering — dedupe identical sides, CTA gets Japanese + Chinese
+
+**Fixes the "Write today / Write today" rendering when the active pair has no translation for either side.**
+
+Two changes:
+
+1. **`bilingual()` dedupes identical sides.** When `targetLang` and `primaryLang` resolve to the same string (typically because both fell back to English via the Translations fallback chain), the helper now returns the string once instead of `"X / X"`. Silent improvement for every call site across the app — no API change, no semantic change for pairs that legitimately differ (e.g. `fr / en`).
+
+2. **HomeScreen CTA gets explicit Japanese, Simplified Chinese, and Traditional Chinese keys.** "Write today" / "Write another" now render correctly when the target is `ja` or the primary is `zh-Hans` / `zh-Hant`:
+   - ja: `今日書きましょう` / `もう一度書きましょう` (polite, inviting register)
+   - zh-Hans: `今天写日记` / `再写一篇`
+   - zh-Hant: `今天寫日記` / `再寫一篇`
+
+**Why partial:** the CTA is the most visually prominent bilingual call on Home, so it gets translations now. The rest of the chrome (`Brain Dump`, `Thought Garden`, `French journaling practice`, `More tools`, etc.) is silently improved by the dedupe alone — they no longer say `"Brain Dump / Brain Dump"` when both sides fall back. A future translation-pass PR will add `ja:` and `zh-*:` keys to the remaining anchors.
 
 ### Japanese language support — target-only
 

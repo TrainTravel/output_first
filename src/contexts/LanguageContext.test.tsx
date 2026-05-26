@@ -263,6 +263,37 @@ describe('bilingual() — formatted pair', () => {
     expect(result.current.bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' }))
       .toBe('Vide-tête / Brain Dump');
   });
+
+  it('dedupes when target and primary resolve to the same string', () => {
+    // target=ja primary=zh-Hant; neither key present → both fall back to en.
+    // bilingual() should render once, not "Write today / Write today".
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hant', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.bilingual({ fr: "Écrire aujourd'hui", en: 'Write today', es: 'Escribir hoy' }))
+      .toBe('Write today');
+  });
+
+  it('does not dedupe when target and primary differ', () => {
+    // target=fr primary=en — both resolve and differ → keep the pair.
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.bilingual({ fr: "Écrire aujourd'hui", en: 'Write today', es: 'Escribir hoy' }))
+      .toBe("Écrire aujourd'hui / Write today");
+  });
+
+  it('renders both when ja and zh-Hant keys are provided', () => {
+    // Same pair as the dedupe case, but now both keys are present → no fallback,
+    // no dedupe, both strings render.
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hant', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.bilingual({
+      fr: "Écrire aujourd'hui",
+      en: 'Write today',
+      es: 'Escribir hoy',
+      ja: '今日書きましょう',
+      'zh-Hans': '今天写日记',
+      'zh-Hant': '今天寫日記',
+    })).toBe('今日書きましょう / 今天寫日記');
+  });
 });
 
 describe('stringFor() — dev-mode fallback warning', () => {
