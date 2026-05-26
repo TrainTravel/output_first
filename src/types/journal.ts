@@ -66,6 +66,9 @@ export interface Badge {
   fr: string;
   en: string;
   es: string;
+  ja?: string;
+  'zh-Hans'?: string;
+  'zh-Hant'?: string;
 }
 
 export interface EmotionWord {
@@ -193,12 +196,12 @@ export const FILL_IN_PROMPTS: FillInPrompt[] = [
 ];
 
 export const BADGES: Badge[] = [
-  { id: 'seedling',    threshold: 50,   icon: '🌱', fr: 'Jeune pousse',  en: 'Seedling',    es: 'Brote'       },
-  { id: 'writer',      threshold: 200,  icon: '✍️',  fr: 'Écrivain',      en: 'Writer',      es: 'Escritor/a'  },
-  { id: 'voice',       threshold: 500,  icon: '🎙️', fr: 'Ta voix',       en: 'Your Voice',  es: 'Tu voz'      },
-  { id: 'storyteller', threshold: 1000, icon: '📖', fr: 'Conteur',       en: 'Storyteller', es: 'Narrador/a'  },
-  { id: 'gardener',    threshold: 2500, icon: '🌿', fr: 'Jardinier',     en: 'Gardener',    es: 'Jardinero/a' },
-  { id: 'sage',        threshold: 5000, icon: '🌳', fr: 'Sage',          en: 'Sage',        es: 'Sabio/a'     },
+  { id: 'seedling',    threshold: 50,   icon: '🌱', fr: 'Jeune pousse',  en: 'Seedling',    es: 'Brote',        ja: '新芽',          'zh-Hans': '嫩芽',           'zh-Hant': '嫩芽'           },
+  { id: 'writer',      threshold: 200,  icon: '✍️',  fr: 'Écrivain',      en: 'Writer',      es: 'Escritor/a',   ja: '書き手',        'zh-Hans': '写作者',         'zh-Hant': '寫作者'         },
+  { id: 'voice',       threshold: 500,  icon: '🎙️', fr: 'Ta voix',       en: 'Your Voice',  es: 'Tu voz',       ja: 'あなたの声',    'zh-Hans': '你的声音',       'zh-Hant': '你的聲音'       },
+  { id: 'storyteller', threshold: 1000, icon: '📖', fr: 'Conteur',       en: 'Storyteller', es: 'Narrador/a',   ja: '語り手',        'zh-Hans': '讲故事的人',     'zh-Hant': '講故事的人'     },
+  { id: 'gardener',    threshold: 2500, icon: '🌿', fr: 'Jardinier',     en: 'Gardener',    es: 'Jardinero/a',  ja: '庭師',          'zh-Hans': '园丁',           'zh-Hant': '園丁'           },
+  { id: 'sage',        threshold: 5000, icon: '🌳', fr: 'Sage',          en: 'Sage',        es: 'Sabio/a',      ja: '賢者',          'zh-Hans': '智者',           'zh-Hant': '智者'           },
 ];
 
 export const EMOTION_SUGGESTIONS: EmotionSuggestion[] = [
