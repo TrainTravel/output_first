@@ -26,6 +26,7 @@ import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
+import { AccountScreen } from './AccountScreen';
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -91,6 +92,7 @@ export function JournalApp() {
     openTodoList,
     openTinyExperiment,
     openLanguageSettings,
+    openAccount,
     goBackToEmotions,
     openVocabulary,
     vocabOrigin,
@@ -130,6 +132,7 @@ export function JournalApp() {
            onOpenTodoList={openTodoList}
            onOpenTinyExperiment={openTinyExperiment}
           onOpenLanguageSettings={openLanguageSettings}
+          onOpenAccount={openAccount}
           onOpenVocabulary={() => openVocabulary('home')}
         />
       )}
@@ -286,6 +289,10 @@ export function JournalApp() {
 
       {currentStep === 'languagesettings' && (
         <LanguageSettingsScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'account' && (
+        <AccountScreen onBack={goHome} />
       )}
 
       {currentStep === 'vocabulary' && (

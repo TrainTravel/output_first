@@ -99,6 +99,35 @@ Tie-break is highest count, then most-recent `lastSeen`. Only one nudge shows at
 - Sits next to the Vocabulary card, so the cognitive jump from "I'm in a rut" to "browse alternatives" is one tap.
 
 **Tests:** 21 unit tests in `useFrequencyMirror.test.ts` (picker, threshold, recency, dismissal window, tie-break), 6 component tests in `EmotionFrequencyNudge.test.tsx` (render, dismiss persistence, alternatives callback, a11y), 4 E2E tests in `freq-mirror.spec.ts` (visibility on seeded vocab, dismiss, reload persistence, empty-state).
+---
+---
+### GDPR Data Export — download all user data as JSON (Article 20)
+
+**Right-to-portability surfaced from the same AccountScreen.**
+
+- New "Download my data" button on `AccountScreen` invokes the `export-user-data` edge function.
+- Returns a single versioned JSON payload (`schema_version: 1`) containing `journal_entries`, `thoughts`, `clusters`, `cluster_thoughts`, `proposals`, `experiments`, and `experiment_checkins` — every row tagged with the caller's `user_id`.
+- The browser writes the JSON to disk via a `Blob` + `<a download>` trick, naming the file `outputfirst-export-YYYY-MM-DD.json`. No new dependency.
+- Feedback is intentionally omitted (stored anonymously, no read policy).
+- Edge function uses the service-role client server-side only — never exposed to the browser.
+
+---
+
+### GDPR Account Deletion — 30-day soft-delete grace (Article 17)
+
+**Right-to-erasure surfaced from a new AccountScreen.**
+
+- New `AccountScreen` reachable from a footer "Account & data" link on `HomeScreen`.
+- Destructive "Delete my account" button opens a confirmation modal explaining the 30-day undo window.
+- On confirm: invokes `schedule-account-deletion` edge function (sets `profiles.scheduled_deletion_at = now() + 30 days`) and signs the user out.
+- Returning within 30 days reveals a yellow banner "Your account is scheduled for deletion on {date}" with a one-click cancel that invokes `cancel-account-deletion`.
+- **v1 limitation (no cron yet):** the AccountScreen itself triggers `hard-delete-account` lazily if the user returns *after* the deadline. A user who never returns is not purged until they do. Production should add a `pg_cron` job that invokes `hard-delete-account` for every row with `scheduled_deletion_at < now()`.
+- New `profiles` table (1 row per `auth.users` row) with strict RLS — users can only see/modify their own row. **Migration must be applied (`supabase db push`) before merging.**
+
+**ADHD-Friendly:**
+- No dark patterns: deletion is a single confirmation, not a multi-step gauntlet.
+- The grace window is generous (30 days) and the cancel path is one click — reduces panic-induced regret.
+- The banner stays *visible* every time the user returns (Persistence) so the pending state doesn't fall out of mind.
 
 ---
 

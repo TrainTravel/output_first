@@ -173,6 +173,23 @@ describe('useJournal — totalWords and earnedBadges', () => {
   });
 });
 
+describe('useJournal — account step', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('openAccount transitions currentStep to "account"', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.openAccount());
+    expect(result.current.currentStep).toBe('account');
+  });
+
+  it('goHome from account returns to home', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.openAccount());
+    act(() => result.current.goHome());
+    expect(result.current.currentStep).toBe('home');
+  });
+});
+
 describe('useJournal — reflection cycle accumulation', () => {
   beforeEach(() => localStorage.clear());
 
