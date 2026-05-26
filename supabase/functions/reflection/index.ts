@@ -12,6 +12,7 @@ function buildUserContextBlock(targetLang?: string, primaryLang?: string): strin
     targetLang === 'es' ? 'Spanish'
     : targetLang === 'zh-Hans' ? 'Simplified Chinese'
     : targetLang === 'zh-Hant' ? 'Traditional Chinese'
+    : targetLang === 'ja' ? 'Japanese'
     : 'French';
   const primaryName =
     primaryLang === 'fr' ? 'French' :

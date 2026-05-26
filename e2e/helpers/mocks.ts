@@ -122,7 +122,7 @@ export async function mockGenerateEmbedding(page: Page) {
  */
 export async function setLanguagePair(
   page: Page,
-  pair: { primary: 'en' | 'fr' | 'es'; target: 'fr' | 'es' | 'zh-Hans' | 'zh-Hant' },
+  pair: { primary: 'en' | 'fr' | 'es' | 'zh-Hans' | 'zh-Hant'; target: 'fr' | 'es' | 'zh-Hans' | 'zh-Hant' | 'ja' },
 ) {
   await page.addInitScript((p) => {
     localStorage.setItem('outputfirst_lang_pair', JSON.stringify(p));

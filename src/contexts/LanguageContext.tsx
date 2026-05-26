@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 
-export type TargetLang = 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
+export type TargetLang = 'fr' | 'es' | 'zh-Hans' | 'zh-Hant' | 'ja';
 export type PrimaryLang = 'en' | 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
 export type Language = TargetLang | PrimaryLang;
 
@@ -11,15 +11,15 @@ export interface LangPair {
   target: TargetLang;
 }
 
-const TARGET_LANGS: readonly TargetLang[] = ['fr', 'es', 'zh-Hans', 'zh-Hant'];
+const TARGET_LANGS: readonly TargetLang[] = ['fr', 'es', 'zh-Hans', 'zh-Hant', 'ja'];
 const PRIMARY_LANGS: readonly PrimaryLang[] = ['en', 'fr', 'es', 'zh-Hans', 'zh-Hant'];
 
 export const DEFAULT_PAIR: LangPair = { primary: 'en', target: 'fr' };
 const STORAGE_KEY = 'outputfirst_lang_pair';
 
 /**
- * Translations keyed by language code. `zh-Hans` / `zh-Hant` are optional;
- * when omitted, the lookup falls back to English.
+ * Translations keyed by language code. `zh-Hans` / `zh-Hant` / `ja` are
+ * optional; when omitted, the lookup falls back to English.
  */
 export interface Translations {
   fr: string;
@@ -27,6 +27,7 @@ export interface Translations {
   es: string;
   'zh-Hans'?: string;
   'zh-Hant'?: string;
+  ja?: string;
 }
 
 interface LanguageContextType {
@@ -126,6 +127,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       case 'es': return translations.es;
       case 'zh-Hans': return translations['zh-Hans'] || translations.en;
       case 'zh-Hant': return translations['zh-Hant'] || translations.en;
+      case 'ja': return translations.ja || translations.en;
     }
   };
 

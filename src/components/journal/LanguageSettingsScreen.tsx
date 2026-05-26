@@ -10,6 +10,7 @@ const TARGET_OPTIONS: ReadonlyArray<{ code: TargetLang; native: string; en: stri
   { code: 'es',      native: 'Español',   en: 'Spanish'             },
   { code: 'zh-Hans', native: '简体中文',   en: 'Chinese (Simplified)' },
   { code: 'zh-Hant', native: '繁體中文',   en: 'Chinese (Traditional)'},
+  { code: 'ja',      native: '日本語',    en: 'Japanese'             },
 ];
 
 const PRIMARY_OPTIONS: ReadonlyArray<{ code: PrimaryLang; native: string; en: string }> = [
