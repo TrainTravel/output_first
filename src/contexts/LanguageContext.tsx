@@ -49,6 +49,32 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+/**
+ * Dev-mode warning when a translation key is missing and stringFor() falls
+ * back to English. Memoized per (lang, en-value) pair so the console isn't
+ * flooded by re-renders of the same call site.
+ *
+ * In prod (import.meta.env.DEV === false) this is a no-op pass-through —
+ * the en value is still returned, no logging cost. Exported for tests.
+ */
+const _fallbackSeen = new Set<string>();
+export function warnFallback(lang: 'ja' | 'zh-Hans' | 'zh-Hant', enValue: string): string {
+  if (import.meta.env.DEV) {
+    const key = `${lang}::${enValue}`;
+    if (!_fallbackSeen.has(key)) {
+      _fallbackSeen.add(key);
+      // eslint-disable-next-line no-console
+      console.warn(`[i18n] Missing ${lang} translation, falling back to en: "${enValue}"`);
+    }
+  }
+  return enValue;
+}
+
+/** Test-only: clears the dedupe set so each test sees a clean console. */
+export function _resetFallbackWarnings(): void {
+  _fallbackSeen.clear();
+}
+
 function isTargetLang(v: unknown): v is TargetLang {
   return typeof v === 'string' && (TARGET_LANGS as readonly string[]).includes(v);
 }
@@ -125,9 +151,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       case 'fr': return translations.fr;
       case 'en': return translations.en;
       case 'es': return translations.es;
-      case 'zh-Hans': return translations['zh-Hans'] || translations.en;
-      case 'zh-Hant': return translations['zh-Hant'] || translations.en;
-      case 'ja': return translations.ja || translations.en;
+      case 'zh-Hans': return translations['zh-Hans'] ?? warnFallback('zh-Hans', translations.en);
+      case 'zh-Hant': return translations['zh-Hant'] ?? warnFallback('zh-Hant', translations.en);
+      case 'ja': return translations.ja ?? warnFallback('ja', translations.en);
     }
   };
 

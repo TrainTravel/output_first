@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { LanguageProvider, useLanguage, DEFAULT_PAIR } from './LanguageContext';
+import { LanguageProvider, useLanguage, DEFAULT_PAIR, _resetFallbackWarnings } from './LanguageContext';
 import type { ReactNode } from 'react';
 
 const STORAGE_KEY = 'outputfirst_lang_pair';
@@ -262,5 +262,57 @@ describe('bilingual() — formatted pair', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' }))
       .toBe('Vide-tête / Brain Dump');
+  });
+});
+
+describe('stringFor() — dev-mode fallback warning', () => {
+  beforeEach(() => {
+    _resetFallbackWarnings();
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('warns when ja key is missing and falls back to en', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const out = result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    expect(out.primary).toBe('Hello'); // falls back to en
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('Missing ja translation'),
+    );
+  });
+
+  it('warns when zh-Hant key is missing and falls back to en', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'zh-Hant', target: 'fr' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('Missing zh-Hant translation'),
+    );
+  });
+
+  it('does not warn when the requested key is present', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola', ja: 'こんにちは' });
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('does not warn for fr / en / es lookups (no fallback possible)', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('dedupes repeat warnings for the same (lang, en) pair', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'ja' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    // Fire 3 times — should only warn once because the (ja, 'Hello') key is memoized.
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
+    expect(console.warn).toHaveBeenCalledTimes(1);
   });
 });
