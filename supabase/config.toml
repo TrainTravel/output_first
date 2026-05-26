@@ -1,11 +1,5 @@
 project_id = "bdeotnzldfnqwbdymscp"
 
-[functions.french-feedback]
-verify_jwt = false
-
-[functions.french-chat]
-verify_jwt = false
-
 [functions.language-feedback]
 verify_jwt = false
 
