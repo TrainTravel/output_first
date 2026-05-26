@@ -52,7 +52,7 @@ test.describe('Navigation', () => {
   });
 
   test('Home → Write (start journal) → back button returns to Home', async ({ page }) => {
-    await page.route('**/functions/v1/french-feedback', (route) =>
+    await page.route('**/functions/v1/language-feedback', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
     );
     // force bypasses animate-breathe CSS instability

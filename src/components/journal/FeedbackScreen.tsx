@@ -72,11 +72,17 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
 
         const vocabularyContext = getVocabularyContext();
 
-        const functionName = isZh ? 'chinese-feedback' : 'french-feedback';
-        const body: Record<string, unknown> = { text: journalContent, type: 'feedback', vocabularyContext, lang: targetLang, primaryLang };
+        const body: Record<string, unknown> = {
+          text: journalContent,
+          type: 'feedback',
+          vocabularyContext,
+          targetLang,
+          lang: targetLang, // legacy field, kept for forward-compat with older deployments
+          primaryLang,
+        };
         if (isZh) body.variant = zhVariant;
 
-        const { data, error: fnError } = await supabase.functions.invoke(functionName, {
+        const { data, error: fnError } = await supabase.functions.invoke('language-feedback', {
           body,
         });
 

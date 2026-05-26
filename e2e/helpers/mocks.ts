@@ -55,9 +55,9 @@ export async function mockAuthRoutes(page: Page) {
   );
 }
 
-/** Mock french-feedback edge function. */
+/** Mock language-feedback edge function (target-agnostic). */
 export async function mockFeedback(page: Page) {
-  await page.route('**/functions/v1/french-feedback', (route) =>
+  await page.route('**/functions/v1/language-feedback', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',

@@ -17,10 +17,9 @@ interface ChatScreenProps {
   context?: ThoughtContext | null;
 }
 
-function getChatUrl(lang: string) {
+function getChatUrl() {
   const base = import.meta.env.VITE_SUPABASE_URL;
-  if (lang === 'zh-Hans' || lang === 'zh-Hant') return `${base}/functions/v1/chinese-chat`;
-  return `${base}/functions/v1/french-chat`;
+  return `${base}/functions/v1/language-chat`;
 }
 
 export function ChatScreen({ onBack, context }: ChatScreenProps) {
@@ -60,8 +59,14 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const chatUrl = getChatUrl(targetLang);
-      const bodyPayload: Record<string, unknown> = { messages: [], thoughtContext: context, lang: targetLang, primaryLang };
+      const chatUrl = getChatUrl();
+      const bodyPayload: Record<string, unknown> = {
+        messages: [],
+        thoughtContext: context,
+        targetLang,
+        lang: targetLang, // legacy field, kept for forward-compat with older deployments
+        primaryLang,
+      };
       if (isZh) bodyPayload.variant = zhVariant;
 
       const resp = await fetch(chatUrl, {
@@ -159,8 +164,14 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const chatUrl = getChatUrl(targetLang);
-      const bodyPayload2: Record<string, unknown> = { messages: newMessages, thoughtContext: context, lang: targetLang, primaryLang };
+      const chatUrl = getChatUrl();
+      const bodyPayload2: Record<string, unknown> = {
+        messages: newMessages,
+        thoughtContext: context,
+        targetLang,
+        lang: targetLang, // legacy field, kept for forward-compat with older deployments
+        primaryLang,
+      };
       if (isZh) bodyPayload2.variant = zhVariant;
 
       const resp = await fetch(chatUrl, {
