@@ -63,7 +63,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {user && !user.is_anonymous && (
               <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
                 <LogOut className="w-4 h-4 mr-1" />
-                {t({ fr: 'Déconnexion', en: 'Sign out', es: 'Cerrar sesión' }).primary}
+                {t({ fr: 'Déconnexion', en: 'Sign out', es: 'Cerrar sesión', ja: 'ログアウト', 'zh-Hans': '退出登录', 'zh-Hant': '登出' }).primary}
               </Button>
             )}
             <GardenThemeSelector />
@@ -83,7 +83,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             OutputFirst
           </h1>
           <p className="text-muted-foreground text-sm italic">
-            {t({ fr: 'Journaling en français', en: 'French journaling practice', es: 'Práctica de journaling en francés' }).primary}
+            {t({ fr: 'Journaling en français', en: 'French journaling practice', es: 'Práctica de journaling en francés', ja: 'フランス語日記の練習', 'zh-Hans': '法语日记练习', 'zh-Hant': '法語日記練習' }).primary}
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-sm font-medium">{t({ fr: 'Terminé', en: 'Completed', es: 'Completado' }).primary}</span>
+              <span className="text-sm font-medium">{t({ fr: 'Terminé', en: 'Completed', es: 'Completado', ja: '完了', 'zh-Hans': '已完成', 'zh-Hant': '已完成' }).primary}</span>
             </div>
           </div>
         )}
@@ -114,7 +114,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               <CalendarDays className="w-4 h-4 text-accent-foreground" /> {totalDays}
             </span>
             <span className="text-border">│</span>
-            <span className="text-muted-foreground">{totalWords} {t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}</span>
+            <span className="text-muted-foreground">{totalWords} {t({ fr: 'mots', en: 'words', es: 'palabras', ja: '文字', 'zh-Hans': '字', 'zh-Hant': '字' }).primary}</span>
           </div>
           <TooltipProvider delayDuration={200}>
             <div className="flex items-center justify-center gap-2">
@@ -130,11 +130,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                       </span>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="text-center">
-                      <p className="font-medium">{t({ fr: badge.fr, en: badge.en, es: badge.es }).primary}</p>
+                      <p className="font-medium">{t({ fr: badge.fr, en: badge.en, es: badge.es, ja: badge.ja, 'zh-Hans': badge['zh-Hans'], 'zh-Hant': badge['zh-Hant'] }).primary}</p>
                       <p className="text-xs text-muted-foreground">
                         {earned
-                          ? `✓ ${t({ fr: 'Obtenu', en: 'Earned', es: 'Obtenido' }).primary}`
-                          : `${badge.threshold} ${t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}`
+                          ? `✓ ${t({ fr: 'Obtenu', en: 'Earned', es: 'Obtenido', ja: '獲得', 'zh-Hans': '已获得', 'zh-Hant': '已獲得' }).primary}`
+                          : `${badge.threshold} ${t({ fr: 'mots', en: 'words', es: 'palabras', ja: '文字', 'zh-Hans': '字', 'zh-Hant': '字' }).primary}`
                         }
                       </p>
                     </TooltipContent>
@@ -174,12 +174,12 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
 
           <Button variant="outline" size="full" onClick={onOpenBrainDump}>
             <Zap className="w-5 h-5 mr-2" />
-            {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' })}
+            {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental', ja: '脳のメモ', 'zh-Hans': '想法清空', 'zh-Hant': '想法清空' })}
           </Button>
 
           <Button variant="outline" size="full" onClick={onOpenThoughtGarden}>
             <Sprout className="w-5 h-5 mr-2" />
-            {bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pensamientos' })}
+            {bilingual({ fr: 'Jardin de pensées', en: 'Thought Garden', es: 'Jardín de pensamientos', ja: '思考の庭', 'zh-Hans': '思绪花园', 'zh-Hant': '思緒花園' })}
           </Button>
 
           {/* More tools toggle */}
@@ -188,44 +188,44 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             className="w-full flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {showMore ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            {t({ fr: 'Autres outils', en: 'More tools', es: 'Más herramientas' }).primary}
+            {t({ fr: 'Autres outils', en: 'More tools', es: 'Más herramientas', ja: 'その他のツール', 'zh-Hans': '更多工具', 'zh-Hant': '更多工具' }).primary}
           </button>
 
           {showMore && (
             <div className="space-y-3 animate-fade-in-up">
               <Button variant="outline" size="full" onClick={onStartFreeWrite}>
                 <PenLine className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Écrire librement', en: 'Free Write', es: 'Escritura libre' })}
+                {bilingual({ fr: 'Écrire librement', en: 'Free Write', es: 'Escritura libre', ja: '自由に書く', 'zh-Hans': '自由写作', 'zh-Hant': '自由寫作' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenFocusPlan} className="bg-accent/10 border-accent/30">
                 <Target className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Un truc à la fois', en: 'One Thing at a Time', es: 'Una cosa a la vez' })}
+                {bilingual({ fr: 'Un truc à la fois', en: 'One Thing at a Time', es: 'Una cosa a la vez', ja: '一度に一つ', 'zh-Hans': '一次一件事', 'zh-Hant': '一次一件事' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenTodoList}>
                 <ListChecks className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C' })}
+                {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C', ja: 'A/B/Cリスト', 'zh-Hans': 'A/B/C 清单', 'zh-Hant': 'A/B/C 清單' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenSmallWins}>
                 <Trophy className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros' })}
+                {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros', ja: '小さな勝利', 'zh-Hans': '小成就', 'zh-Hant': '小成就' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenTinyExperiment}>
                 <FlaskConical className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Petites expériences', en: 'Tiny Experiments', es: 'Pequeños experimentos' })}
+                {bilingual({ fr: 'Petites expériences', en: 'Tiny Experiments', es: 'Pequeños experimentos', ja: '小さな実験', 'zh-Hans': '微小实验', 'zh-Hant': '微小實驗' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenZenGarden}>
                 <Mountain className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Jardin Zen', en: 'Zen Garden', es: 'Jardín Zen' })}
+                {bilingual({ fr: 'Jardin Zen', en: 'Zen Garden', es: 'Jardín Zen', ja: '禅の庭', 'zh-Hans': '禅意花园', 'zh-Hant': '禪意花園' })}
               </Button>
 
               <Button variant="outline" size="full" onClick={onOpenSandTimer}>
                 <Hourglass className="w-5 h-5 mr-2" />
-                {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena' })}
+                {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena', ja: '砂時計', 'zh-Hans': '沙漏', 'zh-Hant': '沙漏' })}
               </Button>
             </div>
           )}
@@ -243,16 +243,16 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground font-medium">
-                {t({ fr: 'Vocabulaire émotionnel', en: 'Emotion vocabulary', es: 'Vocabulario emocional' }).primary}
+                {t({ fr: 'Vocabulaire émotionnel', en: 'Emotion vocabulary', es: 'Vocabulario emocional', ja: '感情語彙', 'zh-Hans': '情绪词汇', 'zh-Hant': '情緒詞彙' }).primary}
               </p>
               <p className="text-xs text-muted-foreground">
-                {t({ fr: 'Explorer vos mots', en: 'Explore your words', es: 'Explora tus palabras' }).primary} →
+                {t({ fr: 'Explorer vos mots', en: 'Explore your words', es: 'Explora tus palabras', ja: '言葉を探検する', 'zh-Hans': '探索你的词汇', 'zh-Hant': '探索你的詞彙' }).primary} →
               </p>
             </div>
           </button>
 
           <p className="text-center text-muted-foreground text-sm pt-2">
-            {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.' }).primary}
+            {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.', ja: '一文か二文で十分です。', 'zh-Hans': '一两句话就够了。', 'zh-Hant': '一兩句話就夠了。' }).primary}
           </p>
         </div>
 

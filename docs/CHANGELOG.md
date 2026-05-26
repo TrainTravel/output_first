@@ -2,6 +2,33 @@
 
 ## [Unreleased] - 2026-05-26
 
+### Chrome translation pass — Tier 1 (Home + Breathe + badges)
+
+**First pass of Japanese / Simplified Chinese / Traditional Chinese keys on the highest-visibility chrome.** Pairs with PR #39's `bilingual()` dedupe — together they fix the "Write today / Write today" rendering you see when target=ja and primary=zh-* with no real translations.
+
+What's translated in this PR (~40 strings × 3 langs = ~120 new keys):
+
+- **HomeScreen** — sign-out button, hero subtitle, "Completed" badge, word counter, badge tooltips (via Badge type extension), "More tools" toggle, all secondary action `bilingual()` anchors (Brain Dump, Thought Garden, Free Write, One Thing at a Time, ABC List, Small Wins, Tiny Experiments, Zen Garden, Sand Timer), Emotion vocabulary card, "One or two sentences is enough." tagline
+- **BreatheScreen** — Back, three breathing phases (inhale / hold / exhale), grounding prompt, "I'm ready" CTA
+- **`BADGES` constant** — `Badge` type now accepts optional `ja`, `zh-Hans`, `zh-Hant` keys; all 6 badges (Seedling, Writer, Your Voice, Storyteller, Gardener, Sage) have CJK translations
+
+**Deliberately out of scope (deferred to Tier 2 + Tier 3):**
+
+- WriteScreen, EmotionsScreen, ReflectionScreen, GratitudeScreen, FeedbackScreen
+- BrainDumpScreen body, ThoughtGardenScreen interior, ProgressScreen
+- All settings / account / font / theme / language picker chrome
+- Anything in `src/components/ui` (shadcn primitives)
+- Error messages / edge-case toasts
+
+**Tiered approach:** The full sweep would be ~350 sites × 3 langs = ~1050 strings of unreviewed AI translation. That's 100× the surface area of the Japanese prompts that already need native review. Tier 1 covers the 80% of visual weight without committing 1000 strings; Tier 2 ships only after Tier 1 + the Japanese prompts have had a native pass.
+
+**Known follow-ups:**
+- "French journaling practice" subtitle is hardcoded — translates literally but is semantically wrong for non-French targets. Future PR makes it target-aware.
+- Word counter is split on `/\s+/`, which produces unreliable counts for Japanese / Chinese. Counter logic itself is a separate fix.
+- Native (iTalki / Preply / r/translator) review is still planned for the Japanese and Chinese strings shipped here, same as PR #36's prompts.
+
+---
+
 ### Spanish CBT scaffolding — fixes a latent routing bug
 
 **Spanish learners were previously coached using French phrases.** Before this PR, `targetLang === 'es'` users fell into the French branch of the `cbtBlock` and `granularityBlock` in `language-chat` (a behavior preserved during the PR #36 consolidation, NOT introduced by it). Spanish journal entries would receive Cognitive Behavioral Therapy prompts in French (`"Quand ça s'est passé, quelle a été ta première pensée ?"`).
