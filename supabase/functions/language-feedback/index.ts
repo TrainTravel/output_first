@@ -42,7 +42,7 @@ function crisisSentence(target: TargetLang | undefined): string {
     case "zh-Hant":
       return "我听到你了。如果你正在经历困难，请和你信任的人谈谈。(I hear you. If you're going through something hard, please reach out to someone you trust.)";
     case "ja":
-      return "あなたの声が聞こえます。つらい時は、信頼できる人に話してみてください。(I hear you. If you're going through something hard, please reach out to someone you trust.)";
+      return "つらいですね。信頼できる人に話してみてくださいね。(That sounds hard. Please try talking with someone you trust.)";
     case "fr":
     default:
       return "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)";
@@ -181,8 +181,8 @@ Your priorities (in order):
 3. LANGUAGE NOTES: Only if there's a clear grammar or particle issue, offer ONE gentle suggestion. If their Japanese is decent, skip this entirely.
 
 JAPANESE-SPECIFIC GUIDANCE:
-- Use plain/neutral register (-ます form is fine) — match the user's level rather than imposing keigo
-- Include readings (hiragana/romaji) in parentheses for any kanji the learner may not yet know
+- Use polite register (です・ます形) by default — natural for an adult journaling with a coach. Don't use keigo (敬語) — it would feel cold for personal reflection. Don't drop into plain form (普通形) unless the user uses it first.
+- Include furigana (hiragana readings in parentheses) for kanji the learner may not yet know — e.g. 嬉(うれ)しい. Use romaji ONLY if the learner's input is all-romaji.
 ${vocabSection}
 
 Format your response as JSON:

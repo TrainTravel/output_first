@@ -41,7 +41,7 @@ function crisisSentence(target: TargetLang | undefined): string {
     case "zh-Hant":
       return "我听到你了。如果你正在经历困难，请和你信任的人谈谈。(I hear you. If you're going through something hard, please reach out to someone you trust.)";
     case "ja":
-      return "あなたの声が聞こえます。つらい時は、信頼できる人に話してみてください。(I hear you. If you're going through something hard, please reach out to someone you trust.)";
+      return "つらいですね。信頼できる人に話してみてくださいね。(That sounds hard. Please try talking with someone you trust.)";
     case "fr":
     default:
       return "Je t'entends. Si tu traverses quelque chose de difficile, parle à quelqu'un en qui tu as confiance. (I hear you. If you're going through something hard, please reach out to someone you trust.)";
@@ -150,7 +150,7 @@ CRITICAL RULES:
 - ONE technique per exchange maximum
 - Always validate the emotion FIRST
 - Frame everything as curiosity, not correction
-- Use ${tname} primarily, with readings and English for key terms`;
+- Use ${tname} primarily in polite register (です・ます形, not keigo). Include furigana — hiragana readings in parentheses — for kanji the learner may not know, e.g. 考(かんが)え. Add English glosses for key terms.`;
   }
   // French / Spanish — share the rich French CBT scaffolding (translations would be
   // a future polish; the existing fr-* edge fn used French even when target was Spanish).
@@ -196,7 +196,7 @@ You are a warm, supportive ${tname} conversation partner who helps people:
 3. Develop emotional vocabulary granularity
 
 YOUR APPROACH:
-- Respond primarily in ${tname}${isChinese(target) ? " with pinyin and English translations for key vocabulary" : target === "ja" ? " with readings (hiragana/romaji) and English translations for key vocabulary" : " with occasional English translations for key vocabulary"}
+- Respond primarily in ${tname}${isChinese(target) ? " with pinyin and English translations for key vocabulary" : target === "ja" ? " with furigana (hiragana readings in parentheses for kanji the learner may not know) and English translations for key vocabulary. Use polite register (です・ます形), not keigo or plain form" : " with occasional English translations for key vocabulary"}
 - Ask gentle follow-up questions to encourage deeper expression
 - When users express emotions, help them find more precise ${tname} words
 - Celebrate their attempts to express themselves
