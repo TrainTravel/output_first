@@ -2,6 +2,22 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Chrome translation — write flow (WriteScreen + FreeWrite × 3)
+
+**Adds ja / zh-Hans / zh-Hant keys to the four writing-entry screens** so journaling never silently falls back to English mid-session.
+
+Files in this PR:
+- `WriteScreen.tsx` — Back, "Useful vocabulary" label, placeholder, "Don't worry about mistakes." tagline, Continue
+- `FreeWriteScreen.tsx` — Back, "Free Write" bilingual anchor, structureless tagline, placeholder, word/sentence helpers, Finish
+- `FreeWriteChoiceScreen.tsx` — Back, "What kind of writing?" header + secondary, both writing-mode cards (Free Write + Expressive Writing) with descriptions
+- `ExpressiveWriteScreen.tsx` — intro phase (3 reassurances + Start now), writing phase (Back, placeholder, words counter, Finish early), self-care phase (2 grounding lines + Session counter + Continue + "One moment...")
+
+Register matches PR #40 + PR #44: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge (继续/繼續, 字 is shared, 书写/書寫, etc.).
+
+Cherry-picked from the larger sweep branch (`feat/chrome-translation-tier2-3`) as a reviewable per-flow PR. Native review pass still planned post-merge.
+
+---
+
 ### Dev-mode warning for missing i18n translations
 
 **Surfaces every `t()` / `bilingual()` call site that's silently falling back to English.**
