@@ -102,9 +102,19 @@ describe('useJournal — prompt flow steps', () => {
 describe('useJournal — free write flow', () => {
   beforeEach(() => localStorage.clear());
 
-  it('startFreeWrite goes to freewrite', () => {
+  it('startFreeWrite goes to freewritechoice (the plain-vs-expressive picker)', () => {
+    // startFreeWrite now lands on a choice screen between plain and
+    // expressive free write. startPlainFreeWrite() (called from the
+    // choice screen) is what ultimately routes to 'freewrite'.
     const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
     act(() => result.current.startFreeWrite());
+    expect(result.current.currentStep).toBe('freewritechoice');
+  });
+
+  it('startPlainFreeWrite from freewritechoice goes to freewrite', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startFreeWrite());          // → freewritechoice
+    act(() => result.current.startPlainFreeWrite());     // → freewrite
     expect(result.current.currentStep).toBe('freewrite');
   });
 
