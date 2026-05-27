@@ -2,6 +2,21 @@
 
 ## [Unreleased] - 2026-05-27
 
+### CI — E2E speedup + cancellation fix
+
+**Diagnosis:** the previous ~50 CI runs were all marked `cancelled` instead of completing. Root cause was the combination of (a) no `concurrency` group on the workflow, so every force-push enqueued a new run that competed for queue slots, and (b) serial test execution (workers: 1 in CI) that made each run slow enough that newer pushes kept catching it mid-run.
+
+**Fixes:**
+- **`.github/workflows/e2e.yml`** — added a `concurrency` block with `cancel-in-progress: true`, scoped to `workflow + ref`. Force-pushes now cleanly cancel the prior run for the same branch instead of leaving both racing.
+- **`.github/workflows/e2e.yml`** — added Playwright browser cache (`~/.cache/ms-playwright`), keyed on `package-lock.json`. Skips the ~150 MB browser download on cache hit. OS deps install via a separate fast-path step.
+- **`.github/workflows/e2e.yml`** — `timeout-minutes` reduced 15 → 12. Local run with `workers=4` finished 38 tests in ~6.6 min; 12 min leaves headroom for the first-run cache miss.
+- **`playwright.config.ts`** — `workers` bumped 1 → 4 on CI. GitHub-hosted `ubuntu-latest` runners have 4 cores; serial execution was the single largest contributor to long CI runs. 63 tests / 4 workers ≈ 1-2 min.
+- **`playwright.config.ts`** — `retries` reduced 2 → 1 on CI. One retry catches genuine flakes; two retries hide real failures behind doubled budgets. Flakes should be fixed, not paper'd over.
+
+**Not changed:** the e2e tests themselves. All 63 stay; no smoke-vs-full split. Once these config changes land, the suite should run cleanly per-PR without the cancellation churn that masked actual signal for the last 25+ runs.
+
+
+
 ### Chrome translation — Focus Plan family
 
 **Adds ja / zh-Hans / zh-Hant keys to the Focus Plan flow** (the "One Thing" + Request Filter + Pomodoro-of-steps tool).
@@ -49,6 +64,23 @@ Files in this PR:
 ~37 t()/bilingual() sites total. Net-new translations.
 
 Register matches PRs #40 / #44–#50.
+### Chrome translation — settings, vocabulary, self-compassion
+
+**Final pass of the chrome translation sweep.** Adds ja / zh-Hans / zh-Hant keys to settings screens, vocabulary view, theme/font pickers, and the self-compassion components.
+
+Files in this PR:
+- `LanguageSettingsScreen.tsx` — Back, "Language settings" header, "I'm learning" / "I already speak" section labels, Preview helper, Brain Dump anchor (unified with PR #47's translation), "target / primary" caption
+- `VocabularyScreen.tsx` — Back, "Your emotion vocabulary" header, "Words explored" + 3 stat-row labels (seen / used / to discover), 4 filter chips (All / Seen / Used / New), 3 empty-state messages
+- `GardenThemeSelector.tsx` — Theme button, "Choose a garden" dialog title + description, sort-mode toggle (Calm first / Palette) + its dynamic aria-label
+- `FontPicker.tsx` — "Reading font" label
+- `SelfCompassionPractice.tsx` — "Self-compassion" anchor, Previous/Next step aria-labels, "Step N of 3" template
+- `SelfCompassionSeed.tsx` — extends `STEP_FR/EN/ES` arrays with `STEP_JA/ZH_HANS/ZH_HANT` so the daily-step bilingual label localizes properly
+
+Known carve-out: the language-NAME strings (e.g. `opt.native`, `opt.en` in LanguageSettingsScreen, "French journaling practice" subtitle on HomeScreen, ChatScreen's "Practice French Conversation") are part of the **LANGUAGE_NAMES architectural refactor** the user flagged as a separate concern. Not in this PR.
+
+ChatScreen also has ~10 hard-coded `isFr/isEs/isZh` ternaries (same pattern as ReflectionScreen / FeedbackScreen) — pre-existing tech debt, not `t()` sites, out of scope.
+
+Register matches PRs #40 / #44–#51.
 
 ---
 

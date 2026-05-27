@@ -23,7 +23,7 @@ export function SelfCompassionPractice({ lang, defaultOpen = false }: SelfCompas
   const phrase = getDailyPhrase(activeStep, lang);
   const stepLabel = getDailyStepLabel(activeStep, lang);
   const triggerLabel = bilingual(
-    { fr: 'Moment de bienveillance', en: 'Self-compassion', es: 'Momento de bondad' },
+    { fr: 'Moment de bienveillance', en: 'Self-compassion', es: 'Momento de bondad', ja: '自分への思いやり', 'zh-Hans': '自我关怀', 'zh-Hant': '自我關懷' },
   );
 
   const prevStep = () => setActiveStep(s => ((s + 2) % 3) as NeffStep);
@@ -77,19 +77,19 @@ export function SelfCompassionPractice({ lang, defaultOpen = false }: SelfCompas
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <button
               onClick={prevStep}
-              aria-label={t({ fr: 'Étape précédente', en: 'Previous step', es: 'Paso anterior' }).primary}
+              aria-label={t({ fr: 'Étape précédente', en: 'Previous step', es: 'Paso anterior', ja: '前のステップ', 'zh-Hans': '上一步', 'zh-Hant': '上一步' }).primary}
               className="p-1 hover:text-foreground transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span>
               {t(
-                { fr: `Étape ${activeStep + 1} sur 3`, en: `Step ${activeStep + 1} of 3`, es: `Paso ${activeStep + 1} de 3` },
+                { fr: `Étape ${activeStep + 1} sur 3`, en: `Step ${activeStep + 1} of 3`, es: `Paso ${activeStep + 1} de 3`, ja: `ステップ ${activeStep + 1} / 3`, 'zh-Hans': `第 ${activeStep + 1} 步 / 共 3 步`, 'zh-Hant': `第 ${activeStep + 1} 步 / 共 3 步` },
               ).primary}
             </span>
             <button
               onClick={nextStep}
-              aria-label={t({ fr: 'Étape suivante', en: 'Next step', es: 'Paso siguiente' }).primary}
+              aria-label={t({ fr: 'Étape suivante', en: 'Next step', es: 'Paso siguiente', ja: '次のステップ', 'zh-Hans': '下一步', 'zh-Hant': '下一步' }).primary}
               className="p-1 hover:text-foreground transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
