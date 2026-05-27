@@ -5,14 +5,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
 import { useJournal } from './useJournal';
+import { LanguageProvider, useLanguage, DEFAULT_PROFILE_ID } from '@/contexts/LanguageContext';
+import { profileKey } from './useProfileStorage';
 
 function makeWrapper() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return ({ children }: { children: React.ReactNode }) =>
-    createElement(QueryClientProvider, { client: queryClient }, children);
+    createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      createElement(LanguageProvider, null, children),
+    );
 }
 
-const STORAGE_KEY = 'outputfirst_entries';
+/** Legacy key — still tested via the one-shot migration path. */
+const LEGACY_STORAGE_KEY = 'outputfirst_entries';
+/** New per-profile storage key for the default profile. */
+const STORAGE_KEY = profileKey(DEFAULT_PROFILE_ID, 'entries');
 
 function loadEntries() {
   return pipe(
@@ -42,6 +51,67 @@ describe('useJournal — localStorage load', () => {
   it('returns None when stored data is malformed JSON', () => {
     localStorage.setItem(STORAGE_KEY, '{{broken');
     expect(O.isNone(loadEntries())).toBe(true);
+  });
+});
+
+describe('useJournal — per-profile isolation', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('entries written under profile A do not appear under profile B', () => {
+    // Seed profile state with two profiles, default active.
+    localStorage.setItem('outputfirst_profiles', JSON.stringify({
+      profiles: [
+        { id: DEFAULT_PROFILE_ID, primary: 'en', target: 'fr', createdAt: '2026-05-27T00:00:00.000Z' },
+        { id: 'profile-b', primary: 'en', target: 'es', createdAt: '2026-05-27T00:00:00.000Z' },
+      ],
+      activeProfileId: DEFAULT_PROFILE_ID,
+    }));
+
+    // Render BOTH useJournal and useLanguage in the same hook so we can switch.
+    const useBoth = () => ({ journal: useJournal(), lang: useLanguage() });
+    const { result } = renderHook(useBoth, { wrapper: makeWrapper() });
+
+    // Write an entry under profile A.
+    act(() => result.current.journal.startFreeWrite());
+    act(() => result.current.journal.saveFreeContent('apple banana cherry'));
+    expect(result.current.journal.totalWords).toBe(3);
+
+    // Switch to profile B — should see zero entries.
+    act(() => result.current.lang.switchProfile('profile-b'));
+    expect(result.current.journal.totalWords).toBe(0);
+
+    // Write a different entry under B.
+    act(() => result.current.journal.startFreeWrite());
+    act(() => result.current.journal.saveFreeContent('one two'));
+    expect(result.current.journal.totalWords).toBe(2);
+
+    // Back to A — A's count is unchanged.
+    act(() => result.current.lang.switchProfile(DEFAULT_PROFILE_ID));
+    expect(result.current.journal.totalWords).toBe(3);
+
+    // Verify each lives at its own prefixed key.
+    const aRaw = localStorage.getItem(profileKey(DEFAULT_PROFILE_ID, 'entries'));
+    const bRaw = localStorage.getItem(profileKey('profile-b', 'entries'));
+    expect(JSON.parse(aRaw!)).toHaveLength(1);
+    expect(JSON.parse(bRaw!)).toHaveLength(1);
+  });
+
+  it('one-shot legacy migration: outputfirst_entries → default profile key', () => {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify([
+      { id: 'legacy-1', date: today, content: 'word one two three four', createdAt: new Date().toISOString() },
+    ]));
+
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+
+    // Legacy entry was migrated and is visible via the hook.
+    expect(result.current.totalWords).toBe(5);
+    // Legacy key was cleaned up.
+    expect(localStorage.getItem(LEGACY_STORAGE_KEY)).toBeNull();
+    // Migration flag set.
+    expect(localStorage.getItem('outputfirst_profile_migrated_entries')).toBe('true');
+    // Data lives at the prefixed key.
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toHaveLength(1);
   });
 });
 

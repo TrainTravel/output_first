@@ -1,19 +1,52 @@
-import { useState, useEffect, useCallback } from 'react';
-import * as O from 'fp-ts/Option';
-import { pipe } from 'fp-ts/function';
+import { useState, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge, VocabPair } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
+import { useProfileStorage } from './useProfileStorage';
 
-const STORAGE_KEY = 'outputfirst_entries';
+/** Legacy unprefixed key — migrated to per-profile storage in Phase 1. */
+const LEGACY_STORAGE_KEY = 'outputfirst_entries';
+
+/**
+ * Internal storage shape — `createdAt` is serialized as an ISO string in
+ * localStorage. We re-hydrate it to a `Date` on read for the exposed API
+ * so callers don't need to know it ever crossed JSON.
+ */
+interface StoredJournalEntry extends Omit<JournalEntry, 'createdAt'> {
+  createdAt: string | Date;
+}
 
 const countWords = (text: string): number =>
   text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
 
 export function useJournal() {
   const queryClient = useQueryClient();
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [rawEntries, setRawEntries] = useProfileStorage<StoredJournalEntry[]>(
+    'entries',
+    [],
+    { legacyKey: LEGACY_STORAGE_KEY },
+  );
+  // Rehydrate Date instances so consumers can treat createdAt as a Date.
+  const entries = useMemo<JournalEntry[]>(() => rawEntries.map(e => ({
+    ...e,
+    createdAt: e.createdAt instanceof Date ? e.createdAt : new Date(e.createdAt),
+  })), [rawEntries]);
+
+  const setEntries = useCallback(
+    (next: JournalEntry[] | ((prev: JournalEntry[]) => JournalEntry[])) => {
+      setRawEntries(prev => {
+        const prevEntries = prev.map(e => ({
+          ...e,
+          createdAt: e.createdAt instanceof Date ? e.createdAt : new Date(e.createdAt),
+        })) as JournalEntry[];
+        const updated = typeof next === 'function' ? next(prevEntries) : next;
+        return updated as StoredJournalEntry[];
+      });
+    },
+    [setRawEntries],
+  );
+
   const [currentStep, setCurrentStep] = useState<JournalStep>('home');
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({});
   const [currentCycle, setCurrentCycle] = useState(0);
@@ -23,29 +56,6 @@ export function useJournal() {
   const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
   const [promptTemplate, setPromptTemplate] = useState('');
   const [promptVocab, setPromptVocab] = useState<VocabPair[] | undefined>(undefined);
-
-  // Load entries from localStorage
-  useEffect(() => {
-    pipe(
-      O.fromNullable(localStorage.getItem(STORAGE_KEY)),
-      O.flatMap(stored => {
-        try { return O.some(JSON.parse(stored) as JournalEntry[]); }
-        catch (e) { console.error('Failed to load entries:', e); return O.none; }
-      }),
-      O.map(parsed => parsed.map((e: JournalEntry) => ({
-        ...e,
-        createdAt: new Date(e.createdAt),
-      }))),
-      O.map(setEntries),
-    );
-  }, []);
-
-  // Save entries to localStorage
-  useEffect(() => {
-    if (entries.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    }
-  }, [entries]);
 
   const today = new Date().toISOString().split('T')?.[0] ?? '';
   const todayEntry = entries.find(e => e.date === today);

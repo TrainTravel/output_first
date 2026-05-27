@@ -2,10 +2,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { EmotionFrequencyNudge } from './EmotionFrequencyNudge';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { LanguageProvider, DEFAULT_PROFILE_ID } from '@/contexts/LanguageContext';
+import { profileKey } from '@/hooks/useProfileStorage';
+import { EMOTION_VOCAB_KEY } from '@/hooks/useEmotionVocab';
+import { FREQ_MIRROR_DISMISS_KEY } from '@/hooks/useFrequencyMirror';
 
-const VOCAB_KEY = 'outputfirst_emotion_vocab';
-const DISMISS_KEY = 'outputfirst_freq_mirror_dismissed';
+// Vocab and dismissals now live under per-profile namespaced keys.
+const VOCAB_KEY = profileKey(DEFAULT_PROFILE_ID, EMOTION_VOCAB_KEY);
+const DISMISS_KEY = profileKey(DEFAULT_PROFILE_ID, FREQ_MIRROR_DISMISS_KEY);
 
 function isoDaysAgo(days: number): string {
   const d = new Date(Date.now() - days * 24 * 60 * 60 * 1000);

@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import * as O from 'fp-ts/Option';
-import { pipe } from 'fp-ts/function';
+import { useProfileStorage } from './useProfileStorage';
 
 export interface SmallWin {
   id: string;
@@ -9,27 +7,17 @@ export interface SmallWin {
   createdAt: string;
 }
 
-const WINS_KEY = 'outputfirst_wins';
+/** Legacy unprefixed key — one-shot migrated to per-profile storage in Phase 1. */
+const LEGACY_WINS_KEY = 'outputfirst_wins';
+/** Per-profile storage suffix. */
+export const WINS_STORAGE_KEY = 'wins';
 
 export function useSmallWins() {
-  const [wins, setWins] = useState<SmallWin[]>([]);
-
-  useEffect(() => {
-    pipe(
-      O.fromNullable(localStorage.getItem(WINS_KEY)),
-      O.flatMap(stored => {
-        try { return O.some(JSON.parse(stored) as SmallWin[]); }
-        catch (e) { console.error('Failed to load wins:', e); return O.none; }
-      }),
-      O.map(setWins),
-    );
-  }, []);
-
-  useEffect(() => {
-    if (wins.length > 0) {
-      localStorage.setItem(WINS_KEY, JSON.stringify(wins));
-    }
-  }, [wins]);
+  const [wins, setWins] = useProfileStorage<SmallWin[]>(
+    WINS_STORAGE_KEY,
+    [],
+    { legacyKey: LEGACY_WINS_KEY },
+  );
 
   const today = new Date().toISOString().split('T')[0] ?? '';
   const winsToday = wins.filter(w => w.date === today);

@@ -1,8 +1,12 @@
+import { useCallback } from 'react';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { profileKey } from './useProfileStorage';
+import { EMOTION_VOCAB_KEY } from './useEmotionVocab';
 
-const VOCAB_KEY = 'outputfirst_emotion_vocab';
-const DISMISS_KEY = 'outputfirst_freq_mirror_dismissed';
+/** Suffix used by useProfileStorage for the dismissal map. */
+export const FREQ_MIRROR_DISMISS_KEY = 'freq_mirror_dismissed';
 
 /** How many cumulative uses count as "over-used". */
 export const USE_THRESHOLD = 5;
@@ -50,25 +54,33 @@ export interface FrequencyMirrorPick {
   count: number;
 }
 
-function loadVocab(): VocabState {
+function readJsonAt<T>(key: string, fallback: T): T {
   return pipe(
-    O.fromNullable(localStorage.getItem(VOCAB_KEY)),
+    O.fromNullable(localStorage.getItem(key)),
     O.flatMap(raw => {
-      try { return O.some(JSON.parse(raw) as VocabState); }
+      try { return O.some(JSON.parse(raw) as T); }
       catch { return O.none; }
     }),
-    O.getOrElse((): VocabState => ({ encountered: [], used: {}, lastSeen: {} })),
+    O.getOrElse(() => fallback),
   );
 }
 
-function loadDismissals(): Record<string, string> {
-  return pipe(
-    O.fromNullable(localStorage.getItem(DISMISS_KEY)),
-    O.flatMap(raw => {
-      try { return O.some(JSON.parse(raw) as Record<string, string>); }
-      catch { return O.none; }
-    }),
-    O.getOrElse((): Record<string, string> => ({})),
+/**
+ * Read the vocab state for a specific profile. Shares the same prefixed
+ * storage key as `useEmotionVocab` — there is exactly one source of truth
+ * per profile for emotion-vocab usage counts.
+ */
+function loadVocabFor(profileId: string): VocabState {
+  return readJsonAt<VocabState>(
+    profileKey(profileId, EMOTION_VOCAB_KEY),
+    { encountered: [], used: {}, lastSeen: {} },
+  );
+}
+
+function loadDismissalsFor(profileId: string): Record<string, string> {
+  return readJsonAt<Record<string, string>>(
+    profileKey(profileId, FREQ_MIRROR_DISMISS_KEY),
+    {},
   );
 }
 
@@ -123,19 +135,63 @@ export function pickOverUsedVagueWord(
   return candidates[0];
 }
 
-/** Convenience wrapper that reads both stores from localStorage. */
-export function getOverUsedVagueWord(now: Date = new Date()): FrequencyMirrorPick | null {
-  return pickOverUsedVagueWord(loadVocab(), loadDismissals(), now);
+/**
+ * Profile-scoped convenience wrapper. Reads both vocab and dismissal stores
+ * for the given profile. Prefer `useFrequencyMirror()` from React components
+ * — this function is for tests and other code paths where a hook is awkward.
+ */
+export function getOverUsedVagueWordForProfile(
+  profileId: string,
+  now: Date = new Date(),
+): FrequencyMirrorPick | null {
+  return pickOverUsedVagueWord(loadVocabFor(profileId), loadDismissalsFor(profileId), now);
 }
 
-/** Record a dismissal of `word` for the DISMISS_WINDOW_DAYS suppression window. */
-export function dismissWord(word: string, now: Date = new Date()): void {
-  const dismissals = loadDismissals();
+/**
+ * Record a dismissal of `word` for the DISMISS_WINDOW_DAYS suppression window,
+ * scoped to a specific profile.
+ */
+export function dismissWordForProfile(
+  profileId: string,
+  word: string,
+  now: Date = new Date(),
+): void {
+  const key = profileKey(profileId, FREQ_MIRROR_DISMISS_KEY);
+  const dismissals = loadDismissalsFor(profileId);
   dismissals[word] = now.toISOString().split('T')[0] ?? '';
-  localStorage.setItem(DISMISS_KEY, JSON.stringify(dismissals));
+  try {
+    localStorage.setItem(key, JSON.stringify(dismissals));
+  } catch {
+    /* quota / private mode — best effort */
+  }
 }
 
-/** Test helper — clear all dismissals. */
+/**
+ * React hook providing profile-aware accessors. Calls `useLanguage()` to
+ * resolve the active profile id, so components don't have to thread it.
+ */
+export function useFrequencyMirror() {
+  const { activeProfileId } = useLanguage();
+
+  const getOverUsedVagueWord = useCallback(
+    (now?: Date) => getOverUsedVagueWordForProfile(activeProfileId, now),
+    [activeProfileId],
+  );
+
+  const dismissWord = useCallback(
+    (word: string, now?: Date) => dismissWordForProfile(activeProfileId, word, now),
+    [activeProfileId],
+  );
+
+  return { getOverUsedVagueWord, dismissWord };
+}
+
+/** Test helper — clear all dismissals across every profile. */
 export function _clearDismissalsForTest(): void {
-  localStorage.removeItem(DISMISS_KEY);
+  const toRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.endsWith(`_${FREQ_MIRROR_DISMISS_KEY}`)) toRemove.push(k);
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
 }

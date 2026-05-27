@@ -13,17 +13,17 @@ See `tasks/plan.md` for design rationale + dependency graph.
 - [x] **0.7** Verify `tsc --noEmit` + `vitest run` green (208/208)
 - [x] **0.8** Open PR
 
-## Phase 1 — `useProfileStorage` helper + migrate per-profile hooks
+## Phase 1 — `useProfileStorage` helper + migrate per-profile hooks ✓
 
-- [ ] **1.1** Build `useProfileStorage<T>(key, defaultValue)` in `src/hooks/useProfileStorage.ts`
-- [ ] **1.2** Migrate `useJournal` to `useProfileStorage('entries', ...)`
-- [ ] **1.3** Migrate `useEmotionVocab` to `useProfileStorage('emotion_vocab', ...)`
-- [ ] **1.4** Migrate `useFrequencyMirror` (vocab + dismiss keys both)
-- [ ] **1.5** Migrate `useTodoList`
-- [ ] **1.6** Migrate `useSmallWins`
-- [ ] **1.7** Add cross-profile isolation tests per hook
-- [ ] **1.8** Verify `tsc --noEmit` + `vitest run` green
-- [ ] **1.9** Open PR (may split into 2 if too large)
+- [x] **1.1** Build `useProfileStorage<T>(key, defaultValue)` in `src/hooks/useProfileStorage.ts`
+- [x] **1.2** Migrate `useJournal` to `useProfileStorage('entries', ...)`
+- [x] **1.3** Migrate `useEmotionVocab` to `useProfileStorage('emotion_vocab', ...)`
+- [x] **1.4** Migrate `useFrequencyMirror` (vocab + dismiss keys both)
+- [x] **1.5** Migrate `useTodoList`
+- [x] **1.6** Migrate `useSmallWins`
+- [x] **1.7** Add cross-profile isolation tests per hook
+- [x] **1.8** Verify `tsc --noEmit` + `vitest run` green (237 passed, was 208)
+- [x] **1.9** Open PR (may split into 2 if too large)
 
 ## Phase 2 — HomeScreen profile picker
 

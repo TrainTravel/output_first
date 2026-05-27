@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { getOverUsedVagueWord, dismissWord } from '@/hooks/useFrequencyMirror';
+import { useFrequencyMirror } from '@/hooks/useFrequencyMirror';
 
 interface EmotionFrequencyNudgeProps {
   onOpenVocabulary: () => void;
@@ -17,6 +17,7 @@ interface EmotionFrequencyNudgeProps {
  */
 export function EmotionFrequencyNudge({ onOpenVocabulary }: EmotionFrequencyNudgeProps) {
   const { t } = useLanguage();
+  const { getOverUsedVagueWord, dismissWord } = useFrequencyMirror();
   const [pick, setPick] = useState(() => getOverUsedVagueWord());
 
   if (!pick) return null;

@@ -1,32 +1,22 @@
-import { useState, useCallback, useMemo } from 'react';
-import * as O from 'fp-ts/Option';
-import { pipe } from 'fp-ts/function';
+import { useCallback, useMemo } from 'react';
 import { EMOTION_SUGGESTIONS, EmotionWord, EmotionSuggestion } from '@/types/journal';
+import { useProfileStorage } from './useProfileStorage';
 
-const STORAGE_KEY = 'outputfirst_emotion_vocab';
+/** Legacy unprefixed key — one-shot migrated to per-profile storage in Phase 1. */
+const LEGACY_STORAGE_KEY = 'outputfirst_emotion_vocab';
+/** Per-profile storage suffix used by useProfileStorage. */
+export const EMOTION_VOCAB_KEY = 'emotion_vocab';
+
 const CATEGORIES_PER_SESSION = 4;
 const WORDS_PER_CATEGORY = 4;
 
-interface VocabState {
+export interface VocabState {
   encountered: string[]; // word keys (en)
   used: Record<string, number>; // word key -> use count
   lastSeen: Record<string, string>; // word key -> ISO date
 }
 
-function loadState(): VocabState {
-  return pipe(
-    O.fromNullable(localStorage.getItem(STORAGE_KEY)),
-    O.flatMap(raw => {
-      try { return O.some(JSON.parse(raw) as VocabState); }
-      catch { return O.none; }
-    }),
-    O.getOrElse((): VocabState => ({ encountered: [], used: {}, lastSeen: {} })),
-  );
-}
-
-function saveState(state: VocabState) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+const EMPTY_STATE: VocabState = { encountered: [], used: {}, lastSeen: {} };
 
 /** Deterministic seed from day-of-year */
 function getDayOfYear(): number {
@@ -64,9 +54,13 @@ export interface VocabStats {
 }
 
 export function useEmotionVocab() {
-  const [state, setState] = useState<VocabState>(loadState);
+  const [state, setState] = useProfileStorage<VocabState>(
+    EMOTION_VOCAB_KEY,
+    () => ({ ...EMPTY_STATE }),
+    { legacyKey: LEGACY_STORAGE_KEY },
+  );
 
-  const allWords = useMemo(() => 
+  const allWords = useMemo(() =>
     EMOTION_SUGGESTIONS.flatMap(g => g.emotions),
     []
   );
@@ -113,21 +107,19 @@ export function useEmotionVocab() {
       const today = new Date().toISOString().split('T')[0];
       const newEncountered = new Set(prev.encountered);
       const newLastSeen = { ...prev.lastSeen };
-      
+
       words.forEach(w => {
         newEncountered.add(w.en);
         newLastSeen[w.en] = today;
       });
 
-      const next = {
+      return {
         ...prev,
         encountered: Array.from(newEncountered),
         lastSeen: newLastSeen,
       };
-      saveState(next);
-      return next;
     });
-  }, []);
+  }, [setState]);
 
   const markUsed = useCallback((words: EmotionWord[]) => {
     setState(prev => {
@@ -135,12 +127,9 @@ export function useEmotionVocab() {
       words.forEach(w => {
         newUsed[w.en] = (newUsed[w.en] || 0) + 1;
       });
-
-      const next = { ...prev, used: newUsed };
-      saveState(next);
-      return next;
+      return { ...prev, used: newUsed };
     });
-  }, []);
+  }, [setState]);
 
   const isFirstEncounter = useCallback((word: EmotionWord): boolean => {
     return !state.encountered.includes(word.en);
@@ -169,6 +158,9 @@ export function useEmotionVocab() {
   }, [state]);
 
   return {
+    /** Raw per-profile vocab state. Use this instead of reading the
+     *  underlying localStorage key directly. */
+    state,
     getSessionWords,
     markEncountered,
     markUsed,

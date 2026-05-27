@@ -13,6 +13,32 @@ Removed:
 
 The `SelfCompassionPractice` component itself stays in the codebase — still used by `ReflectionScreen`.
 
+---
+### Learning Profiles — Phase 1 (per-profile hook storage)
+
+**Per-profile data isolation lands under the hood. No new UI yet — that's Phase 2.**
+
+Builds on Phase 0's `Profile` model. Adds a `useProfileStorage<T>(suffix, default, { legacyKey? })` hook that namespaces localStorage under `outputfirst_profile_<activeProfileId>_<suffix>` and re-hydrates automatically when the active profile changes. Five hooks migrated to it so each profile gets its own journal entries, emotion vocab, frequency-mirror dismissals, todos, and small wins.
+
+What's wired:
+- New `src/hooks/useProfileStorage.ts` — fp-ts/Option hydration, lazy default support, `useState`-shaped API, switches keys on `activeProfileId` change without a stale closure.
+- `useJournal` — `outputfirst_entries` → `outputfirst_profile_<id>_entries`
+- `useEmotionVocab` — `outputfirst_emotion_vocab` → `outputfirst_profile_<id>_emotion_vocab`. Now also exposes the raw `state` so `VocabularyScreen` doesn't bypass via direct localStorage reads.
+- `useFrequencyMirror` — `outputfirst_freq_mirror_dismissed` → `outputfirst_profile_<id>_freq_mirror_dismissed`. Vocab reads also share the per-profile `emotion_vocab` key (one source of truth per profile). The non-hook helpers (`getOverUsedVagueWordForProfile`, `dismissWordForProfile`) now take an explicit `profileId` and the React-facing surface is a thin `useFrequencyMirror()` hook that grabs the active id from context.
+- `useTodoList` — `outputfirst_todos` → `outputfirst_profile_<id>_todos`
+- `useSmallWins` — `outputfirst_wins` → `outputfirst_profile_<id>_wins`
+
+One-shot legacy migration: on first mount, if the active profile is the default (`'default'`) AND the unprefixed key still exists, the data is moved to the prefixed key and the old key removed. A `outputfirst_profile_migrated_<suffix>` flag guards against re-migration. Existing-user data flows transparently into the default profile.
+
+**ADHD-Friendly:**
+- Per-profile isolation means switching from "French journaling" to "Spanish journaling" doesn't drag old emotional state, todos, or wins into the new context. Each profile is a clean cognitive room.
+- Single-profile users see zero behavior change. Multi-profile users won't accidentally see Spanish wins under French sessions.
+
+Tests: 237 passing (was 208 pre-Phase-1). New: 14 for `useProfileStorage`, 7 for `useTodoList` (no prior tests), 2 per migrated hook covering profile isolation + legacy data migration. `tsc --noEmit` clean. No new lint errors.
+
+What's deferred to Phase 2: HomeScreen `ProfileChip` UI + add/switch/archive flows.
+
+---
 
 ### Learning Profiles — Phase 0 (data model only, no UI yet)
 

@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import * as O from 'fp-ts/Option';
-import { pipe } from 'fp-ts/function';
+import { useProfileStorage } from './useProfileStorage';
 
 export type Priority = 'A' | 'B' | 'C';
 
@@ -14,25 +12,17 @@ export interface TodoItem {
   createdAt: string;
 }
 
-const TODOS_KEY = 'outputfirst_todos';
+/** Legacy unprefixed key — one-shot migrated to per-profile storage in Phase 1. */
+const LEGACY_TODOS_KEY = 'outputfirst_todos';
+/** Per-profile storage suffix. */
+export const TODOS_STORAGE_KEY = 'todos';
 
 export function useTodoList() {
-  const [items, setItems] = useState<TodoItem[]>([]);
-
-  useEffect(() => {
-    pipe(
-      O.fromNullable(localStorage.getItem(TODOS_KEY)),
-      O.flatMap(stored => {
-        try { return O.some(JSON.parse(stored) as TodoItem[]); }
-        catch { return O.none; }
-      }),
-      O.map(setItems),
-    );
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(TODOS_KEY, JSON.stringify(items));
-  }, [items]);
+  const [items, setItems] = useProfileStorage<TodoItem[]>(
+    TODOS_STORAGE_KEY,
+    [],
+    { legacyKey: LEGACY_TODOS_KEY },
+  );
 
   const addItem = (text: string): string => {
     const id = crypto.randomUUID();
