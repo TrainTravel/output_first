@@ -34,35 +34,10 @@ test.describe('HomeScreen — SelfCompassionSeed', () => {
   });
 });
 
-// ---- ProgressScreen: SelfCompassionPractice ----
-
-test.describe('ProgressScreen — SelfCompassionPractice', () => {
-  test.beforeEach(async ({ page }) => {
-    await setFrenchLanguage(page);
-    await page.goto('/');
-  });
-
-  test('practice trigger is visible on ProgressScreen, content collapsed by default', async ({ page }) => {
-    // Navigate to ProgressScreen by clicking the compact progress card
-    await page.locator('button').filter({ hasText: /mots/ }).first().click();
-
-    await expect(page.locator('[data-testid="compassion-practice"]')).toBeVisible();
-    await expect(page.locator('[data-testid="compassion-practice-content"]')).toBeHidden();
-  });
-
-  test('clicking trigger expands the practice card', async ({ page }) => {
-    await page.locator('button').filter({ hasText: /mots/ }).first().click();
-
-    // Open the collapsible
-    await page.locator('[data-testid="compassion-practice"]').click();
-
-    await expect(page.locator('[data-testid="compassion-practice-content"]')).toBeVisible();
-    // A phrase should be shown
-    await expect(page.locator('[data-testid="compassion-practice-content"]')).not.toBeEmpty();
-  });
-});
-
 // ---- ReflectionScreen: SelfCompassionPractice ----
+// Note: the ProgressScreen variant of SelfCompassionPractice was removed.
+// SelfCompassionPractice still appears on ReflectionScreen when the
+// active emotion is in HARD_EMOTIONS (defaultOpen=true), tested below.
 
 test.describe('ReflectionScreen — SelfCompassionPractice', () => {
   test('compassion card state on ReflectionScreen matches selected emotion', async ({ page }) => {
