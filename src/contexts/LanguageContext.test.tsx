@@ -1,9 +1,13 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { LanguageProvider, useLanguage, DEFAULT_PAIR, _resetFallbackWarnings } from './LanguageContext';
+import type { PrimaryLang } from './LanguageContext';
 import type { ReactNode } from 'react';
 
+/** Legacy key — still readable for one-shot migration. */
 const STORAGE_KEY = 'outputfirst_lang_pair';
+/** New canonical key — where profile state actually lives now. */
+const PROFILES_STORAGE_KEY = 'outputfirst_profiles';
 
 beforeEach(() => {
   localStorage.clear();
@@ -144,11 +148,14 @@ describe('setLangPair — invariant enforcement', () => {
 });
 
 describe('setLangPair — persistence', () => {
-  it('writes the new pair to localStorage', () => {
+  it('writes the new pair to localStorage (via the active profile)', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     act(() => result.current.setLangPair({ primary: 'es', target: 'zh-Hant' }));
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
-    expect(stored).toEqual({ primary: 'es', target: 'zh-Hant' });
+    const stored = JSON.parse(localStorage.getItem(PROFILES_STORAGE_KEY) ?? 'null');
+    expect(stored).not.toBeNull();
+    const active = stored.profiles.find((p: { id: string }) => p.id === stored.activeProfileId);
+    expect(active.primary).toBe('es');
+    expect(active.target).toBe('zh-Hant');
   });
 });
 
@@ -345,5 +352,125 @@ describe('stringFor() — dev-mode fallback warning', () => {
     result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
     result.current.t({ fr: 'Bonjour', en: 'Hello', es: 'Hola' });
     expect(console.warn).toHaveBeenCalledTimes(1);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Phase 0: profile lifecycle + legacy migration tests
+// ─────────────────────────────────────────────────────────────
+
+describe('profiles — legacy migration from outputfirst_lang_pair', () => {
+  it('on first hydrate, migrates a valid legacy pair into one profile and deletes the old key', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'es' }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.profiles).toHaveLength(1);
+    expect(result.current.profiles[0].primary).toBe('en');
+    expect(result.current.profiles[0].target).toBe('es');
+    expect(result.current.activeProfileId).toBe(result.current.profiles[0].id);
+    // Legacy key cleaned up.
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    // New key populated.
+    expect(localStorage.getItem('outputfirst_profiles')).not.toBeNull();
+  });
+
+  it('on first hydrate with no storage, creates a default profile', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.profiles).toHaveLength(1);
+    expect(result.current.profiles[0].primary).toBe(DEFAULT_PAIR.primary);
+    expect(result.current.profiles[0].target).toBe(DEFAULT_PAIR.target);
+  });
+
+  it('prefers new storage when both old + new exist (no double-migration)', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'es' }));
+    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({
+      profiles: [{ id: 'p-existing', primary: 'fr', target: 'ja', createdAt: '2026-01-01T00:00:00Z' }],
+      activeProfileId: 'p-existing',
+    }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.profiles).toHaveLength(1);
+    expect(result.current.profiles[0].id).toBe('p-existing');
+    expect(result.current.pair).toEqual({ primary: 'fr', target: 'ja' });
+    // Legacy key is NOT touched when new storage was the source.
+    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
+  });
+});
+
+describe('profiles — lifecycle (create / switch / archive / rename)', () => {
+  it('createProfile adds a new profile and switches to it', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const before = result.current.activeProfileId;
+    let createdId = '';
+    act(() => {
+      const p = result.current.createProfile({ primary: 'en', target: 'ja', name: 'Japanese' });
+      createdId = p.id;
+    });
+    expect(result.current.profiles).toHaveLength(2);
+    expect(result.current.activeProfileId).toBe(createdId);
+    expect(result.current.activeProfileId).not.toBe(before);
+    expect(result.current.pair).toEqual({ primary: 'en', target: 'ja' });
+  });
+
+  it('createProfile throws when primary === target', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      act(() => { result.current.createProfile({ primary: 'fr' as PrimaryLang, target: 'fr' as any }); });
+    }).toThrow(/must differ/);
+  });
+
+  it('switchProfile changes activeProfileId to an existing non-archived profile', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    let secondId = '';
+    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja' }).id; });
+    const firstId = result.current.profiles.find(p => p.id !== secondId)?.id ?? '';
+    act(() => { result.current.switchProfile(firstId); });
+    expect(result.current.activeProfileId).toBe(firstId);
+  });
+
+  it('switchProfile is a no-op for an unknown id', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const before = result.current.activeProfileId;
+    act(() => { result.current.switchProfile('does-not-exist'); });
+    expect(result.current.activeProfileId).toBe(before);
+  });
+
+  it('archiveProfile marks archivedAt and jumps active to the next non-archived', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    let secondId = '';
+    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja' }).id; });
+    // Active is the newly-created Japanese profile. Archive it.
+    act(() => { result.current.archiveProfile(secondId); });
+    const archived = result.current.profiles.find(p => p.id === secondId);
+    expect(archived?.archivedAt).toBeDefined();
+    // Active jumped to the original (non-archived) profile.
+    expect(result.current.activeProfileId).not.toBe(secondId);
+    expect(result.current.profiles.find(p => p.id === result.current.activeProfileId)?.archivedAt).toBeUndefined();
+  });
+
+  it('renameProfile updates only the name field on the target profile', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const id = result.current.activeProfileId;
+    act(() => { result.current.renameProfile(id, 'My French'); });
+    const renamed = result.current.profiles.find(p => p.id === id);
+    expect(renamed?.name).toBe('My French');
+  });
+
+  it('persisting + reloading round-trips the full profile list and active id', () => {
+    // Round 1: create a second profile and rename the first.
+    const { result, unmount } = renderHook(() => useLanguage(), { wrapper });
+    const firstId = result.current.activeProfileId;
+    act(() => { result.current.renameProfile(firstId, 'French'); });
+    let secondId = '';
+    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja', name: 'Japanese' }).id; });
+    // Switch back to first.
+    act(() => { result.current.switchProfile(firstId); });
+    unmount();
+
+    // Round 2: fresh provider re-hydrates from localStorage.
+    const { result: result2 } = renderHook(() => useLanguage(), { wrapper });
+    expect(result2.current.profiles).toHaveLength(2);
+    expect(result2.current.activeProfileId).toBe(firstId);
+    expect(result2.current.profiles.find(p => p.id === firstId)?.name).toBe('French');
+    expect(result2.current.profiles.find(p => p.id === secondId)?.name).toBe('Japanese');
   });
 });

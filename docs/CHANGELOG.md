@@ -2,6 +2,29 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Learning Profiles — Phase 0 (data model only, no UI yet)
+
+**Internal refactor laying the groundwork for sequential learning profiles (Duolingo-style).**
+
+`LanguageContext` now stores `{ profiles: Profile[], activeProfileId }` at `outputfirst_profiles` instead of a single pair at `outputfirst_lang_pair`. Behaviour for existing users is unchanged — their old pair is migrated to one default profile on first hydrate, and the legacy storage key is cleaned up.
+
+What's new under the hood:
+- New `Profile` type: `{ id, primary, target, createdAt, name?, archivedAt? }`
+- Migration path: legacy `outputfirst_lang_pair` → one profile with id `'default'`, old key removed
+- Existing API (`pair`, `targetLang`, `primaryLang`, `setLangPair`, `toggleLanguage`) now reads from / writes to the active profile — drop-in, no caller changes
+- New API exposed for upcoming UI work: `profiles`, `activeProfileId`, `createProfile()`, `switchProfile()`, `archiveProfile()`, `renameProfile()`
+- 10 new tests added (migration + create/switch/archive/rename/persistence round-trip). 208/208 suite green.
+
+What's deferred to later phases (see `tasks/plan.md`):
+- Phase 1: `useProfileStorage` helper + migrate the 5 per-profile hooks (journal, vocab, freq-mirror, todos, wins)
+- Phase 2: HomeScreen profile-picker UI
+- Phase 3: Total word count + stat-strip polish
+- Phase 4: Onboarding + profile-management UI
+
+This PR is intentionally non-visible: a Profile data model with no UI yet to create a second one. The next PR makes it usable.
+
+---
+
 ### CI — E2E speedup + cancellation fix
 
 **Diagnosis:** the previous ~50 CI runs were all marked `cancelled` instead of completing. Root cause was the combination of (a) no `concurrency` group on the workflow, so every force-push enqueued a new run that competed for queue slots, and (b) serial test execution (workers: 1 in CI) that made each run slow enough that newer pushes kept catching it mid-run.
