@@ -28,6 +28,17 @@ Files in this PR:
 Note: the hard-coded `isFr ? : isEs ? : ...` ternaries in ReflectionScreen and FeedbackScreen are pre-existing technical debt (they are not `t()` calls). They are outside the scope of this chrome-translation pass and are tracked separately.
 
 Register matches PR #40 + PR #44.
+---
+### Chrome translation — thought management (Brain Dump + Clusters)
+
+**Adds ja / zh-Hans / zh-Hant keys to the brain-dump capture and cluster-list screens.** ThoughtGardenScreen is large enough (~31 sites) that it gets its own PR.
+
+Files in this PR:
+- `BrainDumpScreen.tsx` — Back, thought counter, "Brain Dump" bilingual anchor, "One thought at a time" helper, Add button
+- `ClustersScreen.tsx` — Back, "My Clusters" anchor, intro tagline, create-cluster input + button, Loading + empty states
+- `ClusterDetailScreen.tsx` — Back, Cluster fallback title (2 sites), "Linked Thoughts" anchor, Loading + empty states, "Discuss this cluster" CTA
+
+Register matches PR #40 + PR #44 + PR #45.
 
 ---
 
