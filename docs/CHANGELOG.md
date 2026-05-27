@@ -53,6 +53,17 @@ The CLAUDE.md addition is duplicated across PR #47 and PR #48 by design — whic
 
 Register matches PR #40 + PR #44+: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge.
 ---
+### Chrome translation — Todo List + Tiny Experiments
+
+**Adds ja / zh-Hans / zh-Hant keys to the ABC todo list and Tiny Experiment screens.**
+
+Files in this PR:
+- `TodoListScreen.tsx` — Back, "ABC List" anchor, input placeholder + Add + camera button title, 3 priority section labels (Urgent + Important / Important / Everything else), all 4 image-extract toast messages, clarification card (Your answer / Add / Skip), empty + per-section-empty states
+- `TinyExperimentScreen.tsx` — Back, "My Tiny Experiments" anchor, 3 duration labels (1 week / 2 weeks / 1 month), creation flow ("What are you curious about?" / "I will..." / "for..." / Start experiment), active flow (Day N of M template / "Did this pull you in today?" / Checked in today / Pause), reflection flow ("Your experiment is complete!" / What worked / What was missing / What next + their placeholders / Complete & archive), past-experiments list (Past experiments / completed / paused / Resume tooltip)
+
+~37 t()/bilingual() sites total. Net-new translations.
+
+Register matches PRs #40 / #44–#50.
 ### Chrome translation — settings, vocabulary, self-compassion
 
 **Final pass of the chrome translation sweep.** Adds ja / zh-Hans / zh-Hant keys to settings screens, vocabulary view, theme/font pickers, and the self-compassion components.
