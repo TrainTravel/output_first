@@ -90,7 +90,7 @@ function ClarificationCard({
           value={answer}
           onChange={e => setAnswer(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && answer.trim()) onSubmit(answer.trim()); }}
-          placeholder={t({ fr: 'Votre réponse...', en: 'Your answer...', es: 'Tu respuesta...' }).primary}
+          placeholder={t({ fr: 'Votre réponse...', en: 'Your answer...', es: 'Tu respuesta...', ja: 'あなたの答え...', 'zh-Hans': '你的回答...', 'zh-Hant': '你的回答...' }).primary}
           className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/50 text-sm"
           autoFocus
         />
@@ -100,10 +100,10 @@ function ClarificationCard({
           onClick={() => { if (answer.trim()) onSubmit(answer.trim()); }}
           disabled={!answer.trim()}
         >
-          {t({ fr: 'Ajouter', en: 'Add', es: 'Añadir' }).primary}
+          {t({ fr: 'Ajouter', en: 'Add', es: 'Añadir', ja: '追加', 'zh-Hans': '添加', 'zh-Hant': '新增' }).primary}
         </Button>
         <Button variant="ghost" size="sm" onClick={onSkip}>
-          {t({ fr: 'Passer', en: 'Skip', es: 'Saltar' }).primary}
+          {t({ fr: 'Passer', en: 'Skip', es: 'Saltar', ja: 'スキップ', 'zh-Hans': '跳过', 'zh-Hant': '跳過' }).primary}
         </Button>
       </div>
     </div>
@@ -180,7 +180,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
       await callImageExtract(base64, file.type);
     } catch (err) {
       console.error('Image upload error:', err);
-      toast.error(t({ fr: 'Erreur lors du traitement de l\'image', en: 'Error processing image', es: 'Error al procesar la imagen' }).primary);
+      toast.error(t({ fr: 'Erreur lors du traitement de l\'image', en: 'Error processing image', es: 'Error al procesar la imagen', ja: '画像の処理中にエラーが発生しました', 'zh-Hans': '处理图片时出错', 'zh-Hant': '處理圖片時出錯' }).primary);
       setImageProcessing(false);
     }
   };
@@ -200,7 +200,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        toast.error((errData as { error?: string }).error || t({ fr: 'Erreur du service IA', en: 'AI service error', es: 'Error del servicio IA' }).primary);
+        toast.error((errData as { error?: string }).error || t({ fr: 'Erreur du service IA', en: 'AI service error', es: 'Error del servicio IA', ja: 'AIサービスのエラー', 'zh-Hans': 'AI 服务出错', 'zh-Hant': 'AI 服務出錯' }).primary);
         setImageProcessing(false);
         return;
       }
@@ -223,17 +223,17 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         }
         toast.success(
           t(
-            { fr: `${data.tasks.length} tâche(s) ajoutée(s)`, en: `${data.tasks.length} task(s) added`, es: `${data.tasks.length} tarea(s) añadida(s)` },
+            { fr: `${data.tasks.length} tâche(s) ajoutée(s)`, en: `${data.tasks.length} task(s) added`, es: `${data.tasks.length} tarea(s) añadida(s)`, ja: `${data.tasks.length}件のタスクを追加しました`, 'zh-Hans': `已添加 ${data.tasks.length} 项任务`, 'zh-Hant': `已新增 ${data.tasks.length} 項任務` },
           ).primary,
         );
       } else {
-        toast(t({ fr: 'Aucune tâche détectée', en: 'No tasks detected', es: 'No se detectaron tareas' }).primary);
+        toast(t({ fr: 'Aucune tâche détectée', en: 'No tasks detected', es: 'No se detectaron tareas', ja: 'タスクは検出されませんでした', 'zh-Hans': '未识别到任务', 'zh-Hant': '未識別到任務' }).primary);
       }
 
       clearImageState();
     } catch (err) {
       console.error('Image extract error:', err);
-      toast.error(t({ fr: 'Erreur lors du traitement', en: 'Processing error', es: 'Error de procesamiento' }).primary);
+      toast.error(t({ fr: 'Erreur lors du traitement', en: 'Processing error', es: 'Error de procesamiento', ja: '処理中にエラーが発生しました', 'zh-Hans': '处理时出错', 'zh-Hant': '處理時出錯' }).primary);
       setImageProcessing(false);
     }
   };
@@ -255,9 +255,9 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
   // --- Render helpers ---
   const priorities: Priority[] = ['A', 'B', 'C'];
   const sectionLabels: Record<Priority, string> = {
-    A: t({ fr: 'Urgent + Important', en: 'Urgent + Important', es: 'Urgente + Importante' }).primary,
-    B: t({ fr: 'Important', en: 'Important', es: 'Importante' }).primary,
-    C: t({ fr: 'Le reste', en: 'Everything else', es: 'Todo lo demás' }).primary,
+    A: t({ fr: 'Urgent + Important', en: 'Urgent + Important', es: 'Urgente + Importante', ja: '緊急 ＋ 重要', 'zh-Hans': '紧急 + 重要', 'zh-Hant': '緊急 + 重要' }).primary,
+    B: t({ fr: 'Important', en: 'Important', es: 'Importante', ja: '重要', 'zh-Hans': '重要', 'zh-Hant': '重要' }).primary,
+    C: t({ fr: 'Le reste', en: 'Everything else', es: 'Todo lo demás', ja: 'その他', 'zh-Hans': '其他', 'zh-Hant': '其他' }).primary,
   };
 
   const isEmpty = items.length === 0;
@@ -270,10 +270,10 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" />
-            {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+            {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
           </Button>
           <h2 className="font-serif text-xl text-foreground">
-            {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C' })}
+            {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C', ja: 'A/B/C リスト', 'zh-Hans': 'A/B/C 清单', 'zh-Hant': 'A/B/C 清單' })}
           </h2>
           <div className="w-16" />
         </div>
@@ -286,7 +286,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleAdd(); }}
-            placeholder={t({ fr: 'Nouvelle tâche...', en: 'New task...', es: 'Nueva tarea...' }).primary}
+            placeholder={t({ fr: 'Nouvelle tâche...', en: 'New task...', es: 'Nueva tarea...', ja: '新しいタスク...', 'zh-Hans': '新任务...', 'zh-Hant': '新任務...' }).primary}
             className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/50 text-sm"
             autoFocus
           />
@@ -297,7 +297,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
             onClick={() => fileInputRef.current?.click()}
             disabled={imageProcessing}
             className="h-12 w-12 rounded-xl flex-shrink-0"
-            title={t({ fr: 'Ajouter depuis une image', en: 'Add from image', es: 'Añadir desde imagen' }).primary}
+            title={t({ fr: 'Ajouter depuis une image', en: 'Add from image', es: 'Añadir desde imagen', ja: '画像から追加', 'zh-Hans': '从图片添加', 'zh-Hant': '從圖片新增' }).primary}
           >
             {imageProcessing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -338,7 +338,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
         <div className="space-y-1">
           {isEmpty && (
             <p className="text-center text-muted-foreground/60 text-sm italic py-4">
-              {t({ fr: 'Aucune tâche — la tête est libre.', en: 'No tasks — mind is clear.', es: 'Sin tareas — mente libre.' }).primary}
+              {t({ fr: 'Aucune tâche — la tête est libre.', en: 'No tasks — mind is clear.', es: 'Sin tareas — mente libre.', ja: 'タスクなし — 頭はすっきりしています。', 'zh-Hans': '没有任务 — 思绪清明。', 'zh-Hant': '沒有任務 — 思緒清明。' }).primary}
             </p>
           )}
           {priorities.map(priority => {
@@ -352,7 +352,7 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
                 <SectionHeader priority={priority} label={sectionLabels[priority]} />
                 {filtered.length === 0 ? (
                   <p className="text-xs text-muted-foreground/40 italic pl-4 py-1">
-                    {t({ fr: 'Vide', en: 'Empty', es: 'Vacío' }).primary}
+                    {t({ fr: 'Vide', en: 'Empty', es: 'Vacío', ja: '空', 'zh-Hans': '空', 'zh-Hant': '空' }).primary}
                   </p>
                 ) : (
                   <ul className="space-y-1 mt-1">
