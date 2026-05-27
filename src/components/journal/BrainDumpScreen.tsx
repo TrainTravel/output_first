@@ -87,22 +87,22 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Zap className="w-4 h-4" />
-          <span>{thoughts.length} {t({ fr: 'pensées', en: 'thoughts', es: 'pensamientos' }).primary}</span>
+          <span>{thoughts.length} {t({ fr: 'pensées', en: 'thoughts', es: 'pensamientos', ja: '件の思考', 'zh-Hans': '条想法', 'zh-Hant': '條想法' }).primary}</span>
         </div>
       </div>
 
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental' })}
+          {bilingual({ fr: 'Vide-tête', en: 'Brain Dump', es: 'Volcado mental', ja: '脳のメモ', 'zh-Hans': '想法清空', 'zh-Hant': '想法清空' })}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
-            { fr: 'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.', en: 'One thought at a time. Press Enter to save.', es: 'Un pensamiento a la vez. Presiona Enter para guardar.' }
+            { fr: 'Une pensée à la fois. Appuyez sur Entrée pour sauvegarder.', en: 'One thought at a time. Press Enter to save.', es: 'Un pensamiento a la vez. Presiona Enter para guardar.', ja: '一度に一つの思考を。Enter で保存します。', 'zh-Hans': '一次记一条想法，按 Enter 保存。', 'zh-Hant': '一次記一條想法，按 Enter 儲存。' }
           ).primary}
         </p>
 
@@ -122,7 +122,7 @@ export function BrainDumpScreen({ onBack }: BrainDumpScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar' }).primary}
+            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar', ja: '追加', 'zh-Hans': '添加', 'zh-Hant': '新增' }).primary}
           </Button>
         </div>
 
