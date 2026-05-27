@@ -2,6 +2,16 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Chrome translation — Focus Plan family
+
+**Adds ja / zh-Hans / zh-Hant keys to the Focus Plan flow** (the "One Thing" + Request Filter + Pomodoro-of-steps tool).
+
+Files in this PR:
+- `FocusPlanScreen.tsx` — Back, "One Thing" anchor, Filter / Focus tab labels
+- `FocusPlanTab.tsx` — three phase screens (Naming / Breaking / Stepping), goal placeholder, 4 example step placeholders, all CTAs (Continue / First step / Nice one! / Ready for the next one? / Stop here / Again), all completion + reminder copy
+- `RequestFilterTab.tsx` — three phase screens (Dumping / Sorting / Reflecting), 8 example task placeholders, drag-instruction copy, 3 bucket labels (Yes / Expand / Not Now), summary template, "Pick your One Thing" + "To reframe" headings, reframe nudge ("Can you make it smaller?"), Not-Now compassionate dismissal ("These will wait."), Start over
+
+Register matches PRs #40 / #44–#49.
 ### Chrome translation — tools (Small Wins, Sand Timer, Zen Garden, Emotion drawer + nudge)
 
 **Adds ja / zh-Hans / zh-Hant keys to five tool surfaces** that weren't part of the original Tier 2 sweep — these are net-new translations authored to match the established register.
