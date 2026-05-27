@@ -128,7 +128,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected &&
     feedback?.emotionalGranularity?.alternatives?.length > 0;
 
-  const headerText = t({ fr: 'Un moment de clarté', en: 'A moment of clarity', es: 'Un momento de claridad' });
+  const headerText = t({ fr: 'Un moment de clarté', en: 'A moment of clarity', es: 'Un momento de claridad', ja: '澄んだひととき', 'zh-Hans': '清明片刻', 'zh-Hant': '清明片刻' });
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
@@ -193,7 +193,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                   <div className="flex items-center gap-2 text-foreground">
                     <Sparkles className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      {bilingual({ fr: 'Nommer avec précision', en: 'Naming with precision', es: 'Nombrar con precisión', 'zh-Hans': '精准命名', 'zh-Hant': '精準命名' })}
+                      {bilingual({ fr: 'Nommer avec précision', en: 'Naming with precision', es: 'Nombrar con precisión', ja: '言葉で正確に表す', 'zh-Hans': '精准命名', 'zh-Hant': '精準命名' })}
                     </span>
                   </div>
 
@@ -234,7 +234,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual({ fr: 'Une petite note', en: 'A small note', es: 'Una pequeña nota', 'zh-Hans': '小提示', 'zh-Hant': '小提示' })}</span>
+                    <span className="text-sm">{bilingual({ fr: 'Une petite note', en: 'A small note', es: 'Una pequeña nota', ja: 'ひとこと', 'zh-Hans': '小提示', 'zh-Hant': '小提示' })}</span>
                   </div>
                   <div className="bg-card border border-border rounded-xl p-4 space-y-2">
                     <div className="flex items-center gap-2 text-sm flex-wrap">
@@ -259,7 +259,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{bilingual({ fr: 'Une petite note', en: 'A small note', es: 'Una pequeña nota', 'zh-Hans': '小提示', 'zh-Hant': '小提示' })}</span>
+                    <span className="text-sm">{bilingual({ fr: 'Une petite note', en: 'A small note', es: 'Una pequeña nota', ja: 'ひとこと', 'zh-Hans': '小提示', 'zh-Hant': '小提示' })}</span>
                   </div>
                   {feedback.suggestions.slice(0, 1).map((suggestion, index) => (
                     <div key={index} className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -287,7 +287,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
                   <div className="flex items-center gap-2 text-foreground">
                     <BookOpen className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">
-                      {bilingual({ fr: 'Pont de vocabulaire', en: 'Vocabulary bridge', es: 'Puente de vocabulario', 'zh-Hans': '词汇桥梁', 'zh-Hant': '詞彙橋樑' })}
+                      {bilingual({ fr: 'Pont de vocabulaire', en: 'Vocabulary bridge', es: 'Puente de vocabulario', ja: '語彙の橋渡し', 'zh-Hans': '词汇桥梁', 'zh-Hant': '詞彙橋樑' })}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       feedback.vocabularyBridge.isRevisit 
@@ -331,13 +331,13 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
         {/* Actions */}
         <div className="mt-8 space-y-3">
           <Button variant="default" size="full" onClick={onContinue}>
-            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
+            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar', ja: '続ける', 'zh-Hans': '继续', 'zh-Hant': '繼續' }).primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
 
           {isLoading && (
             <Button variant="skip" size="full" onClick={onSkip}>
-              {t({ fr: 'Passer', en: 'Skip', es: 'Omitir' }).primary}
+              {t({ fr: 'Passer', en: 'Skip', es: 'Omitir', ja: 'スキップ', 'zh-Hans': '跳过', 'zh-Hant': '跳過' }).primary}
             </Button>
           )}
         </div>

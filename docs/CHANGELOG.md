@@ -15,6 +15,19 @@ Files in this PR:
 Register matches PR #40 + PR #44: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge (继续/繼續, 字 is shared, 书写/書寫, etc.).
 
 Cherry-picked from the larger sweep branch (`feat/chrome-translation-tier2-3`) as a reviewable per-flow PR. Native review pass still planned post-merge.
+---
+### Chrome translation — reflection flow (Reflection + Gratitude + Feedback)
+
+**Adds ja / zh-Hans / zh-Hant keys to the three post-write reflection screens.**
+
+Files in this PR:
+- `ReflectionScreen.tsx` — Back, "Taking a moment to reflect..." loader, error-state Continue, response placeholder + optional-helper, "Finish with gratitude" bilingual anchor
+- `GratitudeScreen.tsx` — Back, optional-skip helper, placeholder, Complete journal, Skip and finish
+- `FeedbackScreen.tsx` — header "A moment of clarity", three section bilingual anchors (Naming with precision / A small note / Vocabulary bridge), Continue, Skip
+
+Note: the hard-coded `isFr ? : isEs ? : ...` ternaries in ReflectionScreen and FeedbackScreen are pre-existing technical debt (they are not `t()` calls). They are outside the scope of this chrome-translation pass and are tracked separately.
+
+Register matches PR #40 + PR #44.
 
 ---
 
