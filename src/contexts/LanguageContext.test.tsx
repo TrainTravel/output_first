@@ -380,6 +380,15 @@ describe('profiles — legacy migration from outputfirst_lang_pair', () => {
     expect(result.current.profiles[0].target).toBe(DEFAULT_PAIR.target);
   });
 
+  it('rejects an unparseable archivedAt string on a stored profile', () => {
+    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({
+      profiles: [{ id: 'p1', primary: 'en', target: 'fr', createdAt: '2026-01-01T00:00:00Z', archivedAt: 'yes' }],
+      activeProfileId: 'p1',
+    }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.profiles[0].archivedAt).toBeUndefined();
+  });
+
   it('prefers new storage when both old + new exist (no double-migration)', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'es' }));
     localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({
@@ -445,6 +454,15 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     // Active jumped to the original (non-archived) profile.
     expect(result.current.activeProfileId).not.toBe(secondId);
     expect(result.current.profiles.find(p => p.id === result.current.activeProfileId)?.archivedAt).toBeUndefined();
+  });
+
+  it('archiveProfile is a no-op when it would leave zero live profiles', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const id = result.current.activeProfileId;
+    act(() => { result.current.archiveProfile(id); });
+    const profile = result.current.profiles.find(p => p.id === id);
+    expect(profile?.archivedAt).toBeUndefined(); // not archived
+    expect(result.current.profiles.filter(p => !p.archivedAt)).toHaveLength(1);
   });
 
   it('renameProfile updates only the name field on the target profile', () => {

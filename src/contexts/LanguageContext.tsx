@@ -162,7 +162,9 @@ function validateProfile(raw: unknown): Profile | null {
     target: obj.target,
     createdAt: typeof obj.createdAt === 'string' ? obj.createdAt : new Date().toISOString(),
     name: typeof obj.name === 'string' ? obj.name : undefined,
-    archivedAt: typeof obj.archivedAt === 'string' ? obj.archivedAt : undefined,
+    archivedAt: (typeof obj.archivedAt === 'string' && !Number.isNaN(Date.parse(obj.archivedAt)))
+      ? obj.archivedAt
+      : undefined,
   };
 }
 
@@ -299,15 +301,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const archiveProfile = (id: string) => {
     setState(s => {
+      const target = s.profiles.find(p => p.id === id);
+      if (!target || target.archivedAt) return s;
+      // Refuse to archive the last live profile — would strand the user on an
+      // archived pair with no way to recover via switchProfile (it ignores archived).
+      const liveAfter = s.profiles.filter(p => !p.archivedAt && p.id !== id);
+      if (liveAfter.length === 0) return s;
       const stamp = new Date().toISOString();
       const profiles = s.profiles.map(p =>
         p.id === id ? { ...p, archivedAt: stamp } : p,
       );
-      // If archiving the active one, jump to first non-archived (or stay if none).
       let activeProfileId = s.activeProfileId;
       if (id === s.activeProfileId) {
-        const nextActive = profiles.find(p => !p.archivedAt);
-        if (nextActive) activeProfileId = nextActive.id;
+        activeProfileId = liveAfter[0].id;
       }
       return { profiles, activeProfileId };
     });
