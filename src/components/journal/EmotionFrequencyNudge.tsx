@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFrequencyMirror } from '@/hooks/useFrequencyMirror';
@@ -16,9 +16,18 @@ interface EmotionFrequencyNudgeProps {
  * - Renders nothing if no word currently qualifies.
  */
 export function EmotionFrequencyNudge({ onOpenVocabulary }: EmotionFrequencyNudgeProps) {
-  const { t } = useLanguage();
+  const { t, activeProfileId } = useLanguage();
   const { getOverUsedVagueWord, dismissWord } = useFrequencyMirror();
   const [pick, setPick] = useState(() => getOverUsedVagueWord());
+
+  // The pick is derived from per-profile localStorage; re-derive when the
+  // active profile changes so we don't show profile A's nudge to profile B.
+  useEffect(() => {
+    setPick(getOverUsedVagueWord());
+    // getOverUsedVagueWord reads directly from LS at the current profile's
+    // key, so we depend only on activeProfileId to fire the refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProfileId]);
 
   if (!pick) return null;
 

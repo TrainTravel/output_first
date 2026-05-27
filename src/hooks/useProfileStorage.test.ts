@@ -162,6 +162,45 @@ describe('useProfileStorage — cross-profile isolation', () => {
     ).toEqual(['banana']);
   });
 
+  it('does not write stale data to the new profile key during a profile switch', () => {
+    // Profile A has [1,2,3]; Profile B has [] (empty). Switching A → B must
+    // NOT overwrite B's storage with A's stale value before the rehydrate
+    // effect lands the new value. See useProfileStorage.ts persist-effect
+    // guard for the timing detail.
+    const A = DEFAULT_PROFILE_ID;
+    const B = 'profile-b';
+    localStorage.setItem(profileKey(A, 'basket'), JSON.stringify([1, 2, 3]));
+    localStorage.setItem(profileKey(B, 'basket'), JSON.stringify([]));
+    localStorage.setItem('outputfirst_profiles', JSON.stringify({
+      profiles: [
+        { id: A, primary: 'en', target: 'fr', createdAt: '2026-05-27T00:00:00.000Z' },
+        { id: B, primary: 'en', target: 'es', createdAt: '2026-05-27T00:00:00.000Z' },
+      ],
+      activeProfileId: A,
+    }));
+
+    const { result } = renderHook(
+      () => useStorageAndLang<number[]>('basket', []),
+      { wrapper: makeWrapper() },
+    );
+
+    // Sanity: starts with A's data.
+    expect(result.current.value).toEqual([1, 2, 3]);
+
+    act(() => result.current.lang.switchProfile(B));
+
+    // Critical assertion: profile B's stored value MUST still be [] —
+    // not overwritten with [1,2,3] from profile A's stale closure during
+    // the switch render.
+    const bStored = JSON.parse(localStorage.getItem(profileKey(B, 'basket')) ?? 'null');
+    expect(bStored).toEqual([]);
+    // And the hook should now reflect B's empty value.
+    expect(result.current.value).toEqual([]);
+    // And A's storage is untouched.
+    const aStored = JSON.parse(localStorage.getItem(profileKey(A, 'basket')) ?? 'null');
+    expect(aStored).toEqual([1, 2, 3]);
+  });
+
   it('creating a new profile and switching gives an empty value', () => {
     const { result } = renderHook(
       () => useStorageAndLang<string[]>('basket', []),

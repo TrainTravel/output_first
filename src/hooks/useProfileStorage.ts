@@ -164,7 +164,18 @@ export function useProfileStorage<T>(
   }, [activeProfileId, suffix, legacyKey]);
 
   // Persist on every value change for the active profile.
+  //
+  // Guard against the closure-capture timing bug during a profile switch:
+  // when `activeProfileId` flips A → B in one render, this effect can fire
+  // with the stale `value` (still profile A's data) and the new id (B),
+  // overwriting profile B's saved data with profile A's. The hydration
+  // effect above queues a `setValue(B_data)` but that lands a render later.
+  //
+  // The fix: skip persisting when `lastHydratedFor.current` doesn't yet
+  // match `activeProfileId` — meaning the hydration effect hasn't run for
+  // the new id, so the current `value` is from the old profile.
   useEffect(() => {
+    if (lastHydratedFor.current !== activeProfileId) return;
     const key = profileKey(activeProfileId, suffix);
     try {
       localStorage.setItem(key, JSON.stringify(value));

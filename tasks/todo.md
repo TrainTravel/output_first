@@ -24,6 +24,7 @@ See `tasks/plan.md` for design rationale + dependency graph.
 - [x] **1.7** Add cross-profile isolation tests per hook
 - [x] **1.8** Verify `tsc --noEmit` + `vitest run` green (237 passed, was 208)
 - [x] **1.9** Open PR (may split into 2 if too large)
+- [x] **1.10** Review fixes: closure-capture timing in `useProfileStorage`, `EmotionFrequencyNudge` profile-switch refresh, eager legacy-migration mount via `MigrationsBootstrap` in `JournalApp`
 
 ## Phase 2 — HomeScreen profile picker
 
