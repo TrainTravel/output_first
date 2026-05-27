@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { setFrenchLanguage } from './helpers/mocks';
 
-const VOCAB_KEY = 'outputfirst_emotion_vocab';
-const DISMISS_KEY = 'outputfirst_freq_mirror_dismissed';
+// Per Phase 1 (PR #56), per-profile data lives under
+// `outputfirst_profile_<id>_<suffix>`. The default profile id is `'default'`.
+const VOCAB_KEY = 'outputfirst_profile_default_emotion_vocab';
+const DISMISS_KEY = 'outputfirst_profile_default_freq_mirror_dismissed';
 
 function isoToday(): string {
   return new Date().toISOString().split('T')[0];
