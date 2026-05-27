@@ -2,6 +2,20 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Chrome translation — Thought Garden (~31 sites)
+
+**Adds ja / zh-Hans / zh-Hant keys to ThoughtGardenScreen.tsx**, the largest single-file translation surface in the chrome sweep. Spun out as its own PR because the file's 31 sites would have made the bundled thought-management PR too big to review.
+
+Files in this PR:
+- `src/components/journal/ThoughtGardenScreen.tsx`
+- `CLAUDE.md` — adds the new **Chrome Translation Conventions** section codifying register, S/T character split, fallback policy, and PR scope discipline (same content as PR #47)
+
+The CLAUDE.md addition is duplicated across PR #47 and PR #48 by design — whichever merges first lands the content; the second rebase will detect the no-op and skip cleanly.
+
+Register matches PR #40 + PR #44+: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge.
+
+---
+
 ### Chrome translation — write flow (WriteScreen + FreeWrite × 3)
 
 **Adds ja / zh-Hans / zh-Hant keys to the four writing-entry screens** so journaling never silently falls back to English mid-session.
