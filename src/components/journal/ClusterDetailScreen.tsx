@@ -25,7 +25,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
   const handleChatCluster = () => {
     const context: ThoughtContext = {
       mode: 'cluster',
-      label: cluster?.title ?? bilingual({ fr: 'Cluster', en: 'Cluster', es: 'Grupo' }),
+      label: cluster?.title ?? bilingual({ fr: 'Cluster', en: 'Cluster', es: 'Grupo', ja: 'クラスター', 'zh-Hans': '分组', 'zh-Hant': '分組' }),
       thoughts: thoughts.slice(0, 20).map(th => ({
         content: th.content,
         createdAt: th.createdAt,
@@ -52,7 +52,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
         </Button>
       </div>
 
@@ -60,7 +60,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       <div className="text-center mb-8">
         <h2 className="font-serif text-3xl text-foreground flex items-center justify-center gap-2">
           <Layers className="w-7 h-7 text-primary" />
-          {cluster?.title ?? bilingual({ fr: 'Cluster', en: 'Cluster', es: 'Grupo' })}
+          {cluster?.title ?? bilingual({ fr: 'Cluster', en: 'Cluster', es: 'Grupo', ja: 'クラスター', 'zh-Hans': '分组', 'zh-Hant': '分組' })}
         </h2>
         {cluster?.description && (
           <p className="text-muted-foreground text-sm mt-1">{cluster.description}</p>
@@ -70,14 +70,14 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
       {/* Linked thoughts */}
       <div className="flex-1 max-w-lg mx-auto w-full">
         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
-          {bilingual({ fr: 'Pensées liées', en: 'Linked Thoughts', es: 'Pensamientos vinculados' })}
+          {bilingual({ fr: 'Pensées liées', en: 'Linked Thoughts', es: 'Pensamientos vinculados', ja: 'リンクされた思考', 'zh-Hans': '已关联想法', 'zh-Hant': '已關聯想法' })}
           <span className="ml-2 lowercase font-normal">({thoughts.length})</span>
         </h3>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <p className="text-muted-foreground animate-gentle-pulse">
-              {t({ fr: 'Chargement…', en: 'Loading…', es: 'Cargando…' }).primary}
+              {t({ fr: 'Chargement…', en: 'Loading…', es: 'Cargando…', ja: '読み込み中…', 'zh-Hans': '加载中…', 'zh-Hant': '載入中…' }).primary}
             </p>
           </div>
         ) : thoughts.length === 0 ? (
@@ -85,7 +85,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
             <FileText className="w-10 h-10 text-muted-foreground/30 mb-3" />
             <p className="text-muted-foreground text-sm">
               {t(
-                { fr: 'Aucune pensée liée pour le moment.', en: 'No linked thoughts yet.', es: 'Aún no hay pensamientos vinculados.' }
+                { fr: 'Aucune pensée liée pour le moment.', en: 'No linked thoughts yet.', es: 'Aún no hay pensamientos vinculados.', ja: 'まだリンクされた思考はありません。', 'zh-Hans': '还没有关联的想法。', 'zh-Hant': '還沒有關聯的想法。' }
               ).primary}
             </p>
           </div>
@@ -119,7 +119,7 @@ export function ClusterDetailScreen({ clusterId, onBack, onOpenChatWithContext }
           <div className="mt-8 text-center">
             <Button variant="default" size="full" onClick={handleChatCluster} className="whitespace-normal h-auto min-h-[3.5rem] py-3">
               <MessageCircle className="w-4 h-4 mr-2" />
-              {bilingual({ fr: 'Discuter ce cluster', en: 'Discuss this cluster', es: 'Discutir este grupo' })}
+              {bilingual({ fr: 'Discuter ce cluster', en: 'Discuss this cluster', es: 'Discutir este grupo', ja: 'このクラスターを話し合う', 'zh-Hans': '聊聊这个分组', 'zh-Hant': '聊聊這個分組' })}
             </Button>
           </div>
         )}

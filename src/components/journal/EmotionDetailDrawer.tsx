@@ -79,7 +79,7 @@ export function EmotionDetailDrawer({
               {isZh && word.zhCollocations && word.zhCollocations.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes', 'zh-Hans': '常见表达', 'zh-Hant': '常見表達' }).primary}
+                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes', ja: 'よく使う表現', 'zh-Hans': '常见表达', 'zh-Hant': '常見表達' }).primary}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {word.zhCollocations.map((col, i) => (
@@ -98,7 +98,7 @@ export function EmotionDetailDrawer({
               {!isZh && word.collocations && word.collocations.length > 0 && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes' }).primary}
+                    {t({ fr: 'Expressions courantes', en: 'Common expressions', es: 'Expresiones comunes', ja: 'よく使う表現', 'zh-Hans': '常见表达', 'zh-Hant': '常見表達' }).primary}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {word.collocations.map((col, i) => (
@@ -121,7 +121,7 @@ export function EmotionDetailDrawer({
               ) : examples.length > 0 ? (
                 <>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    {t({ fr: 'Exemples', en: 'Examples', es: 'Ejemplos' }).primary}
+                    {t({ fr: 'Exemples', en: 'Examples', es: 'Ejemplos', ja: '例', 'zh-Hans': '例句', 'zh-Hant': '例句' }).primary}
                   </p>
                   <ul className="space-y-1.5">
                     {examples.map((ex, i) => (
@@ -146,8 +146,8 @@ export function EmotionDetailDrawer({
                 }}
               >
                 {isSelected
-                  ? t({ fr: 'Désélectionner', en: 'Deselect', es: 'Deseleccionar' }).primary
-                  : t({ fr: 'Sélectionner', en: 'Select', es: 'Seleccionar' }).primary}
+                  ? t({ fr: 'Désélectionner', en: 'Deselect', es: 'Deseleccionar', ja: '選択を解除', 'zh-Hans': '取消选择', 'zh-Hant': '取消選擇' }).primary
+                  : t({ fr: 'Sélectionner', en: 'Select', es: 'Seleccionar', ja: '選択', 'zh-Hans': '选择', 'zh-Hant': '選擇' }).primary}
               </Button>
             </DrawerFooter>
           </>

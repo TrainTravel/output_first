@@ -83,12 +83,12 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
         </Button>
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Trophy className="w-4 h-4" />
           <span>
-            {winsToday.length} {t({ fr: 'victoire(s) aujourd\'hui', en: 'win(s) today', es: 'logro(s) hoy' }).primary}
+            {winsToday.length} {t({ fr: 'victoire(s) aujourd\'hui', en: 'win(s) today', es: 'logro(s) hoy', ja: '件の今日のできごと', 'zh-Hans': '件今日小赢', 'zh-Hant': '件今日小贏' }).primary}
           </span>
         </div>
       </div>
@@ -96,11 +96,11 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
       {/* Main input area */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
         <h2 className="font-serif text-3xl text-foreground mb-2 text-center">
-          {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros' })}
+          {bilingual({ fr: 'Petites Victoires', en: 'Small Wins', es: 'Pequeños Logros', ja: '小さな達成', 'zh-Hans': '小小成就', 'zh-Hant': '小小成就' })}
         </h2>
         <p className="text-muted-foreground text-sm mb-8 text-center">
           {t(
-            { fr: 'Même les choses déjà faites comptent.', en: 'Even things you already did count.', es: 'Incluso lo que ya hiciste cuenta.' }
+            { fr: 'Même les choses déjà faites comptent.', en: 'Even things you already did count.', es: 'Incluso lo que ya hiciste cuenta.', ja: 'もう済ませたことも、ちゃんと数に入ります。', 'zh-Hans': '已经做过的事，也算数。', 'zh-Hant': '已經做過的事，也算數。' }
           ).primary}
         </p>
 
@@ -120,7 +120,7 @@ export function SmallWinsScreen({ onBack }: SmallWinsScreenProps) {
             size="sm"
             className="absolute bottom-3 right-3"
           >
-            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar' }).primary}
+            {saving ? '…' : t({ fr: 'Ajouter', en: 'Add', es: 'Agregar', ja: '追加', 'zh-Hans': '添加', 'zh-Hant': '新增' }).primary}
           </Button>
         </div>
 

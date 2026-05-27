@@ -12,6 +12,31 @@ Files in this PR:
 - `RequestFilterTab.tsx` — three phase screens (Dumping / Sorting / Reflecting), 8 example task placeholders, drag-instruction copy, 3 bucket labels (Yes / Expand / Not Now), summary template, "Pick your One Thing" + "To reframe" headings, reframe nudge ("Can you make it smaller?"), Not-Now compassionate dismissal ("These will wait."), Start over
 
 Register matches PRs #40 / #44–#49.
+### Chrome translation — tools (Small Wins, Sand Timer, Zen Garden, Emotion drawer + nudge)
+
+**Adds ja / zh-Hans / zh-Hant keys to five tool surfaces** that weren't part of the original Tier 2 sweep — these are net-new translations authored to match the established register.
+
+Files in this PR:
+- `SmallWinsScreen.tsx` — Back, today-count helper, "Small Wins" anchor, "even what's done counts" tagline, Add button
+- `SandTimerScreen.tsx` — Back, three tab labels (Sand Timer / Pomodoro / Focus Plan), duration + rounds pickers, all running/paused/done state copy, Stop / Again / Done CTAs, cancel hint
+- `EmotionDetailDrawer.tsx` — Common-expressions header (×2 zh/non-zh branches), Examples header, Select/Deselect CTA, missing-ja fix for an existing zh-only site
+- `EmotionFrequencyNudge.tsx` — over-used-word mirror sentence (interpolated word + count), nudge tagline, Dismiss aria-label, "See alternatives" link
+- `zen/ZenGardenScreen.tsx` — Back, "Zen Garden" anchor, breathing prompt, empty-state copy, scroll-up/down aria-labels
+
+Known carve-out: `gardenTiers.ts` tier labels (e.g. "Seedling Garden") use a `{ en, fr }` shape, not the `Translations` shape — needs a data-file pass + type extension. Flagged for follow-up.
+
+Register matches PRs #40 / #44–#48.
+### Chrome translation — Thought Garden (~31 sites)
+
+**Adds ja / zh-Hans / zh-Hant keys to ThoughtGardenScreen.tsx**, the largest single-file translation surface in the chrome sweep. Spun out as its own PR because the file's 31 sites would have made the bundled thought-management PR too big to review.
+
+Files in this PR:
+- `src/components/journal/ThoughtGardenScreen.tsx`
+- `CLAUDE.md` — adds the new **Chrome Translation Conventions** section codifying register, S/T character split, fallback policy, and PR scope discipline (same content as PR #47)
+
+The CLAUDE.md addition is duplicated across PR #47 and PR #48 by design — whichever merges first lands the content; the second rebase will detect the no-op and skip cleanly.
+
+Register matches PR #40 + PR #44+: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge.
 
 ---
 
@@ -41,6 +66,17 @@ Files in this PR:
 Note: the hard-coded `isFr ? : isEs ? : ...` ternaries in ReflectionScreen and FeedbackScreen are pre-existing technical debt (they are not `t()` calls). They are outside the scope of this chrome-translation pass and are tracked separately.
 
 Register matches PR #40 + PR #44.
+---
+### Chrome translation — thought management (Brain Dump + Clusters)
+
+**Adds ja / zh-Hans / zh-Hant keys to the brain-dump capture and cluster-list screens.** ThoughtGardenScreen is large enough (~31 sites) that it gets its own PR.
+
+Files in this PR:
+- `BrainDumpScreen.tsx` — Back, thought counter, "Brain Dump" bilingual anchor, "One thought at a time" helper, Add button
+- `ClustersScreen.tsx` — Back, "My Clusters" anchor, intro tagline, create-cluster input + button, Loading + empty states
+- `ClusterDetailScreen.tsx` — Back, Cluster fallback title (2 sites), "Linked Thoughts" anchor, Loading + empty states, "Discuss this cluster" CTA
+
+Register matches PR #40 + PR #44 + PR #45.
 
 ---
 
