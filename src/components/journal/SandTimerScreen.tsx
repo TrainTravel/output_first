@@ -287,11 +287,11 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={timerState === 'running' ? resetTimer : onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" />
-            {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+            {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
           </Button>
           <h2 className="font-serif text-xl text-foreground">
             {mode === 'sand'
-              ? bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena' })
+              ? bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena', ja: '砂時計', 'zh-Hans': '沙漏', 'zh-Hant': '沙漏' })
               : 'Pomodoro'}
           </h2>
           <div className="w-16" />
@@ -304,13 +304,13 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
             <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)} className="w-full">
               <TabsList className="w-full">
                 <TabsTrigger value="sand" className="flex-1">
-                  {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj' })}
+                  {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj', ja: '砂時計', 'zh-Hans': '沙漏', 'zh-Hant': '沙漏' })}
                 </TabsTrigger>
                 <TabsTrigger value="pomodoro" className="flex-1">
                   Pomodoro
                 </TabsTrigger>
                 <TabsTrigger value="focusplan" className="flex-1">
-                  {bilingual({ fr: 'Plan Focus', en: 'Focus Plan', es: 'Plan' })}
+                  {bilingual({ fr: 'Plan Focus', en: 'Focus Plan', es: 'Plan', ja: '集中プラン', 'zh-Hans': '专注计划', 'zh-Hant': '專注計畫' })}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -325,7 +325,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
             ) : mode === 'sand' ? (
               <>
                 <p className="text-muted-foreground text-sm">
-                  {t({ fr: 'Choisissez une durée', en: 'Choose a duration', es: 'Elige una duración' }).primary}
+                  {t({ fr: 'Choisissez une durée', en: 'Choose a duration', es: 'Elige una duración', ja: '時間を選んでください', 'zh-Hans': '选择时长', 'zh-Hant': '選擇時長' }).primary}
                 </p>
                 <div className="flex justify-center gap-4">
                   {SAND_DURATIONS.map((d, i) => (
@@ -340,7 +340,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground/60">
-                  {t({ fr: 'Pas de chiffres — juste le sable', en: 'No numbers — just the sand', es: 'Sin números — solo la arena' }).primary}
+                  {t({ fr: 'Pas de chiffres — juste le sable', en: 'No numbers — just the sand', es: 'Sin números — solo la arena', ja: '数字はなし — 砂だけを見守って', 'zh-Hans': '没有数字 — 只看沙子流过', 'zh-Hant': '沒有數字 — 只看沙子流過' }).primary}
                 </p>
               </>
             ) : (
@@ -348,7 +348,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                 {/* Work duration selector */}
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-sm">
-                    {t({ fr: 'Durée de focus', en: 'Focus duration', es: 'Duración de enfoque' }).primary}
+                    {t({ fr: 'Durée de focus', en: 'Focus duration', es: 'Duración de enfoque', ja: '集中時間', 'zh-Hans': '专注时长', 'zh-Hant': '專注時長' }).primary}
                   </p>
                   <div className="flex justify-center gap-3">
                     {WORK_OPTIONS.map(m => (
@@ -371,7 +371,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                 {/* Round count selector */}
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-sm">
-                    {t({ fr: 'Nombre de cycles', en: 'Number of rounds', es: 'Número de ciclos' }).primary}
+                    {t({ fr: 'Nombre de cycles', en: 'Number of rounds', es: 'Número de ciclos', ja: 'ラウンド数', 'zh-Hans': '轮数', 'zh-Hant': '輪數' }).primary}
                   </p>
                   <div className="flex justify-center gap-3">
                     {ROUND_OPTIONS.map(r => (
@@ -385,7 +385,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                         }`}
                       >
                         <span className="text-lg font-serif font-semibold">{r}</span>
-                        <span className="text-sm ml-1 opacity-70">{t({ fr: 'cycles', en: 'rounds', es: 'ciclos' }).primary}</span>
+                        <span className="text-sm ml-1 opacity-70">{t({ fr: 'cycles', en: 'rounds', es: 'ciclos', ja: 'ラウンド', 'zh-Hans': '轮', 'zh-Hant': '輪' }).primary}</span>
                       </button>
                     ))}
                   </div>
@@ -394,12 +394,12 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
                 {/* Start button */}
                 <Button variant="default" size="lg" onClick={handleStartPomodoro}>
                   <Play className="w-4 h-4 mr-1" />
-                  {t({ fr: 'Commencer', en: 'Start', es: 'Empezar' }).primary}
+                  {t({ fr: 'Commencer', en: 'Start', es: 'Empezar', ja: '開始', 'zh-Hans': '开始', 'zh-Hant': '開始' }).primary}
                 </Button>
 
                 <p className="text-xs text-muted-foreground/60">
                   {t(
-                    { fr: `${workMinutes} min focus + ${BREAK_MINUTES} min pause × ${totalRounds}`, en: `${workMinutes} min focus + ${BREAK_MINUTES} min break × ${totalRounds}`, es: `${workMinutes} min enfoque + ${BREAK_MINUTES} min pausa × ${totalRounds}` }
+                    { fr: `${workMinutes} min focus + ${BREAK_MINUTES} min pause × ${totalRounds}`, en: `${workMinutes} min focus + ${BREAK_MINUTES} min break × ${totalRounds}`, es: `${workMinutes} min enfoque + ${BREAK_MINUTES} min pausa × ${totalRounds}`, ja: `集中${workMinutes}分 + 休憩${BREAK_MINUTES}分 × ${totalRounds}`, 'zh-Hans': `专注 ${workMinutes} 分钟 + 休息 ${BREAK_MINUTES} 分钟 × ${totalRounds}`, 'zh-Hant': `專注 ${workMinutes} 分鐘 + 休息 ${BREAK_MINUTES} 分鐘 × ${totalRounds}` }
                   ).primary}
                 </p>
               </>
@@ -414,8 +414,8 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
             {mode === 'pomodoro' && timerState === 'running' && (
               <p className="font-serif text-lg text-foreground animate-fade-in-up">
                 {pomPhase === 'work'
-                  ? bilingual({ fr: 'Focus', en: 'Focus', es: 'Enfoque' })
-                  : bilingual({ fr: 'Pause', en: 'Break', es: 'Pausa' })}
+                  ? bilingual({ fr: 'Focus', en: 'Focus', es: 'Enfoque', ja: '集中', 'zh-Hans': '专注', 'zh-Hant': '專注' })
+                  : bilingual({ fr: 'Pause', en: 'Break', es: 'Pausa', ja: '休憩', 'zh-Hans': '休息', 'zh-Hant': '休息' })}
               </p>
             )}
 
@@ -429,23 +429,23 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
               <div className="text-center space-y-4 animate-fade-in-up">
                 <p className="font-serif text-2xl text-foreground">
                   {pomPhase === 'work'
-                    ? t({ fr: 'Temps de pause !', en: 'Break time!', es: '¡Hora de descanso!' }).primary
-                    : t({ fr: 'Prêt(e) à se concentrer ?', en: 'Ready to focus?', es: '¿Listo/a para enfocarte?' }).primary}
+                    ? t({ fr: 'Temps de pause !', en: 'Break time!', es: '¡Hora de descanso!', ja: '休憩時間です！', 'zh-Hans': '该休息一下啦！', 'zh-Hant': '該休息一下啦！' }).primary
+                    : t({ fr: 'Prêt(e) à se concentrer ?', en: 'Ready to focus?', es: '¿Listo/a para enfocarte?', ja: '集中する準備はできましたか？', 'zh-Hans': '准备好专注了吗？', 'zh-Hant': '準備好專注了嗎？' }).primary}
                 </p>
                 <p className="text-sm text-muted-foreground italic">
                   {pomPhase === 'work'
-                    ? t({ fr: 'Temps de pause !', en: 'Break time!', es: '¡Hora de descanso!' }).secondary
-                    : t({ fr: 'Prêt(e) à se concentrer ?', en: 'Ready to focus?', es: '¿Listo/a para enfocarte?' }).secondary}
+                    ? t({ fr: 'Temps de pause !', en: 'Break time!', es: '¡Hora de descanso!', ja: '休憩時間です！', 'zh-Hans': '该休息一下啦！', 'zh-Hant': '該休息一下啦！' }).secondary
+                    : t({ fr: 'Prêt(e) à se concentrer ?', en: 'Ready to focus?', es: '¿Listo/a para enfocarte?', ja: '集中する準備はできましたか？', 'zh-Hans': '准备好专注了吗？', 'zh-Hant': '準備好專注了嗎？' }).secondary}
                 </p>
                 <div className="flex gap-3 justify-center pt-2">
                   <Button variant="calm" onClick={resetTimer}>
-                    {t({ fr: 'Arrêter', en: 'Stop', es: 'Parar' }).primary}
+                    {t({ fr: 'Arrêter', en: 'Stop', es: 'Parar', ja: '停止', 'zh-Hans': '停止', 'zh-Hant': '停止' }).primary}
                   </Button>
                   <Button variant="default" onClick={handleNextPomPhase}>
                     <Play className="w-4 h-4 mr-1" />
                     {pomPhase === 'work'
-                      ? t({ fr: 'Pause', en: 'Break', es: 'Pausa' }).primary
-                      : t({ fr: 'Focus', en: 'Focus', es: 'Enfoque' }).primary}
+                      ? t({ fr: 'Pause', en: 'Break', es: 'Pausa', ja: '休憩', 'zh-Hans': '休息', 'zh-Hant': '休息' }).primary
+                      : t({ fr: 'Focus', en: 'Focus', es: 'Enfoque', ja: '集中', 'zh-Hans': '专注', 'zh-Hant': '專注' }).primary}
                   </Button>
                 </div>
               </div>
@@ -456,21 +456,21 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
               <div className="text-center space-y-4 animate-fade-in-up">
                 <p className="font-serif text-2xl text-foreground">
                   {mode === 'pomodoro' && currentRound >= totalRounds
-                    ? t({ fr: 'Bravo ! Tous les cycles terminés', en: 'Well done! All rounds complete', es: '¡Bravo! Todos los ciclos completados' }).primary
-                    : t({ fr: 'Le temps est écoulé', en: "Time's up", es: 'Se acabó el tiempo' }).primary}
+                    ? t({ fr: 'Bravo ! Tous les cycles terminés', en: 'Well done! All rounds complete', es: '¡Bravo! Todos los ciclos completados', ja: 'お疲れさまでした！すべてのラウンドが完了しました', 'zh-Hans': '太棒了！所有轮次都完成了', 'zh-Hant': '太棒了！所有輪次都完成了' }).primary
+                    : t({ fr: 'Le temps est écoulé', en: "Time's up", es: 'Se acabó el tiempo', ja: '時間になりました', 'zh-Hans': '时间到了', 'zh-Hant': '時間到了' }).primary}
                 </p>
                 <p className="text-sm text-muted-foreground italic">
                   {mode === 'pomodoro' && currentRound >= totalRounds
-                    ? t({ fr: 'Bravo ! Tous les cycles terminés', en: 'Well done! All rounds complete', es: '¡Bravo! Todos los ciclos completados' }).secondary
-                    : t({ fr: 'Le temps est écoulé', en: "Time's up", es: 'Se acabó el tiempo' }).secondary}
+                    ? t({ fr: 'Bravo ! Tous les cycles terminés', en: 'Well done! All rounds complete', es: '¡Bravo! Todos los ciclos completados', ja: 'お疲れさまでした！すべてのラウンドが完了しました', 'zh-Hans': '太棒了！所有轮次都完成了', 'zh-Hant': '太棒了！所有輪次都完成了' }).secondary
+                    : t({ fr: 'Le temps est écoulé', en: "Time's up", es: 'Se acabó el tiempo', ja: '時間になりました', 'zh-Hans': '时间到了', 'zh-Hant': '時間到了' }).secondary}
                 </p>
                 <div className="flex gap-3 justify-center pt-2">
                   <Button variant="calm" onClick={resetTimer}>
                     <RotateCcw className="w-4 h-4 mr-1" />
-                    {t({ fr: 'Encore', en: 'Again', es: 'Otra vez' }).primary}
+                    {t({ fr: 'Encore', en: 'Again', es: 'Otra vez', ja: 'もう一度', 'zh-Hans': '再来一次', 'zh-Hant': '再來一次' }).primary}
                   </Button>
                   <Button variant="default" onClick={onBack}>
-                    {t({ fr: 'Terminé', en: 'Done', es: 'Listo' }).primary}
+                    {t({ fr: 'Terminé', en: 'Done', es: 'Listo', ja: '完了', 'zh-Hans': '完成', 'zh-Hant': '完成' }).primary}
                   </Button>
                 </div>
               </div>
@@ -479,7 +479,7 @@ export function SandTimerScreen({ onBack }: SandTimerScreenProps) {
             {/* Running hint */}
             {timerState === 'running' && (
               <p className="text-xs text-muted-foreground/50 animate-fade-in-up">
-                {t({ fr: 'Appuyez sur Retour pour annuler', en: 'Tap Back to cancel', es: 'Pulsa Volver para cancelar' }).primary}
+                {t({ fr: 'Appuyez sur Retour pour annuler', en: 'Tap Back to cancel', es: 'Pulsa Volver para cancelar', ja: 'キャンセルするには「戻る」を押してください', 'zh-Hans': '点击"返回"取消', 'zh-Hant': '點擊「返回」取消' }).primary}
               </p>
             )}
           </div>

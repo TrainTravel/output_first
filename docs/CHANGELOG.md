@@ -2,6 +2,20 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Chrome translation — tools (Small Wins, Sand Timer, Zen Garden, Emotion drawer + nudge)
+
+**Adds ja / zh-Hans / zh-Hant keys to five tool surfaces** that weren't part of the original Tier 2 sweep — these are net-new translations authored to match the established register.
+
+Files in this PR:
+- `SmallWinsScreen.tsx` — Back, today-count helper, "Small Wins" anchor, "even what's done counts" tagline, Add button
+- `SandTimerScreen.tsx` — Back, three tab labels (Sand Timer / Pomodoro / Focus Plan), duration + rounds pickers, all running/paused/done state copy, Stop / Again / Done CTAs, cancel hint
+- `EmotionDetailDrawer.tsx` — Common-expressions header (×2 zh/non-zh branches), Examples header, Select/Deselect CTA, missing-ja fix for an existing zh-only site
+- `EmotionFrequencyNudge.tsx` — over-used-word mirror sentence (interpolated word + count), nudge tagline, Dismiss aria-label, "See alternatives" link
+- `zen/ZenGardenScreen.tsx` — Back, "Zen Garden" anchor, breathing prompt, empty-state copy, scroll-up/down aria-labels
+
+Known carve-out: `gardenTiers.ts` tier labels (e.g. "Seedling Garden") use a `{ en, fr }` shape, not the `Translations` shape — needs a data-file pass + type extension. Flagged for follow-up.
+
+Register matches PRs #40 / #44–#48.
 ### Chrome translation — Thought Garden (~31 sites)
 
 **Adds ja / zh-Hans / zh-Hant keys to ThoughtGardenScreen.tsx**, the largest single-file translation surface in the chrome sweep. Spun out as its own PR because the file's 31 sites would have made the bundled thought-management PR too big to review.
