@@ -192,6 +192,40 @@ import * as E from 'fp-ts/Either';
 
 ---
 
+### Chrome Translation Conventions
+
+**Rule:** When adding or modifying `t()` / `bilingual()` call sites that include CJK languages (`ja`, `zh-Hans`, `zh-Hant`), follow the register and structure conventions established across the Tier 1+2 translation sweep (PRs #40–#48).
+
+**Japanese (`ja`):**
+- Use polite register (です・ます形) by default — natural for adult journaling/coaching context
+- Don't use 敬語 (keigo) — too cold for personal reflection
+- Don't drop into plain form (普通形) unless the user does first
+- Drop the `あなた` pronoun in supportive / emotional contexts — too direct/distant in Japanese supportive register
+- Include furigana (hiragana readings in parentheses) for kanji a learner may not yet know, e.g. `嬉(うれ)しい`
+
+**Chinese (Simplified `zh-Hans` / Traditional `zh-Hant`):**
+- Modern, direct register; no Gen-Z slang
+- **Distinguish Simplified vs Traditional characters** where they actually differ. Common splits in this codebase:
+  - 继续 / 繼續, 跳过 / 跳過, 学 / 學, 体 / 體, 实 / 實, 关 / 關
+  - 词 / 詞, 处 / 處, 内 / 內, 园 / 園, 浏览 / 瀏覽, 页 / 頁
+- DO NOT auto-convert Simplified → Traditional — many characters are identical between the two scripts; preserve identity where it holds, split where it actually does. Verify each pair.
+
+**Dynamic strings that NAME a language:**
+- DO NOT translate literally (e.g. "French journaling practice" → 法語日記練習). When a string contains a fact (`"French"`) that is also in app state (`pair.target`), the string is wrong by design — translating it 5 ways propagates the wrong design.
+- Derive from app state via a `LANGUAGE_NAMES` helper (planned; not yet implemented as of 2026-05-27). Until that helper exists, flag any such call site in the PR description so the user knows where the future refactor needs to land.
+
+**Fallback policy:**
+- `ja`, `zh-Hans`, `zh-Hant` keys on the `Translations` type are OPTIONAL. When omitted, `stringFor()` falls back to `en` and emits a dev-mode warning: `[i18n] Missing X translation, falling back to en: "..."` (PR #42).
+- Eventually these keys will be promoted to required once all chrome is translated; the fallback branch can then be deleted entirely. Until then, treat the dev warnings as a TODO list of unswept call sites.
+
+**Native review:**
+- All AI-authored CJK translations are queued for native-speaker review (iTalki / r/translator / native colleague). Treat AI-authored translations as functional drafts, not final. The reviewer's findings should be filed as fix PRs, not retro-edits to the original translation PR.
+
+**PR scope discipline:**
+- Translation PRs should be small enough to review every string by eye. Rule of thumb: ≤ 8 files, ≤ 200 lines changed. Larger sweeps must be cherry-picked into per-flow PRs (Home, Write flow, Reflection flow, Thought management, etc.).
+
+---
+
 ## ADHD-Friendly UX Principles
 
 This app is designed for neurodivergent users. Follow these principles when adding features:
