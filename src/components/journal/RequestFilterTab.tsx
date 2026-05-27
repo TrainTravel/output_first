@@ -105,14 +105,14 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
   );
 
   const placeholders = [
-    t({ fr: 'Répondre au courriel du patron', en: 'Reply to boss email', es: 'Responder al correo del jefe' }).primary,
-    t({ fr: 'Finir le ménage', en: 'Finish laundry', es: 'Terminar la colada' }).primary,
-    t({ fr: 'Appeler le dentiste', en: 'Call the dentist', es: 'Llamar al dentista' }).primary,
-    t({ fr: 'Préparer le souper', en: 'Make dinner', es: 'Preparar la cena' }).primary,
-    t({ fr: 'Payer les factures', en: 'Pay bills', es: 'Pagar las facturas' }).primary,
-    t({ fr: 'Répondre à ce message', en: 'Reply to that text', es: 'Responder a ese mensaje' }).primary,
-    t({ fr: 'Ranger le bureau', en: 'Tidy the desk', es: 'Ordenar el escritorio' }).primary,
-    t({ fr: 'Acheter des courses', en: 'Buy groceries', es: 'Comprar comestibles' }).primary,
+    t({ fr: 'Répondre au courriel du patron', en: 'Reply to boss email', es: 'Responder al correo del jefe', ja: '上司のメールに返信する', 'zh-Hans': '回复老板的邮件', 'zh-Hant': '回覆老闆的郵件' }).primary,
+    t({ fr: 'Finir le ménage', en: 'Finish laundry', es: 'Terminar la colada', ja: '洗濯を済ませる', 'zh-Hans': '把洗的衣服晾完', 'zh-Hant': '把洗的衣服晾完' }).primary,
+    t({ fr: 'Appeler le dentiste', en: 'Call the dentist', es: 'Llamar al dentista', ja: '歯医者に電話する', 'zh-Hans': '给牙医打电话', 'zh-Hant': '給牙醫打電話' }).primary,
+    t({ fr: 'Préparer le souper', en: 'Make dinner', es: 'Preparar la cena', ja: '夕食を作る', 'zh-Hans': '做晚饭', 'zh-Hant': '做晚飯' }).primary,
+    t({ fr: 'Payer les factures', en: 'Pay bills', es: 'Pagar las facturas', ja: '請求書を支払う', 'zh-Hans': '付账单', 'zh-Hant': '付帳單' }).primary,
+    t({ fr: 'Répondre à ce message', en: 'Reply to that text', es: 'Responder a ese mensaje', ja: 'あのメッセージに返信する', 'zh-Hans': '回复那条消息', 'zh-Hant': '回覆那則訊息' }).primary,
+    t({ fr: 'Ranger le bureau', en: 'Tidy the desk', es: 'Ordenar el escritorio', ja: 'デスクを片付ける', 'zh-Hans': '整理书桌', 'zh-Hant': '整理書桌' }).primary,
+    t({ fr: 'Acheter des courses', en: 'Buy groceries', es: 'Comprar comestibles', ja: '食料品を買う', 'zh-Hans': '去买杂货', 'zh-Hant': '去買雜貨' }).primary,
   ];
 
   const addCard = () => {
@@ -167,12 +167,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         <div>
           <p className="font-serif text-lg text-foreground">
             {t(
-              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?' }
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在壓在你心上的是什麼？' }
             ).primary}
           </p>
           <p className="text-sm text-muted-foreground italic mt-1">
             {t(
-              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?' }
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在壓在你心上的是什麼？' }
             ).secondary}
           </p>
         </div>
@@ -216,7 +216,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
 
         {cards.length >= 8 && (
           <p className="text-xs text-muted-foreground/60">
-            {t({ fr: '8 max — on garde ça gérable', en: '8 max — keeping it manageable', es: '8 máx — manteniéndolo manejable' }).primary}
+            {t({ fr: '8 max — on garde ça gérable', en: '8 max — keeping it manageable', es: '8 máx — manteniéndolo manejable', ja: '最大8個まで — 抱えきれる量に', 'zh-Hans': '最多 8 个 — 保持可控', 'zh-Hant': '最多 8 個 — 保持可控' }).primary}
           </p>
         )}
 
@@ -224,13 +224,13 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         {cards.length >= 2 && (
           <Button variant="default" onClick={() => setPhase('sorting')}>
             <ArrowRight className="w-4 h-4 mr-1" />
-            {t({ fr: 'Trier', en: 'Sort', es: 'Clasificar' }).primary}
+            {t({ fr: 'Trier', en: 'Sort', es: 'Clasificar', ja: '仕分ける', 'zh-Hans': '分类', 'zh-Hant': '分類' }).primary}
           </Button>
         )}
 
         <p className="text-xs text-muted-foreground/50">
           {t(
-            { fr: 'Demandes des autres, obligations perso, tout ce qui flotte', en: 'Requests from others, self-imposed tasks, anything floating around', es: 'Peticiones de otros, tareas propias, todo lo que flota' }
+            { fr: 'Demandes des autres, obligations perso, tout ce qui flotte', en: 'Requests from others, self-imposed tasks, anything floating around', es: 'Peticiones de otros, tareas propias, todo lo que flota', ja: '他人からの頼み、自分で決めたこと、頭に浮かぶことすべて', 'zh-Hans': '别人的请求、自己定的事、脑子里飘着的一切', 'zh-Hant': '別人的請求、自己定的事、腦子裡飄著的一切' }
           ).primary}
         </p>
       </div>
@@ -243,7 +243,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       <div className="space-y-4 animate-fade-in-up">
         <p className="text-center text-sm text-muted-foreground">
           {t(
-            { fr: 'Glisse chaque carte dans sa colonne', en: 'Drag each card to its column', es: 'Arrastra cada carta a su columna' }
+            { fr: 'Glisse chaque carte dans sa colonne', en: 'Drag each card to its column', es: 'Arrastra cada carta a su columna', ja: '各カードを対応する列にドラッグしてください', 'zh-Hans': '把每张卡片拖到对应的列', 'zh-Hant': '把每張卡片拖到對應的欄' }
           ).primary}
         </p>
 
@@ -266,21 +266,21 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           <div className="grid grid-cols-3 gap-2">
             <DropZone
               bucket="yes"
-              label={t({ fr: 'Oui', en: 'Yes', es: 'Sí' }).primary}
+              label={t({ fr: 'Oui', en: 'Yes', es: 'Sí', ja: 'はい', 'zh-Hans': '要做', 'zh-Hant': '要做' }).primary}
               icon={<Check className="w-3.5 h-3.5" />}
               cards={byBucket('yes')}
               colorClass="border-primary/40 bg-primary/5"
             />
             <DropZone
               bucket="expand"
-              label={t({ fr: 'Élargir', en: 'Expand', es: 'Expandir' }).primary}
+              label={t({ fr: 'Élargir', en: 'Expand', es: 'Expandir', ja: '広げる', 'zh-Hans': '展开看', 'zh-Hant': '展開看' }).primary}
               icon={<Sparkles className="w-3.5 h-3.5" />}
               cards={byBucket('expand')}
               colorClass="border-accent/40 bg-accent/5"
             />
             <DropZone
               bucket="notnow"
-              label={t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no' }).primary}
+              label={t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no', ja: '今はしない', 'zh-Hans': '现在不要', 'zh-Hant': '現在不要' }).primary}
               icon={<Pause className="w-3.5 h-3.5" />}
               cards={byBucket('notnow')}
               colorClass="border-muted-foreground/20 bg-muted/20"
@@ -301,7 +301,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           <div className="text-center pt-2 animate-fade-in-up">
             <Button variant="default" onClick={() => setPhase('reflecting')}>
               <ArrowRight className="w-4 h-4 mr-1" />
-              {t({ fr: 'Voir le résultat', en: 'See the result', es: 'Ver el resultado' }).primary}
+              {t({ fr: 'Voir le résultat', en: 'See the result', es: 'Ver el resultado', ja: '結果を見る', 'zh-Hans': '看结果', 'zh-Hant': '看結果' }).primary}
             </Button>
           </div>
         )}
@@ -320,12 +320,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       <div className="text-center space-y-1">
         <p className="font-serif text-xl text-foreground">
           {t(
-            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}` }
+            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}`, ja: `${yesCards.length}個を残し、${notNowCards.length}個を手放しました`, 'zh-Hans': `留下了 ${yesCards.length} 件，放下了 ${notNowCards.length} 件`, 'zh-Hant': `留下了 ${yesCards.length} 件，放下了 ${notNowCards.length} 件` }
           ).primary}
         </p>
         <p className="text-sm text-muted-foreground italic">
           {t(
-            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}` }
+            { fr: `Tu as gardé ${yesCards.length}, lâché ${notNowCards.length}`, en: `You kept ${yesCards.length}, let go of ${notNowCards.length}`, es: `Guardaste ${yesCards.length}, soltaste ${notNowCards.length}`, ja: `${yesCards.length}個を残し、${notNowCards.length}個を手放しました`, 'zh-Hans': `留下了 ${yesCards.length} 件，放下了 ${notNowCards.length} 件`, 'zh-Hant': `留下了 ${yesCards.length} 件，放下了 ${notNowCards.length} 件` }
           ).secondary}
         </p>
       </div>
@@ -338,12 +338,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
             <div className="space-y-4">
               <p className="text-center font-serif text-lg text-foreground">
                 {t(
-                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?' }
+                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?', ja: '今、どれに惹かれますか？', 'zh-Hans': '现在最被哪一件吸引？', 'zh-Hant': '現在最被哪一件吸引？' }
                 ).primary}
               </p>
               <p className="text-center text-sm text-muted-foreground italic">
                 {t(
-                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?' }
+                  { fr: 'Laquelle t\'attire là, maintenant ?', en: 'Which one pulls you right now?', es: '¿Cuál te atrae ahora mismo?', ja: '今、どれに惹かれますか？', 'zh-Hans': '现在最被哪一件吸引？', 'zh-Hant': '現在最被哪一件吸引？' }
                 ).secondary}
               </p>
 
@@ -379,14 +379,14 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
                 onClick={() => setShowAllYes(true)}
                 className="block mx-auto text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
               >
-                {t({ fr: 'Tout voir', en: 'Show all', es: 'Ver todo' }).primary}
+                {t({ fr: 'Tout voir', en: 'Show all', es: 'Ver todo', ja: 'すべて表示', 'zh-Hans': '查看全部', 'zh-Hant': '查看全部' }).primary}
               </button>
             </div>
           ) : (
             /* ── List view: single card or "show all" mode ── */
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                {t({ fr: 'Choisis ton truc', en: 'Pick your One Thing', es: 'Elige tu cosa' }).primary}
+                {t({ fr: 'Choisis ton truc', en: 'Pick your One Thing', es: 'Elige tu cosa', ja: 'ひとつだけ選ぼう', 'zh-Hans': '挑出你要做的那件事', 'zh-Hant': '挑出你要做的那件事' }).primary}
               </p>
               {yesCards.map((card) => (
                 <button
@@ -408,7 +408,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       {expandCards.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            {t({ fr: 'À reformuler', en: 'To reframe', es: 'Para reformular' }).primary}
+            {t({ fr: 'À reformuler', en: 'To reframe', es: 'Para reformular', ja: '言い換える', 'zh-Hans': '需要换个说法', 'zh-Hant': '需要換個說法' }).primary}
           </p>
           {expandCards.map((card) => (
             <div
@@ -418,7 +418,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
               <span>{card.text}</span>
               <p className="text-xs text-muted-foreground mt-1 italic">
                 {t(
-                  { fr: 'Peux-tu le rendre plus petit ? Poser une condition ?', en: 'Can you make it smaller? Set a condition?', es: '¿Puedes hacerlo más pequeño? ¿Poner una condición?' }
+                  { fr: 'Peux-tu le rendre plus petit ? Poser une condition ?', en: 'Can you make it smaller? Set a condition?', es: '¿Puedes hacerlo más pequeño? ¿Poner una condición?', ja: 'もっと小さくできますか？条件をつけてみる？', 'zh-Hans': '能再拆小一点吗？或者加个前提？', 'zh-Hant': '能再拆小一點嗎？或者加個前提？' }
                 ).primary}
               </p>
             </div>
@@ -430,13 +430,13 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
       {notNowCards.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            {t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no' }).primary}
+            {t({ fr: 'Pas maintenant', en: 'Not Now', es: 'Ahora no', ja: '今はしない', 'zh-Hans': '现在不要', 'zh-Hant': '現在不要' }).primary}
           </p>
           <div className="px-4 py-3 rounded-xl bg-muted/30 border border-border text-sm text-muted-foreground">
             {notNowCards.map((c) => c.text).join(' · ')}
             <p className="text-xs mt-2 italic">
               {t(
-                { fr: 'Ça peut attendre. Tu as choisi ce qui compte.', en: 'These will wait. You chose what matters.', es: 'Pueden esperar. Elegiste lo que importa.' }
+                { fr: 'Ça peut attendre. Tu as choisi ce qui compte.', en: 'These will wait. You chose what matters.', es: 'Pueden esperar. Elegiste lo que importa.', ja: 'これらは待ってくれます。大切なことを選びました。', 'zh-Hans': '它们可以等。你已经选了重要的事。', 'zh-Hant': '它們可以等。你已經選了重要的事。' }
               ).primary}
             </p>
           </div>
@@ -456,7 +456,7 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
           }}
           className="text-muted-foreground"
         >
-          {t({ fr: 'Recommencer', en: 'Start over', es: 'Empezar de nuevo' }).primary}
+          {t({ fr: 'Recommencer', en: 'Start over', es: 'Empezar de nuevo', ja: '最初からやり直す', 'zh-Hans': '重新开始', 'zh-Hant': '重新開始' }).primary}
         </Button>
       </div>
     </div>
