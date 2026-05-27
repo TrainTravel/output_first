@@ -61,10 +61,10 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       <header className="flex items-center justify-between px-6 pt-6 pb-2 relative z-20">
         <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onBack(); }} className="zen-text-muted">
           <ArrowLeft className="w-4 h-4 mr-1" />
-          {t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}
+          {t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}
         </Button>
         <h1 className="font-serif text-lg zen-text-foreground tracking-wider">
-          {bilingual({ fr: 'Jardin Zen', en: 'Zen Garden', es: 'Jardín Zen' })}
+          {bilingual({ fr: 'Jardin Zen', en: 'Zen Garden', es: 'Jardín Zen', ja: '禅の庭', 'zh-Hans': '禅意花园', 'zh-Hant': '禪意花園' })}
         </h1>
         <div className="w-16" />
       </header>
@@ -72,7 +72,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
       {/* Breathing prompt */}
       <div className="text-center py-4 relative z-20">
         <p className="zen-text-muted text-sm italic tracking-wide animate-gentle-pulse">
-          {t({ fr: 'Respirez… touchez une pierre.', en: 'Breathe… touch a stone.', es: 'Respira… toca una piedra.' }).primary}
+          {t({ fr: 'Respirez… touchez une pierre.', en: 'Breathe… touch a stone.', es: 'Respira… toca una piedra.', ja: '息を整え、石にそっと触れてみましょう。', 'zh-Hans': '深呼吸……轻轻触一块石头。', 'zh-Hant': '深呼吸……輕輕觸一塊石頭。' }).primary}
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
               <div className="zen-empty-stone mx-auto" />
               <p className="zen-text-muted text-sm">
                  {t(
-                  { fr: 'Aucune pensée encore. Visitez le Vide-tête pour commencer.', en: 'No thoughts yet. Visit Brain Dump to begin.', es: 'Aún no hay pensamientos. Visita Volcado Mental para empezar.' }
+                  { fr: 'Aucune pensée encore. Visitez le Vide-tête pour commencer.', en: 'No thoughts yet. Visit Brain Dump to begin.', es: 'Aún no hay pensamientos. Visita Volcado Mental para empezar.', ja: 'まだ思考がありません。脳のメモから始めましょう。', 'zh-Hans': '还没有想法。先去想法清空记几条吧。', 'zh-Hant': '還沒有想法。先去想法清空記幾條吧。' }
                 ).primary}
               </p>
             </div>
@@ -146,7 +146,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
             onClick={(e) => { e.stopPropagation(); setViewOffset(v => Math.max(0, v - 1)); }}
             disabled={!canScrollUp}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
-            aria-label={t({ fr: 'Défiler vers le haut', en: 'Scroll up', es: 'Desplazar arriba' }).primary}
+            aria-label={t({ fr: 'Défiler vers le haut', en: 'Scroll up', es: 'Desplazar arriba', ja: '上にスクロール', 'zh-Hans': '向上滚动', 'zh-Hant': '向上捲動' }).primary}
           >
             <ChevronUp className="w-5 h-5" />
           </Button>
@@ -156,7 +156,7 @@ export function ZenGardenScreen({ onBack }: ZenGardenScreenProps) {
             onClick={(e) => { e.stopPropagation(); setViewOffset(v => v + 1); }}
             disabled={!canScrollDown}
             className="zen-text-muted opacity-60 hover:opacity-100 transition-opacity"
-            aria-label={t({ fr: 'Défiler vers le bas', en: 'Scroll down', es: 'Desplazar abajo' }).primary}
+            aria-label={t({ fr: 'Défiler vers le bas', en: 'Scroll down', es: 'Desplazar abajo', ja: '下にスクロール', 'zh-Hans': '向下滚动', 'zh-Hant': '向下捲動' }).primary}
           >
             <ChevronDown className="w-5 h-5" />
           </Button>
