@@ -60,7 +60,7 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}</span>
         </button>
 
         {/* Bilingual Prompt */}
@@ -77,7 +77,7 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
         {preloadedVocab && preloadedVocab.length > 0 && (
           <div className="mb-4">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-              {t({ fr: 'Vocabulaire utile', en: 'Useful vocabulary', es: 'Vocabulario útil' }).primary}
+              {t({ fr: 'Vocabulaire utile', en: 'Useful vocabulary', es: 'Vocabulario útil', ja: '役立つ語彙', 'zh-Hans': '常用词汇', 'zh-Hant': '常用詞彙' }).primary}
             </p>
             <div className="flex flex-wrap gap-2">
               {preloadedVocab.map((v) => (
@@ -110,7 +110,7 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
             ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={t({ fr: 'Écrivez ici...', en: 'Write here...', es: 'Escribe aquí...' }).primary}
+            placeholder={t({ fr: 'Écrivez ici...', en: 'Write here...', es: 'Escribe aquí...', ja: 'ここに書いてください...', 'zh-Hans': '在这里写...', 'zh-Hant': '在這裡寫...' }).primary}
             className="flex-1 min-h-[200px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
           />
 
@@ -121,7 +121,7 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
           />
 
           <p className="text-muted-foreground text-sm text-center">
-            {t({ fr: "Ne vous inquiétez pas des erreurs.", en: "Don't worry about mistakes.", es: "No te preocupes por los errores." }).primary}
+            {t({ fr: "Ne vous inquiétez pas des erreurs.", en: "Don't worry about mistakes.", es: "No te preocupes por los errores.", ja: '間違いは気にしないでください。', 'zh-Hans': '别担心错误。', 'zh-Hant': '別擔心錯誤。' }).primary}
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export function WriteScreen({ prompt, onSave, onBack, initialContent, preloadedV
             onClick={handleSubmit}
             disabled={!content.trim()}
           >
-            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
+            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar', ja: '続ける', 'zh-Hans': '继续', 'zh-Hant': '繼續' }).primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

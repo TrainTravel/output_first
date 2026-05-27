@@ -89,17 +89,17 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
         <div className="w-full max-w-md text-center space-y-6">
           <p className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
             {t(
-              { fr: 'Écrivez sur quelque chose de profondément personnel.', en: 'Write about something deeply personal.', es: 'Escribe sobre algo profundamente personal.' }
+              { fr: 'Écrivez sur quelque chose de profondément personnel.', en: 'Write about something deeply personal.', es: 'Escribe sobre algo profundamente personal.', ja: '心の奥にあることを書いてみましょう。', 'zh-Hans': '写下一件深处的事。', 'zh-Hant': '寫下一件深處的事。' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-base italic">
             {t(
-              { fr: 'Ceci est privé et uniquement pour vous.', en: 'This is private and only for you.', es: 'Esto es privado y solo para ti.' }
+              { fr: 'Ceci est privé et uniquement pour vous.', en: 'This is private and only for you.', es: 'Esto es privado y solo para ti.', ja: 'これはあなただけのものです。', 'zh-Hans': '这只属于你自己。', 'zh-Hant': '這只屬於你自己。' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-sm">
             {t(
-              { fr: 'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.', en: 'Don\'t worry about grammar or spelling — just let it flow.', es: 'No te preocupes por la gramática o la ortografía — déjalo fluir.' }
+              { fr: 'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.', en: 'Don\'t worry about grammar or spelling — just let it flow.', es: 'No te preocupes por la gramática o la ortografía — déjalo fluir.', ja: '文法や綴りは気にせず、流れるままに書きましょう。', 'zh-Hans': '别在意语法或拼写，让文字自然流出。', 'zh-Hant': '別在意文法或拼字，讓文字自然流出。' }
             ).primary}
           </p>
           <div className="pt-4">
@@ -107,7 +107,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               onClick={() => setPhase('writing')}
               className="text-sm text-muted-foreground hover:text-foreground underline transition-colors"
             >
-              {t({ fr: 'Commencer maintenant', en: 'Start now', es: 'Empezar ahora' }).primary}
+              {t({ fr: 'Commencer maintenant', en: 'Start now', es: 'Empezar ahora', ja: '今すぐ始める', 'zh-Hans': '立即开始', 'zh-Hant': '立即開始' }).primary}
             </button>
           </div>
         </div>
@@ -123,16 +123,16 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
         <div className="w-full max-w-md text-center space-y-6">
           <p className="font-serif text-xl md:text-2xl text-foreground leading-relaxed">
             {t(
-              { fr: 'Il est normal de ressentir des émotions intenses.', en: 'It\'s normal to feel intense emotions.', es: 'Es normal sentir emociones intensas.' }
+              { fr: 'Il est normal de ressentir des émotions intenses.', en: 'It\'s normal to feel intense emotions.', es: 'Es normal sentir emociones intensas.', ja: '強い感情がわいてくるのは自然なことです。', 'zh-Hans': '出现强烈情绪是很自然的。', 'zh-Hant': '出現強烈情緒是很自然的。' }
             ).primary}
           </p>
           <p className="text-muted-foreground text-base italic">
             {t(
-              { fr: 'Prenez un moment pour respirer.', en: 'Take a moment to breathe.', es: 'Tómate un momento para respirar.' }
+              { fr: 'Prenez un moment pour respirer.', en: 'Take a moment to breathe.', es: 'Tómate un momento para respirar.', ja: '少し深呼吸しましょう。', 'zh-Hans': '稍作停顿，深呼吸一下。', 'zh-Hant': '稍作停頓，深呼吸一下。' }
             ).primary}
           </p>
           <p className="text-sm text-muted-foreground mt-4">
-            {t({ fr: 'Session', en: 'Session', es: 'Sesión' }).primary} {newCount} / 4
+            {t({ fr: 'Session', en: 'Session', es: 'Sesión', ja: 'セッション', 'zh-Hans': '场次', 'zh-Hant': '場次' }).primary} {newCount} / 4
           </p>
           <div className="pt-6">
             <Button
@@ -142,12 +142,12 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               disabled={!canContinue}
               className={!canContinue ? 'opacity-40' : ''}
             >
-              {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
+              {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar', ja: '続ける', 'zh-Hans': '继续', 'zh-Hant': '繼續' }).primary}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             {!canContinue && (
               <p className="text-xs text-muted-foreground mt-3 animate-gentle-pulse">
-                {t({ fr: 'Un moment...', en: 'One moment...', es: 'Un momento...' }).primary}
+                {t({ fr: 'Un moment...', en: 'One moment...', es: 'Un momento...', ja: '少々お待ちください...', 'zh-Hans': '稍等一下...', 'zh-Hant': '稍等一下...' }).primary}
               </p>
             )}
           </div>
@@ -168,7 +168,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6 self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver' }).primary}</span>
+          <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}</span>
         </button>
 
         <div className="flex-1 flex flex-col space-y-3">
@@ -177,7 +177,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={t(
-              { fr: 'Laissez vos pensées et émotions couler librement...', en: 'Let your thoughts and emotions flow freely...', es: 'Deja fluir tus pensamientos y emociones libremente...' }
+              { fr: 'Laissez vos pensées et émotions couler librement...', en: 'Let your thoughts and emotions flow freely...', es: 'Deja fluir tus pensamientos y emociones libremente...', ja: '思いも感情も、自由に流れるままに...', 'zh-Hans': '让思绪和情绪自由流淌...', 'zh-Hant': '讓思緒和情緒自由流淌...' }
             ).primary}
             className="flex-1 min-h-[300px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
             autoFocus
@@ -210,7 +210,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               {wordCount > 0 && (
                 <>
                   <span className="font-medium text-foreground">{wordCount}</span>{' '}
-                  {t({ fr: 'mots', en: 'words', es: 'palabras' }).primary}
+                  {t({ fr: 'mots', en: 'words', es: 'palabras', ja: '語', 'zh-Hans': '字', 'zh-Hant': '字' }).primary}
                 </>
               )}
             </span>
@@ -227,7 +227,7 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
             onClick={handleFinishEarly}
             className="text-muted-foreground"
           >
-            {t({ fr: 'Terminer maintenant', en: 'Finish early', es: 'Terminar ahora' }).primary}
+            {t({ fr: 'Terminer maintenant', en: 'Finish early', es: 'Terminar ahora', ja: '今すぐ終える', 'zh-Hans': '提前结束', 'zh-Hant': '提前結束' }).primary}
           </Button>
         </div>
       </div>
