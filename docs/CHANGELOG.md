@@ -2,6 +2,18 @@
 
 ## [Unreleased] - 2026-05-27
 
+### Remove SelfCompassionPractice from ProgressScreen
+
+The collapsible self-compassion practice card on `ProgressScreen` is removed. The practice still appears on `ReflectionScreen` when the user's selected emotion is in `HARD_EMOTIONS` (defaultOpen — the high-leverage moment), and the daily seed card stays on `HomeScreen`. ProgressScreen is reverting to a pure progress/calendar surface without the duplicate compassion affordance.
+
+Removed:
+- Import of `SelfCompassionPractice` in `ProgressScreen.tsx`
+- The `<SelfCompassionPractice lang={lang} />` JSX after the affirmation block
+- Two e2e tests in `e2e/self-compassion.spec.ts` (the ProgressScreen describe block); ReflectionScreen + HomeScreen-Seed tests retained
+
+The `SelfCompassionPractice` component itself stays in the codebase — still used by `ReflectionScreen`.
+
+
 ### Learning Profiles — Phase 0 (data model only, no UI yet)
 
 **Internal refactor laying the groundwork for sequential learning profiles (Duolingo-style).**
