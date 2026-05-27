@@ -1,5 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useJournal } from '@/hooks/useJournal';
+import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { HomeScreen } from './HomeScreen';
 import { BreatheScreen } from './BreatheScreen';
 import { WriteScreen } from './WriteScreen';
@@ -26,6 +27,20 @@ import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
+
+/**
+ * Mounts per-profile hooks that perform one-shot legacy → namespaced
+ * migrations on their first render. Without this, returning users whose
+ * data lives at legacy unprefixed keys (e.g. `outputfirst_emotion_vocab`)
+ * never get migrated until they navigate into a screen that uses the
+ * relevant hook — meanwhile HomeScreen components that read directly from
+ * the per-profile key (EmotionFrequencyNudge → getOverUsedVagueWordForProfile)
+ * see nothing.
+ */
+export function MigrationsBootstrap() {
+  useEmotionVocab();
+  return null;
+}
 
 const STEP_BG_CLASS: Record<string, string> = {
   home: 'journal-step-home',
@@ -110,6 +125,7 @@ export function JournalApp() {
 
   return (
     <div className={`min-h-screen bg-background transition-all duration-1000 ${bgClass}`}>
+      <MigrationsBootstrap />
       {currentStep === 'home' && (
         <HomeScreen
           hasJournaledToday={hasJournaledToday}

@@ -16,18 +16,10 @@ export function VocabularyScreen({ onBack }: VocabularyScreenProps) {
   const { t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
-  const { stats, isFirstEncounter } = useEmotionVocab();
+  const { stats, isFirstEncounter, state: rawState } = useEmotionVocab();
   const [filter, setFilter] = useState<FilterMode>('all');
   const [drawerWord, setDrawerWord] = useState<EmotionWord | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // Load raw state for detailed checks
-  const rawState = useMemo(() => {
-    try {
-      const raw = localStorage.getItem('outputfirst_emotion_vocab');
-      return raw ? JSON.parse(raw) as { encountered: string[]; used: Record<string, number>; lastSeen: Record<string, string> } : { encountered: [], used: {}, lastSeen: {} };
-    } catch { return { encountered: [] as string[], used: {} as Record<string, number>, lastSeen: {} as Record<string, string> }; }
-  }, []);
 
   const isEncountered = (word: EmotionWord) => rawState.encountered.includes(word.en);
   const isUsed = (word: EmotionWord) => (rawState.used[word.en] || 0) > 0;
