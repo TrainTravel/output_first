@@ -92,7 +92,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
     onSave(undefined, undefined);
   };
 
-  const header = t({ fr: 'Un mot pour ce que vous ressentez', en: 'A word for how you feel', es: 'Una palabra para lo que sientes' });
+  const header = t({ fr: 'Un mot pour ce que vous ressentez', en: 'A word for how you feel', es: 'Una palabra para lo que sientes', ja: '今の気持ちを一言で', 'zh-Hans': '用一个词形容你的感受', 'zh-Hant': '用一個詞形容你的感受' });
   const growthPercent = stats.totalAvailable > 0 ? Math.round((stats.totalEncountered / stats.totalAvailable) * 100) : 0;
 
   return (
@@ -105,13 +105,13 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            <span className="text-sm">{t({ fr: 'Modifier mon texte', en: 'Edit my text', es: 'Editar mi texto' }).primary}</span>
+            <span className="text-sm">{t({ fr: 'Modifier mon texte', en: 'Edit my text', es: 'Editar mi texto', ja: '本文を編集', 'zh-Hans': '修改我的文字', 'zh-Hant': '修改我的文字' }).primary}</span>
           </button>
           <button
             onClick={onGoHome}
             className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-xs"
           >
-            <span>{t({ fr: "Retour à l'accueil", en: 'Back to home', es: 'Volver al inicio' }).primary}</span>
+            <span>{t({ fr: "Retour à l'accueil", en: 'Back to home', es: 'Volver al inicio', ja: 'ホームに戻る', 'zh-Hans': '返回首页', 'zh-Hant': '返回首頁' }).primary}</span>
           </button>
         </div>
 
@@ -124,14 +124,14 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             {header.secondary}
           </p>
           <p className="text-muted-foreground text-sm mt-2">
-            {t({ fr: `Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, en: `Choose up to ${MAX_EMOTIONS} words.`, es: `Elige hasta ${MAX_EMOTIONS} palabras.` }).primary}
+            {t({ fr: `Choisissez jusqu'à ${MAX_EMOTIONS} mots.`, en: `Choose up to ${MAX_EMOTIONS} words.`, es: `Elige hasta ${MAX_EMOTIONS} palabras.`, ja: `最大${MAX_EMOTIONS}語まで選べます。`, 'zh-Hans': `最多选 ${MAX_EMOTIONS} 个词。`, 'zh-Hant': `最多選 ${MAX_EMOTIONS} 個詞。` }).primary}
             {selectedEmotions.length > 0 && (
               <span className="ml-2 text-primary">({selectedEmotions.length}/{MAX_EMOTIONS})</span>
             )}
           </p>
           {showHint && (
             <p className="text-xs text-muted-foreground/70 animate-fade-in-up">
-              {t({ fr: 'Appui long pour explorer un mot', en: 'Long-press a word to explore it', es: 'Mantén pulsado para explorar una palabra' }).primary}
+              {t({ fr: 'Appui long pour explorer un mot', en: 'Long-press a word to explore it', es: 'Mantén pulsado para explorar una palabra', ja: '長押しで言葉を詳しく見る', 'zh-Hans': '长按可查看词义', 'zh-Hant': '長按可查看詞義' }).primary}
             </p>
           )}
         </div>
@@ -143,7 +143,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground">
-              {t({ fr: 'Vocabulaire exploré', en: 'Words explored', es: 'Vocabulario explorado' }).primary}
+              {t({ fr: 'Vocabulaire exploré', en: 'Words explored', es: 'Vocabulario explorado', ja: '出会った語彙', 'zh-Hans': '已探索词汇', 'zh-Hant': '已探索詞彙' }).primary}
             </p>
             <div className="flex items-center gap-2 mt-1">
               <Progress value={growthPercent} className="h-1.5 flex-1" />
@@ -242,7 +242,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
           >
             <Sprout className="w-3.5 h-3.5" />
-            {t({ fr: 'Explorer les 48 mots', en: 'Explore all 48 words', es: 'Explorar las 48 palabras' }).primary} →
+            {t({ fr: 'Explorer les 48 mots', en: 'Explore all 48 words', es: 'Explorar las 48 palabras', ja: '48語すべてを見る', 'zh-Hans': '浏览全部 48 个词', 'zh-Hant': '瀏覽全部 48 個詞' }).primary} →
           </button>
         )}
 
@@ -253,7 +253,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             size="full"
             onClick={handleContinue}
           >
-            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar' }).primary}
+            {t({ fr: 'Continuer', en: 'Continue', es: 'Continuar', ja: '続ける', 'zh-Hans': '继续', 'zh-Hant': '繼續' }).primary}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
 
@@ -262,7 +262,7 @@ export function EmotionsScreen({ onSave, onBack, onGoHome, onOpenVocabulary }: E
             size="full"
             onClick={handleSkip}
           >
-            {t({ fr: 'Passer cette étape', en: 'Skip this step', es: 'Omitir este paso' }).primary}
+            {t({ fr: 'Passer cette étape', en: 'Skip this step', es: 'Omitir este paso', ja: 'この手順をスキップ', 'zh-Hans': '跳过这一步', 'zh-Hant': '跳過這一步' }).primary}
           </Button>
         </div>
       </div>
