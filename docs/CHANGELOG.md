@@ -37,6 +37,24 @@ Files in this PR:
 The CLAUDE.md addition is duplicated across PR #47 and PR #48 by design — whichever merges first lands the content; the second rebase will detect the no-op and skip cleanly.
 
 Register matches PR #40 + PR #44+: polite Japanese (です・ます), neutral Mandarin with S/T distinguished where they diverge.
+---
+### Chrome translation — settings, vocabulary, self-compassion
+
+**Final pass of the chrome translation sweep.** Adds ja / zh-Hans / zh-Hant keys to settings screens, vocabulary view, theme/font pickers, and the self-compassion components.
+
+Files in this PR:
+- `LanguageSettingsScreen.tsx` — Back, "Language settings" header, "I'm learning" / "I already speak" section labels, Preview helper, Brain Dump anchor (unified with PR #47's translation), "target / primary" caption
+- `VocabularyScreen.tsx` — Back, "Your emotion vocabulary" header, "Words explored" + 3 stat-row labels (seen / used / to discover), 4 filter chips (All / Seen / Used / New), 3 empty-state messages
+- `GardenThemeSelector.tsx` — Theme button, "Choose a garden" dialog title + description, sort-mode toggle (Calm first / Palette) + its dynamic aria-label
+- `FontPicker.tsx` — "Reading font" label
+- `SelfCompassionPractice.tsx` — "Self-compassion" anchor, Previous/Next step aria-labels, "Step N of 3" template
+- `SelfCompassionSeed.tsx` — extends `STEP_FR/EN/ES` arrays with `STEP_JA/ZH_HANS/ZH_HANT` so the daily-step bilingual label localizes properly
+
+Known carve-out: the language-NAME strings (e.g. `opt.native`, `opt.en` in LanguageSettingsScreen, "French journaling practice" subtitle on HomeScreen, ChatScreen's "Practice French Conversation") are part of the **LANGUAGE_NAMES architectural refactor** the user flagged as a separate concern. Not in this PR.
+
+ChatScreen also has ~10 hard-coded `isFr/isEs/isZh` ternaries (same pattern as ReflectionScreen / FeedbackScreen) — pre-existing tech debt, not `t()` sites, out of scope.
+
+Register matches PRs #40 / #44–#51.
 
 ---
 

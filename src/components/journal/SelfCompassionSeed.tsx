@@ -7,6 +7,9 @@ import type { Language } from '@/contexts/LanguageContext';
 const STEP_FR = ['Présence consciente', 'Humanité partagée', 'Bienveillance envers soi'] as const;
 const STEP_EN = ['Mindfulness', 'Common humanity', 'Self-kindness'] as const;
 const STEP_ES = ['Presencia consciente', 'Humanidad compartida', 'Bondad hacia uno mismo'] as const;
+const STEP_JA = ['今この瞬間に気づく', '共通の人間性', '自分にやさしく'] as const;
+const STEP_ZH_HANS = ['正念', '共通的人性', '善待自己'] as const;
+const STEP_ZH_HANT = ['正念', '共通的人性', '善待自己'] as const;
 
 interface SelfCompassionSeedProps {
   lang: Language;
@@ -20,7 +23,14 @@ export function SelfCompassionSeed({ lang }: SelfCompassionSeedProps) {
 
   const step = getDailyStep();
   const phrase = getDailyPhrase(step, lang);
-  const bilingualLabel = bilingual({ fr: STEP_FR[step], en: STEP_EN[step], es: STEP_ES[step] });
+  const bilingualLabel = bilingual({
+    fr: STEP_FR[step],
+    en: STEP_EN[step],
+    es: STEP_ES[step],
+    ja: STEP_JA[step],
+    'zh-Hans': STEP_ZH_HANS[step],
+    'zh-Hant': STEP_ZH_HANT[step],
+  });
 
   const handleDismiss = () => {
     dismissSeedToday();

@@ -76,8 +76,8 @@ export function GardenThemeSelector() {
   };
 
   const sortLabel = sortMode === 'calm-first'
-    ? t({ fr: 'Doux d\'abord', en: 'Calm first', es: 'Calma primero' }).primary
-    : t({ fr: 'Palette', en: 'Palette', es: 'Paleta' }).primary;
+    ? t({ fr: 'Doux d\'abord', en: 'Calm first', es: 'Calma primero', ja: '穏やかから', 'zh-Hans': '柔和优先', 'zh-Hant': '柔和優先' }).primary
+    : t({ fr: 'Palette', en: 'Palette', es: 'Paleta', ja: 'パレット', 'zh-Hans': '调色板', 'zh-Hant': '調色盤' }).primary;
 
   return (
     <>
@@ -88,17 +88,17 @@ export function GardenThemeSelector() {
         className="text-muted-foreground hover:text-foreground"
       >
         <Palette className="w-4 h-4 mr-1" />
-        {t({ fr: 'Thème', en: 'Theme', es: 'Tema' }).primary}
+        {t({ fr: 'Thème', en: 'Theme', es: 'Tema', ja: 'テーマ', 'zh-Hans': '主题', 'zh-Hant': '主題' }).primary}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl">
-              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín' }).primary}
+              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín', ja: '庭を選ぶ', 'zh-Hans': '选一个花园', 'zh-Hant': '選一個花園' }).primary}
             </DialogTitle>
             <DialogDescription className="text-sm italic">
-              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín' }).secondary}
+              {t({ fr: 'Choisir un jardin', en: 'Choose a garden', es: 'Elegir un jardín', ja: '庭を選ぶ', 'zh-Hans': '选一个花园', 'zh-Hant': '選一個花園' }).secondary}
             </DialogDescription>
           </DialogHeader>
 
@@ -110,7 +110,7 @@ export function GardenThemeSelector() {
               onClick={toggleSortMode}
               data-sort-mode={sortMode}
               aria-label={t(
-                { fr: `Tri : ${sortLabel}. Basculer.`, en: `Sort: ${sortLabel}. Toggle.`, es: `Orden: ${sortLabel}. Cambiar.` },
+                { fr: `Tri : ${sortLabel}. Basculer.`, en: `Sort: ${sortLabel}. Toggle.`, es: `Orden: ${sortLabel}. Cambiar.`, ja: `並び順：${sortLabel}。切り替える。`, 'zh-Hans': `排序：${sortLabel}。切换。`, 'zh-Hant': `排序：${sortLabel}。切換。` },
               ).primary}
               className="text-xs text-muted-foreground hover:text-foreground gap-1"
             >
