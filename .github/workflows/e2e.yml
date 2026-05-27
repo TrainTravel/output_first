@@ -6,10 +6,21 @@ on:
   pull_request:
     branches: [main]
 
+# Auto-cancel older in-progress runs for the same ref. Without this,
+# a burst of force-pushes (e.g. PR rebases) leaves the queue clogged
+# with stale runs that GitHub eventually cancels on its own — which
+# is what the "every recent CI run is cancelled" pattern came from.
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Reduced from 15 → 12 to fail-fast on stuck runs while leaving
+    # headroom for first-run cache-miss (~+1 min for Playwright browser
+    # install). Local run with workers=4 finished 38 tests in ~6.6 min.
+    timeout-minutes: 12
 
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +33,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Cache Playwright browser binaries. ~150 MB download skipped
+      # on cache hit — saves 30-60 s per run after the first install.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      # On cache hit, OS deps may still be missing — install just those.
+      - name: Install Playwright OS deps (cache hit only)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Run E2E tests
         run: npm run test:e2e
