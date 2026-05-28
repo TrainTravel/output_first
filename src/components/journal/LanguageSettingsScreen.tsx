@@ -3,6 +3,8 @@ import { ArrowLeft, Check, Pencil, Archive, X } from 'lucide-react';
 import { useLanguage, type PrimaryLang, type Profile, type Translations } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { useQuotesEnabled } from '@/hooks/useQuotesEnabled';
 
 interface LanguageSettingsScreenProps {
   onBack: () => void;
@@ -40,6 +42,7 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
     renameProfile,
     archiveProfile,
   } = useLanguage();
+  const [quotesEnabled, setQuotesEnabled] = useQuotesEnabled();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -273,6 +276,49 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
                   </button>
                 );
               })}
+          </div>
+        </section>
+
+        <section className="mb-10" data-testid="preferences-section">
+          <h3 className="font-medium text-foreground mb-3">
+            {bilingual({ fr: 'Préférences', en: 'Preferences', es: 'Preferencias', ja: '設定', 'zh-Hans': '偏好设置', 'zh-Hant': '偏好設定' })}
+          </h3>
+          <div className="rounded-xl border border-border bg-card px-4 py-3 flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <label htmlFor="quotes-toggle" className="text-sm text-foreground font-medium block">
+                {t({
+                  fr: 'Pensée du jour',
+                  en: 'Daily thought',
+                  es: 'Pensamiento del día',
+                  ja: '今日の言葉',
+                  'zh-Hans': '每日一思',
+                  'zh-Hant': '每日一思',
+                }).primary}
+              </label>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t({
+                  fr: "Une citation d'un·e philosophe après chaque entrée du jour.",
+                  en: 'A philosopher quote after your first entry each day.',
+                  es: 'Una cita filosófica después de tu primera entrada del día.',
+                  ja: '毎日最初の記録の後に哲学者の言葉を表示します。',
+                  'zh-Hans': '每天首次记录后展示一段哲思摘录。',
+                  'zh-Hant': '每天首次記錄後展示一段哲思摘錄。',
+                }).primary}
+              </p>
+            </div>
+            <Switch
+              id="quotes-toggle"
+              checked={quotesEnabled}
+              onCheckedChange={setQuotesEnabled}
+              aria-label={t({
+                fr: 'Activer la pensée du jour',
+                en: 'Enable daily thought',
+                es: 'Activar el pensamiento del día',
+                ja: '今日の言葉を表示する',
+                'zh-Hans': '启用每日一思',
+                'zh-Hant': '啟用每日一思',
+              }).primary}
+            />
           </div>
         </section>
 

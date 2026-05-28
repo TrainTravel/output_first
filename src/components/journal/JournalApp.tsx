@@ -27,6 +27,7 @@ import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
+import { PhilosopherQuoteDialog } from './PhilosopherQuoteDialog';
 
 /**
  * Mounts per-profile hooks that perform one-shot legacy → namespaced
@@ -244,16 +245,19 @@ export function JournalApp() {
       )}
 
       {currentStep === 'complete' && (
-        <ProgressScreen
-          streak={streak}
-          totalDays={totalDays}
-          totalWords={totalWords}
-          earnedBadges={earnedBadges}
-          hasJournaledToday={hasJournaledToday}
-          onGoHome={goHome}
-          onStartJournal={startJournal}
-          onOpenVocabulary={openVocabulary}
-        />
+        <>
+          <ProgressScreen
+            streak={streak}
+            totalDays={totalDays}
+            totalWords={totalWords}
+            earnedBadges={earnedBadges}
+            hasJournaledToday={hasJournaledToday}
+            onGoHome={goHome}
+            onStartJournal={startJournal}
+            onOpenVocabulary={openVocabulary}
+          />
+          <PhilosopherQuoteDialog active />
+        </>
       )}
 
       {currentStep === 'chat' && (

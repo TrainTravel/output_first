@@ -34,6 +34,27 @@ Tests:
 - Switching profiles is one tap from the header; rename / archive are out of the way in settings
 - Archive uses an inline confirm row (not a modal) — preserves screen context, no jarring overlay
 - The Add Profile flow uses a single Select (target only) — the global primary is implicit, removing a decision point
+### Philosopher quote — daily reward on the 'complete' screen
+
+**A once-per-day quote from a philosopher / writer of the active target language, shown as a reward after the first journal completion of the day.**
+
+Picks deterministically by day-of-year, so a user who completes multiple entries the same day sees one consistent quote and a new one tomorrow. v1 ships 3 curated canonical quotes per target language (fr, es, zh-Hans, zh-Hant, ja) — Merleau-Ponty / Camus / Weil; Ortega y Gasset / Borges / Machado; Laozi / Zhuangzi / Confucius; Dōgen / Bashō / Nishida Kitarō. Original in target language + canonical English translation underneath. (FR / ES / CJK glosses are deferred — they fall back to English until native-reviewed translations land.)
+
+What's new:
+- `src/data/philosopher-quotes.ts` — typed quote pool + `pickQuoteForDay(target, date)`
+- `src/hooks/useQuotesEnabled.ts` — persisted toggle (default ON) at `outputfirst_quotes_enabled`
+- `src/components/journal/PhilosopherQuoteDialog.tsx` — auto-opens on the journal 'complete' step when enabled and not yet shown today; "Don't show again" link writes `enabled=false`; "Thanks" closes without disabling
+- `LanguageSettingsScreen` gains a **Preferences** section with a toggle (chrome-translated FR/EN/ES/JA/zh-Hans/zh-Hant)
+- E2E: existing `journal-flow.spec.ts` is unaffected — a new `suppressPhilosopherQuoteDialog()` helper is bundled into `setupJournalMocks()` so tests not focused on the dialog don't have to dismiss an unrelated overlay
+
+Tests: 16 new unit (`philosopher-quotes`, `useQuotesEnabled`, `PhilosopherQuoteDialog`) + 4 new e2e (`philosopher-quotes.spec.ts`). 258 unit passing total.
+
+**ADHD-Friendly:**
+- Reward-after-effort pattern: appears only after completing a journal entry, never on idle home-screen visits
+- Once per day cap — no novelty fatigue, no anxious "did I see it yet?" checking
+- One-tap dismiss + always-on settings toggle + inline "Don't show again" — three independent exits, no friction to opt out
+- Fixed-per-day pick (not random per visit) — predictable, no "wait, what was the quote?" rumination if dismissed too fast
+- Quote varies daily across the curated pool — gentle variable novelty within a stable container
 
 ### Remove SelfCompassionPractice from ProgressScreen
 
