@@ -1,184 +1,313 @@
 import { test, expect } from '@playwright/test';
-import { setLanguagePair } from './helpers/mocks';
+import { seedProfiles, getProfilesState } from './helpers/mocks';
 
-const STORAGE_KEY = 'outputfirst_lang_pair';
+const LEGACY_KEY = 'outputfirst_lang_pair';
+const PROFILES_KEY = 'outputfirst_profiles';
 
-async function getStoredPair(page: import('@playwright/test').Page) {
-  return await page.evaluate(key => {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  }, STORAGE_KEY);
-}
+const profileChip = (page: import('@playwright/test').Page) =>
+  page.getByRole('button', { name: /Active profile|Profil actif|Perfil activo|アクティブなプロファイル|当前档案|當前檔案/ });
 
-test.describe('Language pair — defaults & hydration', () => {
-  test('new user gets default pair { primary: "en", target: "fr" }', async ({ page }) => {
+test.describe('Profiles — defaults & hydration', () => {
+  test('first-run user gets a single default profile (target=fr, primary=en)', async ({ page }) => {
     await page.goto('/');
-    const pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'fr' });
+    const state = await getProfilesState(page);
+    expect(state).not.toBeNull();
+    expect(state.primaryLang).toBe('en');
+    expect(state.profiles).toHaveLength(1);
+    expect(state.profiles[0].target).toBe('fr');
+    expect(state.activeProfileId).toBe(state.profiles[0].id);
   });
 
-  test('toggle button shows "EN → FR" by default', async ({ page }) => {
+  test('ProfileChip shows FR by default', async ({ page }) => {
     await page.goto('/');
-    const toggle = page.getByRole('button', { name: 'Toggle primary language' });
-    await expect(toggle).toContainText('EN');
-    await expect(toggle).toContainText('FR');
+    await expect(profileChip(page)).toContainText('FR');
   });
 
-  test('hydrate falls back to default when stored pair has primary === target', async ({ page }) => {
-    // Pre-seed an invariant violation
+  test('legacy outputfirst_lang_pair migrates to profiles shape and is deleted', async ({ page }) => {
     await page.addInitScript(() => {
-      localStorage.setItem('outputfirst_lang_pair', JSON.stringify({ primary: 'fr', target: 'fr' }));
+      localStorage.setItem('outputfirst_lang_pair', JSON.stringify({ primary: 'es', target: 'ja' }));
     });
     await page.goto('/');
-    const pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'fr' });
+    const state = await getProfilesState(page);
+    expect(state.primaryLang).toBe('es');
+    expect(state.profiles).toHaveLength(1);
+    expect(state.profiles[0].target).toBe('ja');
+    const legacy = await page.evaluate((k) => localStorage.getItem(k), LEGACY_KEY);
+    expect(legacy).toBeNull();
   });
 
-  test('hydrate falls back to default on malformed JSON', async ({ page }) => {
+  test('legacy malformed JSON falls back to default profile', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('outputfirst_lang_pair', '{ not json');
     });
     await page.goto('/');
-    const pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'fr' });
+    const state = await getProfilesState(page);
+    expect(state.primaryLang).toBe('en');
+    expect(state.profiles[0].target).toBe('fr');
+  });
+
+  test('Phase 0 shape (per-profile `primary`) lifts primary to global', async ({ page }) => {
+    // Legacy shape: profile object carried its own `primary` field.
+    await page.addInitScript((key) => {
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          profiles: [
+            { id: 'p1', target: 'es', primary: 'fr', createdAt: '2026-01-01T00:00:00Z' },
+          ],
+          activeProfileId: 'p1',
+          // no top-level primaryLang
+        }),
+      );
+    }, PROFILES_KEY);
+    await page.goto('/');
+    const state = await getProfilesState(page);
+    expect(state.primaryLang).toBe('fr');
+    expect(state.profiles[0].target).toBe('es');
+    // The Profile entity no longer carries `primary`.
+    expect(state.profiles[0].primary).toBeUndefined();
+  });
+
+  test('invariant violation (primary === target) is corrected on hydrate', async ({ page }) => {
+    await page.addInitScript((key) => {
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          profiles: [{ id: 'p1', target: 'fr', createdAt: '2026-01-01T00:00:00Z' }],
+          activeProfileId: 'p1',
+          primaryLang: 'fr',
+        }),
+      );
+    }, PROFILES_KEY);
+    await page.goto('/');
+    const state = await getProfilesState(page);
+    expect(state.profiles[0].target).toBe('fr');
+    expect(state.primaryLang).not.toBe('fr');
   });
 });
 
-test.describe('LanguageToggle — cheap one-tap primary flip', () => {
-  test('toggle cycles primary, target stays the same', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+test.describe('ProfileChip — switch and create', () => {
+  test('dropdown opens and lists the active profile', async ({ page }) => {
     await page.goto('/');
-
-    const toggle = page.getByRole('button', { name: 'Toggle primary language' });
-
-    // en → es (skips fr, which equals target)
-    await toggle.click();
-    expect(await getStoredPair(page)).toEqual({ primary: 'es', target: 'fr' });
-    await expect(toggle).toContainText('ES');
-    await expect(toggle).toContainText('FR');
-
-    // es → en (skips fr again)
-    await toggle.click();
-    expect(await getStoredPair(page)).toEqual({ primary: 'en', target: 'fr' });
+    await profileChip(page).click();
+    // Default profile is French — label shows the localized language name.
+    await expect(page.getByRole('menuitem', { name: /French|Français|Francés/ })).toBeVisible();
   });
 
-  test('invariant preserved across rapid toggling', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+  test('creating a new profile (Japanese) switches active and updates the chip', async ({ page }) => {
     await page.goto('/');
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Add profile|Ajouter un profil|Añadir perfil/ }).click();
 
-    const toggle = page.getByRole('button', { name: 'Toggle primary language' });
-    for (let i = 0; i < 6; i++) await toggle.click();
+    // Pick Japanese from the Select inside the dialog.
+    await page.getByRole('combobox').click();
+    await page.getByRole('option', { name: /日 ·|日 ·/ }).click();
+    await page.getByRole('button', { name: /^(Create|Créer|Crear|作成|创建|建立)$/ }).click();
 
-    const pair = await getStoredPair(page);
-    expect(pair.primary).not.toBe(pair.target);
+    // Chip now shows 日 (Japanese label).
+    await expect(profileChip(page)).toContainText('日');
+
+    // Storage reflects two profiles, Japanese active.
+    const state = await getProfilesState(page);
+    expect(state.profiles).toHaveLength(2);
+    const active = state.profiles.find((p: { id: string }) => p.id === state.activeProfileId);
+    expect(active.target).toBe('ja');
+  });
+
+  test('switching profiles does NOT mutate the chrome (primary) language', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [
+        { id: 'fr', target: 'fr' },
+        { id: 'ja', target: 'ja' },
+      ],
+      activeProfileId: 'fr',
+      primaryLang: 'es',
+    });
+    await page.goto('/');
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Japanese|Japonais|Japonés|日本語|日语|日語/ }).click();
+
+    const state = await getProfilesState(page);
+    expect(state.activeProfileId).toBe('ja');
+    expect(state.primaryLang).toBe('es'); // unchanged
+  });
+
+  test('switching to a profile whose target equals current primary auto-adjusts primary', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [
+        { id: 'ja', target: 'ja' },
+        { id: 'fr', target: 'fr' },
+      ],
+      activeProfileId: 'ja',
+      primaryLang: 'fr', // OK while target=ja
+    });
+    await page.goto('/');
+    await profileChip(page).click();
+    // Chip is in Japanese (target=ja) before the switch, so French shows as フランス語.
+    await page.getByRole('menuitem', { name: /French|Français|Francés|フランス語|法语|法語/ }).click();
+
+    const state = await getProfilesState(page);
+    expect(state.activeProfileId).toBe('fr');
+    // primary was fr and would now equal target — must change
+    expect(state.primaryLang).not.toBe('fr');
   });
 });
 
-test.describe('LanguageSettingsScreen — foolproof invariant', () => {
-  test('opens via gear icon next to the toggle', async ({ page }) => {
+test.describe('LanguageSettingsScreen — profile management', () => {
+  test('opens via the Settings entry on the ProfileChip', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
-    await expect(page.getByRole('heading', { name: /Réglages de langue|Language settings/ })).toBeVisible();
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue|Ajustes de idioma/ }).click();
+    await expect(
+      page.getByRole('heading', { name: /Réglages de langue|Language settings|Ajustes de idioma/ }),
+    ).toBeVisible();
   });
 
-  test('conflicting card is filtered out, not just disabled', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+  test('profiles-section lists each live profile', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [
+        { id: 'fr', target: 'fr' },
+        { id: 'ja', target: 'ja' },
+      ],
+      activeProfileId: 'fr',
+      primaryLang: 'en',
+    });
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
 
-    // The two sections always appear in order: learn (first), speak (second).
-    const speakSection = page.getByTestId('speak-section');
-
-    // target = fr → "I already speak" should NOT contain Français as an option
-    await expect(speakSection.getByRole('button', { name: /Français/ })).toHaveCount(0);
-    // English and Español are still available
-    await expect(speakSection.getByRole('button', { name: /English/ })).toBeVisible();
-    await expect(speakSection.getByRole('button', { name: /Español/ })).toBeVisible();
+    const section = page.getByTestId('profiles-section');
+    await expect(section.getByTestId('profile-row-fr')).toBeVisible();
+    await expect(section.getByTestId('profile-row-ja')).toBeVisible();
   });
 
-  test('picking a different target updates the pair immediately (no Save button)', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+  test('rename a profile inline; the chip reflects the new name', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [
+        { id: 'fr', target: 'fr' },
+        { id: 'ja', target: 'ja' },
+      ],
+      activeProfileId: 'fr',
+      primaryLang: 'en',
+    });
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
 
-    const learnSection = page.getByTestId('learn-section');
-    await learnSection.getByRole('button', { name: /Español/ }).click();
+    const frRow = page.getByTestId('profile-row-fr');
+    await frRow.getByRole('button', { name: /Rename profile|Renommer le profil/ }).click();
 
-    const pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'es' });
+    const input = frRow.getByRole('textbox');
+    await input.fill('Travel French');
+    await input.press('Enter');
 
-    // No Save button — the change is committed on tap
+    const state = await getProfilesState(page);
+    const fr = state.profiles.find((p: { id: string }) => p.id === 'fr');
+    expect(fr.name).toBe('Travel French');
+
+    // Reflected in the chip's aria-label after returning home.
+    await page.getByRole('button', { name: /Back|Retour/ }).click();
+    await expect(profileChip(page)).toHaveAttribute('aria-label', /Travel French/);
+  });
+
+  test('archive a profile (with multiple) — row disappears and active switches if needed', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [
+        { id: 'fr', target: 'fr' },
+        { id: 'ja', target: 'ja' },
+      ],
+      activeProfileId: 'fr',
+      primaryLang: 'en',
+    });
+    await page.goto('/');
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
+
+    const frRow = page.getByTestId('profile-row-fr');
+    await frRow.getByRole('button', { name: /Archive profile|Archiver le profil/ }).click();
+
+    // Confirm step
+    await frRow.getByRole('button', { name: /^(Archive|Archiver|Archivar)$/ }).click();
+
+    // Row gone from the live list
+    await expect(page.getByTestId('profile-row-fr')).toHaveCount(0);
+    // Japanese is now active
+    const state = await getProfilesState(page);
+    expect(state.activeProfileId).toBe('ja');
+    expect(state.profiles.find((p: { id: string }) => p.id === 'fr').archivedAt).toBeTruthy();
+  });
+
+  test('archive button is disabled when only one live profile remains', async ({ page }) => {
+    await page.goto('/');
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
+
+    const onlyRow = page.getByTestId('profiles-section').locator('[data-testid^="profile-row-"]');
+    await expect(onlyRow).toHaveCount(1);
+    await expect(
+      onlyRow.getByRole('button', { name: /Archive profile|Archiver le profil/ }),
+    ).toBeDisabled();
+  });
+
+  test('picking a different "I already speak" language updates primary immediately (no Save button)', async ({ page }) => {
+    await page.goto('/');
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
+
+    const speak = page.getByTestId('speak-section');
+    await speak.getByRole('button', { name: /Español/ }).click();
+
+    const state = await getProfilesState(page);
+    expect(state.primaryLang).toBe('es');
+    // No Save button anywhere on the page
     await expect(page.getByRole('button', { name: /^Save$/i })).toHaveCount(0);
   });
 
-  test('invariant holds end-to-end: any sequence of taps keeps primary !== target', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+  test('the language currently being learned is filtered out of "I already speak"', async ({ page }) => {
+    // target=fr → primary cannot be fr
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
 
-    const learnSection = page.getByTestId('learn-section');
-    const speakSection = page.getByTestId('speak-section');
-
-    // Switch target to Spanish
-    await learnSection.getByRole('button', { name: /Español/ }).click();
-    let pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'es' });
-
-    // Switch primary to French
-    await speakSection.getByRole('button', { name: /Français/ }).click();
-    pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'fr', target: 'es' });
-
-    // Switch target to Simplified Chinese
-    await learnSection.getByRole('button', { name: /简体中文/ }).click();
-    pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'fr', target: 'zh-Hans' });
-
-    // Invariant held at every step
-    expect(pair.primary).not.toBe(pair.target);
+    const speak = page.getByTestId('speak-section');
+    await expect(speak.getByRole('button', { name: /Français/ })).toHaveCount(0);
+    await expect(speak.getByRole('button', { name: /English/ })).toBeVisible();
   });
 
   test('back arrow returns to home', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
+    await profileChip(page).click();
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue/ }).click();
     await page.getByRole('button', { name: /Back|Retour/ }).click();
-    // Home shows the "Write today" CTA
-    await expect(page.getByRole('button', { name: /Write today|Écrire aujourd'hui|Escribir hoy/ }))
-      .toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /Write today|Écrire aujourd'hui|Escribir hoy/ }),
+    ).toBeVisible();
   });
 });
 
-test.describe('Japanese — target-only language', () => {
-  test('picking Japanese as target persists pair { primary: "en", target: "ja" }', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'fr' });
+test.describe('Japanese — target-only', () => {
+  test('chip shows 日 when active target is Japanese', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [{ id: 'p1', target: 'ja' }],
+      activeProfileId: 'p1',
+      primaryLang: 'en',
+    });
     await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
-
-    const learnSection = page.getByTestId('learn-section');
-    await learnSection.getByRole('button', { name: /日本語/ }).click();
-
-    const pair = await getStoredPair(page);
-    expect(pair).toEqual({ primary: 'en', target: 'ja' });
+    await expect(profileChip(page)).toContainText('日');
   });
 
-  test('toggle shows 日 character when target=ja', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'ja' });
+  test('Japanese is not offered as a primary option', async ({ page }) => {
+    await seedProfiles(page, {
+      profiles: [{ id: 'p1', target: 'ja' }],
+      activeProfileId: 'p1',
+      primaryLang: 'en',
+    });
     await page.goto('/');
-    // The toggle's aria-label follows the same pattern as the other tests in
-    // this file (Speaking EN, learning JA...). Use the same selector style.
-    const toggle = page.getByRole('button', { name: /Speaking|Toggle primary language/ });
-    await expect(toggle).toContainText('日');
-    // Primary is still English
-    await expect(toggle).toContainText('EN');
-  });
+    await profileChip(page).click();
+    // Chrome renders in Japanese when target=ja, so Settings is "言語設定".
+    await page.getByRole('menuitem', { name: /Language settings|Réglages de langue|言語設定/ }).click();
 
-  test('Japanese is not offered as a primary option (target-only)', async ({ page }) => {
-    await setLanguagePair(page, { primary: 'en', target: 'ja' });
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Language settings' }).click();
-
-    const speakSection = page.getByTestId('speak-section');
-    // "I already speak" must not list Japanese / 日本語
-    await expect(speakSection.getByRole('button', { name: /日本語/ })).toHaveCount(0);
+    const speak = page.getByTestId('speak-section');
+    await expect(speak.getByRole('button', { name: /日本語/ })).toHaveCount(0);
   });
 });

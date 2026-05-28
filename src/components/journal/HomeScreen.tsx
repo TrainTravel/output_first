@@ -3,10 +3,10 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/comp
 import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
-import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
+import { ProfileChip } from './ProfileChip';
 import { FontPicker } from '@/components/FontPicker';
 import { SelfCompassionSeed } from './SelfCompassionSeed';
 import { EmotionFrequencyNudge } from './EmotionFrequencyNudge';
@@ -68,7 +68,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             )}
             <GardenThemeSelector />
           </div>
-          <LanguageToggle onOpenSettings={onOpenLanguageSettings} />
+          <ProfileChip onOpenLanguageSettings={onOpenLanguageSettings} />
         </div>
 
         {/* Date */}
