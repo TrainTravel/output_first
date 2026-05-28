@@ -12,13 +12,12 @@ export interface LangPair {
 }
 
 /**
- * A learning profile = one language pair plus identity. Per-profile data
- * (journal entries, vocab progress, etc.) is keyed off the profile's `id`
- * via `useProfileStorage()` in Phase 1.
+ * A learning profile = a course identity (the target language being learned).
+ * The chrome language (`primary`) is a global app-wide preference and does NOT
+ * live on Profile — switching profiles must not silently mutate chrome.
  */
 export interface Profile {
   id: string;
-  primary: PrimaryLang;
   target: TargetLang;
   /** ISO timestamp of when this profile was created. */
   createdAt: string;
@@ -35,7 +34,7 @@ export const DEFAULT_PAIR: LangPair = { primary: 'en', target: 'fr' };
 /** Stable id assigned to the migrated-from-legacy or initial default profile. */
 export const DEFAULT_PROFILE_ID = 'default';
 
-/** New storage key — the full profiles list + active id. */
+/** Canonical storage key — full profiles list + active id + global primary. */
 const PROFILES_STORAGE_KEY = 'outputfirst_profiles';
 /** Legacy single-pair key. Migrated on first hydrate then deleted. */
 const LEGACY_PAIR_STORAGE_KEY = 'outputfirst_lang_pair';
@@ -56,34 +55,37 @@ export interface Translations {
 interface ProfilesState {
   profiles: Profile[];
   activeProfileId: string;
+  /** Global chrome language. Unaffected by profile switches. */
+  primaryLang: PrimaryLang;
 }
 
 interface LanguageContextType {
-  // ---- existing API (preserved verbatim — all reads from the active profile) ----
+  // ---- pair-shaped reads (preserved for back-compat) ----
   pair: LangPair;
   targetLang: TargetLang;
   primaryLang: PrimaryLang;
+  /** Updates the global primary AND the active profile's target in one call. Enforces primary !== target. */
   setLangPair: (next: LangPair) => void;
-  /** Cheap one-tap flip: cycles primaryLang through valid options (skips target). */
+  /** Cheap one-tap flip: cycles global primaryLang through valid options (skips active target). */
   toggleLanguage: () => void;
-  /** Available primary options that don't conflict with the current target. */
+  /** Available primary options that don't conflict with the active profile's target. */
   availablePrimaries: readonly PrimaryLang[];
-  /** Available target options that don't conflict with the current primary. */
+  /** Available target options that don't conflict with the global primary. */
   availableTargets: readonly TargetLang[];
   /** Returns { primary: target-language string, secondary: primary-language string }. */
   t: (translations: Translations) => { primary: string; secondary: string };
   /** Returns "{target-string} / {primary-string}". */
   bilingual: (translations: Translations) => string;
 
-  // ---- new profile-management API ----
+  // ---- profile-management API ----
   /** All profiles, including archived ones. Sort by createdAt for display. */
   profiles: readonly Profile[];
   activeProfileId: string;
-  /** Create a new profile and switch to it. Returns the created profile. */
-  createProfile: (input: { primary: PrimaryLang; target: TargetLang; name?: string }) => Profile;
-  /** Switch to a different non-archived profile. No-op if id is unknown or archived. */
+  /** Create a new profile (target only — primary is global) and switch to it. */
+  createProfile: (input: { target: TargetLang; name?: string }) => Profile;
+  /** Switch to a different non-archived profile. Auto-adjusts global primary if it would conflict with the new target. */
   switchProfile: (id: string) => void;
-  /** Soft-archive a profile. If it was active, falls back to the first non-archived one. */
+  /** Soft-archive a profile. Refuses to archive the last live profile. */
   archiveProfile: (id: string) => void;
   /** Set the user-facing display name on a profile. */
   renameProfile: (id: string, name: string) => void;
@@ -95,9 +97,6 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
  * Dev-mode warning when a translation key is missing and stringFor() falls
  * back to English. Memoized per (lang, en-value) pair so the console isn't
  * flooded by re-renders of the same call site.
- *
- * In prod (import.meta.env.DEV === false) this is a no-op pass-through —
- * the en value is still returned, no logging cost. Exported for tests.
  */
 const _fallbackSeen = new Set<string>();
 export function warnFallback(lang: 'ja' | 'zh-Hans' | 'zh-Hant', enValue: string): string {
@@ -143,22 +142,24 @@ function makeId(): string {
 function makeDefaultProfile(): Profile {
   return {
     id: DEFAULT_PROFILE_ID,
-    primary: DEFAULT_PAIR.primary,
     target: DEFAULT_PAIR.target,
     createdAt: new Date().toISOString(),
   };
 }
 
+/**
+ * Validate a stored profile object. Accepts both:
+ *  - new shape: { id, target, createdAt, name?, archivedAt? }
+ *  - legacy Phase 0 shape: { id, primary, target, ... } — `primary` is read by
+ *    the caller and lifted to global state, then ignored here.
+ */
 function validateProfile(raw: unknown): Profile | null {
   if (!raw || typeof raw !== 'object') return null;
   const obj = raw as Record<string, unknown>;
   if (typeof obj.id !== 'string' || obj.id.length === 0) return null;
-  if (!isPrimaryLang(obj.primary)) return null;
   if (!isTargetLang(obj.target)) return null;
-  if ((obj.primary as string) === (obj.target as string)) return null;
   return {
     id: obj.id,
-    primary: obj.primary,
     target: obj.target,
     createdAt: typeof obj.createdAt === 'string' ? obj.createdAt : new Date().toISOString(),
     name: typeof obj.name === 'string' ? obj.name : undefined,
@@ -168,8 +169,17 @@ function validateProfile(raw: unknown): Profile | null {
   };
 }
 
+/**
+ * Pick a fallback primary that doesn't equal the given target. Used when the
+ * stored or requested primary conflicts with the active target.
+ */
+function fallbackPrimary(target: TargetLang, preferred: PrimaryLang = 'en'): PrimaryLang {
+  if ((preferred as string) !== (target as string)) return preferred;
+  return (PRIMARY_LANGS.find(p => (p as string) !== (target as string)) ?? 'en') as PrimaryLang;
+}
+
 function hydrate(): ProfilesState {
-  // 1. Try the new profiles storage first.
+  // 1. Try the canonical profiles storage first.
   const fromNew = pipe(
     O.fromNullable(localStorage.getItem(PROFILES_STORAGE_KEY)),
     O.flatMap(raw => {
@@ -180,16 +190,45 @@ function hydrate(): ProfilesState {
       if (!data || typeof data !== 'object') return O.none;
       const obj = data as Record<string, unknown>;
       if (!Array.isArray(obj.profiles)) return O.none;
-      const validated = (obj.profiles as unknown[])
+
+      // Lift `primary` from each raw profile so we can recover the global
+      // primary in the Phase 0 → Path A migration case.
+      const rawProfiles = obj.profiles as unknown[];
+      const validated = rawProfiles
         .map(validateProfile)
         .filter((p): p is Profile => p !== null);
       if (validated.length === 0) return O.none;
+
       const activeId = typeof obj.activeProfileId === 'string' ? obj.activeProfileId : '';
       const activeExists = validated.some(p => p.id === activeId && !p.archivedAt);
       const firstActive = validated.find(p => !p.archivedAt) ?? validated[0];
+      const resolvedActiveId = activeExists ? activeId : firstActive.id;
+      const activeProfile = validated.find(p => p.id === resolvedActiveId) ?? validated[0];
+
+      // Resolve global primary:
+      //   a) explicit top-level field (new shape)
+      //   b) Phase 0 migration: pull primary off the active raw profile
+      //   c) fallback: 'en' if non-conflicting, else first non-target primary
+      let primaryLang: PrimaryLang;
+      if (isPrimaryLang(obj.primaryLang)) {
+        primaryLang = obj.primaryLang;
+      } else {
+        const activeRaw = rawProfiles.find(
+          (r): r is Record<string, unknown> =>
+            !!r && typeof r === 'object' && (r as Record<string, unknown>).id === resolvedActiveId,
+        );
+        const migrated = activeRaw && isPrimaryLang(activeRaw.primary) ? activeRaw.primary : null;
+        primaryLang = migrated ?? 'en';
+      }
+      // Invariant: primary !== active target. If violated, fall back.
+      if ((primaryLang as string) === (activeProfile.target as string)) {
+        primaryLang = fallbackPrimary(activeProfile.target, primaryLang);
+      }
+
       return O.some({
         profiles: validated,
-        activeProfileId: activeExists ? activeId : firstActive.id,
+        activeProfileId: resolvedActiveId,
+        primaryLang,
       });
     }),
   );
@@ -198,22 +237,28 @@ function hydrate(): ProfilesState {
   // 2. Fall back to the legacy single-pair key (one-shot migration).
   const legacyRaw = localStorage.getItem(LEGACY_PAIR_STORAGE_KEY);
   if (legacyRaw !== null) {
-    // Migrate whatever's in the legacy key (validatePair handles invalid input).
     let parsed: unknown = null;
     try { parsed = JSON.parse(legacyRaw); } catch { /* fall through */ }
     const pair = validatePair(parsed);
     const profile: Profile = {
       id: DEFAULT_PROFILE_ID,
-      primary: pair.primary,
       target: pair.target,
       createdAt: new Date().toISOString(),
     };
     try { localStorage.removeItem(LEGACY_PAIR_STORAGE_KEY); } catch { /* ignore */ }
-    return { profiles: [profile], activeProfileId: DEFAULT_PROFILE_ID };
+    return {
+      profiles: [profile],
+      activeProfileId: DEFAULT_PROFILE_ID,
+      primaryLang: pair.primary,
+    };
   }
 
   // 3. First-ever run: default profile.
-  return { profiles: [makeDefaultProfile()], activeProfileId: DEFAULT_PROFILE_ID };
+  return {
+    profiles: [makeDefaultProfile()],
+    activeProfileId: DEFAULT_PROFILE_ID,
+    primaryLang: DEFAULT_PAIR.primary,
+  };
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -224,69 +269,87 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     catch { /* quota/private mode — best effort */ }
   }, [state]);
 
-  // Derive the active profile. If somehow not found (shouldn't happen with the
-  // hydration guard), fall back to the first profile in the list.
+  // Derive the active profile. Fallback to first if somehow missing.
   const activeProfile: Profile =
     state.profiles.find(p => p.id === state.activeProfileId) ?? state.profiles[0];
-  const pair: LangPair = { primary: activeProfile.primary, target: activeProfile.target };
+  const pair: LangPair = { primary: state.primaryLang, target: activeProfile.target };
 
-  // Update only the active profile in-place.
-  const patchActive = (patch: Partial<Profile>) => {
+  const patchActiveTarget = (target: TargetLang) => {
     setState(s => ({
       ...s,
       profiles: s.profiles.map(p =>
-        p.id === s.activeProfileId ? { ...p, ...patch } : p,
+        p.id === s.activeProfileId ? { ...p, target } : p,
       ),
     }));
   };
 
   const setLangPair = (next: LangPair) => {
     if ((next.primary as string) !== (next.target as string)) {
-      patchActive({ primary: next.primary, target: next.target });
+      setState(s => ({
+        ...s,
+        primaryLang: next.primary,
+        profiles: s.profiles.map(p =>
+          p.id === s.activeProfileId ? { ...p, target: next.target } : p,
+        ),
+      }));
       return;
     }
-    // Conflict: swap-or-fallback to keep the invariant.
+    // Conflict: swap-or-fallback.
     const primaryChanged = next.primary !== pair.primary;
     if (primaryChanged) {
       const oldPrimary = pair.primary;
       const swapped: TargetLang = isTargetLang(oldPrimary)
         ? oldPrimary
         : (TARGET_LANGS.find(t => (t as string) !== (next.primary as string)) as TargetLang);
-      patchActive({ primary: next.primary, target: swapped });
+      setState(s => ({
+        ...s,
+        primaryLang: next.primary,
+        profiles: s.profiles.map(p =>
+          p.id === s.activeProfileId ? { ...p, target: swapped } : p,
+        ),
+      }));
     } else {
       const oldTarget = pair.target;
       const swapped: PrimaryLang = isPrimaryLang(oldTarget)
         ? oldTarget
         : (PRIMARY_LANGS.find(p => (p as string) !== (next.target as string)) as PrimaryLang);
-      patchActive({ primary: swapped, target: next.target });
+      setState(s => ({
+        ...s,
+        primaryLang: swapped,
+        profiles: s.profiles.map(p =>
+          p.id === s.activeProfileId ? { ...p, target: next.target } : p,
+        ),
+      }));
     }
   };
 
   const toggleLanguage = () => {
-    const idx = PRIMARY_LANGS.indexOf(pair.primary);
+    const idx = PRIMARY_LANGS.indexOf(state.primaryLang);
     for (let i = 1; i <= PRIMARY_LANGS.length; i++) {
       const candidate = PRIMARY_LANGS[(idx + i) % PRIMARY_LANGS.length];
-      if ((candidate as string) !== (pair.target as string)) {
-        patchActive({ primary: candidate });
+      if ((candidate as string) !== (activeProfile.target as string)) {
+        setState(s => ({ ...s, primaryLang: candidate }));
         return;
       }
     }
   };
 
-  const createProfile = (input: { primary: PrimaryLang; target: TargetLang; name?: string }): Profile => {
-    if ((input.primary as string) === (input.target as string)) {
-      throw new Error('Profile primary and target must differ');
+  const createProfile = (input: { target: TargetLang; name?: string }): Profile => {
+    if ((state.primaryLang as string) === (input.target as string)) {
+      throw new Error(
+        `Cannot create profile with target=${input.target} while chrome language is also ${state.primaryLang}`,
+      );
     }
     const profile: Profile = {
       id: makeId(),
-      primary: input.primary,
       target: input.target,
       createdAt: new Date().toISOString(),
       name: input.name,
     };
     setState(s => ({
+      ...s,
       profiles: [...s.profiles, profile],
-      activeProfileId: profile.id, // switch immediately so per-profile data writes go to it
+      activeProfileId: profile.id,
     }));
     return profile;
   };
@@ -295,7 +358,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setState(s => {
       const target = s.profiles.find(p => p.id === id);
       if (!target || target.archivedAt) return s;
-      return { ...s, activeProfileId: id };
+      // Auto-adjust primary if it would equal the new target.
+      const primaryLang = (s.primaryLang as string) === (target.target as string)
+        ? fallbackPrimary(target.target, s.primaryLang)
+        : s.primaryLang;
+      return { ...s, activeProfileId: id, primaryLang };
     });
   };
 
@@ -312,10 +379,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         p.id === id ? { ...p, archivedAt: stamp } : p,
       );
       let activeProfileId = s.activeProfileId;
+      let primaryLang = s.primaryLang;
       if (id === s.activeProfileId) {
-        activeProfileId = liveAfter[0].id;
+        const next = liveAfter[0];
+        activeProfileId = next.id;
+        // Same primary-vs-target guard as switchProfile.
+        if ((primaryLang as string) === (next.target as string)) {
+          primaryLang = fallbackPrimary(next.target, primaryLang);
+        }
       }
-      return { profiles, activeProfileId };
+      return { profiles, activeProfileId, primaryLang };
     });
   };
 
@@ -326,8 +399,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const availablePrimaries = PRIMARY_LANGS.filter(p => (p as string) !== (pair.target as string));
-  const availableTargets = TARGET_LANGS.filter(t => (t as string) !== (pair.primary as string));
+  const availablePrimaries = PRIMARY_LANGS.filter(p => (p as string) !== (activeProfile.target as string));
+  const availableTargets = TARGET_LANGS.filter(t => (t as string) !== (state.primaryLang as string));
 
   const stringFor = (lang: Language, translations: Translations): string => {
     switch (lang) {
@@ -341,15 +414,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (translations: Translations) => ({
-    primary: stringFor(pair.target, translations),
-    secondary: stringFor(pair.primary, translations),
+    primary: stringFor(activeProfile.target, translations),
+    secondary: stringFor(state.primaryLang, translations),
   });
 
   const bilingual = (translations: Translations) => {
-    const tgt = stringFor(pair.target, translations);
-    const prm = stringFor(pair.primary, translations);
-    // Dedupe: when target and primary resolve to the same string (typically
-    // because both fell back to en), render once instead of "X / X".
+    const tgt = stringFor(activeProfile.target, translations);
+    const prm = stringFor(state.primaryLang, translations);
     return tgt === prm ? tgt : `${tgt} / ${prm}`;
   };
 
@@ -357,8 +428,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     <LanguageContext.Provider
       value={{
         pair,
-        targetLang: pair.target,
-        primaryLang: pair.primary,
+        targetLang: activeProfile.target,
+        primaryLang: state.primaryLang,
         setLangPair,
         toggleLanguage,
         availablePrimaries,

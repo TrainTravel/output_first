@@ -1,6 +1,39 @@
 # Changelog
 
-## [Unreleased] - 2026-05-27
+## [Unreleased] - 2026-05-28
+
+### Learning Profiles — Phase 2 (ProfileChip in header + Path A refactor)
+
+**Duolingo-style course switcher in the HomeScreen, and a settings surface for managing profiles.**
+
+`LanguageToggle` is gone from the header. In its place: a `ProfileChip` dropdown showing the active profile's language (FR / ES / 简 / 繁 / 日), with menu entries to switch profiles, add a new one, and open Language settings.
+
+The chrome language (the language UI buttons render in, formerly `primary`) is now a **global** preference rather than a per-profile field. Switching profiles never silently mutates chrome — a bug that existed when both controls were in the header at once. The refactor (internally "Path A") moves `primaryLang` from each `Profile` to the top-level `ProfilesState`, with a one-shot migration on hydrate for users coming from Phase 0.
+
+What's new in the UI:
+- `ProfileChip` (`src/components/journal/ProfileChip.tsx`) — replaces `LanguageToggle` in HomeScreen header; dropdown lists live profiles, plus "Add profile" (dialog) and "Language settings" entries
+- `LanguageSettingsScreen` expanded: new **My profiles** section with inline rename (Enter / Esc) and archive (with inline confirm row). Archive button is disabled when only one live profile remains (refuses to strand the user)
+- The legacy "I'm learning" grid is removed from settings — that's the ProfileChip's job now
+- "I already speak" (chrome language) section stays
+
+Under the hood:
+- `Profile` shape simplified — `primary` field removed; `ProfilesState` carries top-level `primaryLang`
+- `createProfile({ target, name? })` throws if target would collide with the global primary
+- `switchProfile(id)` auto-adjusts `primaryLang` if the new target would equal it (via `fallbackPrimary()` helper) — invariant preserved across every state transition
+- `archiveProfile(id)` refuses to archive the last live profile and re-runs the same primary guard if the active profile is the one being archived
+- Hydrate detects Phase 0 shape (raw profile carrying its own `primary` field) and lifts it to the new top-level slot; legacy `outputfirst_lang_pair` migration path retained
+
+Tests:
+- 9 new `ProfileChip` unit tests (render, switch, archived-hidden, settings callback, dialog, default-non-conflict)
+- `e2e/language.spec.ts` fully rewritten for the new model — 20 tests covering defaults, hydration, migration, Phase 0 lift, invariant fallback, chip switch/create, settings rename + archive, disabled-on-last-profile, primary filter, Japanese target-only
+- `e2e/helpers/mocks.ts` gains `seedProfiles()` + `getProfilesState()` for the new shape
+- 212/212 unit tests green; 20/20 new language e2e green
+
+**ADHD-Friendly:**
+- One control = one job. Course-switching (profile) and display-language are now visually separated — no more "I tapped a chip and my buttons changed language" surprise
+- Switching profiles is one tap from the header; rename / archive are out of the way in settings
+- Archive uses an inline confirm row (not a modal) — preserves screen context, no jarring overlay
+- The Add Profile flow uses a single Select (target only) — the global primary is implicit, removing a decision point
 
 ### Remove SelfCompassionPractice from ProgressScreen
 

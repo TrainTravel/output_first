@@ -148,14 +148,15 @@ describe('setLangPair — invariant enforcement', () => {
 });
 
 describe('setLangPair — persistence', () => {
-  it('writes the new pair to localStorage (via the active profile)', () => {
+  it('writes target to active profile and primary to global state', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     act(() => result.current.setLangPair({ primary: 'es', target: 'zh-Hant' }));
     const stored = JSON.parse(localStorage.getItem(PROFILES_STORAGE_KEY) ?? 'null');
     expect(stored).not.toBeNull();
+    expect(stored.primaryLang).toBe('es');
     const active = stored.profiles.find((p: { id: string }) => p.id === stored.activeProfileId);
-    expect(active.primary).toBe('es');
     expect(active.target).toBe('zh-Hant');
+    expect(active.primary).toBeUndefined();
   });
 });
 
@@ -360,11 +361,11 @@ describe('stringFor() — dev-mode fallback warning', () => {
 // ─────────────────────────────────────────────────────────────
 
 describe('profiles — legacy migration from outputfirst_lang_pair', () => {
-  it('on first hydrate, migrates a valid legacy pair into one profile and deletes the old key', () => {
+  it('on first hydrate, migrates a valid legacy pair into one profile + global primary, deletes old key', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'en', target: 'es' }));
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.profiles).toHaveLength(1);
-    expect(result.current.profiles[0].primary).toBe('en');
+    expect(result.current.primaryLang).toBe('en');
     expect(result.current.profiles[0].target).toBe('es');
     expect(result.current.activeProfileId).toBe(result.current.profiles[0].id);
     // Legacy key cleaned up.
@@ -373,10 +374,10 @@ describe('profiles — legacy migration from outputfirst_lang_pair', () => {
     expect(localStorage.getItem('outputfirst_profiles')).not.toBeNull();
   });
 
-  it('on first hydrate with no storage, creates a default profile', () => {
+  it('on first hydrate with no storage, creates a default profile + default global primary', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.profiles).toHaveLength(1);
-    expect(result.current.profiles[0].primary).toBe(DEFAULT_PAIR.primary);
+    expect(result.current.primaryLang).toBe(DEFAULT_PAIR.primary);
     expect(result.current.profiles[0].target).toBe(DEFAULT_PAIR.target);
   });
 
@@ -410,27 +411,30 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     const before = result.current.activeProfileId;
     let createdId = '';
     act(() => {
-      const p = result.current.createProfile({ primary: 'en', target: 'ja', name: 'Japanese' });
+      const p = result.current.createProfile({ target: 'ja', name: 'Japanese' });
       createdId = p.id;
     });
     expect(result.current.profiles).toHaveLength(2);
     expect(result.current.activeProfileId).toBe(createdId);
     expect(result.current.activeProfileId).not.toBe(before);
+    // Global primary unchanged; new profile's target inherited.
     expect(result.current.pair).toEqual({ primary: 'en', target: 'ja' });
   });
 
-  it('createProfile throws when primary === target', () => {
+  it('createProfile throws when target equals current global primary', () => {
+    // Default primary is 'en'. Set primary to 'fr' first by changing pair.
     const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => { result.current.setLangPair({ primary: 'fr', target: 'es' }); });
+    // Now global primary === 'fr'; creating a profile with target='fr' must throw.
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      act(() => { result.current.createProfile({ primary: 'fr' as PrimaryLang, target: 'fr' as any }); });
-    }).toThrow(/must differ/);
+      act(() => { result.current.createProfile({ target: 'fr' as TargetLang }); });
+    }).toThrow(/Cannot create profile/);
   });
 
   it('switchProfile changes activeProfileId to an existing non-archived profile', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     let secondId = '';
-    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja' }).id; });
+    act(() => { secondId = result.current.createProfile({ target: 'ja' }).id; });
     const firstId = result.current.profiles.find(p => p.id !== secondId)?.id ?? '';
     act(() => { result.current.switchProfile(firstId); });
     expect(result.current.activeProfileId).toBe(firstId);
@@ -443,10 +447,29 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     expect(result.current.activeProfileId).toBe(before);
   });
 
+  it('switchProfile auto-adjusts primary if it would equal the new target', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    // Step 1: move the default profile's target off 'fr' so we can create a fr profile.
+    act(() => { result.current.setLangPair({ primary: 'en', target: 'es' }); });
+    // Step 2: create a French profile (becomes active).
+    let frenchId = '';
+    act(() => { frenchId = result.current.createProfile({ target: 'fr' }).id; });
+    // Step 3: switch back to the default profile (target='es').
+    const defaultId = result.current.profiles.find(p => p.id !== frenchId)!.id;
+    act(() => { result.current.switchProfile(defaultId); });
+    // Step 4: cycle global primary to 'fr' (toggleLanguage from en→fr, skipping target='es').
+    act(() => { result.current.toggleLanguage(); });
+    expect(result.current.primaryLang).toBe('fr');
+    // Step 5: switch to French profile. Its target='fr'; primary='fr' would conflict — auto-adjust.
+    act(() => { result.current.switchProfile(frenchId); });
+    expect(result.current.targetLang).toBe('fr');
+    expect(result.current.primaryLang).not.toBe('fr');
+  });
+
   it('archiveProfile marks archivedAt and jumps active to the next non-archived', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
     let secondId = '';
-    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja' }).id; });
+    act(() => { secondId = result.current.createProfile({ target: 'ja' }).id; });
     // Active is the newly-created Japanese profile. Archive it.
     act(() => { result.current.archiveProfile(secondId); });
     const archived = result.current.profiles.find(p => p.id === secondId);
@@ -456,12 +479,12 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     expect(result.current.profiles.find(p => p.id === result.current.activeProfileId)?.archivedAt).toBeUndefined();
   });
 
-  it('archiveProfile is a no-op when it would leave zero live profiles', () => {
+  it('archiveProfile refuses to archive the last live profile (no-op)', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    const id = result.current.activeProfileId;
-    act(() => { result.current.archiveProfile(id); });
-    const profile = result.current.profiles.find(p => p.id === id);
-    expect(profile?.archivedAt).toBeUndefined(); // not archived
+    const onlyId = result.current.activeProfileId;
+    act(() => { result.current.archiveProfile(onlyId); });
+    const stillThere = result.current.profiles.find(p => p.id === onlyId);
+    expect(stillThere?.archivedAt).toBeUndefined();
     expect(result.current.profiles.filter(p => !p.archivedAt)).toHaveLength(1);
   });
 
@@ -473,13 +496,13 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     expect(renamed?.name).toBe('My French');
   });
 
-  it('persisting + reloading round-trips the full profile list and active id', () => {
+  it('persisting + reloading round-trips the full profile list, global primary, and active id', () => {
     // Round 1: create a second profile and rename the first.
     const { result, unmount } = renderHook(() => useLanguage(), { wrapper });
     const firstId = result.current.activeProfileId;
     act(() => { result.current.renameProfile(firstId, 'French'); });
     let secondId = '';
-    act(() => { secondId = result.current.createProfile({ primary: 'en', target: 'ja', name: 'Japanese' }).id; });
+    act(() => { secondId = result.current.createProfile({ target: 'ja', name: 'Japanese' }).id; });
     // Switch back to first.
     act(() => { result.current.switchProfile(firstId); });
     unmount();
@@ -488,7 +511,41 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     const { result: result2 } = renderHook(() => useLanguage(), { wrapper });
     expect(result2.current.profiles).toHaveLength(2);
     expect(result2.current.activeProfileId).toBe(firstId);
+    expect(result2.current.primaryLang).toBe('en');
     expect(result2.current.profiles.find(p => p.id === firstId)?.name).toBe('French');
     expect(result2.current.profiles.find(p => p.id === secondId)?.name).toBe('Japanese');
+  });
+});
+
+describe('Path A migration — Phase 0 (per-profile primary) shape', () => {
+  it('lifts active profile primary to global state, strips primary from profiles', () => {
+    // Pre-seed Phase 0 shape: profiles have `primary` inline, no top-level primaryLang.
+    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({
+      profiles: [
+        { id: 'p1', primary: 'en', target: 'fr', createdAt: '2026-01-01T00:00:00Z' },
+        { id: 'p2', primary: 'es', target: 'ja', createdAt: '2026-01-02T00:00:00Z' },
+      ],
+      activeProfileId: 'p2',
+    }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    // Active was p2 with primary='es' — global primary should be 'es'.
+    expect(result.current.primaryLang).toBe('es');
+    expect(result.current.activeProfileId).toBe('p2');
+    expect(result.current.targetLang).toBe('ja');
+    // Both profiles still listed; primary stripped from each.
+    expect(result.current.profiles).toHaveLength(2);
+    expect((result.current.profiles[0] as Record<string, unknown>).primary).toBeUndefined();
+    expect((result.current.profiles[1] as Record<string, unknown>).primary).toBeUndefined();
+  });
+
+  it('falls back primary to "en" when lifted primary would conflict with active target', () => {
+    // Active profile is fr, primary on it is fr (invalid — invariant violation in old data).
+    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({
+      profiles: [{ id: 'p1', primary: 'fr', target: 'fr', createdAt: '2026-01-01T00:00:00Z' }],
+      activeProfileId: 'p1',
+    }));
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    // Primary should NOT equal target after hydration.
+    expect(result.current.primaryLang).not.toBe(result.current.targetLang);
   });
 });

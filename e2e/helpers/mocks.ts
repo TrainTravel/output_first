@@ -139,6 +139,45 @@ export async function setSpanishLanguage(page: Page) {
   await setLanguagePair(page, { primary: 'en', target: 'es' });
 }
 
+/**
+ * Seed the new profiles storage shape directly. Use this when a test needs
+ * multi-profile state (the legacy helper only models a single pair).
+ */
+export async function seedProfiles(
+  page: Page,
+  state: {
+    profiles: Array<{
+      id: string;
+      target: 'fr' | 'es' | 'zh-Hans' | 'zh-Hant' | 'ja';
+      name?: string;
+      archivedAt?: string;
+      createdAt?: string;
+    }>;
+    activeProfileId: string;
+    primaryLang: 'en' | 'fr' | 'es' | 'zh-Hans' | 'zh-Hant';
+  },
+) {
+  await page.addInitScript((s) => {
+    const now = new Date().toISOString();
+    localStorage.setItem(
+      'outputfirst_profiles',
+      JSON.stringify({
+        profiles: s.profiles.map((p) => ({ createdAt: p.createdAt ?? now, ...p })),
+        activeProfileId: s.activeProfileId,
+        primaryLang: s.primaryLang,
+      }),
+    );
+  }, state);
+}
+
+/** Read the new profiles storage shape (returns null if absent). */
+export async function getProfilesState(page: Page) {
+  return await page.evaluate(() => {
+    const raw = localStorage.getItem('outputfirst_profiles');
+    return raw ? JSON.parse(raw) : null;
+  });
+}
+
 /** Inject a mock authenticated Supabase session. */
 export async function injectMockSession(page: Page) {
   await page.addInitScript(() => {
