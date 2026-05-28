@@ -219,8 +219,28 @@ export async function mockTodoFromImage(page: Page, response: { tasks?: string[]
   );
 }
 
+/**
+ * Suppress the philosopher-quote dialog on the 'complete' screen by marking
+ * "shown today" before the page loads. Existing journal-flow tests aren't
+ * about the quote; they shouldn't have to manually dismiss an unrelated
+ * overlay. Per-feature tests opt in by NOT calling this helper.
+ */
+export async function suppressPhilosopherQuoteDialog(page: Page) {
+  await page.addInitScript(() => {
+    const today = (() => {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    })();
+    localStorage.setItem('outputfirst_quotes_last_shown', today);
+  });
+}
+
 /** Apply all mocks needed for the full journal flow. */
 export async function setupJournalMocks(page: Page) {
   await mockFeedback(page);
   await mockReflection(page);
+  await suppressPhilosopherQuoteDialog(page);
 }
