@@ -1,13 +1,15 @@
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/function';
-import { COMPASSION_PHRASES, NeffStep } from '@/data/compassionPhrases';
+import { COMPASSION_PHRASES, NeffStep, type CompassionLang } from '@/data/compassionPhrases';
 import type { Language } from '@/contexts/LanguageContext';
 
-type CompassionLang = 'fr' | 'en' | 'es';
-const COMPASSION_LANGS: ReadonlySet<string> = new Set(['fr', 'en', 'es']);
+const COMPASSION_LANGS: ReadonlySet<string> = new Set(['fr', 'en', 'es', 'ja', 'zh-Hans', 'zh-Hant']);
 
-// Chinese (zh-Hans/zh-Hant) translations don't exist yet; fall back to en
-// so the seed/practice still renders for primary=zh-* users.
+/**
+ * Every member of `Language` is now a member of `CompassionLang` (the data
+ * file ships translations for all six). The guard stays as a defensive
+ * fallback in case a future Language value lands without phrase data.
+ */
 function asCompassionLang(lang: Language): CompassionLang {
   return COMPASSION_LANGS.has(lang) ? (lang as CompassionLang) : 'en';
 }

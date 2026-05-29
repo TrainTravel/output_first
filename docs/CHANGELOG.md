@@ -1,6 +1,32 @@
 # Changelog
 
-## [Unreleased] - 2026-05-28
+## [Unreleased] - 2026-05-29
+
+### CJK self-compassion phrases + `LANGUAGE_NAMES` helper (i18n cleanup)
+
+**Two real bugs surfaced when using the app with target=Japanese, primary=Traditional Chinese.**
+
+**Bug 1 — English fell through as the self-compassion phrase.** `useSelfCompassion.ts` was forcing a fallback to English for any non-`fr/en/es` language because `COMPASSION_PHRASES` only shipped those three pools. A user on the Japanese profile speaking Traditional Chinese saw "What I feel, others have felt too. We are connected." despite neither setting matching English. Fixed by extending `COMPASSION_PHRASES` with `ja`, `zh-Hans`, and `zh-Hant` arrays (8 phrases × 3 steps × 3 langs = 72 new strings) plus the matching label translations. AI-drafted, queued for native review per CLAUDE.md.
+
+**Bug 2 — the HomeScreen subtitle hardcoded "French" into every translation.** `t({fr:'Journaling en français', en:'French journaling practice', ja:'フランス語日記の練習', …}).primary` rendered "フランス語日記の練習" (French language journal practice) even when the active profile was Japanese — exactly the CLAUDE.md "Dynamic strings that NAME a language" anti-pattern. Fixed by introducing `LANGUAGE_NAMES` in `src/lib/languageNames.ts` and rewriting the subtitle template to derive the language name from `targetLang`.
+
+**Bonus consolidation.** The same per-code lookup table existed locally in both `LanguageSettingsScreen` and `ProfileChip`. Adding `LANGUAGE_NAMES` made it the third instance — per the Rule of Three (CLAUDE.md), both local copies are now deleted and the components import the shared helper.
+
+Files:
+- `src/data/compassionPhrases.ts` — type widened to `PerLang<T>` over all 6 `CompassionLang` values; data extended with ja / zh-Hans / zh-Hant
+- `src/hooks/useSelfCompassion.ts` — drops the forced `en` fallback for valid CJK languages
+- `src/lib/languageNames.ts` — new canonical `LANGUAGE_NAMES` + `languageNameFor()`
+- `src/components/journal/HomeScreen.tsx` — subtitle derives from `targetLang` via the helper
+- `src/components/journal/LanguageSettingsScreen.tsx` + `src/components/journal/ProfileChip.tsx` — drop local copies, import the helper
+
+Tests:
+- 5 new `LANGUAGE_NAMES` unit tests (coverage of every code, distinct Simplified vs Traditional glyphs, attribute spot-checks)
+- 6 new `COMPASSION_PHRASES` data-shape tests (3 steps × 6 langs × 8 phrases shape, distinct CJK glyphs, canonical Japanese label)
+- 272/272 unit total green
+
+**ADHD-Friendly:**
+- Self-compassion phrases now show in the user's own target language — no more cognitive friction from an unexpected English wall when the rest of the UI is in 日本語 / 繁體中文
+- "OutputFirst — フランス語日記の練習" while on the Japanese profile was an actual lie. Removing it removes a small but real "wait, what?" loop that punishes attention drift
 
 ### Learning Profiles — Phase 2 (ProfileChip in header + Path A refactor)
 
