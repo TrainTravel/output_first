@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ArrowLeft, Check, Pencil, Archive, X } from 'lucide-react';
-import { useLanguage, type PrimaryLang, type Profile, type Translations } from '@/contexts/LanguageContext';
+import { useLanguage, type PrimaryLang, type Profile } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useQuotesEnabled } from '@/hooks/useQuotesEnabled';
+import { languageNameFor } from '@/lib/languageNames';
 
 interface LanguageSettingsScreenProps {
   onBack: () => void;
@@ -17,17 +18,6 @@ const PRIMARY_OPTIONS: ReadonlyArray<{ code: PrimaryLang; native: string; en: st
   { code: 'zh-Hans', native: '简体中文',  en: 'Chinese (Simplified)' },
   { code: 'zh-Hant', native: '繁體中文',  en: 'Chinese (Traditional)'},
 ];
-
-function languageName(code: string): Translations {
-  switch (code) {
-    case 'fr': return { fr: 'Français', en: 'French', es: 'Francés', ja: 'フランス語', 'zh-Hans': '法语', 'zh-Hant': '法語' };
-    case 'es': return { fr: 'Espagnol', en: 'Spanish', es: 'Español', ja: 'スペイン語', 'zh-Hans': '西班牙语', 'zh-Hant': '西班牙語' };
-    case 'ja': return { fr: 'Japonais', en: 'Japanese', es: 'Japonés', ja: '日本語', 'zh-Hans': '日语', 'zh-Hant': '日語' };
-    case 'zh-Hans': return { fr: 'Chinois simplifié', en: 'Simplified Chinese', es: 'Chino simplificado', ja: '中国語（簡体）', 'zh-Hans': '简体中文', 'zh-Hant': '簡體中文' };
-    case 'zh-Hant': return { fr: 'Chinois traditionnel', en: 'Traditional Chinese', es: 'Chino tradicional', ja: '中国語（繁体）', 'zh-Hans': '繁体中文', 'zh-Hant': '繁體中文' };
-    default: return { fr: code, en: code, es: code };
-  }
-}
 
 export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) {
   const {
@@ -117,7 +107,7 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
           <ul className="space-y-2">
             {live.map(p => {
               const isActive = p.id === activeProfileId;
-              const fallback = t(languageName(p.target)).primary;
+              const fallback = t(languageNameFor(p.target)).primary;
               const isEditing = editingId === p.id;
               const isConfirming = confirmArchiveId === p.id;
               const renameAria = t({

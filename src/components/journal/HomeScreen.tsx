@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GardenThemeSelector } from './GardenThemeSelector';
 import { ProfileChip } from './ProfileChip';
 import { FontPicker } from '@/components/FontPicker';
+import { languageNameFor } from '@/lib/languageNames';
 import { SelfCompassionSeed } from './SelfCompassionSeed';
 import { EmotionFrequencyNudge } from './EmotionFrequencyNudge';
 import { Badge } from '@/types/journal';
@@ -83,7 +84,17 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             OutputFirst
           </h1>
           <p className="text-muted-foreground text-sm italic">
-            {t({ fr: 'Journaling en français', en: 'French journaling practice', es: 'Práctica de journaling en francés', ja: 'フランス語日記の練習', 'zh-Hans': '法语日记练习', 'zh-Hant': '法語日記練習' }).primary}
+            {(() => {
+              const ln = languageNameFor(targetLang);
+              return t({
+                fr: `Journaling en ${ln.fr}`,
+                en: `${ln.en} journaling practice`,
+                es: `Práctica de journaling en ${ln.es}`,
+                ja: `${ln.ja}日記の練習`,
+                'zh-Hans': `${ln['zh-Hans']}日记练习`,
+                'zh-Hant': `${ln['zh-Hant']}日記練習`,
+              }).primary;
+            })()}
           </p>
         </div>
 

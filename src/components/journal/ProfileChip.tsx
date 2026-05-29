@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
-import type { Profile, TargetLang, Translations } from '@/contexts/LanguageContext';
+import type { Profile, TargetLang } from '@/contexts/LanguageContext';
+import { languageNameFor } from '@/lib/languageNames';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,17 +39,6 @@ const LABELS: Record<string, string> = {
 
 const TARGET_OPTIONS: TargetLang[] = ['fr', 'es', 'zh-Hans', 'zh-Hant', 'ja'];
 
-function languageName(code: string): Translations {
-  switch (code) {
-    case 'fr': return { fr: 'Français', en: 'French', es: 'Francés', ja: 'フランス語', 'zh-Hans': '法语', 'zh-Hant': '法語' };
-    case 'es': return { fr: 'Espagnol', en: 'Spanish', es: 'Español', ja: 'スペイン語', 'zh-Hans': '西班牙语', 'zh-Hant': '西班牙語' };
-    case 'ja': return { fr: 'Japonais', en: 'Japanese', es: 'Japonés', ja: '日本語', 'zh-Hans': '日语', 'zh-Hant': '日語' };
-    case 'zh-Hans': return { fr: 'Chinois simplifié', en: 'Simplified Chinese', es: 'Chino simplificado', ja: '中国語（簡体）', 'zh-Hans': '简体中文', 'zh-Hant': '簡體中文' };
-    case 'zh-Hant': return { fr: 'Chinois traditionnel', en: 'Traditional Chinese', es: 'Chino tradicional', ja: '中国語（繁体）', 'zh-Hans': '繁体中文', 'zh-Hant': '繁體中文' };
-    default: return { fr: code, en: code, es: code };
-  }
-}
-
 function displayName(profile: Profile, fallbackName: string): string {
   if (profile.name && profile.name.trim()) return profile.name.trim();
   return fallbackName;
@@ -72,7 +62,7 @@ export function ProfileChip({ onOpenLanguageSettings }: ProfileChipProps = {}) {
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
   const active = live.find(p => p.id === activeProfileId) ?? live[0];
-  const activeName = displayName(active, t(languageName(active.target)).primary);
+  const activeName = displayName(active, t(languageNameFor(active.target)).primary);
 
   const triggerAria = t({
     fr: `Profil actif : ${activeName}. Ouvrir le menu des profils.`,
@@ -142,7 +132,7 @@ export function ProfileChip({ onOpenLanguageSettings }: ProfileChipProps = {}) {
         <DropdownMenuContent align="end" className="min-w-[14rem] rounded-xl">
           {live.map(p => {
             const isActive = p.id === active.id;
-            const name = displayName(p, t(languageName(p.target)).primary);
+            const name = displayName(p, t(languageNameFor(p.target)).primary);
             const switchAria = t({
               fr: `Passer à ${name}`,
               en: `Switch to ${name}`,
@@ -228,7 +218,7 @@ export function ProfileChip({ onOpenLanguageSettings }: ProfileChipProps = {}) {
                   const disabled = (code as string) === (primaryLang as string);
                   return (
                     <SelectItem key={code} value={code} disabled={disabled}>
-                      {LABELS[code]} · {t(languageName(code)).primary}
+                      {LABELS[code]} · {t(languageNameFor(code)).primary}
                     </SelectItem>
                   );
                 })}
