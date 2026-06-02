@@ -1,4 +1,5 @@
 import { useProfileStorage } from './useProfileStorage';
+import { tickEngagement } from './useEngagement';
 
 export interface SmallWin {
   id: string;
@@ -30,6 +31,7 @@ export function useSmallWins() {
       createdAt: new Date().toISOString(),
     };
     setWins(prev => [...prev, win]);
+    tickEngagement();
     return win;
   };
 

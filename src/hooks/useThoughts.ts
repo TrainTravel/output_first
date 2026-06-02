@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserId } from '@/hooks/useUserId';
 import { toast } from 'sonner';
+import { tickEngagement } from './useEngagement';
 
 export interface Thought {
   id: string;
@@ -66,6 +67,7 @@ export function useThoughts() {
       composted: data.composted,
     };
     setThoughts(prev => [thought, ...prev]);
+    tickEngagement();
 
     // Fire-and-forget: generate embedding for the new thought
     supabase.functions.invoke('generate-embedding', {
