@@ -56,7 +56,7 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
   });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-12 animate-fade-in-up">
         {/* Language Toggle */}
         <div className="flex justify-between items-center">
@@ -282,6 +282,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
         </div>
 
       </div>
-    </div>
+    </main>
   );
 }
