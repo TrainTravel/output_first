@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Check, Pencil, Archive, X } from 'lucide-react';
+import { ArrowLeft, Check, Pencil, Archive, X, Coffee, Mail, MessageSquare } from 'lucide-react';
 import { useLanguage, type PrimaryLang, type Profile } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,9 @@ import { Switch } from '@/components/ui/switch';
 import { useQuotesEnabled } from '@/hooks/useQuotesEnabled';
 import { useDailyReminder } from '@/hooks/useDailyReminder';
 import { languageNameFor } from '@/lib/languageNames';
+import { openExternal, openMailto } from '@/lib/externalLink';
+import { TIP_JAR_URL, FEEDBACK_EMAIL, FEEDBACK_FORM_URL } from '@/lib/supportLinks';
+import { useEngagement, ENGAGEMENT_FEEDBACK_THRESHOLD, ENGAGEMENT_TIP_JAR_THRESHOLD } from '@/hooks/useEngagement';
 
 interface LanguageSettingsScreenProps {
   onBack: () => void;
@@ -35,6 +38,12 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
   } = useLanguage();
   const [quotesEnabled, setQuotesEnabled] = useQuotesEnabled();
   const reminder = useDailyReminder();
+  const { count: engagement } = useEngagement();
+  const showFeedbackCard = engagement >= ENGAGEMENT_FEEDBACK_THRESHOLD
+    && Boolean(FEEDBACK_EMAIL || FEEDBACK_FORM_URL);
+  const showTipJarCard = engagement >= ENGAGEMENT_TIP_JAR_THRESHOLD
+    && Boolean(TIP_JAR_URL);
+  const showSupportSection = showFeedbackCard || showTipJarCard;
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -369,6 +378,114 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
             />
           </div>
         </section>
+
+        {showSupportSection && (
+        <section className="mb-10" data-testid="support-section">
+          <h3 className="font-medium text-foreground mb-3">
+            {bilingual({
+              fr: 'Soutien & retours',
+              en: 'Support & feedback',
+              es: 'Apoyo y opiniones',
+              ja: '応援とフィードバック',
+              'zh-Hans': '支持与反馈',
+              'zh-Hant': '支持與回饋',
+            })}
+          </h3>
+
+          {showTipJarCard && (
+            <button
+              type="button"
+              onClick={() => { void openExternal(TIP_JAR_URL); }}
+              data-testid="tip-jar-button"
+              className="w-full rounded-xl border border-border bg-card px-4 py-3 flex items-center gap-3 text-left transition-colors hover:bg-primary/5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              <Coffee className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-foreground font-medium">
+                  {t({
+                    fr: "Ça t'a aidé ?",
+                    en: 'Did this help?',
+                    es: '¿Te ayudó?',
+                    ja: '役に立ちましたか？',
+                    'zh-Hans': '有帮到你吗？',
+                    'zh-Hant': '有幫到你嗎？',
+                  }).primary}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t({
+                    fr: 'Offre-moi 5 minutes de validation externe ☕',
+                    en: 'Buy me 5 minutes of external validation ☕',
+                    es: 'Regálame 5 minutos de validación externa ☕',
+                    ja: '外部からの承認を 5 分ぶん ☕',
+                    'zh-Hans': '5 分钟的外部认可，来一杯？☕',
+                    'zh-Hant': '5 分鐘的外部認可，來一杯？☕',
+                  }).primary}
+                </p>
+              </div>
+              <span className="text-sm font-medium text-primary flex-shrink-0">€2</span>
+            </button>
+          )}
+
+          {showFeedbackCard && (
+            <div className="mt-3 rounded-xl border border-border bg-card px-4 py-3">
+              <p className="text-sm text-foreground font-medium">
+                {t({
+                  fr: 'Une idée ?',
+                  en: 'Got thoughts?',
+                  es: '¿Algo en mente?',
+                  ja: 'ご感想は？',
+                  'zh-Hans': '有想法？',
+                  'zh-Hant': '有想法？',
+                }).primary}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t({
+                  fr: 'Dis-moi ce qui marche — ou pas.',
+                  en: "Tell me what's working — or what isn't.",
+                  es: 'Cuéntame qué funciona — o qué no.',
+                  ja: 'うまくいっていること、いないこと、どちらも教えてください。',
+                  'zh-Hans': '告诉我哪里好用、哪里不好用。',
+                  'zh-Hant': '告訴我哪裡好用、哪裡不好用。',
+                }).primary}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {FEEDBACK_EMAIL && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    data-testid="feedback-email-button"
+                    onClick={() => openMailto(
+                      FEEDBACK_EMAIL,
+                      t({
+                        fr: 'Retour OutputFirst',
+                        en: 'OutputFirst feedback',
+                        es: 'Comentarios OutputFirst',
+                        ja: 'OutputFirst フィードバック',
+                        'zh-Hans': 'OutputFirst 反馈',
+                        'zh-Hant': 'OutputFirst 回饋',
+                      }).primary,
+                    )}
+                  >
+                    <Mail className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                    {t({ fr: 'E-mail', en: 'Email', es: 'Correo', ja: 'メール', 'zh-Hans': '邮件', 'zh-Hant': '電郵' }).primary}
+                  </Button>
+                )}
+                {FEEDBACK_FORM_URL && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    data-testid="feedback-form-button"
+                    onClick={() => { void openExternal(FEEDBACK_FORM_URL); }}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                    {t({ fr: 'Formulaire', en: 'Quick form', es: 'Formulario', ja: 'フォーム', 'zh-Hans': '表单', 'zh-Hant': '表單' }).primary}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+        )}
 
         <section className="mt-auto">
           <p className="text-xs text-muted-foreground mb-2">

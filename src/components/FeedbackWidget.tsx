@@ -1,21 +1,16 @@
-import { useState } from 'react';
-import { MessageSquareHeart, X, Send, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { MessageSquareHeart, X, Send, Loader2, Coffee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { FEEDBACK_ELIGIBLE_EVENT } from '@/hooks/useEngagement';
+import { openExternal } from '@/lib/externalLink';
+import { TIP_JAR_URL } from '@/lib/supportLinks';
 
 const EMOJI_RATINGS = ['😞', '😐', '🙂', '😊', '🤩'];
-
-const PRICE_OPTIONS = [
-  { value: 'free', label: '$0 (free only)' },
-  { value: '1-3', label: '$1–3/mo' },
-  { value: '3-5', label: '$3–5/mo' },
-  { value: '5-10', label: '$5–10/mo' },
-  { value: '10+', label: '$10+/mo' },
-];
 
 const PLATFORM_OPTIONS = [
   { value: 'web', label: '🌐 Web' },
@@ -27,11 +22,9 @@ const PLATFORM_OPTIONS = [
 export function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(() => localStorage.getItem('feedback-hidden') === 'true');
-  const isEligible = localStorage.getItem('feedback-eligible') === 'true';
+  const [isEligible, setIsEligible] = useState(() => localStorage.getItem('feedback-eligible') === 'true');
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
-  const [wouldPay, setWouldPay] = useState<string | null>(null);
-  const [priceRange, setPriceRange] = useState<string | null>(null);
   const [platform, setPlatform] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -39,11 +32,17 @@ export function FeedbackWidget() {
   const isFr = targetLang === 'fr';
   const { user } = useAuth();
 
+  // Eligibility unlocks asynchronously via tickEngagement's 10s timer.
+  // Listen so the floating button slides in without a page reload.
+  useEffect(() => {
+    const handler = () => setIsEligible(localStorage.getItem('feedback-eligible') === 'true');
+    window.addEventListener(FEEDBACK_ELIGIBLE_EVENT, handler);
+    return () => window.removeEventListener(FEEDBACK_ELIGIBLE_EVENT, handler);
+  }, []);
+
   const reset = () => {
     setRating(null);
     setComment('');
-    setWouldPay(null);
-    setPriceRange(null);
     setPlatform(null);
     setSent(false);
   };
@@ -56,8 +55,6 @@ export function FeedbackWidget() {
       user_anonymous_id: user?.id,
       rating,
       comment: comment.trim().slice(0, 2000),
-      would_pay: wouldPay || 'no',
-      price_range: wouldPay === 'yes' || wouldPay === 'maybe' ? priceRange : null,
       platform_preference: platform || 'web',
     } as any);
 
@@ -76,8 +73,6 @@ export function FeedbackWidget() {
       reset();
     }, 2000);
   };
-
-  const showPriceQuestion = wouldPay === 'yes' || wouldPay === 'maybe';
 
   return (
     <>
@@ -176,55 +171,19 @@ export function FeedbackWidget() {
                   />
                 </div>
 
-                {/* Would pay */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    {isFr ? 'Paieriez-vous pour cette app?' : 'Would you pay for this app?'}
-                  </label>
-                  <div className="flex gap-2">
-                    {[
-                      { value: 'yes', label: isFr ? 'Oui' : 'Yes' },
-                      { value: 'maybe', label: isFr ? 'Peut-être' : 'Maybe' },
-                      { value: 'no', label: isFr ? 'Non' : 'No' },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setWouldPay(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
-                          wouldPay === opt.value
-                            ? 'bg-primary/15 border-primary/30 text-foreground'
-                            : 'border-border text-muted-foreground hover:border-primary/20'
-                        }`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price range (conditional) */}
-                {showPriceQuestion && (
-                  <div className="space-y-2 animate-fade-in-up">
-                    <label className="text-sm font-medium text-foreground">
-                      {isFr ? 'Combien par mois?' : 'How much per month?'}
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {PRICE_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => setPriceRange(opt.value)}
-                          className={`py-1.5 px-3 rounded-lg text-sm border transition-all ${
-                            priceRange === opt.value
-                              ? 'bg-primary/15 border-primary/30 text-foreground'
-                              : 'border-border text-muted-foreground hover:border-primary/20'
-                          }`}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Coffee jar CTA — non-blocking, outbound link to BMAC */}
+                <button
+                  type="button"
+                  onClick={() => { void openExternal(TIP_JAR_URL); }}
+                  data-testid="feedback-widget-coffee"
+                  className="w-full rounded-xl border border-border bg-card px-4 py-3 flex items-center gap-3 text-left transition-colors hover:bg-primary/5 hover:border-primary/40"
+                >
+                  <Coffee className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+                  <span className="text-sm text-foreground flex-1">
+                    {isFr ? 'Offrez-moi un café pour m\'aider à continuer' : 'Buy me a coffee to help me continue'}
+                  </span>
+                  <span className="text-sm font-medium text-primary flex-shrink-0">☕</span>
+                </button>
 
                 {/* Platform */}
                 <div className="space-y-2">

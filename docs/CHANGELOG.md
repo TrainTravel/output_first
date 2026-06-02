@@ -1,6 +1,28 @@
 # Changelog
 
-## [Unreleased] - 2026-05-30
+## [Unreleased] - 2026-06-01
+
+### Tip jar + feedback in Preferences
+
+**A subtle, opt-in way for users to support the project and send feedback — placed where it won't intrude on the journaling flow. Gated behind real engagement so brand-new users never see an ask before they've experienced value.**
+
+What's new:
+- `src/lib/externalLink.ts` — `openExternal(url)` wrapper that uses `@capacitor/browser` (in-app SFSafariViewController) on iOS and falls back to `window.open` with `noopener,noreferrer` on web. `openMailto(email, subject)` triggers the OS mail composer on both platforms.
+- `src/lib/supportLinks.ts` — three config constants (`TIP_JAR_URL`, `FEEDBACK_EMAIL`, `FEEDBACK_FORM_URL`). Empty strings hide the corresponding row so a half-configured build never shows a broken button. Replace `YOUR_HANDLE` in the BMAC URL before release.
+- `LanguageSettingsScreen` gains a "Support & feedback" section directly below "Preferences":
+  - A tip-jar card with playful copy ("Did this help? Buy me 5 minutes of external validation ☕") and a fixed €2 indicator. Tap → opens Buy Me a Coffee in the in-app browser.
+  - A feedback card with two outline buttons — "Email" (opens mail composer with a pre-filled subject) and "Quick form" (opens a hosted form). Each button hides itself when its target is empty; the whole card hides if both are.
+- All copy translated across en / fr / es / ja / zh-Hans / zh-Hant per the chrome translation conventions (polite Japanese register, no `あなた`, distinct Simplified/Traditional characters preserved).
+- `@capacitor/browser@^8.0.3` added as a new dependency.
+- 7 new unit tests for `openExternal` (web fallback, native path, plugin-throw fallback, empty-URL no-op) and `openMailto` (subject encoding, no-subject path, empty-email no-op).
+- **Engagement gating** (`src/hooks/useEngagement.ts`): a global, profile-agnostic counter bumped from three save paths — journal completion (any flow that reaches the `complete` step), brain-dump `addThought`, and small-win `addWin`. The Support & feedback section is hidden entirely until at least one card has earned visibility. Thresholds: feedback card at ≥ 2 engagement events, tip jar at ≥ 5. Monotonic; counts only go up; never profile-scoped (one device, one counter). 10 new unit tests covering fresh-install state, pre-seeded counts, malformed-data clamping, monotonicity across many ticks, and threshold-ordering invariants.
+
+**ADHD-Friendly:**
+- Lives in Preferences, NOT on HomeScreen — the home stays sacred journaling real-estate; a tip jar there would feel like a guilt tax every session.
+- **Engagement-gated** so brand-new users never see an ask before they've experienced value. Feedback unlocks after 2 saved actions (any combination of journal completions, brain-dump captures, or small wins); tip jar unlocks after 5. Aligns with the Ethical Monetization Principles in CLAUDE.md — no asking before earning.
+- Hides itself entirely when no payment / feedback channel is configured. Zero noise for users who never visit settings.
+- Single-tap action, no multi-step purchase flow inside the app. The actual transaction lives on Buy Me a Coffee's page — we just hand off.
+- No "loss aversion" framing ("haven't supported yet…" anti-pattern). The copy is self-aware, opt-in, and skippable by ignoring it.
 
 ### iOS app (Capacitor) — Phases 1-2: scaffold + native polish
 

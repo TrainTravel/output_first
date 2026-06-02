@@ -1,10 +1,11 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualPrompt, ReflectionCycle, MIN_CYCLES, MAX_CYCLES, BADGES, Badge, VocabPair } from '@/types/journal';
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 import { useProfileStorage } from './useProfileStorage';
 import { hapticSuccess } from '@/lib/haptics';
+import { tickEngagement } from './useEngagement';
 
 /** Legacy unprefixed key — migrated to per-profile storage in Phase 1. */
 const LEGACY_STORAGE_KEY = 'outputfirst_entries';
@@ -49,6 +50,9 @@ export function useJournal() {
   );
 
   const [currentStep, setCurrentStep] = useState<JournalStep>('home');
+  useEffect(() => {
+    if (currentStep === 'complete') tickEngagement();
+  }, [currentStep]);
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({});
   const [currentCycle, setCurrentCycle] = useState(0);
   const [reflectionCycles, setReflectionCycles] = useState<ReflectionCycle[]>([]);
@@ -233,7 +237,6 @@ export function useJournal() {
     setEntries(prev => [...prev, newEntry]);
     persistToDb(newEntry);
     setCurrentStep('complete');
-    localStorage.setItem('feedback-eligible', 'true');
     hapticSuccess();
   };
 
@@ -250,7 +253,6 @@ export function useJournal() {
     setEntries(prev => [...prev, newEntry]);
     persistToDb(newEntry);
     setCurrentStep('complete');
-    localStorage.setItem('feedback-eligible', 'true');
     hapticSuccess();
   };
 
