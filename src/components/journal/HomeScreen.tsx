@@ -282,6 +282,6 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
         </div>
 
       </div>
-    </div>
+    </main>
   );
 }
