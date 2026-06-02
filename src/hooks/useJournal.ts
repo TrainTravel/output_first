@@ -4,6 +4,7 @@ import { JournalEntry, JournalStep, DAILY_PROMPTS, GRATITUDE_PROMPTS, BilingualP
 import { supabase } from '@/integrations/supabase/client';
 import { ThoughtContext } from '@/types/chat';
 import { useProfileStorage } from './useProfileStorage';
+import { hapticSuccess } from '@/lib/haptics';
 
 /** Legacy unprefixed key — migrated to per-profile storage in Phase 1. */
 const LEGACY_STORAGE_KEY = 'outputfirst_entries';
@@ -142,6 +143,7 @@ export function useJournal() {
     setEntries(prev => [...prev, newEntry]);
     persistToDb(newEntry);
     setCurrentStep('complete');
+    hapticSuccess();
   };
 
   const saveContent = (content: string) => {
@@ -232,6 +234,7 @@ export function useJournal() {
     persistToDb(newEntry);
     setCurrentStep('complete');
     localStorage.setItem('feedback-eligible', 'true');
+    hapticSuccess();
   };
 
   const skipToComplete = () => {
@@ -248,6 +251,7 @@ export function useJournal() {
     persistToDb(newEntry);
     setCurrentStep('complete');
     localStorage.setItem('feedback-eligible', 'true');
+    hapticSuccess();
   };
 
   const goHome = () => {

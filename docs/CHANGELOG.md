@@ -1,6 +1,36 @@
 # Changelog
 
-## [Unreleased] - 2026-05-29
+## [Unreleased] - 2026-05-30
+
+### iOS app (Capacitor) — Phases 1-2: scaffold + native polish
+
+**OutputFirst now runs as a native iOS shell wrapping the existing Vite build.** Bundle ID `com.traintravel.outputfirst`, target iOS Simulator first, then real device + TestFlight once the Apple Developer Program is enrolled. Goal: App Store listing to validate iOS demand.
+
+What's new (Phase 1 — scaffold):
+- Capacitor 8 packages: `@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`
+- `capacitor.config.ts` — `SplashScreen`, `StatusBar`, `Keyboard` plugins configured for the sage palette + WKWebView resize behaviour
+- `npx cap init` + `npx cap add ios` ran; `ios/` directory checked in (Xcode workspace + Swift Package Manager — no CocoaPods at runtime)
+- `index.html` viewport gains `viewport-fit=cover` + `user-scalable=no` so the WebView respects the notch and doesn't pinch-zoom
+- `src/index.css` uses `env(safe-area-inset-*)` padding on `body` so the ProfileChip header isn't clipped by the dynamic island
+- `src/lib/native.ts` — one-shot bootstrap (StatusBar style, Keyboard resize mode, SplashScreen hide). No-ops on web — safe to call unconditionally from `main.tsx`.
+
+What's new (Phase 2 — native polish):
+- `src/lib/haptics.ts` — `hapticLight` / `hapticMedium` / `hapticSuccess` wrappers around `@capacitor/haptics`. Every call no-ops on web; fail-open on plugin errors.
+- `useJournal.ts` — `hapticSuccess()` fires on every path that lands on the `complete` step (`saveFreeContent`, `saveGratitude`, `skipToComplete`)
+- `src/hooks/useDailyReminder.ts` — persisted toggle + `<Input type="time">` time picker that schedules a daily repeating local notification via `@capacitor/local-notifications`. Permission requested on first enable; refusal rolls the UI back to OFF.
+- `LanguageSettingsScreen` Preferences section gains a "Daily reminder" row right next to "Daily thought" — copy is gentle and never mentions streak loss
+- 6 new unit tests for `useDailyReminder` (default, persistence, time validation, pre-seeded state)
+
+What still needs to happen before App Store submission (deferred):
+- Custom 1024×1024 app icon (using Capacitor default for now)
+- Custom splash artwork
+- Apple Developer Program enrollment ($99/year)
+- TestFlight beta — see `tasks/ios-app-spec.md` for the full submission checklist
+
+**ADHD-Friendly:**
+- Haptic feedback turns the "you finished" moment into a tactile reward — bridges the time-blindness "did anything happen?" gap
+- Daily reminder copy is intentionally invitational ("Take 2 minutes for yourself") rather than punitive ("Don't break your streak"). Per CLAUDE.md: never use loss aversion to drive engagement.
+- One-tap opt-in + per-row time picker means users can choose when they're most likely to actually open the app, instead of fighting a default
 
 ### CJK self-compassion phrases + `LANGUAGE_NAMES` helper (i18n cleanup)
 

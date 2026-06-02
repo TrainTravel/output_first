@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useQuotesEnabled } from '@/hooks/useQuotesEnabled';
+import { useDailyReminder } from '@/hooks/useDailyReminder';
 import { languageNameFor } from '@/lib/languageNames';
 
 interface LanguageSettingsScreenProps {
@@ -33,6 +34,7 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
     archiveProfile,
   } = useLanguage();
   const [quotesEnabled, setQuotesEnabled] = useQuotesEnabled();
+  const reminder = useDailyReminder();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -307,6 +309,62 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
                 ja: '今日の言葉を表示する',
                 'zh-Hans': '启用每日一思',
                 'zh-Hant': '啟用每日一思',
+              }).primary}
+            />
+          </div>
+
+          <div className="mt-3 rounded-xl border border-border bg-card px-4 py-3 flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <label htmlFor="reminder-toggle" className="text-sm text-foreground font-medium block">
+                {t({
+                  fr: 'Rappel quotidien',
+                  en: 'Daily reminder',
+                  es: 'Recordatorio diario',
+                  ja: '毎日のリマインダー',
+                  'zh-Hans': '每日提醒',
+                  'zh-Hant': '每日提醒',
+                }).primary}
+              </label>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t({
+                  fr: 'Une notification douce pour prendre 2 minutes.',
+                  en: 'A gentle nudge to take 2 minutes for yourself.',
+                  es: 'Un recordatorio amable para tomarte 2 minutos.',
+                  ja: '2分だけ自分の時間を取るための優しい通知。',
+                  'zh-Hans': '一个温柔的提醒，给自己留 2 分钟。',
+                  'zh-Hant': '一個溫柔的提醒，給自己留 2 分鐘。',
+                }).primary}
+              </p>
+              {reminder.enabled && (
+                <div className="mt-2 flex items-center gap-2">
+                  <Input
+                    type="time"
+                    value={reminder.time}
+                    onChange={e => reminder.setTime(e.target.value)}
+                    className="h-8 w-28 text-sm"
+                    aria-label={t({
+                      fr: "Heure du rappel",
+                      en: 'Reminder time',
+                      es: 'Hora del recordatorio',
+                      ja: 'リマインダーの時刻',
+                      'zh-Hans': '提醒时间',
+                      'zh-Hant': '提醒時間',
+                    }).primary}
+                  />
+                </div>
+              )}
+            </div>
+            <Switch
+              id="reminder-toggle"
+              checked={reminder.enabled}
+              onCheckedChange={(next) => { void reminder.setEnabled(next); }}
+              aria-label={t({
+                fr: 'Activer le rappel quotidien',
+                en: 'Enable daily reminder',
+                es: 'Activar recordatorio diario',
+                ja: '毎日のリマインダーを有効にする',
+                'zh-Hans': '启用每日提醒',
+                'zh-Hant': '啟用每日提醒',
               }).primary}
             />
           </div>
