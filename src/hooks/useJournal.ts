@@ -326,6 +326,7 @@ export function useJournal() {
     openFocusPlan: () => setCurrentStep('focusplan'),
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
+    openBodyScan: () => setCurrentStep('bodyscan'),
     openLanguageSettings: () => setCurrentStep('languagesettings'),
     goBackToEmotions: () => setCurrentStep('emotions'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },

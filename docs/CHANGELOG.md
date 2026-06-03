@@ -1,6 +1,22 @@
 # Changelog
 
-## [Unreleased] - 2026-06-01
+## [Unreleased] - 2026-06-03
+
+### Body Scan pre-write check-in
+
+**A passive 12-second body scan as a low-friction alternative to the Breathe step. Body part labels (head → toe) double as L2 vocabulary anchors that swap with the target language.**
+
+What's new:
+- `src/data/body-parts.ts` — 6 anchor points (head, shoulders, chest, belly, hands, legs) with normalized vertical positions and translations across en / fr / es / ja / zh-Hans / zh-Hant. Japanese entries include furigana; Simplified and Traditional Chinese diverge where they should (e.g. 双手 / 雙手).
+- `src/components/journal/BodyScanScreen.tsx` — inline SVG silhouette + horizontal CSS-driven scan line that sweeps top→bottom on a 12s loop via `requestAnimationFrame`. Body-part labels sit on alternating sides of the silhouette and brighten as the scan line crosses them (`opacity 0.35 → 1` with a 400ms ease). Continue button reveals after 10s, mirroring `BreatheScreen`'s "wait then offer" pattern.
+- Accessible via HomeScreen "More tools" expander, between Sand Timer and Zen Garden. New `bodyscan` step in `JournalStep` type and `openBodyScan` opener in `useJournal`.
+- 6 unit tests covering required language fields, ID uniqueness, head-to-toe sort order, position bounds, and Hans/Hant divergence per CLAUDE.md chrome conventions.
+
+**ADHD-Friendly:**
+- Vocabulary acquisition is a side effect of an already-useful regulation tool — no separate "flashcard" mode required.
+- Visual anchor (moving scan line) externalizes the passage of time; users see the progress instead of guessing how long is left.
+- Label opacity highlights ONE body part at a time, satisfying the "one thing at a time" focus rule.
+- Single asset feeds 6 languages — no baked-in text, no asset regeneration when the user switches their language pair mid-session.
 
 ### Tip jar + feedback in Preferences
 

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -31,11 +31,12 @@ interface HomeScreenProps {
   onOpenFocusPlan: () => void;
   onOpenTodoList: () => void;
   onOpenTinyExperiment: () => void;
+  onOpenBodyScan: () => void;
   onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
@@ -251,6 +252,11 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               <Button variant="outline" size="full" onClick={onOpenSandTimer}>
                 <Hourglass className="w-5 h-5 mr-2" />
                 {bilingual({ fr: 'Sablier', en: 'Sand Timer', es: 'Reloj de arena', ja: '砂時計', 'zh-Hans': '沙漏', 'zh-Hant': '沙漏' })}
+              </Button>
+
+              <Button variant="outline" size="full" onClick={onOpenBodyScan}>
+                <Activity className="w-5 h-5 mr-2" />
+                {bilingual({ fr: 'Scan corporel', en: 'Body Scan', es: 'Escaneo corporal', ja: 'ボディスキャン', 'zh-Hans': '身体扫描', 'zh-Hant': '身體掃描' })}
               </Button>
             </div>
           )}
