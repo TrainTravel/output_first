@@ -9,7 +9,7 @@ interface BodyScanScreenProps {
   onBack: () => void;
 }
 
-const SCAN_DURATION_MS = 12000;
+const SCAN_DURATION_MS = 15000;
 const REVEAL_DELAY_MS = 10000;
 
 export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
@@ -89,7 +89,13 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
           />
 
           {BODY_PARTS.map(part => {
+            // active = scan line is currently crossing this part
+            // passed = scan has already swept past (lingering memory)
+            // hidden = scan hasn't reached yet
             const active = scanY >= part.yNorm - 0.04 && scanY <= part.yNorm + 0.14;
+            const passed = scanY > part.yNorm + 0.14;
+            const opacity = active ? 1 : passed ? 0.55 : 0;
+            const scale = active ? 1.08 : 1;
             const label = t(part.label);
             return (
               <div
@@ -98,12 +104,15 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
                 style={{
                   top: `${part.yNorm * 100}%`,
                   left: `${part.xPercent}%`,
-                  transform: 'translate(-50%, -50%)',
-                  opacity: active ? 1 : 0.35,
-                  transition: 'opacity 400ms ease',
+                  transform: `translate(-50%, -50%) scale(${scale})`,
+                  opacity,
+                  transition: 'opacity 600ms ease, transform 600ms ease',
                 }}
               >
-                <p className="font-serif text-base text-foreground whitespace-nowrap">
+                <p
+                  className="font-serif text-base whitespace-nowrap"
+                  style={{ color: active ? 'hsl(var(--primary))' : 'hsl(var(--foreground))' }}
+                >
                   {label.primary}
                 </p>
                 <p className="text-xs text-muted-foreground italic whitespace-nowrap">
