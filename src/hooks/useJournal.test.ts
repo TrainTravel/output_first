@@ -306,3 +306,55 @@ describe('useJournal — reflection cycle accumulation', () => {
     expect(result.current.reflectionCycles[0].aiQuestion).toBeUndefined();
   });
 });
+
+describe('useJournal — Center choice (Breathe vs Body Scan) routing', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('startJournal lands on centerchoice, not directly on breathe', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    expect(result.current.currentStep).toBe('centerchoice');
+  });
+
+  it('chooseBreathe advances to breathe step (existing pre-write flow preserved)', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.chooseBreathe());
+    expect(result.current.currentStep).toBe('breathe');
+    act(() => result.current.finishBreathe());
+    expect(result.current.currentStep).toBe('promptchoice');
+  });
+
+  it('chooseBodyScan from journal flow → bodyscan → finishBodyScan → promptchoice', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.startJournal());
+    act(() => result.current.chooseBodyScan());
+    expect(result.current.currentStep).toBe('bodyscan');
+    act(() => result.current.finishBodyScan());
+    // Came from the journal flow → continue forward
+    expect(result.current.currentStep).toBe('promptchoice');
+  });
+
+  it('openBodyScan from HomeScreen "More tools" → bodyscan → finishBodyScan → home', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    // No startJournal — entering directly from home tools shortcut
+    act(() => result.current.openBodyScan());
+    expect(result.current.currentStep).toBe('bodyscan');
+    act(() => result.current.finishBodyScan());
+    // Came from home → bounce back to home, not into the journal flow
+    expect(result.current.currentStep).toBe('home');
+  });
+
+  it('origin tracking: most recent opener wins (home → journal switches the destination)', () => {
+    // Regression guard: if a user opens Body Scan from home tools, abandons it,
+    // then later starts journal and picks Body Scan again, the "journal" origin
+    // must be the one finishBodyScan honors.
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+    act(() => result.current.openBodyScan());          // origin = 'home'
+    act(() => result.current.goHome());                // bail out
+    act(() => result.current.startJournal());
+    act(() => result.current.chooseBodyScan());        // origin = 'journal'
+    act(() => result.current.finishBodyScan());
+    expect(result.current.currentStep).toBe('promptchoice');
+  });
+});

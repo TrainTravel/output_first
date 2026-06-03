@@ -3,6 +3,8 @@ import { useJournal } from '@/hooks/useJournal';
 import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { HomeScreen } from './HomeScreen';
 import { BreatheScreen } from './BreatheScreen';
+import { BodyScanScreen } from './BodyScanScreen';
+import { CenterChoiceScreen } from './CenterChoiceScreen';
 import { WriteScreen } from './WriteScreen';
 import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
@@ -74,7 +76,10 @@ export function JournalApp() {
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
+    chooseBreathe,
+    chooseBodyScan,
     finishBreathe,
+    finishBodyScan,
     chooseDirect,
     openPromptLibrary,
     pickPrompt,
@@ -106,6 +111,7 @@ export function JournalApp() {
     openFocusPlan,
     openTodoList,
     openTinyExperiment,
+    openBodyScan,
     openLanguageSettings,
     goBackToEmotions,
     openVocabulary,
@@ -146,14 +152,30 @@ export function JournalApp() {
           onOpenFocusPlan={openFocusPlan}
            onOpenTodoList={openTodoList}
            onOpenTinyExperiment={openTinyExperiment}
+           onOpenBodyScan={openBodyScan}
           onOpenLanguageSettings={openLanguageSettings}
           onOpenVocabulary={() => openVocabulary('home')}
+        />
+      )}
+
+      {currentStep === 'centerchoice' && (
+        <CenterChoiceScreen
+          onChooseBreathe={chooseBreathe}
+          onChooseBodyScan={chooseBodyScan}
+          onBack={goHome}
         />
       )}
 
       {currentStep === 'breathe' && (
         <BreatheScreen
           onReady={finishBreathe}
+          onBack={goHome}
+        />
+      )}
+
+      {currentStep === 'bodyscan' && (
+        <BodyScanScreen
+          onReady={finishBodyScan}
           onBack={goHome}
         />
       )}
