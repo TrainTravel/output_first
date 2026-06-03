@@ -4,6 +4,7 @@ import { useEmotionVocab } from '@/hooks/useEmotionVocab';
 import { HomeScreen } from './HomeScreen';
 import { BreatheScreen } from './BreatheScreen';
 import { BodyScanScreen } from './BodyScanScreen';
+import { CenterChoiceScreen } from './CenterChoiceScreen';
 import { WriteScreen } from './WriteScreen';
 import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
@@ -75,7 +76,10 @@ export function JournalApp() {
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
+    chooseBreathe,
+    chooseBodyScan,
     finishBreathe,
+    finishBodyScan,
     chooseDirect,
     openPromptLibrary,
     pickPrompt,
@@ -154,6 +158,14 @@ export function JournalApp() {
         />
       )}
 
+      {currentStep === 'centerchoice' && (
+        <CenterChoiceScreen
+          onChooseBreathe={chooseBreathe}
+          onChooseBodyScan={chooseBodyScan}
+          onBack={goHome}
+        />
+      )}
+
       {currentStep === 'breathe' && (
         <BreatheScreen
           onReady={finishBreathe}
@@ -163,7 +175,7 @@ export function JournalApp() {
 
       {currentStep === 'bodyscan' && (
         <BodyScanScreen
-          onReady={goHome}
+          onReady={finishBodyScan}
           onBack={goHome}
         />
       )}

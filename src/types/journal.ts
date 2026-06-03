@@ -18,7 +18,7 @@ export interface JournalEntry {
   createdAt: Date;
 }
 
-export type JournalStep = 'home' | 'breathe' | 'bodyscan' | 'promptchoice' | 'promptlibrary'
+export type JournalStep = 'home' | 'centerchoice' | 'breathe' | 'bodyscan' | 'promptchoice' | 'promptlibrary'
   | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete'
   | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters' | 'clusterdetail'
   | 'zengarden' | 'freewrite' | 'freewritechoice' | 'expressivewrite'

@@ -59,6 +59,7 @@ export function useJournal() {
   const [activeClusterId, setActiveClusterId] = useState<string | null>(null);
   const [chatContext, setChatContext] = useState<ThoughtContext | null>(null);
   const [vocabOrigin, setVocabOrigin] = useState<JournalStep>('home');
+  const [bodyScanOrigin, setBodyScanOrigin] = useState<'home' | 'journal'>('home');
   const [promptTemplate, setPromptTemplate] = useState('');
   const [promptVocab, setPromptVocab] = useState<VocabPair[] | undefined>(undefined);
 
@@ -109,13 +110,26 @@ export function useJournal() {
     setCurrentEntry({ date: today });
     setPromptTemplate('');
     setPromptVocab(undefined);
-    setCurrentStep('breathe');
+    setCurrentStep('centerchoice');
     setCurrentCycle(0);
     setReflectionCycles([]);
   };
 
+  const chooseBreathe = () => setCurrentStep('breathe');
+  const chooseBodyScan = () => {
+    setBodyScanOrigin('journal');
+    setCurrentStep('bodyscan');
+  };
+
   const finishBreathe = () => {
     setCurrentStep('promptchoice');
+  };
+
+  const finishBodyScan = () => {
+    // Body scan can be reached from the journal flow (chooseBodyScan) or
+    // from HomeScreen "More tools" (openBodyScan). Route forward to
+    // promptchoice in the first case, back to home in the second.
+    setCurrentStep(bodyScanOrigin === 'journal' ? 'promptchoice' : 'home');
   };
 
   const chooseDirect = () => setCurrentStep('write');
@@ -294,7 +308,10 @@ export function useJournal() {
     getDailyPrompt,
     getGratitudePrompt,
     startJournal,
+    chooseBreathe,
+    chooseBodyScan,
     finishBreathe,
+    finishBodyScan,
     chooseDirect,
     openPromptLibrary,
     pickPrompt,
@@ -326,7 +343,10 @@ export function useJournal() {
     openFocusPlan: () => setCurrentStep('focusplan'),
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
-    openBodyScan: () => setCurrentStep('bodyscan'),
+    openBodyScan: () => {
+      setBodyScanOrigin('home');
+      setCurrentStep('bodyscan');
+    },
     openLanguageSettings: () => setCurrentStep('languagesettings'),
     goBackToEmotions: () => setCurrentStep('emotions'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
