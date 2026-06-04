@@ -534,8 +534,8 @@ describe('Path A migration — Phase 0 (per-profile primary) shape', () => {
     expect(result.current.targetLang).toBe('ja');
     // Both profiles still listed; primary stripped from each.
     expect(result.current.profiles).toHaveLength(2);
-    expect((result.current.profiles[0] as Record<string, unknown>).primary).toBeUndefined();
-    expect((result.current.profiles[1] as Record<string, unknown>).primary).toBeUndefined();
+    expect((result.current.profiles[0] as unknown as Record<string, unknown>).primary).toBeUndefined();
+    expect((result.current.profiles[1] as unknown as Record<string, unknown>).primary).toBeUndefined();
   });
 
   it('falls back primary to "en" when lifted primary would conflict with active target', () => {
