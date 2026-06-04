@@ -226,6 +226,31 @@ import * as E from 'fp-ts/Either';
 
 ---
 
+### Keep CI Green — Don't Let It Drift
+
+**Rule:** Never merge a PR while CI is red on `main`, even if "your" tests pass. A red baseline destroys signal — once red is normal, every new regression is invisible until someone bisects 12 PRs of accumulated drift.
+
+**Why:** E2E went red on 2026-03-08 and stayed red for 12 weeks (through 2026-06-04) because a single user-feedback fix (collapse "More tools") broke ~16 tests, and once red was "normal" the next four refactors (FreeWriteChoiceScreen insertion, progress card redesign, ProfileChip replacing LanguageToggle, PhilosopherQuoteDialog interaction) added their own breakages indistinguishable from the first. Fixing one PR's drift while it's still warm costs ~30 minutes. Unwinding 12 weeks of drift across 21 failures cost an afternoon plus near-certain merge conflicts.
+
+**When you change UI flow or layout, do this in the same PR:**
+- **Insert a screen between two existing ones** (e.g., `CenterChoiceScreen` between Home and Breathe): `grep -r` E2E for tests that navigate the old path — they're now broken even if your component compiles.
+- **Collapse, rename, or move a HomeScreen button**: search `e2e/` for the old aria-label / text / role+name. Don't leave selector drift for Future You.
+- **Remove user-visible copy that was uniquely used as a test selector** (e.g., "Série" on the progress card → numbers-only design): update the test in the same PR.
+
+**Stable test selectors:**
+- Prefer `data-testid="…"` for elements that E2E *navigates to*. Reserve text-based selectors for *assertions* (does the user see "Welcome"?), not *navigation* (click "Welcome").
+- Text and aria-label selectors get rewritten in i18n sweeps; `data-testid` doesn't.
+
+**Modal/a11y trap:** Modals that mark the page `aria-hidden` (Radix `Dialog`, `Sheet`, etc.) silently break `getByRole` queries against underlying buttons even though the element is "rendered." If a test lands on the `'complete'` step (or any step that auto-opens a modal like `PhilosopherQuoteDialog`), call `suppressPhilosopherQuoteDialog(page)` in `beforeEach`. Rolling that into `setupJournalMocks` is a one-line PR worth doing.
+
+**Spec / plan checklist questions** (extend the Rule-of-Three checklist):
+- *"Does this PR change the navigation graph, move a HomeScreen button, or rename a user-visible string that an E2E test selects by?"* If yes, list affected specs and update them in THIS PR.
+- *"Is CI green on `main` right now?"* If no, fixing it is part of the PR scope unless explicitly carved out into a sibling `chore/e2e-…` branch.
+
+**The deepest lesson:** green CI is a budget, not a goal. When it's green, the next regression is loud and bisectable. When it's red, every regression is silent. Most test-rot stories come down to that one phase transition — never let CI go red overnight.
+
+---
+
 ## ADHD-Friendly UX Principles
 
 This app is designed for neurodivergent users. Follow these principles when adding features:
@@ -370,7 +395,7 @@ Keep iterating until the mistake rate measurably drops.
 - Start every complex task in plan mode (shift+tab to cycle)
 - Pour energy into the plan so Claude can 1-shot the implementation
 - When something goes sideways, switch back to plan mode and re-plan. Don't keep pushing.
-- **Verification section is mandatory in every plan** — must include: type check, new unit tests for all new logic, new E2E tests for new user flows, and regression check. "Existing tests still pass" alone is not sufficient.
+- **Verification section is mandatory in every plan** — must include: type check, new unit tests for all new logic, new E2E tests for new user flows, and a regression check that runs the *full* E2E suite (not just the new tests). "Existing tests still pass" alone is not sufficient — you must also confirm you haven't *added* to a red baseline. See [Keep CI Green — Don't Let It Drift](#keep-ci-green--dont-let-it-drift).
 
 ## Parallel Work
 
@@ -387,6 +412,8 @@ Keep iterating until the mistake rate measurably drops.
 - Don't commit without running tests first
 - Don't make breaking API changes without discussion
 - **Don't ship a feature without writing tests for its new logic** — new step transitions, derived state, and user flows all need unit and/or E2E coverage in the same PR
+- **Don't open or push a PR that adds a new E2E failure to an already-red baseline** without flagging it explicitly. Run the full E2E suite locally and diff failures against `main`. If `main` is red, fix or carve out the rot first — silence is how 12 weeks of drift accumulates.
+- **Don't navigate E2E tests by user-visible text or aria-label when a `data-testid` would do.** Copy gets rewritten; testids don't.
 
 ## Backlog / Future Ideas
 
