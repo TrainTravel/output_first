@@ -4,7 +4,16 @@ import { Helmet } from 'react-helmet-async';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen px-6 py-12">
+    <>
+      <Helmet>
+        <title>Privacy Policy — OutputFirst</title>
+        <meta name="description" content="How OutputFirst stores, protects, and respects your journal data." />
+        <link rel="canonical" href="https://quiet-words-grow.lovable.app/privacy" />
+        <meta property="og:title" content="Privacy Policy — OutputFirst" />
+        <meta property="og:description" content="How OutputFirst stores, protects, and respects your journal data." />
+        <meta property="og:url" content="https://quiet-words-grow.lovable.app/privacy" />
+      </Helmet>
+      <div className="min-h-screen px-6 py-12">
       <div className="w-full max-w-2xl mx-auto space-y-10 animate-fade-in-up">
 
         <div className="space-y-4">
@@ -145,5 +154,6 @@ export default function PrivacyPolicy() {
 
       </div>
     </div>
+    </>
   );
 }
