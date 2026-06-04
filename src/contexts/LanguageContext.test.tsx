@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { LanguageProvider, useLanguage, DEFAULT_PAIR, _resetFallbackWarnings } from './LanguageContext';
-import type { PrimaryLang } from './LanguageContext';
+import type { PrimaryLang, TargetLang } from './LanguageContext';
 import type { ReactNode } from 'react';
 
 /** Legacy key — still readable for one-shot migration. */
@@ -534,8 +534,8 @@ describe('Path A migration — Phase 0 (per-profile primary) shape', () => {
     expect(result.current.targetLang).toBe('ja');
     // Both profiles still listed; primary stripped from each.
     expect(result.current.profiles).toHaveLength(2);
-    expect((result.current.profiles[0] as Record<string, unknown>).primary).toBeUndefined();
-    expect((result.current.profiles[1] as Record<string, unknown>).primary).toBeUndefined();
+    expect((result.current.profiles[0] as unknown as Record<string, unknown>).primary).toBeUndefined();
+    expect((result.current.profiles[1] as unknown as Record<string, unknown>).primary).toBeUndefined();
   });
 
   it('falls back primary to "en" when lifted primary would conflict with active target', () => {

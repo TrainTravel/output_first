@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Navigate, Link } from 'react-router-dom';
 import { Feather, ArrowLeft } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 type AuthMode = 'signin' | 'signup' | 'forgot';
 
@@ -57,8 +58,20 @@ export default function Auth() {
     setSubmitting(false);
   };
 
+  const pageTitle = mode === 'signup' ? 'Sign Up — OutputFirst' : mode === 'forgot' ? 'Reset Password — OutputFirst' : 'Sign In — OutputFirst';
+  const pageDesc = mode === 'signup' ? 'Create your OutputFirst account to start journaling.' : mode === 'forgot' ? 'Reset your OutputFirst password.' : 'Sign in to your OutputFirst journal.';
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <link rel="canonical" href="https://quiet-words-grow.lovable.app/auth" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:url" content="https://quiet-words-grow.lovable.app/auth" />
+      </Helmet>
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm space-y-8 animate-fade-in-up">
         <div className="text-center space-y-2">
           <Feather className="w-10 h-10 mx-auto text-primary" />
@@ -157,5 +170,6 @@ export default function Auth() {
         )}
       </div>
     </div>
+    </>
   );
 }

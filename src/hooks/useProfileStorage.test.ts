@@ -214,7 +214,7 @@ describe('useProfileStorage — cross-profile isolation', () => {
     // Create a new profile (createProfile switches to it automatically).
     let newProfileId = '';
     act(() => {
-      const created = result.current.lang.createProfile({ primary: 'en', target: 'es' });
+      const created = result.current.lang.createProfile({ target: 'es' });
       newProfileId = created.id;
     });
     expect(newProfileId).not.toBe('');

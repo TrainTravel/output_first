@@ -1,0 +1,15 @@
+# OutputFirst
+
+> A bilingual journaling app for emotional clarity — designed for neurodivergent minds.
+
+OutputFirst helps people build a daily writing habit by removing the blank-page barrier. Write freely, receive gentle AI reflection, and grow your emotional vocabulary in the language you're learning.
+
+## Pages
+
+- [/](/): Home — start journaling, browse tools, track streaks
+- [/privacy](/privacy): Privacy policy and data practices
+- [/auth](/auth): Sign in or create an account
+
+## Optional
+
+- [/reset-password](/reset-password): Set a new password after a reset link
