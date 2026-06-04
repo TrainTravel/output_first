@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { LanguageProvider, useLanguage, DEFAULT_PAIR, _resetFallbackWarnings } from './LanguageContext';
-import type { PrimaryLang } from './LanguageContext';
+import type { PrimaryLang, TargetLang } from './LanguageContext';
 import type { ReactNode } from 'react';
 
 /** Legacy key — still readable for one-shot migration. */
