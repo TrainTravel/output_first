@@ -76,7 +76,7 @@ describe('useEmotionVocab — per-profile isolation', () => {
     expect(result.current.vocab.state.encountered).toEqual([]);
 
     // Mark another word under B.
-    const otherWord = { en: 'wistful', fr: 'mélancolique', es: 'nostálgico/a' };
+    const otherWord = { en: 'wistful', fr: 'mélancolique', es: 'nostálgico/a', nuance: 'A gentle, pensive sadness' };
     act(() => result.current.vocab.markEncountered([otherWord]));
     expect(result.current.vocab.state.encountered).toContain('wistful');
 
