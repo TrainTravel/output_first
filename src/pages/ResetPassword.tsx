@@ -50,7 +50,16 @@ export default function ResetPassword() {
 
   if (!valid) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+      <>
+        <Helmet>
+          <title>Invalid Reset Link — OutputFirst</title>
+          <meta name="description" content="This password reset link is invalid or has expired." />
+          <link rel="canonical" href="https://quiet-words-grow.lovable.app/reset-password" />
+          <meta property="og:title" content="Invalid Reset Link — OutputFirst" />
+          <meta property="og:description" content="This password reset link is invalid or has expired." />
+          <meta property="og:url" content="https://quiet-words-grow.lovable.app/reset-password" />
+        </Helmet>
+        <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-6 text-center animate-fade-in-up">
           <Feather className="w-10 h-10 mx-auto text-primary" />
           <h1 className="font-serif text-2xl text-foreground">Invalid Reset Link</h1>
@@ -62,23 +71,43 @@ export default function ResetPassword() {
           </Button>
         </div>
       </div>
+      </>
     );
   }
 
   if (done) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+      <>
+        <Helmet>
+          <title>Password Updated — OutputFirst</title>
+          <meta name="description" content="Your OutputFirst password has been updated successfully." />
+          <link rel="canonical" href="https://quiet-words-grow.lovable.app/reset-password" />
+          <meta property="og:title" content="Password Updated — OutputFirst" />
+          <meta property="og:description" content="Your OutputFirst password has been updated successfully." />
+          <meta property="og:url" content="https://quiet-words-grow.lovable.app/reset-password" />
+        </Helmet>
+        <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-6 text-center animate-fade-in-up">
           <CheckCircle2 className="w-12 h-12 mx-auto text-primary" />
           <h1 className="font-serif text-2xl text-foreground">Password Updated</h1>
           <p className="text-muted-foreground text-sm">Redirecting you now...</p>
         </div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <>
+      <Helmet>
+        <title>Set New Password — OutputFirst</title>
+        <meta name="description" content="Choose a new password for your OutputFirst account." />
+        <link rel="canonical" href="https://quiet-words-grow.lovable.app/reset-password" />
+        <meta property="og:title" content="Set New Password — OutputFirst" />
+        <meta property="og:description" content="Choose a new password for your OutputFirst account." />
+        <meta property="og:url" content="https://quiet-words-grow.lovable.app/reset-password" />
+      </Helmet>
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm space-y-8 animate-fade-in-up">
         <div className="text-center space-y-2">
           <Feather className="w-10 h-10 mx-auto text-primary" />
@@ -119,5 +148,6 @@ export default function ResetPassword() {
         </form>
       </div>
     </div>
+    </>
   );
 }
