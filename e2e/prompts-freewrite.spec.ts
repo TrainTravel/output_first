@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, mockFeedback, injectMockSession, mockAuthRoutes } from './helpers/mocks';
+import { setFrenchLanguage, mockFeedback, injectMockSession, mockAuthRoutes, expandMoreTools, suppressPhilosopherQuoteDialog } from './helpers/mocks';
 
 async function setupAndOpenPromptChoice(page: Parameters<typeof mockFeedback>[0]) {
   await setFrenchLanguage(page);
@@ -71,22 +71,36 @@ test.describe('Free write flow', () => {
     await setFrenchLanguage(page);
     await injectMockSession(page);
     await mockAuthRoutes(page);
+    // The "submit → complete screen" test lands on ProgressScreen + the
+    // PhilosopherQuoteDialog modal, whose aria-hidden overlay masks the
+    // underlying buttons from a11y queries. Suppress for the day.
+    await suppressPhilosopherQuoteDialog(page);
     await page.goto('/');
+    // Free Write lives under the collapsed "More tools" expander on HomeScreen.
+    await expandMoreTools(page);
   });
 
   test('free write button visible on home screen', async ({ page }) => {
     await expect(page.getByRole('button', { name: /Écrire librement/ })).toBeVisible();
   });
 
-  test('free write goes directly to FreeWriteScreen without breathe', async ({ page }) => {
+  // The "Écrire librement" home button now opens a FreeWriteChoiceScreen
+  // (Plain "Écriture libre" vs guided "Écriture expressive") before the
+  // FreeWriteScreen itself.
+  async function openPlainFreeWrite(page: Parameters<Parameters<typeof test>[1]>[0]['page']) {
     await page.getByRole('button', { name: /Écrire librement/ }).click();
+    await page.getByRole('button', { name: /Écriture libre/ }).click();
+  }
+
+  test('free write goes directly to FreeWriteScreen without breathe', async ({ page }) => {
+    await openPlainFreeWrite(page);
 
     await expect(page.getByPlaceholder('Écrivez ce qui vous vient...')).toBeVisible({ timeout: 5_000 });
     await expect(page.getByText('Inspirez...')).not.toBeVisible();
   });
 
   test('word counter updates as user types', async ({ page }) => {
-    await page.getByRole('button', { name: /Écrire librement/ }).click();
+    await openPlainFreeWrite(page);
 
     const textarea = page.getByPlaceholder('Écrivez ce qui vous vient...');
     await expect(textarea).toBeVisible({ timeout: 5_000 });
@@ -97,7 +111,7 @@ test.describe('Free write flow', () => {
   });
 
   test('free write submit skips emotions/reflection/gratitude and reaches complete screen', async ({ page }) => {
-    await page.getByRole('button', { name: /Écrire librement/ }).click();
+    await openPlainFreeWrite(page);
 
     const textarea = page.getByPlaceholder('Écrivez ce qui vous vient...');
     await expect(textarea).toBeVisible({ timeout: 5_000 });
