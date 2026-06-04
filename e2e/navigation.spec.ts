@@ -4,6 +4,7 @@ import {
   injectMockSession,
   mockAuthRoutes,
   mockThoughts,
+  suppressPhilosopherQuoteDialog,
 } from './helpers/mocks';
 
 test.describe('Navigation', () => {
@@ -12,6 +13,10 @@ test.describe('Navigation', () => {
     await injectMockSession(page);
     await mockAuthRoutes(page);
     await mockThoughts(page);
+    // ProgressScreen is rendered under the 'complete' step, which also
+    // triggers PhilosopherQuoteDialog. The dialog's modal overlay
+    // intercepts clicks on the back button, so suppress it for nav tests.
+    await suppressPhilosopherQuoteDialog(page);
     await page.goto('/');
   });
 
@@ -40,8 +45,11 @@ test.describe('Navigation', () => {
   });
 
   test('Home → Progress (via progress card) → back to Home', async ({ page }) => {
-    // The progress card is a <button> containing streak/days stats — click it
-    await page.getByText(/Série|Streak|Racha/i).click();
+    // The progress card was redesigned to a numbers-only display (streak,
+    // days, words) with icons — the literal "Série/Streak/Racha" label
+    // was removed. Click via the unique "<N> mots/words" text that lives
+    // inside the progress card button.
+    await page.getByRole('button').filter({ hasText: /\d+\s*mots|\d+\s*words/i }).first().click();
     // ProgressScreen shows streak stat
     await expect(page.getByText(/jours de suite/i)).toBeVisible({ timeout: 5_000 });
 

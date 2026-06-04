@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, mockTodoTriage } from './helpers/mocks';
+import { setFrenchLanguage, mockTodoTriage, expandMoreTools } from './helpers/mocks';
 
 test.describe('ABC Todo List', () => {
   test.beforeEach(async ({ page }) => {
     await setFrenchLanguage(page);
     await mockTodoTriage(page, 'A');
     await page.goto('/');
+    // ABC List lives under the collapsed "More tools" expander on HomeScreen.
+    await expandMoreTools(page);
   });
 
   test('Home → Todo List → back to Home (navigation smoke)', async ({ page }) => {
@@ -89,7 +91,9 @@ test.describe('ABC Todo List', () => {
 
     // Reload
     await page.reload();
-    // Language is set via addInitScript so it persists across reload
+    // Language is set via addInitScript so it persists across reload.
+    // "More tools" state resets on remount, so re-expand before clicking.
+    await expandMoreTools(page);
     await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
 
     await expect(page.getByText('Buy groceries')).toBeVisible({ timeout: 3_000 });

@@ -244,3 +244,15 @@ export async function setupJournalMocks(page: Page) {
   await mockReflection(page);
   await suppressPhilosopherQuoteDialog(page);
 }
+
+/**
+ * Expand HomeScreen's "More tools" accordion so collapsed buttons (Free
+ * Write, ABC List, Small Wins, Tiny Experiments, Zen Garden, Sand Timer,
+ * One Thing at a Time, Body Scan) become clickable. Must be called from
+ * the home screen after the screen has rendered. HomeScreen state resets
+ * on remount, so this needs to be called again after any back-nav that
+ * unmounts and remounts the home screen.
+ */
+export async function expandMoreTools(page: Page) {
+  await page.getByRole('button', { name: /Autres outils|More tools|Más herramientas|その他のツール|更多工具/i }).click();
+}

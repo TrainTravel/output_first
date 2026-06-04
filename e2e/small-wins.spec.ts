@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, injectMockSession, mockAuthRoutes } from './helpers/mocks';
+import { setFrenchLanguage, injectMockSession, mockAuthRoutes, expandMoreTools } from './helpers/mocks';
 
 test.describe('Small Wins', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,6 +7,8 @@ test.describe('Small Wins', () => {
     await injectMockSession(page);
     await mockAuthRoutes(page);
     await page.goto('/');
+    // Small Wins lives under the collapsed "More tools" expander on HomeScreen.
+    await expandMoreTools(page);
   });
 
   test('HomeScreen has a Small Wins button', async ({ page }) => {
@@ -56,8 +58,10 @@ test.describe('Small Wins', () => {
     await textarea.press('Enter');
     await expect(page.getByText('Got out of bed today')).toBeVisible({ timeout: 3_000 });
 
-    // Navigate back to home then re-open
+    // Navigate back to home then re-open. HomeScreen "More tools" state
+    // resets on remount, so re-expand before clicking the collapsed button.
     await page.getByRole('button', { name: /Retour|Back/i }).click();
+    await expandMoreTools(page);
     await page.getByRole('button', { name: 'Petites Victoires / Small Wins' }).click();
 
     // Counter should still show 1
