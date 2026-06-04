@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Navigate, Link } from 'react-router-dom';
 import { Feather, ArrowLeft } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 type AuthMode = 'signin' | 'signup' | 'forgot';
 
