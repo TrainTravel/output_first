@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Feather, ArrowLeft } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 export default function PrivacyPolicy() {
   return (

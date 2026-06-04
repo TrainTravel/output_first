@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Feather, CheckCircle2 } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 export default function ResetPassword() {
   const { updatePassword } = useAuth();
