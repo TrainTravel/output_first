@@ -66,7 +66,7 @@ describe('useEmotionVocab — per-profile isolation', () => {
     const { result } = renderHook(useBoth, { wrapper: makeWrapper() });
 
     // Mark a word used under profile A.
-    const word = { en: 'curious', fr: 'curieux(se)', es: 'curioso/a' };
+    const word = { en: 'curious', fr: 'curieux(se)', es: 'curioso/a', nuance: 'Interested and eager to learn' };
     act(() => result.current.vocab.markUsed([word]));
     expect(result.current.vocab.state.used.curious).toBe(1);
 
