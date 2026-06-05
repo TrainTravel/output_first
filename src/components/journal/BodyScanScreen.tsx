@@ -60,30 +60,46 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
           <svg
             viewBox="0 0 200 500"
             className="absolute inset-0 w-full h-full"
-            fill="none"
+            fill="hsl(var(--primary) / 0.06)"
             stroke="hsl(var(--primary))"
-            strokeWidth="2"
+            strokeWidth="1.5"
             strokeLinejoin="round"
             strokeLinecap="round"
             aria-hidden
           >
-            <circle cx="100" cy="55" r="35" />
-            <path d="M85 88 L85 105 L115 105 L115 88" />
-            <path d="M50 130 Q100 110 150 130 L155 280 Q100 295 45 280 Z" />
-            <path d="M50 130 Q30 200 35 280" />
-            <path d="M150 130 Q170 200 165 280" />
-            <circle cx="35" cy="290" r="10" />
-            <circle cx="165" cy="290" r="10" />
-            <path d="M70 285 L60 480 L90 480 L95 290" />
-            <path d="M130 285 L140 480 L110 480 L105 290" />
+            {/* Head — slim oval */}
+            <ellipse cx="100" cy="48" rx="18" ry="22" />
+            {/* Neck */}
+            <path d="M93 70 Q93 82 89 92 Q100 96 111 92 Q107 82 107 70" />
+            {/* Torso — slim shoulders (y≈120), tapered waist (y≈230), narrow hips (y≈300) */}
+            <path d="
+              M89 92
+              Q72 96 70 124
+              Q76 162 78 200
+              Q76 234 82 268
+              Q86 296 92 306
+              L108 306
+              Q114 296 118 268
+              Q124 234 122 200
+              Q124 162 130 124
+              Q128 96 111 92
+              Z
+            " />
+            {/* Arms — slim, resting alongside torso */}
+            <path d="M72 122 Q62 180 68 244 Q72 282 84 300" fill="none" />
+            <path d="M128 122 Q138 180 132 244 Q128 282 116 300" fill="none" />
+            {/* Legs — slim from hips to feet (y≈482) */}
+            <path d="M92 306 Q88 380 88 442 Q88 474 96 484 Q102 480 100 442 Q100 376 100 318" fill="none" />
+            <path d="M108 306 Q112 380 112 442 Q112 474 104 484 Q98 480 100 442" fill="none" />
           </svg>
 
           <div
-            className="absolute left-0 right-0 h-6 pointer-events-none"
+            className="absolute left-0 right-0 h-10 pointer-events-none"
             style={{
-              top: `calc(${scanY * 100}% - 12px)`,
+              top: `calc(${scanY * 100}% - 20px)`,
               background:
-                'linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.55), transparent)',
+                'linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.18) 35%, hsl(var(--primary) / 0.45) 50%, hsl(var(--primary) / 0.18) 65%, transparent)',
+              filter: 'blur(0.5px)',
             }}
             aria-hidden
           />

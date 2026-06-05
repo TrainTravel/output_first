@@ -40,8 +40,6 @@ export function ReflectionScreen({
   const [response, setResponse] = useState('');
   const [showQuestion, setShowQuestion] = useState(false);
   const { bilingual, t, targetLang, primaryLang } = useLanguage();
-  const isFr = targetLang === 'fr';
-  const isEs = targetLang === 'es';
 
   useEffect(() => {
     generateReflection();
@@ -207,10 +205,10 @@ export function ReflectionScreen({
               {isLastCycle ? (
                 <div className="space-y-3">
                   <p className="text-center text-muted-foreground text-sm mb-4">
-                    {isFr ? "Vous avez beaucoup exploré. Terminons avec de la gratitude." : isEs ? "Has explorado mucho. Terminemos con gratitud." : "You've explored a lot. Let's finish with gratitude."}
+                    {t({ fr: "Vous avez beaucoup exploré. Terminons avec de la gratitude.", en: "You've explored a lot. Let's finish with gratitude.", es: "Has explorado mucho. Terminemos con gratitud.", ja: 'たくさん探求(たんきゅう)しましたね。感謝(かんしゃ)で締(し)めくくりましょう。', 'zh-Hans': '你已经探索了不少。让我们以感恩收尾吧。', 'zh-Hant': '你已經探索了不少。讓我們以感恩收尾吧。' }).primary}
                     <br />
                     <span className="text-xs">
-                      {isFr ? "You've explored a lot. Let's finish with gratitude." : isEs ? "You've explored a lot. Let's finish with gratitude." : "Vous avez beaucoup exploré. Terminons avec de la gratitude."}
+                      {t({ fr: "Vous avez beaucoup exploré. Terminons avec de la gratitude.", en: "You've explored a lot. Let's finish with gratitude.", es: "Has explorado mucho. Terminemos con gratitud.", ja: 'たくさん探求(たんきゅう)しましたね。感謝(かんしゃ)で締(し)めくくりましょう。', 'zh-Hans': '你已经探索了不少。让我们以感恩收尾吧。', 'zh-Hant': '你已經探索了不少。讓我們以感恩收尾吧。' }).secondary}
                     </span>
                   </p>
                   <Button variant="default" size="full" onClick={handleMoveToGratitude}>
@@ -221,10 +219,10 @@ export function ReflectionScreen({
               ) : (
                 <div className="space-y-4">
                   <p className="text-center text-foreground font-medium">
-                    {isFr ? 'Souhaitez-vous continuer à explorer ?' : isEs ? '¿Deseas continuar explorando?' : 'Would you like to continue exploring?'}
+                    {t({ fr: 'Souhaitez-vous continuer à explorer ?', en: 'Would you like to continue exploring?', es: '¿Deseas continuar explorando?', ja: 'もう少(すこ)し探求(たんきゅう)を続(つづ)けますか？', 'zh-Hans': '想再继续探索一下吗？', 'zh-Hant': '想再繼續探索一下嗎？' }).primary}
                     <br />
                     <span className="text-sm text-muted-foreground">
-                      {isFr ? 'Would you like to continue exploring?' : isEs ? 'Would you like to continue exploring?' : 'Souhaitez-vous continuer à explorer ?'}
+                      {t({ fr: 'Souhaitez-vous continuer à explorer ?', en: 'Would you like to continue exploring?', es: '¿Deseas continuar explorando?', ja: 'もう少(すこ)し探求(たんきゅう)を続(つづ)けますか？', 'zh-Hans': '想再继续探索一下吗？', 'zh-Hant': '想再繼續探索一下嗎？' }).secondary}
                     </span>
                   </p>
 
@@ -236,8 +234,8 @@ export function ReflectionScreen({
                       onClick={handleContinueExploring}
                     >
                       <ArrowRight className="w-5 h-5" />
-                      <span className="text-sm">{isFr ? 'Oui, explorer plus' : isEs ? 'Sí, explorar más' : 'Yes, explore more'}</span>
-                      <span className="text-xs text-muted-foreground">{isFr ? 'Yes, explore more' : isEs ? 'Yes, explore more' : 'Oui, explorer plus'}</span>
+                      <span className="text-sm">{t({ fr: 'Oui, explorer plus', en: 'Yes, explore more', es: 'Sí, explorar más', ja: 'はい、もう少(すこ)し続(つづ)けます', 'zh-Hans': '好，继续探索', 'zh-Hant': '好，繼續探索' }).primary}</span>
+                      <span className="text-xs text-muted-foreground">{t({ fr: 'Oui, explorer plus', en: 'Yes, explore more', es: 'Sí, explorar más', ja: 'はい、もう少(すこ)し続(つづ)けます', 'zh-Hans': '好，继续探索', 'zh-Hant': '好，繼續探索' }).secondary}</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -246,8 +244,8 @@ export function ReflectionScreen({
                       onClick={handleMoveToGratitude}
                     >
                       <Heart className="w-5 h-5" />
-                      <span className="text-sm">{isFr ? 'Non, gratitude' : isEs ? 'No, gratitud' : 'No, gratitude'}</span>
-                      <span className="text-xs text-muted-foreground">{isFr ? 'No, move to gratitude' : isEs ? 'No, pasar a la gratitud' : 'Non, passer à la gratitude'}</span>
+                      <span className="text-sm">{t({ fr: 'Non, gratitude', en: 'No, gratitude', es: 'No, gratitud', ja: 'いいえ、感謝(かんしゃ)へ', 'zh-Hans': '不，去感恩', 'zh-Hant': '不，去感恩' }).primary}</span>
+                      <span className="text-xs text-muted-foreground">{t({ fr: 'Non, passer à la gratitude', en: 'No, move to gratitude', es: 'No, pasar a la gratitud', ja: 'いいえ、感謝(かんしゃ)に進(すす)みます', 'zh-Hans': '不，转向感恩', 'zh-Hant': '不，轉向感恩' }).secondary}</span>
                     </Button>
                   </div>
                 </div>
