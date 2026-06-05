@@ -2,6 +2,23 @@
 
 ## [Unreleased] - 2026-06-05
 
+### ABC List — Focus mode (Bailey ABC Step 3)
+
+**The ABC List now opens in "Focus" mode by default, rendering only A-priority items. A "Tout / All" toggle reveals the full master list when needed.**
+
+What's new:
+- `src/components/journal/TodoListScreen.tsx` — new `mode: 'focus' | 'all'` state (session-local, not persisted). Segmented pill toggle between header and input row. In Focus mode, only A-priority non-pending items render; B and C sections are hidden entirely. Empty-Focus state shows a protective message (*"Rien d'urgent aujourd'hui. Respire."*) instead of the master-list "no tasks" copy.
+- New pure helper `filterByMode(items, mode)` exported from the same file, with 6 unit tests covering all-mode pass-through, A-only filtering, pendingAI exclusion, empty inputs, and completed-item preservation.
+- All six languages: en / fr / es / ja / zh-Hans / zh-Hant. Japanese uses ます-form with furigana on 緊急 and 深呼吸; Simplified / Traditional kept distinct (专注 / 專注, 紧急 / 緊急).
+- Stable E2E selectors via `data-testid="abc-mode-focus"`, `abc-mode-all`, and `abc-focus-empty` — text-based selectors are only used for visibility assertions.
+- 4 new E2E specs in `e2e/todo-list.spec.ts` covering Focus-as-default, B/C header hiding in Focus, All-mode toggling, and A-item visibility in Focus.
+
+**ADHD-Friendly (Bailey ABC Step 3 rationale):**
+- The framework's explicit warning is that ADHD brains entering "the master list" trigger overwhelm freeze. Rendering A + B + C together — which is what the screen did before — is exactly the pattern the method tells you to avoid.
+- Focus mode is the *protective default* on every entry. Re-entry resets to Focus (no persistence) so the user can never accidentally land in All mode and get blasted by the master list when they were just looking for "what's urgent."
+- The empty-Focus message is non-judgmental and doesn't surface a CTA. Zero A's = *"Nothing urgent today. Breathe."*, not *"Add a task!"*.
+- Completed A tasks stay on the Focus view (struck through) so wins remain visible — not hidden on completion. Wins are what carry the system through the day; hiding them would erase the dopamine.
+
 ### fix(reflection): ReflectionScreen chrome no longer leaks French to non-French learners
 
 **Five legacy `isFr ? … : isEs ? … : …` ternaries in `ReflectionScreen.tsx` migrated to the `t()` helper with full ja / zh-Hans / zh-Hant coverage.**
