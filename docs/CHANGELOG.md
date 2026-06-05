@@ -19,6 +19,22 @@ What's new:
 - The empty-Focus message is non-judgmental and doesn't surface a CTA. Zero A's = *"Nothing urgent today. Breathe."*, not *"Add a task!"*.
 - Completed A tasks stay on the Focus view (struck through) so wins remain visible — not hidden on completion. Wins are what carry the system through the day; hiding them would erase the dopamine.
 
+### fix(reflection): ReflectionScreen chrome no longer leaks French to non-French learners
+
+**Five legacy `isFr ? … : isEs ? … : …` ternaries in `ReflectionScreen.tsx` migrated to the `t()` helper with full ja / zh-Hans / zh-Hant coverage.**
+
+Before: when `targetLang` was anything other than `fr` or `es` (zh-Hans, zh-Hant, ja), the fallback branch returned the English string for the primary slot AND the French string for the secondary slot. Mandarin learners saw chrome like *"Would you like to continue exploring?" / "Souhaitez-vous continuer à explorer ?"* — French where their bilingual translation should be.
+
+What changed:
+- `src/components/journal/ReflectionScreen.tsx` lines 210, 213, 224, 227, 239, 240, 249, 250 → all replaced with `t({...}).primary` / `t({...}).secondary` calls.
+- New ja / zh-Hans / zh-Hant translations for: "You've explored a lot. Let's finish with gratitude.", "Would you like to continue exploring?", "Yes, explore more", "No, gratitude", "No, move to gratitude".
+- `isFr` and `isEs` locals removed — no longer referenced anywhere in the file.
+- CJK follows CLAUDE.md conventions: Japanese uses ます-form with furigana on `探求(たんきゅう)` / `感謝(かんしゃ)` / `続(つづ)け` / `締(し)め`; Simplified and Traditional kept distinct where they diverge (`继续探索` / `繼續探索`, `转向感恩` / `轉向感恩`).
+
+**Why this matters:**
+- This was caught in the field by an English-speaking Mandarin learner reaching the reflection screen and seeing French chrome around their Mandarin study. Erodes trust ("this app wasn't really built for me"). Adjacent issue to the edge-function fix in `fix/reflection-respects-target-lang` (PR #67) — together they make the reflection screen actually usable for Mandarin learners.
+- This is exactly the kind of legacy ternary the `t()` codemod in PR #32 was meant to catch. The codemod swept `t()` call sites but didn't sweep these ad-hoc ternaries. Worth a future codemod target.
+
 ## [Unreleased] - 2026-06-03
 
 ### Center Choice — Breathe or Body Scan before writing
