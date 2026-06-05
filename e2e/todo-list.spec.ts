@@ -41,22 +41,26 @@ test.describe('ABC Todo List', () => {
 
   test('tapping priority badge cycles A → B', async ({ page }) => {
     await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+    // Focus mode hides B/C — flip to All so we can observe the badge cycling
+    // from A into the B section without the item being filtered out.
+    await page.getByTestId('abc-mode-all').click();
 
     const input = page.getByPlaceholder(/Nouvelle tâche|New task|Nueva tarea/i);
     await input.fill('Do the laundry');
     await input.press('Enter');
 
-    // Wait for AI to resolve to A
     const badge = page.locator('button[title]').filter({ hasText: 'A' }).first();
     await expect(badge).toBeVisible({ timeout: 5_000 });
 
-    // Tap to cycle A → B
     await badge.click();
     await expect(page.locator('button[title]').filter({ hasText: 'B' }).first()).toBeVisible({ timeout: 2_000 });
   });
 
-  test('section headers A, B, C always visible', async ({ page }) => {
+  test('section headers A, B, C visible in All mode', async ({ page }) => {
     await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+    // Focus mode (the default) only renders the A section. The "all three
+    // headers visible" contract belongs to All mode.
+    await page.getByTestId('abc-mode-all').click();
 
     await expect(page.getByText(/A.*Urgent/i)).toBeVisible({ timeout: 5_000 });
     await expect(page.getByText(/B.*Important/i)).toBeVisible({ timeout: 5_000 });
@@ -102,8 +106,79 @@ test.describe('ABC Todo List', () => {
   test('empty state message shown when no tasks', async ({ page }) => {
     await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
 
+    // Focus mode is the default — flip to All so the master-list empty
+    // message is the one rendered (Focus shows a different message).
+    await page.getByTestId('abc-mode-all').click();
+
     await expect(
       page.getByText(/Aucune tâche|No tasks|Sin tareas/i)
     ).toBeVisible({ timeout: 5_000 });
+  });
+});
+
+test.describe('ABC Todo List — Focus mode (Bailey Step 3)', () => {
+  test.beforeEach(async ({ page }) => {
+    await setFrenchLanguage(page);
+    await page.goto('/');
+    await expandMoreTools(page);
+  });
+
+  test('Focus is the default mode on entry', async ({ page }) => {
+    await mockTodoTriage(page, 'A');
+    await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+
+    const focusPill = page.getByTestId('abc-mode-focus');
+    await expect(focusPill).toBeVisible({ timeout: 5_000 });
+    await expect(focusPill).toHaveAttribute('aria-pressed', 'true');
+
+    // With no items, the protective empty Focus message renders — not the
+    // "no tasks" message (that one is reserved for All mode).
+    await expect(page.getByTestId('abc-focus-empty')).toBeVisible({ timeout: 5_000 });
+  });
+
+  test('Focus mode hides B and C section headers', async ({ page }) => {
+    await mockTodoTriage(page, 'B');
+    await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+
+    const input = page.getByPlaceholder(/Nouvelle tâche|New task|Nueva tarea/i);
+    await input.fill('Plan birthday party');
+    await input.press('Enter');
+
+    // Triage resolves to B — Focus view still empty.
+    await expect(page.getByTestId('abc-focus-empty')).toBeVisible({ timeout: 5_000 });
+
+    // B section header label is not visible in Focus mode.
+    await expect(page.getByText(/B — Important/)).not.toBeVisible();
+  });
+
+  test('switching to All reveals B and C sections', async ({ page }) => {
+    await mockTodoTriage(page, 'B');
+    await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+
+    const input = page.getByPlaceholder(/Nouvelle tâche|New task|Nueva tarea/i);
+    await input.fill('Plan birthday party');
+    await input.press('Enter');
+
+    await expect(page.getByTestId('abc-focus-empty')).toBeVisible({ timeout: 5_000 });
+
+    await page.getByTestId('abc-mode-all').click();
+
+    await expect(page.getByText(/B — Important/)).toBeVisible({ timeout: 3_000 });
+    await expect(page.getByText('Plan birthday party')).toBeVisible();
+    await expect(page.getByTestId('abc-focus-empty')).not.toBeVisible();
+  });
+
+  test('Focus mode shows A items and hides B/C headers', async ({ page }) => {
+    await mockTodoTriage(page, 'A');
+    await page.getByRole('button', { name: /Liste A\/B\/C|ABC List/i }).click();
+
+    const input = page.getByPlaceholder(/Nouvelle tâche|New task|Nueva tarea/i);
+    await input.fill('Pay rent today');
+    await input.press('Enter');
+
+    await expect(page.getByText('Pay rent today')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/A — Urgent/)).toBeVisible();
+    await expect(page.getByText(/B — Important/)).not.toBeVisible();
+    await expect(page.getByText(/C — Le reste/)).not.toBeVisible();
   });
 });

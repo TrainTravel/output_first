@@ -12,6 +12,16 @@ interface TodoListScreenProps {
 
 const PRIORITY_CYCLE: Record<Priority, Priority> = { A: 'B', B: 'C', C: 'A' };
 
+type ListMode = 'focus' | 'all';
+
+// Bailey ABC Step 3: in Focus mode, hide the master list entirely.
+// `pendingAI` items are excluded — their priority isn't decided yet, so they
+// can't be "urgent" from the user's perspective.
+export function filterByMode(items: TodoItem[], mode: ListMode): TodoItem[] {
+  if (mode === 'all') return items;
+  return items.filter(item => item.priority === 'A' && !item.pendingAI);
+}
+
 const PRIORITY_STYLES: Record<Priority, { badge: string; dot: string; header: string }> = {
   A: {
     badge: 'bg-[hsl(var(--accent))] text-accent-foreground',
@@ -116,6 +126,9 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
   const { t, bilingual, targetLang, primaryLang } = useLanguage();
   const { items, addItem, resolveAI, setPriority, toggleComplete, deleteItem } = useTodoList();
   const [inputValue, setInputValue] = useState('');
+  // Intentionally session-local, not persisted: each visit starts in Focus
+  // mode so the protective default is automatic (Bailey ABC Step 3).
+  const [mode, setMode] = useState<ListMode>('focus');
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -253,14 +266,16 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
   };
 
   // --- Render helpers ---
-  const priorities: Priority[] = ['A', 'B', 'C'];
   const sectionLabels: Record<Priority, string> = {
     A: t({ fr: 'Urgent + Important', en: 'Urgent + Important', es: 'Urgente + Importante', ja: '緊急 ＋ 重要', 'zh-Hans': '紧急 + 重要', 'zh-Hant': '緊急 + 重要' }).primary,
     B: t({ fr: 'Important', en: 'Important', es: 'Importante', ja: '重要', 'zh-Hans': '重要', 'zh-Hant': '重要' }).primary,
     C: t({ fr: 'Le reste', en: 'Everything else', es: 'Todo lo demás', ja: 'その他', 'zh-Hans': '其他', 'zh-Hant': '其他' }).primary,
   };
 
-  const isEmpty = items.length === 0;
+  const visibleItems = filterByMode(items, mode);
+  const isFocusEmpty = mode === 'focus' && visibleItems.length === 0;
+  const isAllEmpty = mode === 'all' && items.length === 0;
+  const sectionPriorities: Priority[] = mode === 'focus' ? ['A'] : ['A', 'B', 'C'];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start px-6 py-12">
@@ -276,6 +291,37 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
             {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C', ja: 'A/B/C リスト', 'zh-Hans': 'A/B/C 清单', 'zh-Hant': 'A/B/C 清單' })}
           </h2>
           <div className="w-16" />
+        </div>
+
+        {/* Focus / All mode toggle (Bailey ABC Step 3) */}
+        <div
+          data-testid="abc-mode-toggle"
+          role="group"
+          aria-label={t({ fr: 'Mode de la liste', en: 'List mode', es: 'Modo de la lista', ja: 'リストモード', 'zh-Hans': '清单模式', 'zh-Hant': '清單模式' }).primary}
+          className="flex justify-center gap-0 rounded-full bg-muted/40 p-1 mx-auto w-fit"
+        >
+          {(['focus', 'all'] as const).map(m => {
+            const isActive = mode === m;
+            const label = m === 'focus'
+              ? t({ fr: 'Focus', en: 'Focus', es: 'Foco', ja: '集中', 'zh-Hans': '专注', 'zh-Hant': '專注' }).primary
+              : t({ fr: 'Tout', en: 'All', es: 'Todo', ja: 'すべて', 'zh-Hans': '全部', 'zh-Hant': '全部' }).primary;
+            return (
+              <button
+                key={m}
+                type="button"
+                data-testid={`abc-mode-${m}`}
+                aria-pressed={isActive}
+                onClick={() => setMode(m)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Input row */}
@@ -336,12 +382,20 @@ export function TodoListScreen({ onBack }: TodoListScreenProps) {
 
         {/* Task sections */}
         <div className="space-y-1">
-          {isEmpty && (
+          {isAllEmpty && (
             <p className="text-center text-muted-foreground/60 text-sm italic py-4">
               {t({ fr: 'Aucune tâche — la tête est libre.', en: 'No tasks — mind is clear.', es: 'Sin tareas — mente libre.', ja: 'タスクなし — 頭はすっきりしています。', 'zh-Hans': '没有任务 — 思绪清明。', 'zh-Hant': '沒有任務 — 思緒清明。' }).primary}
             </p>
           )}
-          {priorities.map(priority => {
+          {isFocusEmpty && !isAllEmpty && (
+            <p
+              data-testid="abc-focus-empty"
+              className="text-center text-muted-foreground/60 text-sm italic py-4"
+            >
+              {t({ fr: "Rien d'urgent aujourd'hui. Respire.", en: 'Nothing urgent today. Breathe.', es: 'Nada urgente hoy. Respira.', ja: '今日(きょう)は緊急(きんきゅう)なものはありません。深呼吸(しんこきゅう)を。', 'zh-Hans': '今天没有紧急的事。深呼吸。', 'zh-Hant': '今天沒有緊急的事。深呼吸。' }).primary}
+            </p>
+          )}
+          {sectionPriorities.map(priority => {
             const sectionItems = items.filter(i => i.priority === priority || (i.pendingAI && priority === 'C'));
             const filtered = priority === 'C'
               ? items.filter(i => i.priority === 'C')
