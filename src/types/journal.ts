@@ -138,7 +138,7 @@ export const FILL_IN_PROMPTS: FillInPrompt[] = [
   { id: 'ch1', category: 'Challenges', fr: "J'ai du mal à ___, mais je sais que ___.", en: "I struggle with ___, but I know that ___.", es: "Me cuesta ___, pero sé que ___.",
     zhHans: "我在___方面有困难，但我知道___。", zhHant: "我在___方面有困難，但我知道___。" },
   { id: 'ch2', category: 'Challenges', fr: "Ce qui me pèse en ce moment c'est ___. Ce qui m'aide c'est ___.", en: "What's weighing on me is ___. What helps is ___.", es: "Lo que me pesa es ___. Lo que me ayuda es ___.",
-    zhHans: "现在压在我心上的是___。帮助我的是___。", zhHant: "現在壓在我心上的是___。幫助我的是___。" },
+    zhHans: "现在压在我心上的是___。帮助我的是___。", zhHant: "最近放不下的：___\n讓我安心的：___" },
   { id: 'ch3', category: 'Challenges', fr: "Si je pouvais changer une chose aujourd'hui, ce serait ___.", en: "If I could change one thing today, it would be ___.", es: "Si pudiera cambiar una cosa hoy, sería ___.",
     zhHans: "如果我今天能改变一件事，那就是___。", zhHant: "如果我今天能改變一件事，那就是___。" },
   // Hopes
