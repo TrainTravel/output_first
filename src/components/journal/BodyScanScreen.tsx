@@ -93,11 +93,12 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
           </svg>
 
           <div
-            className="absolute left-0 right-0 h-6 pointer-events-none"
+            className="absolute left-0 right-0 h-10 pointer-events-none"
             style={{
-              top: `calc(${scanY * 100}% - 12px)`,
+              top: `calc(${scanY * 100}% - 20px)`,
               background:
-                'linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.55), transparent)',
+                'linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.18) 35%, hsl(var(--primary) / 0.45) 50%, hsl(var(--primary) / 0.18) 65%, transparent)',
+              filter: 'blur(0.5px)',
             }}
             aria-hidden
           />
