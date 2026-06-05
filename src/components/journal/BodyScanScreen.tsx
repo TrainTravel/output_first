@@ -60,22 +60,36 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
           <svg
             viewBox="0 0 200 500"
             className="absolute inset-0 w-full h-full"
-            fill="none"
+            fill="hsl(var(--primary) / 0.06)"
             stroke="hsl(var(--primary))"
-            strokeWidth="2"
+            strokeWidth="1.5"
             strokeLinejoin="round"
             strokeLinecap="round"
             aria-hidden
           >
-            <circle cx="100" cy="55" r="35" />
-            <path d="M85 88 L85 105 L115 105 L115 88" />
-            <path d="M50 130 Q100 110 150 130 L155 280 Q100 295 45 280 Z" />
-            <path d="M50 130 Q30 200 35 280" />
-            <path d="M150 130 Q170 200 165 280" />
-            <circle cx="35" cy="290" r="10" />
-            <circle cx="165" cy="290" r="10" />
-            <path d="M70 285 L60 480 L90 480 L95 290" />
-            <path d="M130 285 L140 480 L110 480 L105 290" />
+            {/* Head — soft oval (yNorm 0.10 → y≈50) */}
+            <ellipse cx="100" cy="50" rx="26" ry="30" />
+            {/* Neck */}
+            <path d="M86 78 Q86 94 80 104 Q100 112 120 104 Q114 94 114 78" />
+            {/* Torso — shoulders at y≈120 (0.24), chest y≈180 (0.36), belly y≈250 (0.50), hips y≈290 (0.58) */}
+            <path d="
+              M80 104
+              Q42 112 40 142
+              Q50 178 54 222
+              Q52 258 60 292
+              Q72 308 100 310
+              Q128 308 140 292
+              Q148 258 146 222
+              Q150 178 160 142
+              Q158 112 120 104
+              Z
+            " />
+            {/* Arms resting alongside torso, hands near hips (y≈290) */}
+            <path d="M42 140 Q28 200 38 258 Q44 284 58 292" fill="none" />
+            <path d="M158 140 Q172 200 162 258 Q156 284 142 292" fill="none" />
+            {/* Legs — hips to feet (y≈482, yNorm 0.85→ legs anchor) */}
+            <path d="M74 310 Q68 380 66 440 Q64 472 78 484 Q92 480 94 442 Q96 380 98 322" fill="none" />
+            <path d="M126 310 Q132 380 134 440 Q136 472 122 484 Q108 480 106 442 Q104 380 102 322" fill="none" />
           </svg>
 
           <div
