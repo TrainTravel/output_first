@@ -167,12 +167,12 @@ export function RequestFilterTab({ onSelectGoal }: RequestFilterTabProps) {
         <div>
           <p className="font-serif text-lg text-foreground">
             {t(
-              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在壓在你心上的是什麼？' }
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在稍微深呼吸，感受一下，還有什麼心事嗎？' }
             ).primary}
           </p>
           <p className="text-sm text-muted-foreground italic mt-1">
             {t(
-              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在壓在你心上的是什麼？' }
+              { fr: 'Qu\'est-ce qui pèse en ce moment ?', en: 'What\'s weighing on you right now?', es: '¿Qué te pesa en este momento?', ja: '今、心に重くのしかかっているものは？', 'zh-Hans': '现在压在你心上的是什么？', 'zh-Hant': '現在稍微深呼吸，感受一下，還有什麼心事嗎？' }
             ).secondary}
           </p>
         </div>

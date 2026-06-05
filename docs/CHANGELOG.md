@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased] - 2026-06-05
+
+### i18n — Traditional Chinese (zh-Hant) journal-prompt rewrites
+
+**Three Traditional-Chinese journal prompts that used `壓在心上` (a Mainland-flavored construction that reads as "translation-ish" to a Taiwanese reader) rewritten in native journaling register.**
+
+What changed:
+- `src/types/journal.ts` — fill-in-the-blank prompt `ch2` zhHant:
+  - was: `現在壓在我心上的是___。幫助我的是___。`
+  - now: `最近放不下的：___\n讓我安心的：___` (two-line colon form)
+- `src/components/journal/RequestFilterTab.tsx` (×2 — primary and italic helper):
+  - was: `現在壓在你心上的是什麼？`
+  - now: `現在稍微深呼吸，感受一下，還有什麼心事嗎？`
+- `src/components/journal/PromptLibraryScreen.tsx` — prompt buttons gain `whitespace-pre-line` so the colon-variant fill-in-blank renders on two lines as intended. Invisible to existing prompts (none contain `\n`).
+
+**Why:**
+- Native Taiwanese reader research flagged `壓在心上` as the kind of "MT-flavored" phrasing that subtly erodes the sense that the product *gets you*. `壓在` itself is heavy and burden-coded — `放不下` keeps the emotional weight while shifting the metaphor from *burden* to *attention*, which is gentler for an ADHD journaling tool.
+- `現在稍微深呼吸，感受一下，還有什麼心事嗎？` reframes a demanding *what-question* into a gentle invitation. Adds a soft breath-cue (`稍微深呼吸，感受一下`) before the question lands.
+- `幫助我的是` was stiff and clinical — `讓我安心的` is relational and warm (Brené-Brown-in-Mandarin register).
+
+Simplified Chinese (`zh-Hans`) is deliberately left untouched in this PR; the user wants those scoped separately.
+
 ## [Unreleased] - 2026-06-03
 
 ### Center Choice — Breathe or Body Scan before writing
