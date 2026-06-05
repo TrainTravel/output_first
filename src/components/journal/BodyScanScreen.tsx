@@ -67,29 +67,30 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
             strokeLinecap="round"
             aria-hidden
           >
-            {/* Head — soft oval (yNorm 0.10 → y≈50) */}
-            <ellipse cx="100" cy="50" rx="26" ry="30" />
+            {/* Head — slim oval */}
+            <ellipse cx="100" cy="48" rx="18" ry="22" />
             {/* Neck */}
-            <path d="M86 78 Q86 94 80 104 Q100 112 120 104 Q114 94 114 78" />
-            {/* Torso — shoulders at y≈120 (0.24), chest y≈180 (0.36), belly y≈250 (0.50), hips y≈290 (0.58) */}
+            <path d="M93 70 Q93 82 89 92 Q100 96 111 92 Q107 82 107 70" />
+            {/* Torso — slim shoulders (y≈120), tapered waist (y≈230), narrow hips (y≈300) */}
             <path d="
-              M80 104
-              Q42 112 40 142
-              Q50 178 54 222
-              Q52 258 60 292
-              Q72 308 100 310
-              Q128 308 140 292
-              Q148 258 146 222
-              Q150 178 160 142
-              Q158 112 120 104
+              M89 92
+              Q72 96 70 124
+              Q76 162 78 200
+              Q76 234 82 268
+              Q86 296 92 306
+              L108 306
+              Q114 296 118 268
+              Q124 234 122 200
+              Q124 162 130 124
+              Q128 96 111 92
               Z
             " />
-            {/* Arms resting alongside torso, hands near hips (y≈290) */}
-            <path d="M42 140 Q28 200 38 258 Q44 284 58 292" fill="none" />
-            <path d="M158 140 Q172 200 162 258 Q156 284 142 292" fill="none" />
-            {/* Legs — hips to feet (y≈482, yNorm 0.85→ legs anchor) */}
-            <path d="M74 310 Q68 380 66 440 Q64 472 78 484 Q92 480 94 442 Q96 380 98 322" fill="none" />
-            <path d="M126 310 Q132 380 134 440 Q136 472 122 484 Q108 480 106 442 Q104 380 102 322" fill="none" />
+            {/* Arms — slim, resting alongside torso */}
+            <path d="M72 122 Q62 180 68 244 Q72 282 84 300" fill="none" />
+            <path d="M128 122 Q138 180 132 244 Q128 282 116 300" fill="none" />
+            {/* Legs — slim from hips to feet (y≈482) */}
+            <path d="M92 306 Q88 380 88 442 Q88 474 96 484 Q102 480 100 442 Q100 376 100 318" fill="none" />
+            <path d="M108 306 Q112 380 112 442 Q112 474 104 484 Q98 480 100 442" fill="none" />
           </svg>
 
           <div
