@@ -45,6 +45,7 @@ export function CenterChoiceScreen({ onChooseBreathe, onChooseBodyScan, onBack }
 
         <div className="flex flex-col gap-4 flex-1">
           <button
+            data-testid="center-choice-breathe"
             onClick={onChooseBreathe}
             className="group flex items-start gap-4 p-6 rounded-2xl border-2 border-primary/20 bg-primary/5 hover:border-primary/50 hover:bg-primary/10 transition-all text-left"
           >
@@ -76,6 +77,7 @@ export function CenterChoiceScreen({ onChooseBreathe, onChooseBodyScan, onBack }
           </button>
 
           <button
+            data-testid="center-choice-bodyscan"
             onClick={onChooseBodyScan}
             className="group flex items-start gap-4 p-6 rounded-2xl border-2 border-accent/30 bg-accent/5 hover:border-accent/60 hover:bg-accent/10 transition-all text-left"
           >

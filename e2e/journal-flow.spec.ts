@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, setupJournalMocks, mockFeedback, injectMockSession, mockAuthRoutes } from './helpers/mocks';
+import { setFrenchLanguage, setupJournalMocks, mockFeedback, injectMockSession, mockAuthRoutes, chooseBreatheOnCenterChoice } from './helpers/mocks';
 
 test.describe('Journal flow - happy path', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,6 +13,7 @@ test.describe('Journal flow - happy path', () => {
   test('completes journal from home to complete screen', async ({ page }) => {
     // 1. Start journal (force bypasses animate-breathe CSS instability)
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
 
     // 2. BreatheScreen — wait for the "ready" button to become active
     await expect(page.getByText('Inspirez...')).toBeVisible({ timeout: 5000 });
@@ -70,6 +71,7 @@ test.describe('Journal flow - happy path', () => {
 
   test('can skip gratitude and still reach complete screen', async ({ page }) => {
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
 
     // Wait for breathe button (up to 12s)
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
@@ -125,6 +127,7 @@ test.describe('Reflection - multi-round conversation history', () => {
 
     // Start → breathe → write
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
     await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
     await page.getByPlaceholder('Écrivez ici...').fill("J'ai du mal à me concentrer.");
@@ -172,6 +175,7 @@ test.describe('BreatheScreen - clock control', () => {
     );
 
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
     await expect(page.getByText('Inspirez...')).toBeVisible({ timeout: 5_000 });
 
     // Fast-forward 10 seconds so the breathing cycle completes
