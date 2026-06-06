@@ -75,9 +75,11 @@ test.describe('Philosopher quote — appears on journal completion', () => {
     await page.locator('button').filter({ hasText: /\(.+\)/ }).first().click();
     await page.getByRole('button', { name: 'Continuer' }).click();
 
-    // Reflection → skip to gratitude or completion
+    // Reflection → SelfCompassionScreen → gratitude → complete
     await page.getByRole('button', { name: /Non, gratitude/ }).click();
-    await page.getByRole('button', { name: /Passer|Skip/ }).first().click();
+    await expect(page.getByTestId('selfcompassion-screen')).toBeVisible({ timeout: 5_000 });
+    await page.getByTestId('selfcompassion-skip').click();
+    await page.getByRole('button', { name: 'Passer et terminer' }).click();
 
     // Quote dialog should appear on the complete screen
     await expect(page.getByTestId('philosopher-quote-dialog')).toBeVisible({ timeout: 5_000 });

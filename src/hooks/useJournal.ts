@@ -205,15 +205,18 @@ export function useJournal() {
     const nextCycle = currentCycle + 1;
     setCurrentCycle(nextCycle);
     
-    // If user chose to move to gratitude (after min cycles) or reached max cycles
+    // If user chose to move to gratitude (after min cycles) or reached max cycles,
+    // route through the self-compassion step first. The user can skip it from there.
     if (moveToGratitude || nextCycle >= MAX_CYCLES) {
       setCurrentEntry(prev => ({ ...prev, reflectionCycles: updatedCycles }));
-      setCurrentStep('gratitude');
+      setCurrentStep('selfcompassion');
     } else {
       // Continue to next cycle - go back to feedback
       setCurrentStep('feedback');
     }
   };
+
+  const finishSelfCompassion = () => setCurrentStep('gratitude');
 
   const canMoveToGratitude = currentCycle >= MIN_CYCLES - 1; // -1 because we check before incrementing
 
@@ -325,6 +328,7 @@ export function useJournal() {
     continuePastFeedback,
     saveEmotion,
     continueFromReflection,
+    finishSelfCompassion,
     saveGratitude,
     skipToComplete,
     goHome,
