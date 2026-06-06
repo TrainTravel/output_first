@@ -19,7 +19,7 @@ export interface JournalEntry {
 }
 
 export type JournalStep = 'home' | 'centerchoice' | 'breathe' | 'bodyscan' | 'promptchoice' | 'promptlibrary'
-  | 'write' | 'feedback' | 'emotions' | 'reflection' | 'gratitude' | 'complete'
+  | 'write' | 'feedback' | 'emotions' | 'reflection' | 'selfcompassion' | 'gratitude' | 'complete'
   | 'chat' | 'braindump' | 'thoughtgarden' | 'clusters' | 'clusterdetail'
   | 'zengarden' | 'freewrite' | 'freewritechoice' | 'expressivewrite'
   | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment'

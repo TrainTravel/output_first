@@ -307,6 +307,49 @@ describe('useJournal — reflection cycle accumulation', () => {
   });
 });
 
+describe('useJournal — self-compassion step routing', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('continueFromReflection(moveToGratitude=true) routes to selfcompassion, not gratitude', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+
+    act(() => result.current.startJournal());
+    act(() => result.current.saveContent('Today felt heavy.'));
+    act(() => result.current.saveEmotion('overwhelmed', 'submergé(e)'));
+    act(() => result.current.continueFromReflection('A lot is happening.', true));
+
+    expect(result.current.currentStep).toBe('selfcompassion');
+  });
+
+  it('reaching MAX_CYCLES routes to selfcompassion', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+
+    act(() => result.current.startJournal());
+    act(() => result.current.saveContent('Exploring deeply.'));
+    act(() => result.current.saveEmotion('curious', 'curieux/se'));
+
+    // Drive 5 cycles without choosing moveToGratitude — last cycle should land on selfcompassion.
+    for (let i = 0; i < 5; i++) {
+      act(() => result.current.continueFromReflection(`response ${i}`, false));
+    }
+
+    expect(result.current.currentStep).toBe('selfcompassion');
+  });
+
+  it('finishSelfCompassion routes from selfcompassion to gratitude', () => {
+    const { result } = renderHook(() => useJournal(), { wrapper: makeWrapper() });
+
+    act(() => result.current.startJournal());
+    act(() => result.current.saveContent('Done exploring.'));
+    act(() => result.current.saveEmotion('peaceful', 'paisible'));
+    act(() => result.current.continueFromReflection(undefined, true));
+    expect(result.current.currentStep).toBe('selfcompassion');
+
+    act(() => result.current.finishSelfCompassion());
+    expect(result.current.currentStep).toBe('gratitude');
+  });
+});
+
 describe('useJournal — Center choice (Breathe vs Body Scan) routing', () => {
   beforeEach(() => localStorage.clear());
 

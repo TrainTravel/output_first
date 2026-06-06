@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased] - 2026-06-06
+
+### Self-compassion as its own step
+
+**The self-compassion practice now lives on its own screen between Reflection and Gratitude, instead of being an inline card on ReflectionScreen gated by the picked emotion.**
+
+What changed:
+- New `JournalStep`: `'selfcompassion'`, slotted between `'reflection'` and `'gratitude'` in `src/types/journal.ts`.
+- `useJournal.continueFromReflection()` now routes the `moveToGratitude` / `MAX_CYCLES` branch to `'selfcompassion'` instead of jumping straight to `'gratitude'`.
+- New `finishSelfCompassion()` hook handler routes from the new screen to `'gratitude'`.
+- New `src/components/journal/SelfCompassionScreen.tsx` — wraps the existing `SelfCompassionPractice` component with a header ("A moment for yourself" / "Un moment pour soi" / 自分のための一時 / etc.), Continue button, and Skip button. Both Continue and Skip route to the Gratitude screen.
+- `JournalApp.tsx` wires the new route.
+- `ReflectionScreen.tsx` cleaned up: the inline `isStruggling(emotions)`-gated `SelfCompassionPractice` block and the now-unused `SelfCompassionPractice` / `isStruggling` imports are removed.
+- Stable E2E selectors: `data-testid="selfcompassion-screen"`, `selfcompassion-continue`, `selfcompassion-skip`.
+
+Tests:
+- 3 new unit tests in `useJournal.test.ts` covering the new transitions; all 321 vitest tests pass.
+- `e2e/self-compassion.spec.ts` rewritten — stale "compassion card on ReflectionScreen" assertions removed, replaced with three specs covering screen appearance after "Non, gratitude", Continue → Gratitude, Skip → Gratitude.
+- `journal-flow.spec.ts` and `philosopher-quotes.spec.ts` updated to click through the new screen on their "Non, gratitude" paths.
+
+**ADHD-Friendly:**
+- **One thing at a time.** Self-compassion is no longer a card competing for attention next to the AI reflection — it's its own room with its own purpose.
+- **Skip is always available.** Both Continue and Skip route to Gratitude. Neff's framework only works if the person opts in; a forced screen would defeat the point.
+- **No more emotion gate.** The old `isStruggling(emotions)` check meant the practice only showed up when the user picked from a hard-coded list of "heavy" emotions. That's exactly the kind of paternalistic gating ADHD users object to. Now every flow ends with the same offering and the user chooses each time.
+
 ## [Unreleased] - 2026-06-05
 
 ### i18n — Traditional Chinese (zh-Hant) journal-prompt rewrites

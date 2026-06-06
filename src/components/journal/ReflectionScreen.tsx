@@ -5,8 +5,6 @@ import { ArrowRight, ArrowLeft, Loader2, Heart } from 'lucide-react';
 import { MAX_CYCLES, ReflectionCycle } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { SelfCompassionPractice } from './SelfCompassionPractice';
-import { isStruggling } from '@/hooks/useSelfCompassion';
 
 interface ReflectionScreenProps {
   journalContent: string;
@@ -170,13 +168,6 @@ export function ReflectionScreen({
                 {reflectionData.reflection}
               </p>
             </div>
-
-            {/* Self-compassion practice — defaults open if the emotion is heavy */}
-            {isStruggling(emotions) && (
-              <div className="mb-6">
-                <SelfCompassionPractice lang={targetLang} defaultOpen />
-              </div>
-            )}
 
             {/* Curious Question — revealed after delay */}
             {showQuestion && (

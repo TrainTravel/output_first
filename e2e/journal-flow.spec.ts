@@ -50,8 +50,12 @@ test.describe('Journal flow - happy path', () => {
         'What is one small thing that felt manageable today?'
       )
     ).toBeVisible({ timeout: 8_000 });
-    // Choose "Non, gratitude" to skip to gratitude step
+    // Choose "Non, gratitude" — routes through the SelfCompassionScreen first
     await page.getByRole('button', { name: /Non, gratitude/ }).click();
+
+    // 6b. SelfCompassionScreen — always appears between reflection and gratitude
+    await expect(page.getByTestId('selfcompassion-screen')).toBeVisible({ timeout: 5_000 });
+    await page.getByTestId('selfcompassion-continue').click();
 
     // 7. GratitudeScreen
     const gratitudeTextarea = page.getByPlaceholder('Quelque chose de petit suffit...');
@@ -91,6 +95,10 @@ test.describe('Journal flow - happy path', () => {
       page.getByText('What is one small thing that felt manageable today?')
     ).toBeVisible({ timeout: 8_000 });
     await page.getByRole('button', { name: /Non, gratitude/ }).click();
+
+    // SelfCompassionScreen — skip past it to reach gratitude
+    await expect(page.getByTestId('selfcompassion-screen')).toBeVisible({ timeout: 5_000 });
+    await page.getByTestId('selfcompassion-skip').click();
 
     await expect(page.getByPlaceholder('Quelque chose de petit suffit...')).toBeVisible({ timeout: 5_000 });
     await page.getByRole('button', { name: 'Passer et terminer' }).click();

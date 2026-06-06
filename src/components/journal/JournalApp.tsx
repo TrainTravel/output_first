@@ -9,6 +9,7 @@ import { WriteScreen } from './WriteScreen';
 import { FeedbackScreen } from './FeedbackScreen';
 import { EmotionsScreen } from './EmotionsScreen';
 import { ReflectionScreen } from './ReflectionScreen';
+import { SelfCompassionScreen } from './SelfCompassionScreen';
 import { GratitudeScreen } from './GratitudeScreen';
 import { ProgressScreen } from './ProgressScreen';
 import { ChatScreen } from './ChatScreen';
@@ -94,6 +95,7 @@ export function JournalApp() {
     continuePastFeedback,
     saveEmotion,
     continueFromReflection,
+    finishSelfCompassion,
     saveGratitude,
     skipToComplete,
     goHome,
@@ -254,6 +256,13 @@ export function JournalApp() {
           reflectionCycles={reflectionCycles}
           onContinue={continueFromReflection}
           onBack={goBackToEmotions}
+        />
+      )}
+
+      {currentStep === 'selfcompassion' && (
+        <SelfCompassionScreen
+          onContinue={finishSelfCompassion}
+          onSkip={finishSelfCompassion}
         />
       )}
 
