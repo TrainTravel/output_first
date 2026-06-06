@@ -402,3 +402,4 @@ Keep iterating until the mistake rate measurably drops.
 - Dev server runs on `localhost:8080`
 - Component tagging via `lovable-tagger` active in dev mode
 - See `docs/CHANGELOG.md` for recent updates and design rationale
+- See `docs/research/adhd-comprehensive-briefing.md` for ADHD clinical, neurological, genetic, and treatment context — the "why" behind the ADHD-Friendly UX Principles. Covers the Default Mode Network, diagnostic underrecognition (esp. in adult women), comorbidities (hEDS, eating disorders), the "Ferrari engine with bicycle brakes" framing, and lifestyle interventions ("Vitamin Connect"). Consult before designing any new ADHD-relevant feature.
