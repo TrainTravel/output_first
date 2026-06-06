@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, setupJournalMocks, injectMockSession, mockAuthRoutes } from './helpers/mocks';
+import { setFrenchLanguage, setupJournalMocks, injectMockSession, mockAuthRoutes, chooseBreatheOnCenterChoice } from './helpers/mocks';
 
 const ENABLED_KEY = 'outputfirst_quotes_enabled';
 const LAST_SHOWN_KEY = 'outputfirst_quotes_last_shown';
@@ -60,6 +60,7 @@ test.describe('Philosopher quote — appears on journal completion', () => {
   test('the quote dialog opens when reaching the complete screen and marks "shown today"', async ({ page }) => {
     // Run through the journal flow until 'complete'.
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
     await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
 

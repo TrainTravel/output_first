@@ -256,3 +256,14 @@ export async function setupJournalMocks(page: Page) {
 export async function expandMoreTools(page: Page) {
   await page.getByRole('button', { name: /Autres outils|More tools|Más herramientas|その他のツール|更多工具/i }).click();
 }
+
+/**
+ * Tap the "Breathe" card on CenterChoiceScreen. As of PR #63 the home
+ * "Écrire aujourd'hui" CTA no longer goes straight to BreatheScreen — it
+ * lands on CenterChoiceScreen, where the user picks Breathe or Body Scan
+ * first. Existing journal-flow tests aren't about that choice; they just
+ * need to traverse it to reach the breathing screen they were written for.
+ */
+export async function chooseBreatheOnCenterChoice(page: Page) {
+  await page.getByTestId('center-choice-breathe').click();
+}

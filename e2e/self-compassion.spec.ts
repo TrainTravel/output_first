@@ -4,6 +4,7 @@ import {
   injectMockSession,
   mockAuthRoutes,
   setupJournalMocks,
+  chooseBreatheOnCenterChoice,
 } from './helpers/mocks';
 
 // ---- HomeScreen: SelfCompassionSeed ----
@@ -49,6 +50,7 @@ test.describe('ReflectionScreen — SelfCompassionPractice', () => {
 
     // Navigate through journal flow
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
     await page.getByRole('button', { name: 'Je suis prêt(e)' }).click({ timeout: 12_000 });
     await page.getByRole('button', { name: /Je sais ce que j'écris/ }).click();
     await page.getByPlaceholder('Écrivez ici...').fill("Je me sens vraiment épuisé aujourd'hui.");

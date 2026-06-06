@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setFrenchLanguage, mockFeedback, injectMockSession, mockAuthRoutes, expandMoreTools, suppressPhilosopherQuoteDialog } from './helpers/mocks';
+import { setFrenchLanguage, mockFeedback, injectMockSession, mockAuthRoutes, expandMoreTools, suppressPhilosopherQuoteDialog, chooseBreatheOnCenterChoice } from './helpers/mocks';
 
 async function setupAndOpenPromptChoice(page: Parameters<typeof mockFeedback>[0]) {
   await setFrenchLanguage(page);
@@ -17,6 +17,7 @@ async function setupAndOpenPromptChoice(page: Parameters<typeof mockFeedback>[0]
   await page.goto('/');
 
   await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+  await chooseBreatheOnCenterChoice(page);
   await expect(page.getByText('Inspirez...')).toBeVisible({ timeout: 5_000 });
   await page.clock.fastForward(10_000);
   await page.getByRole('button', { name: 'Je suis prêt(e)' }).click();
