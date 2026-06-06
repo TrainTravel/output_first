@@ -5,6 +5,7 @@ import {
   mockAuthRoutes,
   mockThoughts,
   suppressPhilosopherQuoteDialog,
+  chooseBreatheOnCenterChoice,
 } from './helpers/mocks';
 
 test.describe('Navigation', () => {
@@ -65,6 +66,7 @@ test.describe('Navigation', () => {
     );
     // force bypasses animate-breathe CSS instability
     await page.getByRole('button', { name: "Écrire aujourd'hui" }).click({ force: true });
+    await chooseBreatheOnCenterChoice(page);
     // Breathe screen or write screen should appear
     const onBreathe = await page.getByText('Inspirez...').isVisible().catch(() => false);
     const onWrite = await page.getByPlaceholder('Écrivez ici...').isVisible().catch(() => false);

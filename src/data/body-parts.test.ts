@@ -44,4 +44,29 @@ describe('BODY_PARTS data integrity', () => {
     const allIdentical = BODY_PARTS.every(p => p.label['zh-Hans'] === p.label['zh-Hant']);
     expect(allIdentical).toBe(false);
   });
+
+  /**
+   * Anatomical reference — where each body part actually sits on the current
+   * silhouette in `BodyScanScreen.tsx` (viewBox 0 0 200 500, container 420px
+   * tall). If a future silhouette redesign moves a body part, update BOTH
+   * `BODY_PARTS.yNorm` AND this reference, OR the label will land on the
+   * wrong anatomy. This test is the canary for that drift.
+   */
+  const ANATOMICAL_REFERENCE: Record<string, number> = {
+    head: 0.10,       // ellipse cy=48 (48/500)
+    shoulders: 0.22,  // shoulder line y≈108-124 (mid 116/500)
+    chest: 0.33,      // upper torso ~y=162-170 (162/500)
+    belly: 0.47,      // mid-belly y≈234 (234/500)
+    hands: 0.60,      // arms terminate at hip y≈300 (300/500)
+    legs: 0.80,       // mid-shin y≈400 (400/500)
+  };
+  const ANATOMICAL_TOLERANCE = 0.03;
+
+  it('every yNorm anchor is within ±0.03 of the silhouette anatomy reference', () => {
+    for (const p of BODY_PARTS) {
+      const ref = ANATOMICAL_REFERENCE[p.id];
+      expect(ref, `missing reference for body part "${p.id}" — update ANATOMICAL_REFERENCE`).toBeDefined();
+      expect(Math.abs(p.yNorm - ref)).toBeLessThanOrEqual(ANATOMICAL_TOLERANCE);
+    }
+  });
 });
