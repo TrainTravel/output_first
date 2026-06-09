@@ -347,6 +347,7 @@ export function useJournal() {
     openFocusPlan: () => setCurrentStep('focusplan'),
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
+    openQuadrants: () => setCurrentStep('quadrants'),
     openBodyScan: () => {
       setBodyScanOrigin('home');
       setCurrentStep('bodyscan');

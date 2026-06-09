@@ -29,6 +29,7 @@ import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
+import { QuadrantsScreen } from './QuadrantsScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
 import { PhilosopherQuoteDialog } from './PhilosopherQuoteDialog';
 
@@ -114,6 +115,7 @@ export function JournalApp() {
     openTodoList,
     openTinyExperiment,
     openBodyScan,
+    openQuadrants,
     openLanguageSettings,
     goBackToEmotions,
     openVocabulary,
@@ -155,6 +157,7 @@ export function JournalApp() {
            onOpenTodoList={openTodoList}
            onOpenTinyExperiment={openTinyExperiment}
            onOpenBodyScan={openBodyScan}
+           onOpenQuadrants={openQuadrants}
           onOpenLanguageSettings={openLanguageSettings}
           onOpenVocabulary={() => openVocabulary('home')}
         />
@@ -333,6 +336,10 @@ export function JournalApp() {
 
       {currentStep === 'tinyexperiment' && (
         <TinyExperimentScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'quadrants' && (
+        <QuadrantsScreen onBack={goHome} />
       )}
 
       {currentStep === 'languagesettings' && (

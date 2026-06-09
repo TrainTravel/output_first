@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -32,11 +32,12 @@ interface HomeScreenProps {
   onOpenTodoList: () => void;
   onOpenTinyExperiment: () => void;
   onOpenBodyScan: () => void;
+  onOpenQuadrants: () => void;
   onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
@@ -233,6 +234,36 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                 <ListChecks className="w-5 h-5 mr-2" />
                 {bilingual({ fr: 'Liste A/B/C', en: 'ABC List', es: 'Lista A/B/C', ja: 'A/B/Cリスト', 'zh-Hans': 'A/B/C 清单', 'zh-Hant': 'A/B/C 清單' })}
               </Button>
+
+              <button
+                data-testid="home-tile-quadrants"
+                onClick={onOpenQuadrants}
+                className="w-full h-14 rounded-xl px-6 flex items-center gap-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-left"
+              >
+                <LayoutGrid className="w-5 h-5 shrink-0" />
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm font-medium whitespace-normal h-auto leading-tight">
+                    {bilingual({
+                      fr: 'Matrice de priorités',
+                      en: 'Priority Quadrants',
+                      es: 'Matriz de prioridades',
+                      ja: '優先順位マトリックス',
+                      'zh-Hans': '优先级矩阵',
+                      'zh-Hant': '優先級矩陣',
+                    })}
+                  </span>
+                  <span className="block text-xs text-muted-foreground mt-0.5">
+                    {t({
+                      fr: 'Vos pensées et tâches, classées.',
+                      en: 'Your thoughts and tasks, sorted.',
+                      es: 'Tus pensamientos y tareas, clasificados.',
+                      ja: '思考とタスクを分類。',
+                      'zh-Hans': '想法和任务，已分类。',
+                      'zh-Hant': '想法和任務，已分類。',
+                    }).primary}
+                  </span>
+                </span>
+              </button>
 
               <Button variant="outline" size="full" onClick={onOpenSmallWins}>
                 <Trophy className="w-5 h-5 mr-2" />
