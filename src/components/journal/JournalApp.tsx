@@ -114,6 +114,7 @@ export function JournalApp() {
     openFocusPlan,
     openTodoList,
     openTinyExperiment,
+    openQuadrants,
     openBodyScan,
     openQuadrants,
     openLanguageSettings,
