@@ -9,16 +9,6 @@ interface QuadrantsScreenProps {
   onBack: () => void;
 }
 
-interface QuadrantMeta {
-  id: Quadrant;
-  label: ReturnType<typeof bilingualPlaceholder>;
-  subtitle: string;
-  tone: string;
-}
-
-// placeholder for typing only
-function bilingualPlaceholder() { return ''; }
-
 export function QuadrantsScreen({ onBack }: QuadrantsScreenProps) {
   const { bilingual, t } = useLanguage();
   const { buckets, loading, isEmpty } = useQuadrants();
