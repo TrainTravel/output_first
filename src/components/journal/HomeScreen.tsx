@@ -32,11 +32,12 @@ interface HomeScreenProps {
   onOpenTodoList: () => void;
   onOpenTinyExperiment: () => void;
   onOpenBodyScan: () => void;
+  onOpenQuadrants: () => void;
   onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
