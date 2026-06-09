@@ -338,6 +338,10 @@ export function JournalApp() {
         <TinyExperimentScreen onBack={goHome} />
       )}
 
+      {currentStep === 'quadrants' && (
+        <QuadrantsScreen onBack={goHome} />
+      )}
+
       {currentStep === 'languagesettings' && (
         <LanguageSettingsScreen onBack={goHome} />
       )}
