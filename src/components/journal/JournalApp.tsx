@@ -156,6 +156,7 @@ export function JournalApp() {
            onOpenTodoList={openTodoList}
            onOpenTinyExperiment={openTinyExperiment}
            onOpenBodyScan={openBodyScan}
+           onOpenQuadrants={openQuadrants}
           onOpenLanguageSettings={openLanguageSettings}
           onOpenVocabulary={() => openVocabulary('home')}
         />
