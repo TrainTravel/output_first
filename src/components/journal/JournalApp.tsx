@@ -303,7 +303,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'braindump' && (
-        <BrainDumpScreen onBack={goHome} />
+        <BrainDumpScreen onBack={goHome} onAfterSort={openQuadrants} />
       )}
 
       {currentStep === 'thoughtgarden' && (
