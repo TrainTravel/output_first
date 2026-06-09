@@ -29,6 +29,7 @@ import { SandTimerScreen } from './SandTimerScreen';
 import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
+import { QuadrantsScreen } from './QuadrantsScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
 import { PhilosopherQuoteDialog } from './PhilosopherQuoteDialog';
 
