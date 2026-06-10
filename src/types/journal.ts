@@ -27,7 +27,7 @@ export type JournalStep = 'home' | 'centerchoice' | 'breathe' | 'bodyscan' | 'pr
   | 'languagesettings';
 
 export type Quadrant = 'q1' | 'q2' | 'q3' | 'q4';
-export const QUADRANTS: Quadrant[] = ['q1', 'q2', 'q3', 'q4'];
+export const QUADRANTS: readonly Quadrant[] = ['q1', 'q2', 'q3', 'q4'] as const;
 
 export const MIN_CYCLES = 1;
 export const MAX_CYCLES = 5;

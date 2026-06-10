@@ -208,6 +208,40 @@ export async function mockTodoTriage(page: Page, priority: 'A' | 'B' | 'C' = 'B'
   );
 }
 
+/**
+ * Mock todo-triage in mode: 'eisenhower'. Echoes the input ids back as
+ * classifications. By default each item is classified as a task in q2;
+ * override with `classify` to set per-id results.
+ */
+export async function mockTodoTriageEisenhower(
+  page: Page,
+  classify: (id: string, content: string) => { isTask: boolean; quadrant: 'q1' | 'q2' | 'q3' | 'q4' | null }
+    = () => ({ isTask: true, quadrant: 'q2' }),
+) {
+  await page.route('**/functions/v1/todo-triage', (route) => {
+    try {
+      const body = route.request().postDataJSON() as { mode?: string; items?: Array<{ id: string; content: string }> };
+      if (body?.mode === 'eisenhower' && Array.isArray(body.items)) {
+        const classifications = body.items.map(it => ({
+          id: it.id,
+          ...classify(it.id, it.content),
+          reasoning: 'Mock reasoning.',
+        }));
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ classifications }),
+        });
+      }
+    } catch { /* fall through to ABC default */ }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ priority: 'B', reason: 'Mock AI reason.' }),
+    });
+  });
+}
+
 /** Mock todo-from-image edge function. Returns tasks by default, or a question. */
 export async function mockTodoFromImage(page: Page, response: { tasks?: string[]; question?: string } = { tasks: ['Task from image'] }) {
   await page.route('**/functions/v1/todo-from-image', (route) =>

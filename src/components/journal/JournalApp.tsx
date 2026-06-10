@@ -114,8 +114,8 @@ export function JournalApp() {
     openFocusPlan,
     openTodoList,
     openTinyExperiment,
-    openBodyScan,
     openQuadrants,
+    openBodyScan,
     openLanguageSettings,
     goBackToEmotions,
     openVocabulary,
@@ -303,7 +303,7 @@ export function JournalApp() {
       )}
 
       {currentStep === 'braindump' && (
-        <BrainDumpScreen onBack={goHome} />
+        <BrainDumpScreen onBack={goHome} onAfterSort={openQuadrants} />
       )}
 
       {currentStep === 'thoughtgarden' && (

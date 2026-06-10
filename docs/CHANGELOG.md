@@ -1,5 +1,34 @@
 # Changelog
 
+## [Unreleased] - 2026-06-09
+
+### Priority Quadrants — Eisenhower 2×2 board, AI-classified from BrainDump
+
+**A new Home tile shows the user's current thoughts and tasks sorted into the four Eisenhower quadrants. After a brain-dump session, the user can sort what they wrote with a single tap — AI classifies each item as a task vs non-task and places the tasks; the user verifies the AI's task/non-task call on a quick checklist before the items land on the board.**
+
+What changed:
+- **Schema** (`supabase/migrations/20260608172506_…sql`): adds `thoughts.is_task BOOLEAN` and `thoughts.quadrant TEXT CHECK (q1..q4)` with a partial index on `(user_anonymous_id, quadrant)` for the tile query path.
+- **Edge function** (`supabase/functions/todo-triage/index.ts`): now accepts `mode: 'eisenhower'` for batch classification. Input `{items: [{id, content}]}` → output `{classifications: [{id, isTask, quadrant, reasoning}]}`. Falls back to a no-classification row per missing id so the caller always gets one row per input. Existing ABC-mode callers preserved verbatim — this extends rather than forks the endpoint (per Rule of Three).
+- **Hook** (`src/hooks/useQuadrants.ts`): merges classified thoughts (Supabase) with the active TodoList (localStorage) into per-quadrant buckets. Todos use an ABC → quadrant projection (A → q1, B → q2, C → q4) for v1; q3 is reachable only via the AI Eisenhower classifier on brain-dump items.
+- **Step + routing**: new `'quadrants'` step, `openQuadrants` action on `useJournal`, route registered in `JournalApp.tsx`.
+- **`QuadrantsScreen.tsx`** (Lovable): polished 2×2 board with quadrant tints (accent/primary/secondary/muted), bilingual quadrant labels, source tag per item, empty / loading states. Anchor term: `bilingual({ fr: 'Matrice de priorités', en: 'Priority Quadrants', es: 'Matriz de prioridades', ja: '優先順位マトリックス', 'zh-Hans': '优先级矩阵', 'zh-Hant': '優先級矩陣' })`.
+- **Home tile** (Lovable, inside the "More tools" section): `LayoutGrid` icon + bilingual label, `data-testid="home-tile-quadrants"`.
+- **`TaskVerifyStep.tsx`** (Lovable): standalone "quick check" component — each item is a checkbox row pre-filled with the AI's `isTaskGuess`. Single Confirm and Skip buttons.
+- **`BrainDumpScreen.tsx`**: tracks uncapped `sessionThoughts` (the existing `recentlyAdded` stays capped at 5). New "Sort into quadrants (N)" CTA appears when the session has any items. Tapping it calls `todo-triage` in eisenhower mode, renders `TaskVerifyStep`, persists `is_task`/`quadrant` on each row, then routes to `QuadrantsScreen` via a new `onAfterSort` prop. If the user promotes a non-task to a task and the AI gave no quadrant, defaults to q2 — important, not urgent — so the row isn't orphaned. Skip persists the AI's classifications verbatim.
+- **Bilingual chrome**: all new strings cover en/fr/es/ja/zh-Hans/zh-Hant. Quadrant labels are bilingual anchor terms; action and helper text are single-language via `t()`.
+
+Tests:
+- 8 unit tests in `useQuadrants.test.ts` covering empty state, ABC → quadrant projection, completed-todo filtering, source tagging, thought-feed placement, invalid-quadrant defense, source merge, and refresh after BrainDump classification.
+- 6 E2E specs in `priority-quadrants.spec.ts` covering both entry paths: Home tile (anchor visible, empty state, items in the q2 cell from the server) and BrainDump sort flow (CTA appearance + count, verify step pre-fill with AI guesses, Confirm and Skip both routing to `QuadrantsScreen`).
+- Adds `mockTodoTriageEisenhower(page, classify)` helper to `e2e/helpers/mocks.ts` — handles `mode: 'eisenhower'` requests with a per-id classify callback; defaults to ABC mode for backward compat.
+- Total: 330/330 vitest passing, 6/6 new E2E passing, regression on `braindump.spec.ts` and `home.spec.ts` clean.
+
+**ADHD-Friendly:**
+- **Brain Dump first, organize later.** The capture step stays frictionless — type, hit Enter, repeat. Sorting is a separate, optional step the user opts into. Honors the CLAUDE.md rule *"never require categorization before capture."*
+- **AI does the classification, user has the last word.** The verify step takes seconds: the user only corrects what the AI got wrong. Auto-classification without verification would feel paternalistic; verification without an AI default would feel like homework.
+- **Immediate Closure.** After sort, the user lands on QuadrantsScreen and immediately sees their items in cells — the externalized executive function payoff for the effort they just put in. Matches the *"every effort step must be followed by an immediate reward"* principle.
+- **Read-only board for v1.** No drag-to-move yet. The most common ADHD failure mode after sorting is endless re-shuffling. v2 can add overrides once we see how often the AI is wrong.
+
 ## [Unreleased] - 2026-06-06
 
 ### Self-compassion as its own step
