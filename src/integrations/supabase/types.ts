@@ -267,6 +267,8 @@ export type Database = {
           created_at: string
           embedding: string | null
           id: string
+          is_task: boolean
+          quadrant: string | null
           user_anonymous_id: string
         }
         Insert: {
@@ -277,6 +279,8 @@ export type Database = {
           created_at?: string
           embedding?: string | null
           id?: string
+          is_task?: boolean
+          quadrant?: string | null
           user_anonymous_id: string
         }
         Update: {
@@ -287,6 +291,8 @@ export type Database = {
           created_at?: string
           embedding?: string | null
           id?: string
+          is_task?: boolean
+          quadrant?: string | null
           user_anonymous_id?: string
         }
         Relationships: []
@@ -306,6 +312,8 @@ export type Database = {
           created_at: string
           embedding: string | null
           id: string
+          is_task: boolean
+          quadrant: string | null
           user_anonymous_id: string
         }[]
         SetofOptions: {
