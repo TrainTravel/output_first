@@ -1,0 +1,1 @@
+ALTER TABLE public.thoughts ADD COLUMN IF NOT EXISTS is_task BOOLEAN NOT NULL DEFAULT false; ALTER TABLE public.thoughts ADD COLUMN IF NOT EXISTS quadrant TEXT; ALTER TABLE public.thoughts ADD CONSTRAINT thoughts_quadrant_check CHECK (quadrant IS NULL OR quadrant IN ('q1','q2','q3','q4'));
