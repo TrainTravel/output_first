@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased] - 2026-06-10
+
+### Gratitude — start with one, add more if you feel like
+
+**`GratitudeScreen` no longer asks for a single static field. The user always sees one input by default (no pressure, no "blank form for three things" — the classic dropout trap of the *three good things* exercise). Once they've written anything in the first field, a soft "+ Add another (optional)" button appears below; tapping it reveals a second field, then a third. Cap at three.**
+
+What changed:
+- `src/components/journal/GratitudeScreen.tsx`:
+  - State is now an array of up to 3 entries (was: a single string).
+  - The "+ Add another (optional)" button is offered only when the most recent visible field has content — so the user isn't tempted to stack empty boxes. Hides again if they clear the field. Disappears entirely once the cap is reached.
+  - Save concatenates non-empty entries with `\n\n`. Empty/whitespace entries are filtered out. If every field is empty, `onSave(undefined)` matches the prior contract.
+  - Storage shape unchanged: still a single `gratitude?: string` on `JournalEntry`. No migration; downstream readers (progress count, persistToDb) just see one longer string instead of a short one.
+- Bilingual chrome on the new button: en/fr/es/ja/zh-Hans/zh-Hant covered.
+- Stable selectors for E2E: `gratitude-field-1..3`, `gratitude-add-another`.
+
+Tests:
+- 8 new unit tests in `GratitudeScreen.test.tsx` covering the progressive disclosure, the empty-field guard, the cap, the concat-on-save with `\n\n`, the empty-field filter, the all-empty → `undefined` path, and Skip behavior.
+- 338/338 vitest passing. Existing journal-flow E2E specs still pass — `getByPlaceholder('Quelque chose de petit suffit...')` returns the first field, so the single-entry happy path is unchanged.
+
+**ADHD-Friendly:**
+- **One thing at a time.** Three empty boxes upfront is a known dropout trigger — staring at multiple blank fields amplifies the blank-page paralysis ADHD users already struggle with. Starting with one is *the* lowest-friction frame.
+- **Opt-in continuation, never demand.** Three Good Things (Seligman 2005) is well-evidenced in positive psychology — but the protocol assumes a neurotypical capacity for sustained focus. By making fields 2 and 3 opt-in, we keep the intervention's *benefit* (extending the gratitude practice when momentum is there) without the *cost* (turning it into a checklist that has to be completed).
+- **Reveal only after evidence of momentum.** The "+ Add another" button shows up only when field 1 has content. If the user is staring at an empty field, the UI doesn't surface a second one to make them feel behind.
+- **Self-stop is honored.** Cap at three matches the research without being a rigid quota — the user can stop at one or two with no UI nag.
+
 ## [Unreleased] - 2026-06-09
 
 ### Priority Quadrants — Eisenhower 2×2 board, AI-classified from BrainDump

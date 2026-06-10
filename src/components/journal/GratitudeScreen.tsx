@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Plus } from 'lucide-react';
 import { BilingualPrompt } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -12,13 +12,31 @@ interface GratitudeScreenProps {
   onBack: () => void;
 }
 
+const MAX_GRATITUDES = 3;
+
 export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScreenProps) {
-  const [gratitude, setGratitude] = useState('');
+  // Up to MAX_GRATITUDES entries, starting with just one. Additional fields appear
+  // only when the user opts in via the "+ Add another" button.
+  const [entries, setEntries] = useState<string[]>(['']);
   const { t } = useLanguage();
 
-  const handleSave = () => {
-    onSave(gratitude.trim() || undefined);
+  const updateEntry = (idx: number, value: string) => {
+    setEntries(prev => prev.map((e, i) => i === idx ? value : e));
   };
+
+  const addAnotherField = () => {
+    if (entries.length >= MAX_GRATITUDES) return;
+    setEntries(prev => [...prev, '']);
+  };
+
+  const handleSave = () => {
+    const filled = entries.map(e => e.trim()).filter(Boolean);
+    onSave(filled.length > 0 ? filled.join('\n\n') : undefined);
+  };
+
+  // "+ Add another" is offered only when the most recent field has content
+  // (so the user isn't tempted to stack empty boxes) and we're below the cap.
+  const canAddAnother = entries.length < MAX_GRATITUDES && entries[entries.length - 1].trim().length > 0;
 
   const promptText = t({ fr: prompt.fr, en: prompt.en, es: prompt.en });
 
@@ -47,14 +65,37 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
           </p>
         </div>
 
-        {/* Text Area */}
-        <div className="flex-1">
-          <Textarea
-            value={gratitude}
-            onChange={(e) => setGratitude(e.target.value)}
-            placeholder={t({ fr: 'Quelque chose de petit suffit...', en: 'Something small is perfect...', es: 'Algo pequeño es suficiente...', ja: '小さなことで大丈夫です...', 'zh-Hans': '一件小事就足够...', 'zh-Hant': '一件小事就足夠...' }).primary}
-            className="min-h-[150px] resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl"
-          />
+        {/* Text Areas — one by default, more on opt-in */}
+        <div className="flex-1 space-y-3">
+          {entries.map((value, idx) => (
+            <Textarea
+              key={idx}
+              data-testid={`gratitude-field-${idx + 1}`}
+              value={value}
+              onChange={(e) => updateEntry(idx, e.target.value)}
+              placeholder={t({ fr: 'Quelque chose de petit suffit...', en: 'Something small is perfect...', es: 'Algo pequeño es suficiente...', ja: '小さなことで大丈夫です...', 'zh-Hans': '一件小事就足够...', 'zh-Hant': '一件小事就足夠...' }).primary}
+              className={`${idx === 0 ? 'min-h-[150px]' : 'min-h-[100px]'} resize-none bg-card border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 text-lg leading-relaxed p-4 rounded-xl animate-fade-in-up`}
+            />
+          ))}
+
+          {canAddAnother && (
+            <button
+              type="button"
+              data-testid="gratitude-add-another"
+              onClick={addAnotherField}
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
+            >
+              <Plus className="w-4 h-4" />
+              {t({
+                fr: 'En ajouter un autre (facultatif)',
+                en: 'Add another (optional)',
+                es: 'Añadir otro (opcional)',
+                ja: 'もう一つ追加（任意）',
+                'zh-Hans': '再加一项（可选）',
+                'zh-Hant': '再加一項（選填）',
+              }).primary}
+            </button>
+          )}
         </div>
 
         {/* Actions */}
