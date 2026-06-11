@@ -1,21 +1,46 @@
-## Two things to do
+## Body Scan — Abstract Aura Redesign
 
-### 1. Fix the build errors in `src/hooks/useProWaitlist.ts`
+Remove the cartoon body SVG entirely. Replace with a soft vertical gradient "aura column" that the scan line travels through. Body-part labels float in space, anchored to vertical positions only.
 
-The hook inserts into `pro_waitlist`, but that table doesn't exist in the DB (it's not in the generated types, hence the `"pro_waitlist" is not assignable to parameter of type 'never'"` errors). Two options:
+### Visual concept
 
-- **(a) Create the table** via migration with columns: `id uuid pk`, `user_anonymous_id text not null`, `email text`, `features text[] not null`, `other_text text`, `primary_lang text`, `target_lang text`, `created_at timestamptz default now()`. Enable RLS + `GRANT` for `authenticated`/`service_role` + insert-own policy. Types regenerate and both errors clear.
-- **(b) Remove/stub the hook** if the Pro Waitlist feature isn't wanted yet — write to `localStorage` only and drop the Supabase insert.
+```
+        Body scan
+       Scan corporel
 
-I recommend **(a)** since the hook is wired into `ProWaitlistScreen` and clearly intended to capture real submissions.
+       ╭─────────╮
+       │  ░░░░░  │   ← Head            (label fades in as scan passes)
+       │  ▒▒▒▒▒  │
+       │  ▓▓▓▓▓  │   ═══ scan line ═══  Chest    Poitrine
+       │  ▓▓▓▓▓  │
+       │  ▒▒▒▒▒  │   ← Belly
+       │  ░░░░░  │
+       │   ░░░   │   ← Legs
+       ╰─────────╯
 
-### 2. Debug the `todo-triage` priority-quadrant flow
+   Follow the light. Notice what you feel.
+```
 
-The function was just redeployed and the eisenhower branch is live (verified — returns 401 on unauthed curl rather than the old `"task must be 1-500 chars"`). Next-step debugging:
+A narrow vertical column (~120px wide × 420px tall) filled with a vertical sage-green radial gradient — brightest at center, falling off softly to transparent at the edges. No outline, no body shape. The scan line is a horizontal soft-glow band that drifts top to bottom (existing animation kept). Labels appear to the left/right of the column at their vertical position, fading in as the scan crosses, lingering at 55% opacity afterward (existing behavior kept).
 
-- Reproduce in preview as a logged-in user: Brain Dump → add 2 thoughts → tap "Trier en quadrants".
-- Pull `supabase--edge_function_logs` for `todo-triage` filtered on `eisenhower` / `error` to see the real-time outcome.
-- Check the network response body in the preview to confirm the response now has a `classifications` array.
-- If it still 400s, inspect the request payload shape vs. the validator in `index.ts` (items array, each with id+content 1–500 chars).
+### Files changed
 
-Plan: do step 1 first (unblocks the build), then run step 2.
+- `src/components/journal/BodyScanScreen.tsx` — remove the `<svg>` block (lines 60–110) including head circle, torso path, hand circles, and leg path. Replace with a single `<div>` aura column styled with a vertical linear-gradient mask + radial soft glow using `hsl(var(--primary))` at low opacity. Keep the existing scan-line `<div>` and the `BODY_PARTS.map` label rendering untouched.
+
+### What stays
+
+- 15s scan loop, 10s reveal delay for the continue button
+- `BODY_PARTS` data and label positioning (yNorm/xPercent)
+- Scan-line gradient + transitions
+- Header, instruction copy, "I'm ready" button — unchanged
+
+### Verification
+
+- Visual check in preview at `/` → body scan step: no figure visible, only a soft glowing column; scan line still travels; labels still fade in/out at their positions.
+- Confirm dark mode still reads well (column should glow, not look like a flat bar).
+- No TS / lint errors.
+
+### Out of scope
+
+- No changes to `BODY_PARTS` data, copy, durations, or button behavior.
+- No animation library additions.
