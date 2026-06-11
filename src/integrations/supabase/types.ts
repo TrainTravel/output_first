@@ -258,39 +258,6 @@ export type Database = {
           },
         ]
       }
-      pro_waitlist: {
-        Row: {
-          email: string | null
-          features: string[]
-          id: string
-          other_text: string | null
-          primary_lang: string | null
-          submitted_at: string
-          target_lang: string | null
-          user_anonymous_id: string
-        }
-        Insert: {
-          email?: string | null
-          features?: string[]
-          id?: string
-          other_text?: string | null
-          primary_lang?: string | null
-          submitted_at?: string
-          target_lang?: string | null
-          user_anonymous_id: string
-        }
-        Update: {
-          email?: string | null
-          features?: string[]
-          id?: string
-          other_text?: string | null
-          primary_lang?: string | null
-          submitted_at?: string
-          target_lang?: string | null
-          user_anonymous_id?: string
-        }
-        Relationships: []
-      }
       thoughts: {
         Row: {
           ai_theme: string | null
