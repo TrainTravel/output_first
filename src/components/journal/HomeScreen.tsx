@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,6 +12,7 @@ import { languageNameFor } from '@/lib/languageNames';
 import { SelfCompassionSeed } from './SelfCompassionSeed';
 import { EmotionFrequencyNudge } from './EmotionFrequencyNudge';
 import { Badge } from '@/types/journal';
+import { useProWaitlist } from '@/hooks/useProWaitlist';
 
 interface HomeScreenProps {
   hasJournaledToday: boolean;
@@ -39,6 +40,7 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary, onOpenProWaitlist }: HomeScreenProps) {
+  const { submitted: proWaitlistSubmitted } = useProWaitlist();
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
@@ -318,13 +320,25 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
             {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.', ja: '一文か二文で十分です。', 'zh-Hans': '一两句话就够了。', 'zh-Hant': '一兩句話就夠了。' }).primary}
           </p>
 
-          <button
-            data-testid="home-pro-waitlist-cta"
-            onClick={onOpenProWaitlist}
-            className="block mx-auto mt-3 text-xs text-muted-foreground/70 hover:text-foreground transition-colors underline decoration-dotted underline-offset-4"
-          >
-            {t({ fr: 'Aidez à façonner Pro', en: 'Help shape Pro', es: 'Ayuda a dar forma a Pro', ja: 'Pro を一緒に形作る', 'zh-Hans': '一起塑造 Pro', 'zh-Hant': '一起塑造 Pro' }).primary}
-          </button>
+          {!proWaitlistSubmitted && (
+            <button
+              data-testid="home-pro-waitlist-cta"
+              onClick={onOpenProWaitlist}
+              className="w-full mt-2 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 px-4 py-3 transition-colors cursor-pointer text-left flex items-center gap-3 group"
+            >
+              <div className="rounded-full bg-primary/15 p-2 group-hover:bg-primary/25 transition-colors">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground font-medium">
+                  {t({ fr: 'Aidez à façonner Pro', en: 'Help shape Pro', es: 'Ayuda a dar forma a Pro', ja: 'Pro を一緒に形作る', 'zh-Hans': '一起塑造 Pro', 'zh-Hant': '一起塑造 Pro' }).primary}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t({ fr: 'Dites-nous ce qui rendrait Pro utile.', en: 'Tell us what would make Pro worth it.', es: 'Cuéntanos qué haría Pro valga la pena.', ja: 'Pro を価値あるものにする要素を教えてください。', 'zh-Hans': '告诉我们什么会让 Pro 值得。', 'zh-Hant': '告訴我們什麼會讓 Pro 值得。' }).primary}
+                </p>
+              </div>
+            </button>
+          )}
         </div>
 
       </div>
