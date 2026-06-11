@@ -223,6 +223,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_waitlist: {
+        Row: {
+          created_at: string
+          email: string | null
+          features: string[]
+          id: string
+          other_text: string | null
+          primary_lang: string | null
+          target_lang: string | null
+          user_anonymous_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          features?: string[]
+          id?: string
+          other_text?: string | null
+          primary_lang?: string | null
+          target_lang?: string | null
+          user_anonymous_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          features?: string[]
+          id?: string
+          other_text?: string | null
+          primary_lang?: string | null
+          target_lang?: string | null
+          user_anonymous_id?: string
+        }
+        Relationships: []
+      }
       proposals: {
         Row: {
           cluster_id: string
