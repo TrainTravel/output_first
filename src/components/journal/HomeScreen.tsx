@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid, Sparkles } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid, Sparkles, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -338,6 +338,31 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
                 </p>
               </div>
             </button>
+          )}
+
+          {/* Support link — opens the user-configured tip URL in a new tab. */}
+          {/* If VITE_SUPPORT_URL is not set at build time, the link is hidden — */}
+          {/* this keeps the dev environment clean while letting prod show it. */}
+          {import.meta.env.VITE_SUPPORT_URL && (
+            <a
+              data-testid="home-support-cta"
+              href={import.meta.env.VITE_SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full mt-2 rounded-xl border border-accent/30 bg-accent/5 hover:bg-accent/10 px-4 py-3 transition-colors cursor-pointer text-left flex items-center gap-3 group"
+            >
+              <div className="rounded-full bg-accent/15 p-2 group-hover:bg-accent/25 transition-colors">
+                <Heart className="w-4 h-4 text-accent" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground font-medium">
+                  {t({ fr: 'Soutenir cette appli', en: 'Support this app', es: 'Apoyar esta app', ja: 'このアプリを支援する', 'zh-Hans': '支持这个应用', 'zh-Hant': '支持這個應用' }).primary}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t({ fr: 'Si ça vous aide, offrez un café. Merci.', en: 'If it helps you, buy a coffee. Thanks.', es: 'Si te ayuda, invita un café. Gracias.', ja: '役に立ったら、コーヒーをご馳走してください。', 'zh-Hans': '如果它帮到你，请我喝杯咖啡，谢谢。', 'zh-Hant': '如果它幫到你，請我喝杯咖啡，謝謝。' }).primary}
+                </p>
+              </div>
+            </a>
           )}
         </div>
 
