@@ -57,57 +57,26 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
         </div>
 
         <div className="relative w-72 h-[420px]">
-          <svg
-            viewBox="0 0 200 500"
-            className="absolute inset-0 w-full h-full"
-            fill="hsl(var(--primary) / 0.06)"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-            strokeLinecap="round"
+          {/* Abstract aura column — soft vertical glow, no body silhouette */}
+          <div
+            className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-32 rounded-full"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, hsl(var(--primary) / 0.22) 0%, hsl(var(--primary) / 0.10) 45%, hsl(var(--primary) / 0.03) 75%, transparent 100%)',
+              filter: 'blur(8px)',
+            }}
             aria-hidden
-          >
-            {/* Head — soft round circle, no neck taper */}
-            <circle cx="100" cy="52" r="26" />
-            {/* Neutral soft pillar — body from y≈80 (shoulders) to y≈322 (hips).
-                Nearly vertical sides, rounded shoulder + hip corners.
-                No waist indent, no hip flare, no thin limbs. */}
-            <path d="
-              M70 96
-              Q70 82 88 80
-              L112 80
-              Q130 82 130 96
-              L130 312
-              Q130 322 122 322
-              L78 322
-              Q70 322 70 312
-              Z
-            " />
-            {/* Hands — small rounded anchors at the sides at hip level (y≈300).
-                Suggests hands without drawing thin arms alongside the body. */}
-            <circle cx="62" cy="300" r="9" />
-            <circle cx="138" cy="300" r="9" />
-            {/* Legs — soft base from y≈322 to y≈472 with a subtle center
-                divot at the bottom to suggest two legs without thin separation. */}
-            <path d="
-              M78 322
-              L122 322
-              Q130 322 130 332
-              L130 462
-              Q130 472 122 472
-              L108 472
-              Q102 472 102 464
-              L102 400
-              Q100 396 98 400
-              L98 464
-              Q98 472 92 472
-              L78 472
-              Q70 472 70 462
-              L70 332
-              Q70 322 78 322
-              Z
-            " />
-          </svg>
+          />
+          <div
+            className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-16 rounded-full"
+            style={{
+              background:
+                'linear-gradient(to bottom, hsl(var(--primary) / 0.18), hsl(var(--primary) / 0.10) 50%, hsl(var(--primary) / 0.18))',
+              filter: 'blur(4px)',
+            }}
+            aria-hidden
+          />
+
 
           <div
             className="absolute left-0 right-0 h-10 pointer-events-none"
