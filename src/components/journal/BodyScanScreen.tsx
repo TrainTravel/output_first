@@ -67,30 +67,46 @@ export function BodyScanScreen({ onReady, onBack }: BodyScanScreenProps) {
             strokeLinecap="round"
             aria-hidden
           >
-            {/* Head — slim oval */}
-            <ellipse cx="100" cy="48" rx="18" ry="22" />
-            {/* Neck */}
-            <path d="M93 70 Q93 82 89 92 Q100 96 111 92 Q107 82 107 70" />
-            {/* Torso — slim shoulders (y≈120), tapered waist (y≈230), narrow hips (y≈300) */}
+            {/* Head — soft round circle, no neck taper */}
+            <circle cx="100" cy="52" r="26" />
+            {/* Neutral soft pillar — body from y≈80 (shoulders) to y≈322 (hips).
+                Nearly vertical sides, rounded shoulder + hip corners.
+                No waist indent, no hip flare, no thin limbs. */}
             <path d="
-              M89 92
-              Q72 96 70 124
-              Q76 162 78 200
-              Q76 234 82 268
-              Q86 296 92 306
-              L108 306
-              Q114 296 118 268
-              Q124 234 122 200
-              Q124 162 130 124
-              Q128 96 111 92
+              M70 96
+              Q70 82 88 80
+              L112 80
+              Q130 82 130 96
+              L130 312
+              Q130 322 122 322
+              L78 322
+              Q70 322 70 312
               Z
             " />
-            {/* Arms — slim, resting alongside torso */}
-            <path d="M72 122 Q62 180 68 244 Q72 282 84 300" fill="none" />
-            <path d="M128 122 Q138 180 132 244 Q128 282 116 300" fill="none" />
-            {/* Legs — slim from hips to feet (y≈482) */}
-            <path d="M92 306 Q88 380 88 442 Q88 474 96 484 Q102 480 100 442 Q100 376 100 318" fill="none" />
-            <path d="M108 306 Q112 380 112 442 Q112 474 104 484 Q98 480 100 442" fill="none" />
+            {/* Hands — small rounded anchors at the sides at hip level (y≈300).
+                Suggests hands without drawing thin arms alongside the body. */}
+            <circle cx="62" cy="300" r="9" />
+            <circle cx="138" cy="300" r="9" />
+            {/* Legs — soft base from y≈322 to y≈472 with a subtle center
+                divot at the bottom to suggest two legs without thin separation. */}
+            <path d="
+              M78 322
+              L122 322
+              Q130 322 130 332
+              L130 462
+              Q130 472 122 472
+              L108 472
+              Q102 472 102 464
+              L102 400
+              Q100 396 98 400
+              L98 464
+              Q98 472 92 472
+              L78 472
+              Q70 472 70 462
+              L70 332
+              Q70 322 78 322
+              Z
+            " />
           </svg>
 
           <div
