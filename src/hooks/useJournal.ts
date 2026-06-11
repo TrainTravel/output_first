@@ -348,6 +348,7 @@ export function useJournal() {
     openTodoList: () => setCurrentStep('todolist'),
     openTinyExperiment: () => setCurrentStep('tinyexperiment'),
     openQuadrants: () => setCurrentStep('quadrants'),
+    openProWaitlist: () => setCurrentStep('prowaitlist'),
     openBodyScan: () => {
       setBodyScanOrigin('home');
       setCurrentStep('bodyscan');

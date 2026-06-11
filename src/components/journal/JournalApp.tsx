@@ -30,6 +30,7 @@ import { FocusPlanScreen } from './FocusPlanScreen';
 import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
 import { QuadrantsScreen } from './QuadrantsScreen';
+import { ProWaitlistScreen } from './ProWaitlistScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
 import { PhilosopherQuoteDialog } from './PhilosopherQuoteDialog';
 
@@ -115,6 +116,7 @@ export function JournalApp() {
     openTodoList,
     openTinyExperiment,
     openQuadrants,
+    openProWaitlist,
     openBodyScan,
     openLanguageSettings,
     goBackToEmotions,
@@ -158,6 +160,7 @@ export function JournalApp() {
            onOpenTinyExperiment={openTinyExperiment}
            onOpenBodyScan={openBodyScan}
            onOpenQuadrants={openQuadrants}
+          onOpenProWaitlist={openProWaitlist}
           onOpenLanguageSettings={openLanguageSettings}
           onOpenVocabulary={() => openVocabulary('home')}
         />
@@ -340,6 +343,10 @@ export function JournalApp() {
 
       {currentStep === 'quadrants' && (
         <QuadrantsScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'prowaitlist' && (
+        <ProWaitlistScreen onBack={goHome} />
       )}
 
       {currentStep === 'languagesettings' && (

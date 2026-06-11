@@ -24,7 +24,24 @@ export type JournalStep = 'home' | 'centerchoice' | 'breathe' | 'bodyscan' | 'pr
   | 'zengarden' | 'freewrite' | 'freewritechoice' | 'expressivewrite'
   | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment'
   | 'quadrants'
+  | 'prowaitlist'
   | 'languagesettings';
+
+/**
+ * Features the user can pick on the Pro waitlist screen.
+ * Stored as plain strings in `pro_waitlist.features` (text[]) so adding a new
+ * key is a one-line change here — no schema migration needed.
+ */
+export const PRO_WAITLIST_FEATURES = [
+  'sync',
+  'voice',
+  'deeper-ai',
+  'export',
+  'more-languages',
+  'weekly-insights',
+  'custom-themes',
+] as const;
+export type ProWaitlistFeature = typeof PRO_WAITLIST_FEATURES[number];
 
 export type Quadrant = 'q1' | 'q2' | 'q3' | 'q4';
 export const QUADRANTS: readonly Quadrant[] = ['q1', 'q2', 'q3', 'q4'] as const;

@@ -35,9 +35,10 @@ interface HomeScreenProps {
   onOpenQuadrants: () => void;
   onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
+  onOpenProWaitlist: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary, onOpenProWaitlist }: HomeScreenProps) {
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
@@ -316,6 +317,14 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <p className="text-center text-muted-foreground text-sm pt-2">
             {t({ fr: 'Une ou deux phrases suffisent.', en: 'One or two sentences is enough.', es: 'Una o dos frases bastan.', ja: '一文か二文で十分です。', 'zh-Hans': '一两句话就够了。', 'zh-Hant': '一兩句話就夠了。' }).primary}
           </p>
+
+          <button
+            data-testid="home-pro-waitlist-cta"
+            onClick={onOpenProWaitlist}
+            className="block mx-auto mt-3 text-xs text-muted-foreground/70 hover:text-foreground transition-colors underline decoration-dotted underline-offset-4"
+          >
+            {t({ fr: 'Aidez à façonner Pro', en: 'Help shape Pro', es: 'Ayuda a dar forma a Pro', ja: 'Pro を一緒に形作る', 'zh-Hans': '一起塑造 Pro', 'zh-Hant': '一起塑造 Pro' }).primary}
+          </button>
         </div>
 
       </div>

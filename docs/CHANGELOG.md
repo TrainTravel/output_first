@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased] - 2026-06-11
+
+### Pro waitlist — demand signal before payments
+
+**A small opt-in screen — reachable as a discrete link from HomeScreen — where existing users can tell us what would make a Pro tier worth it. No payment, no feature gating; pure demand signal. Validates "what to build" before we commit to any payment architecture.**
+
+What changed:
+- **Migration** (`supabase/migrations/20260611101448_…sql`): new `pro_waitlist` table — `user_anonymous_id`, optional `email`, `features text[]`, `other_text`, `primary_lang`/`target_lang`, `submitted_at`. RLS: authenticated users can insert their own row; only service role reads aggregate data.
+- **Hook** (`src/hooks/useProWaitlist.ts`): `submit({ features, otherText, email })` → inserts the row and caches the submission timestamp per profile in localStorage (so the CTA hides once the user has voted). Normalizes the email (validates shape, drops if invalid), trims `other_text`, and persists the submitted flag even on insert failure so the user isn't asked twice.
+- **Step + routing**: new `'prowaitlist'` step, `openProWaitlist` action on `useJournal`, route registered in `JournalApp.tsx`.
+- **`ProWaitlistScreen.tsx`**: 7 feature options (sync, voice, deeper-ai, export, more-languages, weekly-insights, custom-themes) as tap-to-toggle cards. Optional "anything else?" free-text field. Optional email field. Send + Skip both routable to home; Send fires the insert, Skip just returns. Thank-you state after submit with a single "Back to writing" CTA.
+- **HomeScreen entry point**: tiny dotted-underline text link below the home footer copy — *"Help shape Pro" / "Aidez à façonner Pro"*. Discrete by design — we want users to opt in, not be funneled in.
+- **Bilingual chrome**: full coverage in en/fr/es/ja/zh-Hans/zh-Hant. Feature titles are `bilingual()` anchors (they name future product features); button labels and helper text are `t().primary`.
+
+Tests:
+- 6 new unit tests in `useProWaitlist.test.ts` covering empty/initial state, successful submit + payload shape, email normalization, other_text trimming, insert-error path (still marks submitted), and cross-instance persistence via localStorage.
+- 344/344 vitest pass. `tsc --noEmit` clean.
+
+**ADHD-Friendly:**
+- **Skip is always available.** Every screen in the app has it; this one is no exception. A waitlist is a request, not a gate.
+- **One tap per vote.** Feature options are tap-to-toggle cards, not a multi-step form. The user can vote in under 10 seconds.
+- **No forced fields.** Email is optional. The user can vote anonymously, and the row is tagged with their `user_anonymous_id` either way for de-duplication.
+- **Ethical Monetization (per CLAUDE.md).** No dark patterns: the CTA is text-link-discreet rather than an attention-grab. *"OutputFirst will always have a free tier"* is the first sentence of the screen — sets the frame before any feature pitch. Premium = additive ("sync", "voice", "more languages") not subtractive — none of the listed features would remove anything users have today.
+- **One vote, never asked again.** Once a user submits, the CTA hides. The submitted flag is per-profile, so a different user on the same device still gets to vote.
+
 ## [Unreleased] - 2026-06-10
 
 ### Gratitude — start with one, add more if you feel like
