@@ -115,7 +115,12 @@ export function BrainDumpScreen({ onBack, onAfterSort }: BrainDumpScreenProps) {
       });
 
       if (error || !data?.classifications || !Array.isArray(data.classifications)) {
-        setSortError(error?.message || 'Classification failed');
+        // Log the raw failure so debugging stays straightforward — but show
+        // the user a soft, ADHD-friendly line, not the engineer-speak from
+        // supabase-js ("Edge Function returned a non-2xx status code") or a
+        // backend validation slug. The retry affordance is rendered below.
+        console.error('[braindump.sort] classification failed', { error, data });
+        setSortError('failed');
         setClassifying(false);
         return;
       }
@@ -266,9 +271,38 @@ export function BrainDumpScreen({ onBack, onAfterSort }: BrainDumpScreenProps) {
               )}
             </Button>
             {sortError && (
-              <p className="text-destructive text-xs mt-2 text-center" data-testid="braindump-sort-error">
-                {sortError}
-              </p>
+              <div
+                className="mt-3 p-3 rounded-lg bg-muted/40 border border-border/50"
+                data-testid="braindump-sort-error"
+              >
+                <p className="text-sm text-foreground text-center mb-2">
+                  {t({
+                    fr: "Je n'ai pas pu trier maintenant.",
+                    en: "Couldn't sort right now.",
+                    es: 'No pude clasificar ahora mismo.',
+                    ja: '今は分類できませんでした。',
+                    'zh-Hans': '现在没能完成分类。',
+                    'zh-Hant': '現在沒能完成分類。',
+                  }).primary}
+                </p>
+                <Button
+                  data-testid="braindump-sort-retry"
+                  onClick={startSort}
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  disabled={classifying}
+                >
+                  {t({
+                    fr: 'Réessayer',
+                    en: 'Try again',
+                    es: 'Reintentar',
+                    ja: 'もう一度',
+                    'zh-Hans': '再试一次',
+                    'zh-Hant': '再試一次',
+                  }).primary}
+                </Button>
+              </div>
             )}
           </div>
         )}
