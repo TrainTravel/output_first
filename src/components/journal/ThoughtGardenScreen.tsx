@@ -331,63 +331,84 @@ export function ThoughtGardenScreen({ onBack, onOpenChatWithContext, onOpenClust
           </div>
         ) : (
           <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
-            <div className="space-y-8">
-              {groups.map((group, idx) => (
-                <ThemeDropZone key={group.label} themeLabel={group.label} isOver={false}>
-                  <div className="animate-fade-in-up">
-                    {groups.length > 1 && (
-                      <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 mb-4 flex items-center justify-between">
-                        <h3 className="font-serif text-lg font-semibold text-foreground tracking-tight">
-                          {group.label}
-                          <span className="text-muted-foreground ml-2 text-sm font-sans font-normal">({group.thoughts.length})</span>
-                        </h3>
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleConvertTheme(group)}
-                            disabled={convertingTheme === group.label}
-                            className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors disabled:opacity-50"
-                            title={bilingual({ fr: 'Convertir en cluster', en: 'Convert to cluster', es: 'Convertir a cluster', ja: 'クラスターに変換', 'zh-Hans': '转为分组', 'zh-Hant': '轉為分組' })}
-                          >
-                            {convertingTheme === group.label ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <FolderPlus className="w-4 h-4" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleChatTheme(group)}
-                            className="p-1.5 rounded-full hover:bg-primary/20 text-primary transition-colors"
-                            title={bilingual({ fr: 'Discuter ce thème', en: 'Discuss this theme', es: 'Discutir este tema', ja: 'このテーマを話し合う', 'zh-Hans': '聊聊这个主题', 'zh-Hant': '聊聊這個主題' })}
-                          >
-                            <MessageCircle className="w-4 h-4" />
-                          </button>
+            <div className="space-y-6">
+              {groups.map((group) => {
+                // When there are multiple themes, each group sits in its own soft
+                // "planter" — a sage-tinted container that visually holds its cards
+                // together. With a single theme there's nothing to separate from,
+                // so we skip the wrapper to avoid an empty-looking frame.
+                const isMulti = groups.length > 1;
+                return (
+                  <ThemeDropZone key={group.label} themeLabel={group.label} isOver={false}>
+                    <div
+                      className={
+                        isMulti
+                          ? 'rounded-3xl bg-primary/[0.04] border border-primary/10 p-5 animate-fade-in-up'
+                          : 'animate-fade-in-up'
+                      }
+                    >
+                      {isMulti && (
+                        <div className="flex items-center justify-between mb-4 px-1">
+                          <h3 className="font-serif text-lg text-foreground flex items-center gap-2 tracking-tight">
+                            <Sprout className="w-4 h-4 text-primary/70" />
+                            {group.label}
+                            <span className="text-muted-foreground ml-1 text-sm font-sans font-normal">
+                              ({group.thoughts.length})
+                            </span>
+                          </h3>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleConvertTheme(group)}
+                              disabled={convertingTheme === group.label}
+                              className="p-1.5 rounded-full hover:bg-primary/15 text-primary/80 hover:text-primary transition-colors disabled:opacity-50"
+                              title={bilingual({ fr: 'Convertir en cluster', en: 'Convert to cluster', es: 'Convertir a cluster', ja: 'クラスターに変換', 'zh-Hans': '转为分组', 'zh-Hant': '轉為分組' })}
+                            >
+                              {convertingTheme === group.label ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <FolderPlus className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleChatTheme(group)}
+                              className="p-1.5 rounded-full hover:bg-primary/15 text-primary/80 hover:text-primary transition-colors"
+                              title={bilingual({ fr: 'Discuter ce thème', en: 'Discuss this theme', es: 'Discutir este tema', ja: 'このテーマを話し合う', 'zh-Hans': '聊聊这个主题', 'zh-Hant': '聊聊這個主題' })}
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
+                      )}
+                      <div className="space-y-2">
+                        {group.thoughts.map((thought, cardIdx) => (
+                          <div
+                            key={thought.id}
+                            className="animate-fade-in-up"
+                            style={{ animationDelay: `${cardIdx * 60}ms`, animationFillMode: 'backwards' }}
+                          >
+                            <DraggableThoughtCard
+                              thought={thought}
+                              currentTheme={thought.aiTheme}
+                              themeLabels={themeLabels}
+                              selected={selectedIds.has(thought.id)}
+                              onToggle={() => toggleSelect(thought.id)}
+                              onArchive={() => archiveThought(thought.id)}
+                              onMoveToTheme={(theme) => {
+                                moveThoughtToTheme(thought.id, theme);
+                                toast.success(bilingual({ fr: `Déplacé vers "${theme}"`, en: `Moved to "${theme}"`, es: `Movido a "${theme}"`, ja: `「${theme}」へ移動しました`, 'zh-Hans': `已移到“${theme}”`, 'zh-Hant': `已移到「${theme}」` }));
+                              }}
+                              onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
+                              onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}
+                              clusters={clusters}
+                              isFr={isFr}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    )}
-                    <div className="space-y-2">
-                      {group.thoughts.map(thought => (
-                        <DraggableThoughtCard
-                          key={thought.id}
-                          thought={thought}
-                          currentTheme={thought.aiTheme}
-                          themeLabels={themeLabels}
-                          selected={selectedIds.has(thought.id)}
-                          onToggle={() => toggleSelect(thought.id)}
-                          onArchive={() => archiveThought(thought.id)}
-                          onMoveToTheme={(theme) => {
-                            moveThoughtToTheme(thought.id, theme);
-                            toast.success(bilingual({ fr: `Déplacé vers "${theme}"`, en: `Moved to "${theme}"`, es: `Movido a "${theme}"`, ja: `「${theme}」へ移動しました`, 'zh-Hans': `已移到“${theme}”`, 'zh-Hant': `已移到「${theme}」` }));
-                          }}
-                          onLinkToCluster={(clusterId) => handleLinkThought(thought.id, clusterId)}
-                          onCreateAndLink={(title) => handleCreateAndLink(title, thought.id)}
-                          clusters={clusters}
-                          isFr={isFr}
-                        />
-                      ))}
                     </div>
-                  </div>
-                </ThemeDropZone>
-              ))}
+                  </ThemeDropZone>
+                );
+              })}
             </div>
             <DragOverlay>
               {activeThought && (
