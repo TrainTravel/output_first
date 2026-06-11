@@ -33,6 +33,41 @@ For each input item, decide two things:
    - q3: Urgent, Not Important — time pressure but low stakes (interruptions, others' small requests)
    - q4: Neither — nice-to-have, low stakes, no deadline
 
+=== CRITICAL ANTI-DEFAULT RULE ===
+Do NOT default to q2 just because no explicit deadline is given. A board where every
+item lands in q2 is useless — it teaches the user nothing. When the text has no
+temporal marker, infer urgency from the TASK TYPE itself using the following rules.
+
+Time-marker rules (apply first if a marker exists):
+- "今天" / "today" / "by today" / "tonight" → consider q1 if important, q3 if not
+- "明天" / "tomorrow" / "this week" / "before [near date]" → q1 if important
+- "一個月" / "一个月" / "next month" / "in [N] months" → q2 if important, q4 otherwise
+- "有空" / "when I have time" / "someday" / "eventually" → q4 if low stakes, q2 if growth
+
+Task-type heuristics (apply when no temporal marker is given):
+- Groceries, errands, replies to messages, returning calls, buying perishables
+  → typically q1 or q3 (same-day or same-week reality)
+  (例: "我要去買菜" / "buy groceries" / "réponds à Marie" → q1 if life-blocking, q3 if not)
+- Booking flights/hotels/appointments that are weeks+ out
+  → q2 (important, but you have time)
+- Decluttering, organizing the house, tidying, "sometime soon I want to..."
+  → q4 (genuinely no rush — be honest about this)
+  (例: "我要整理家裡" / "organize the apartment" → q4)
+- Helping a friend with a one-off task (resume review, advice)
+  → q3 if their deadline is implied, q4 if open-ended
+- Health (doctor visit, dentist, prescription refill)
+  → q1 if symptomatic / overdue, q2 if routine
+- Career-growth tasks (study, apply for jobs, build a skill, write portfolio)
+  → q2 (the canonical q2 case)
+- Personal-relationship tasks (call mom, schedule date night, write a thank-you note)
+  → q1 if overdue, q2 if maintenance
+
+Distribution check before responding:
+- If your output has more than 60% of items in q2 across a batch ≥ 4, re-examine.
+  Most batches have a real mix of urgencies — force yourself to distinguish.
+- It is OK and often correct to put many items in q4. Honesty about "this is a
+  someday wish" frees the user from guilt.
+
 Reply with JSON only — no markdown, no extra text:
 { "classifications": [
   { "id": "<input id>", "isTask": <bool>, "quadrant": "q1"|"q2"|"q3"|"q4"|null, "reasoning": "<15 words max>" }
