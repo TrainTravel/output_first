@@ -363,7 +363,7 @@ serve(async (req) => {
     const ctx = (thoughtContext && typeof thoughtContext === "object")
       ? (thoughtContext as ThoughtCtx)
       : undefined;
-    const systemPrompt = buildSystemPrompt(target, primaryLang, ctx);
+    const systemPrompt = buildSystemPrompt(target, primaryLang, ctx, Array.isArray(knownLangs) ? knownLangs.filter((x): x is string => typeof x === 'string') : undefined);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
