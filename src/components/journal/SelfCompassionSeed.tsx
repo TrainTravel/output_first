@@ -55,7 +55,7 @@ export function SelfCompassionSeed({ lang }: SelfCompassionSeedProps) {
           <X className="w-4 h-4" />
         </button>
       </div>
-      <p className="font-serif text-sm italic text-foreground mt-2 leading-relaxed">
+      <p className="font-serif text-base italic text-foreground mt-2 leading-relaxed">
         {phrase}
       </p>
     </div>
