@@ -66,6 +66,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         targetLang,
         lang: targetLang, // legacy field, kept for forward-compat with older deployments
         primaryLang,
+        knownLangs,
       };
       if (isZh) bodyPayload.variant = zhVariant;
 
@@ -171,6 +172,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         targetLang,
         lang: targetLang, // legacy field, kept for forward-compat with older deployments
         primaryLang,
+        knownLangs,
       };
       if (isZh) bodyPayload2.variant = zhVariant;
 
