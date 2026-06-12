@@ -223,8 +223,9 @@ function buildSystemPrompt(
   target: TargetLang,
   primary: unknown,
   ctx: ThoughtCtx | undefined,
+  knownLangs?: string[],
 ): string {
-  const userContextBlock = buildUserContextBlock(target, primary);
+  const userContextBlock = buildUserContextBlock(target, primary, knownLangs);
   const tname = targetName(target);
   const supportSuffix = isChinese(target)
     ? `${tname} with pinyin`
