@@ -165,6 +165,7 @@ Emotions they chose: ${emotions || "none selected"}`;
           { role: "system", content: buildSystemPrompt(
             typeof lang === 'string' ? lang : undefined,
             typeof primaryLang === 'string' ? primaryLang : undefined,
+            Array.isArray(knownLangs) ? knownLangs.filter((x): x is string => typeof x === 'string') : undefined,
           ) },
           { role: "user", content: userMessage },
         ],
