@@ -86,12 +86,10 @@ describe('hydration', () => {
     expect(result.current.pair).toEqual({ primary: 'en', target: 'ja' });
   });
 
-  it('rejects primary=ja (Japanese is not a valid primary)', () => {
-    // 'ja' is intentionally absent from PRIMARY_LANGS — a stored pair with
-    // primary=ja must hydrate back to DEFAULT_PAIR.
+  it('accepts primary=ja paired with a non-ja target (Japanese can be a known/display language)', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ primary: 'ja', target: 'fr' }));
     const { result } = renderHook(() => useLanguage(), { wrapper });
-    expect(result.current.pair).toEqual(DEFAULT_PAIR);
+    expect(result.current.pair).toEqual({ primary: 'ja', target: 'fr' });
   });
 
   it('rejects pair with both primary=ja and target=ja (invariant + ja-as-primary violation)', () => {
