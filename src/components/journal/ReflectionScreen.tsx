@@ -71,6 +71,7 @@ export function ReflectionScreen({
             previousCycles: reflectionCycles.length > 0 ? reflectionCycles : undefined,
             lang: targetLang,
             primaryLang,
+            knownLangs,
           }),
         }
       );
