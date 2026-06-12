@@ -23,10 +23,33 @@ function resolveLangNames(targetLang?: string, primaryLang?: string): { targetNa
   return { targetName, primaryName };
 }
 
-function buildUserContextBlock(targetLang?: string, primaryLang?: string): string {
-  const { targetName, primaryName } = resolveLangNames(targetLang, primaryLang);
+function languageName(code: string): string {
+  switch (code) {
+    case 'fr': return 'French';
+    case 'es': return 'Spanish';
+    case 'zh-Hans': return 'Simplified Chinese';
+    case 'zh-Hant': return 'Traditional Chinese';
+    case 'ja': return 'Japanese';
+    case 'en': return 'English';
+    default: return code;
+  }
+}
+
+function humanList(items: string[]): string {
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
+function buildUserContextBlock(targetLang?: string, primaryLang?: string, knownLangs?: string[]): string {
+  const targetName = languageName(targetLang ?? 'fr');
+  const primaryName = languageName(primaryLang ?? 'en');
+  const knowsNames = (knownLangs && knownLangs.length > 0)
+    ? humanList(knownLangs.map(languageName))
+    : primaryName;
   return `USER CONTEXT:
-- The user is a native ${primaryName} speaker learning ${targetName} (beginner to intermediate level)
+- The user is comfortable in ${knowsNames}; app chrome is shown in ${primaryName}. They are learning ${targetName} (beginner to intermediate level).
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack observations or questions
@@ -35,9 +58,10 @@ function buildUserContextBlock(targetLang?: string, primaryLang?: string): strin
 `;
 }
 
-function buildSystemPrompt(targetLang?: string, primaryLang?: string): string {
-  const { targetName, primaryName } = resolveLangNames(targetLang, primaryLang);
-  return `${buildUserContextBlock(targetLang, primaryLang)}
+function buildSystemPrompt(targetLang?: string, primaryLang?: string, knownLangs?: string[]): string {
+  const targetName = languageName(targetLang ?? 'fr');
+  const primaryName = languageName(primaryLang ?? 'en');
+  return `${buildUserContextBlock(targetLang, primaryLang, knownLangs)}
 You are a warm, gentle guide helping someone explore their feelings — like a kind therapist who listens with curiosity, not judgment.
 
 YOUR ROLE:
