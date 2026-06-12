@@ -415,9 +415,9 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { text, type, vocabularyContext, targetLang, lang, primaryLang } = body as {
+    const { text, type, vocabularyContext, targetLang, lang, primaryLang, knownLangs } = body as {
       text?: unknown; type?: unknown; vocabularyContext?: unknown;
-      targetLang?: unknown; lang?: unknown; primaryLang?: unknown;
+      targetLang?: unknown; lang?: unknown; primaryLang?: unknown; knownLangs?: unknown;
     };
     if (!isStringWithin(text, 1, 10000)) return badRequest("text must be 1-10000 chars", corsHeaders);
 
