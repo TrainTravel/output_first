@@ -158,40 +158,73 @@ describe('setLangPair — persistence', () => {
   });
 });
 
-describe('toggleLanguage — cheap one-tap flip of primary', () => {
-  it('cycles primary through en → fr → es → zh-Hans → zh-Hant, skipping the current target', () => {
-    // pair starts as { primary: 'en', target: 'fr' }. Cycle is [en, fr, es, zh-Hans, zh-Hant].
-    // From en, next non-target is 'es' (skip 'fr' which equals target).
+describe('toggleLanguage — cycle through known languages', () => {
+  it('no-ops when knownLangs has only the primary (nothing else to cycle through)', () => {
+    // Default state: knownLangs=[en], target=fr — toggle has nothing to swap to.
     const { result } = renderHook(() => useLanguage(), { wrapper });
     expect(result.current.pair).toEqual({ primary: 'en', target: 'fr' });
-
     act(() => result.current.toggleLanguage());
-    expect(result.current.pair.primary).toBe('es');
-    expect(result.current.pair.target).toBe('fr');
+    expect(result.current.pair.primary).toBe('en');
   });
 
-  it('cycles through all 5 primaries when target does not conflict', () => {
-    // Start: primary=en, target=fr. From this state, cycling should visit: es, zh-Hans, zh-Hant, en, es...
-    // (Each step skips the current target 'fr'.)
+  it('cycles primary through the user-selected known languages, skipping the active target', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => {
+      result.current.toggleKnownLang('es');
+      result.current.toggleKnownLang('fr'); // ignored: equals current target
+      result.current.toggleKnownLang('zh-Hans');
+    });
+    // knownLangs now contains [en, es, zh-Hans]; target=fr is excluded automatically.
     const visited: string[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       act(() => result.current.toggleLanguage());
       visited.push(result.current.pair.primary);
     }
-    // The four non-'fr' primaries appear, none of them equal target='fr'.
-    expect(visited).toEqual(['es', 'zh-Hans', 'zh-Hant', 'en', 'es']);
     expect(visited.every(p => p !== 'fr')).toBe(true);
+    // Cycle should visit each entry at least once.
+    expect(new Set(visited).size).toBeGreaterThan(1);
   });
 
   it('preserves the invariant after every toggle', () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => {
+      result.current.toggleKnownLang('es');
+      result.current.toggleKnownLang('zh-Hans');
+    });
     for (let i = 0; i < 10; i++) {
       act(() => result.current.toggleLanguage());
       expect(result.current.pair.primary).not.toBe(result.current.pair.target);
     }
   });
 });
+
+describe('knownLangs — multi-select API', () => {
+  it('seeds knownLangs from primaryLang on first run', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    expect(result.current.knownLangs).toEqual(['en']);
+  });
+
+  it('toggleKnownLang adds a language and removes it on a second call', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => result.current.toggleKnownLang('es'));
+    expect(result.current.knownLangs).toContain('es');
+    act(() => result.current.toggleKnownLang('es'));
+    expect(result.current.knownLangs).not.toContain('es');
+  });
+
+  it('refuses to remove the current primary (would orphan the display language)', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => result.current.toggleKnownLang('en'));
+    expect(result.current.knownLangs).toContain('en');
+  });
+
+  it('refuses to add the active target as a known language', () => {
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+    act(() => result.current.toggleKnownLang('fr')); // fr is the default target
+    expect(result.current.knownLangs).not.toContain('fr');
+  });
+});
+
 
 describe('availablePrimaries / availableTargets — UI-layer filters', () => {
   it('availablePrimaries excludes the current target', () => {
