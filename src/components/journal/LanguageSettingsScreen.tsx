@@ -30,12 +30,13 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
     setLangPair,
     t,
     bilingual,
-    availablePrimaries,
     profiles,
     activeProfileId,
     switchProfile,
     renameProfile,
     archiveProfile,
+    knownLangs,
+    toggleKnownLang,
   } = useLanguage();
   const [quotesEnabled, setQuotesEnabled] = useQuotesEnabled();
   const reminder = useDailyReminder();
