@@ -320,9 +320,9 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { messages, thoughtContext, targetLang, lang, primaryLang } = body as {
+    const { messages, thoughtContext, targetLang, lang, primaryLang, knownLangs } = body as {
       messages?: unknown; thoughtContext?: unknown;
-      targetLang?: unknown; lang?: unknown; primaryLang?: unknown;
+      targetLang?: unknown; lang?: unknown; primaryLang?: unknown; knownLangs?: unknown;
     };
 
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
