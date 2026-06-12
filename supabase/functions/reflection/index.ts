@@ -108,8 +108,8 @@ serve(async (req) => {
 
     const parsed = await req.json().catch(() => null);
     if (!parsed || typeof parsed !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { journalContent, emotions, previousCycles, lang, primaryLang } = parsed as {
-      journalContent?: unknown; emotions?: unknown; previousCycles?: unknown; lang?: unknown; primaryLang?: unknown;
+    const { journalContent, emotions, previousCycles, lang, primaryLang, knownLangs } = parsed as {
+      journalContent?: unknown; emotions?: unknown; previousCycles?: unknown; lang?: unknown; primaryLang?: unknown; knownLangs?: unknown;
     };
     if (!isStringWithin(journalContent, 1, 10000)) {
       return badRequest("journalContent must be 1-10000 chars", corsHeaders);
