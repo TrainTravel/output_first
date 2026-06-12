@@ -446,6 +446,7 @@ serve(async (req) => {
       primaryLang,
       typeof type === "string" ? type : "",
       vocabularyContext,
+      Array.isArray(knownLangs) ? knownLangs.filter((x): x is string => typeof x === 'string') : undefined,
     );
 
     const requestBody: Record<string, unknown> = {
