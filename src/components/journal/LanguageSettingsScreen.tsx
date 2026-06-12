@@ -57,7 +57,7 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   const canArchive = live.length > 1;
 
-  const onPickPrimary = (next: PrimaryLang) => setLangPair({ ...pair, primary: next });
+  
 
   const startRename = (p: Profile, fallback: string) => {
     setEditingId(p.id);
