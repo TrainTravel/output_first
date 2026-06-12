@@ -79,8 +79,9 @@ function buildSystemPrompt(
   primary: unknown,
   type: string,
   vocabularyContext: unknown,
+  knownLangs?: string[],
 ): { systemPrompt: string; useToolCalling: boolean } {
-  const userContextBlock = buildUserContextBlock(target, primary);
+  const userContextBlock = buildUserContextBlock(target, primary, knownLangs);
   const tname = targetName(target);
   const isCjk = isChinese(target) || target === "ja";
 
