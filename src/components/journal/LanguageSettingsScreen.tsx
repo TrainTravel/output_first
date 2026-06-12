@@ -252,35 +252,94 @@ export function LanguageSettingsScreen({ onBack }: LanguageSettingsScreenProps) 
         </section>
 
         <section className="mb-10" data-testid="speak-section">
-          <h3 className="font-medium text-foreground mb-3">
+          <h3 className="font-medium text-foreground mb-1">
             {bilingual({ fr: 'Je parle déjà', en: 'I already speak', es: 'Ya hablo', ja: 'すでに話せる言語', 'zh-Hans': '我已经会说', 'zh-Hant': '我已經會說' })}
           </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            {t({
+              fr: 'Sélectionnez toutes les langues que vous connaissez déjà.',
+              en: 'Select every language you already know.',
+              es: 'Selecciona todos los idiomas que ya conoces.',
+              ja: 'すでに知っている言語をすべて選んでください。',
+              'zh-Hans': '选择你已经会的所有语言。',
+              'zh-Hant': '選擇你已經會的所有語言。',
+            }).primary}
+          </p>
           <div className="grid grid-cols-2 gap-3">
             {PRIMARY_OPTIONS
-              .filter(opt => (availablePrimaries as readonly PrimaryLang[]).includes(opt.code) || opt.code === pair.primary)
+              .filter(opt => opt.code !== pair.target)
               .map(opt => {
-                const active = opt.code === pair.primary;
+                const checked = (knownLangs as readonly PrimaryLang[]).includes(opt.code);
+                const isPrimary = opt.code === pair.primary;
+                const disabled = checked && isPrimary; // can't uncheck the display language
                 return (
                   <button
                     key={opt.code}
-                    onClick={() => onPickPrimary(opt.code)}
-                    aria-pressed={active}
+                    onClick={() => toggleKnownLang(opt.code)}
+                    aria-pressed={checked}
+                    disabled={disabled}
                     className={`relative text-left rounded-xl border-2 px-4 py-3 transition-all ${
-                      active
+                      checked
                         ? 'border-primary bg-primary/5'
                         : 'border-border bg-card hover:border-primary/40 hover:bg-primary/5'
-                    }`}
+                    } ${disabled ? 'opacity-90 cursor-default' : ''}`}
+                    title={disabled
+                      ? t({
+                          fr: "Langue d'affichage — décochez-la en choisissant une autre langue d'affichage.",
+                          en: 'Display language — uncheck by picking a different display language first.',
+                          es: 'Idioma de visualización — desactívalo eligiendo otro idioma primero.',
+                          ja: '表示言語です。先に別の表示言語を選んでください。',
+                          'zh-Hans': '当前显示语言，请先切换显示语言再取消。',
+                          'zh-Hant': '當前顯示語言，請先切換顯示語言再取消。',
+                        }).primary
+                      : undefined}
                   >
                     <p className="font-serif text-lg text-foreground">{opt.native}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{opt.en}</p>
-                    {active && (
+                    {checked && (
                       <Check className="absolute top-3 right-3 w-4 h-4 text-primary" />
                     )}
                   </button>
                 );
               })}
           </div>
+
+          {/* Display language picker — limited to checked known languages. */}
+          <div className="mt-5">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              {t({
+                fr: "Afficher l'app en",
+                en: 'Show app in',
+                es: 'Mostrar la app en',
+                ja: 'アプリの表示言語',
+                'zh-Hans': '应用显示语言',
+                'zh-Hant': '應用顯示語言',
+              }).primary}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {PRIMARY_OPTIONS
+                .filter(opt => (knownLangs as readonly PrimaryLang[]).includes(opt.code) && opt.code !== pair.target)
+                .map(opt => {
+                  const active = opt.code === pair.primary;
+                  return (
+                    <button
+                      key={opt.code}
+                      onClick={() => setLangPair({ ...pair, primary: opt.code })}
+                      aria-pressed={active}
+                      className={`text-sm rounded-full border px-3 py-1.5 transition-all ${
+                        active
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40'
+                      }`}
+                    >
+                      {opt.native}
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
         </section>
+
 
         <section className="mb-10" data-testid="preferences-section">
           <h3 className="font-medium text-foreground mb-3">
