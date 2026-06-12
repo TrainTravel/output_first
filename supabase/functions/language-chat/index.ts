@@ -48,9 +48,19 @@ function crisisSentence(target: TargetLang | undefined): string {
   }
 }
 
-function buildUserContextBlock(target: TargetLang | undefined, primary: unknown): string {
+function humanList(items: string[]): string {
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
+function buildUserContextBlock(target: TargetLang | undefined, primary: unknown, knownLangs?: string[]): string {
+  const knownNames = (knownLangs && knownLangs.length > 0)
+    ? humanList(knownLangs.map(c => primaryName(c)))
+    : primaryName(primary);
   return `USER CONTEXT:
-- The user is a native ${primaryName(primary)} speaker learning ${targetName(target)} (beginner to intermediate level)
+- The user is comfortable in ${knownNames}; app chrome is shown in ${primaryName(primary)}. They are learning ${targetName(target)} (beginner to intermediate level).
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack questions or observations
