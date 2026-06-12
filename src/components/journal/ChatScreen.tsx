@@ -29,7 +29,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { targetLang, primaryLang } = useLanguage();
+  const { targetLang, primaryLang, knownLangs } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
   const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
