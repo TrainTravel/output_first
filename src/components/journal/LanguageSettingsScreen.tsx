@@ -19,6 +19,7 @@ const PRIMARY_OPTIONS: ReadonlyArray<{ code: PrimaryLang; native: string; en: st
   { code: 'en',      native: 'English',  en: 'English'              },
   { code: 'fr',      native: 'Français', en: 'French'               },
   { code: 'es',      native: 'Español',  en: 'Spanish'              },
+  { code: 'ja',      native: '日本語',    en: 'Japanese'             },
   { code: 'zh-Hans', native: '简体中文',  en: 'Chinese (Simplified)' },
   { code: 'zh-Hant', native: '繁體中文',  en: 'Chinese (Traditional)'},
 ];
