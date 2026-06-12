@@ -488,8 +488,8 @@ describe('profiles — lifecycle (create / switch / archive / rename)', () => {
     // Step 3: switch back to the default profile (target='es').
     const defaultId = result.current.profiles.find(p => p.id !== frenchId)!.id;
     act(() => { result.current.switchProfile(defaultId); });
-    // Step 4: cycle global primary to 'fr' (toggleLanguage from en→fr, skipping target='es').
-    act(() => { result.current.toggleLanguage(); });
+    // Step 4: set primary to 'fr' directly (knownLangs only contains 'en' so toggleLanguage would no-op).
+    act(() => { result.current.setLangPair({ primary: 'fr', target: 'es' }); });
     expect(result.current.primaryLang).toBe('fr');
     // Step 5: switch to French profile. Its target='fr'; primary='fr' would conflict — auto-adjust.
     act(() => { result.current.switchProfile(frenchId); });
