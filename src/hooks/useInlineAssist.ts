@@ -26,7 +26,7 @@ export function useInlineAssist(text: string) {
   const [loading, setLoading] = useState(false);
   const cacheRef = useRef<Map<string, InlineSuggestion[]>>(new Map());
   const abortRef = useRef<AbortController | null>(null);
-  const { targetLang, primaryLang } = useLanguage();
+  const { targetLang, primaryLang, knownLangs } = useLanguage();
   const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
   const zhVariant: 'Hans' | 'Hant' | null =
     targetLang === 'zh-Hans' ? 'Hans' : targetLang === 'zh-Hant' ? 'Hant' : null;
@@ -58,6 +58,7 @@ export function useInlineAssist(text: string) {
           targetLang,
           lang: targetLang, // legacy field, kept for forward-compat with older deployments
           primaryLang,
+          knownLangs,
         };
         if (isZh) body.variant = zhVariant;
 
@@ -107,7 +108,7 @@ export function useInlineAssist(text: string) {
     return () => {
       clearTimeout(timer);
     };
-  }, [text, targetLang, primaryLang, isZh, zhVariant]);
+  }, [text, targetLang, primaryLang, knownLangs, isZh, zhVariant]);
 
   return { suggestions, loading };
 }

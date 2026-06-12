@@ -48,9 +48,19 @@ function crisisSentence(target: TargetLang | undefined): string {
   }
 }
 
-function buildUserContextBlock(target: TargetLang | undefined, primary: unknown): string {
+function humanList(items: string[]): string {
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
+function buildUserContextBlock(target: TargetLang | undefined, primary: unknown, knownLangs?: string[]): string {
+  const knownNames = (knownLangs && knownLangs.length > 0)
+    ? humanList(knownLangs.map(c => primaryName(c)))
+    : primaryName(primary);
   return `USER CONTEXT:
-- The user is a native ${primaryName(primary)} speaker learning ${targetName(target)} (beginner to intermediate level)
+- The user is comfortable in ${knownNames}; app chrome is shown in ${primaryName(primary)}. They are learning ${targetName(target)} (beginner to intermediate level).
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack questions or observations
@@ -213,8 +223,9 @@ function buildSystemPrompt(
   target: TargetLang,
   primary: unknown,
   ctx: ThoughtCtx | undefined,
+  knownLangs?: string[],
 ): string {
-  const userContextBlock = buildUserContextBlock(target, primary);
+  const userContextBlock = buildUserContextBlock(target, primary, knownLangs);
   const tname = targetName(target);
   const supportSuffix = isChinese(target)
     ? `${tname} with pinyin`
@@ -309,9 +320,9 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { messages, thoughtContext, targetLang, lang, primaryLang } = body as {
+    const { messages, thoughtContext, targetLang, lang, primaryLang, knownLangs } = body as {
       messages?: unknown; thoughtContext?: unknown;
-      targetLang?: unknown; lang?: unknown; primaryLang?: unknown;
+      targetLang?: unknown; lang?: unknown; primaryLang?: unknown; knownLangs?: unknown;
     };
 
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 100) {
@@ -352,7 +363,7 @@ serve(async (req) => {
     const ctx = (thoughtContext && typeof thoughtContext === "object")
       ? (thoughtContext as ThoughtCtx)
       : undefined;
-    const systemPrompt = buildSystemPrompt(target, primaryLang, ctx);
+    const systemPrompt = buildSystemPrompt(target, primaryLang, ctx, Array.isArray(knownLangs) ? knownLangs.filter((x): x is string => typeof x === 'string') : undefined);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

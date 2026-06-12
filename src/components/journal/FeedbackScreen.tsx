@@ -57,7 +57,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t, bilingual, targetLang, primaryLang } = useLanguage();
+  const { t, bilingual, targetLang, primaryLang, knownLangs } = useLanguage();
   const isFr = targetLang === 'fr';
   const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
   const zhVariant: 'Hans' | 'Hant' | null =
@@ -79,6 +79,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
           targetLang,
           lang: targetLang, // legacy field, kept for forward-compat with older deployments
           primaryLang,
+          knownLangs,
         };
         if (isZh) body.variant = zhVariant;
 
@@ -122,7 +123,7 @@ export function FeedbackScreen({ journalContent, onContinue, onSkip }: FeedbackS
     };
 
     if (journalContent) fetchFeedback();
-  }, [journalContent, getVocabularyContext, isZh, zhVariant, targetLang, primaryLang]);
+  }, [journalContent, getVocabularyContext, isZh, zhVariant, targetLang, primaryLang, knownLangs]);
 
   const acknowledgment = feedback?.acknowledgment || feedback?.encouragement;
   const hasEmotionalGranularity = feedback?.emotionalGranularity?.detected &&

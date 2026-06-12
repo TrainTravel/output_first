@@ -49,9 +49,19 @@ function crisisSentence(target: TargetLang | undefined): string {
   }
 }
 
-function buildUserContextBlock(target: TargetLang | undefined, primary: unknown): string {
+function humanList(items: string[]): string {
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
+function buildUserContextBlock(target: TargetLang | undefined, primary: unknown, knownLangs?: string[]): string {
+  const knownNames = (knownLangs && knownLangs.length > 0)
+    ? humanList(knownLangs.map(c => primaryName(c)))
+    : primaryName(primary);
   return `USER CONTEXT:
-- The user is a native ${primaryName(primary)} speaker learning ${targetName(target)} (beginner to intermediate level)
+- The user is comfortable in ${knownNames}; app chrome is shown in ${primaryName(primary)}. They are learning ${targetName(target)} (beginner to intermediate level).
 - They may have ADHD and/or autism (medium to high functioning) — keep every response short and scannable, never a wall of text
 - Prefer literal, clear language — avoid idioms, sarcasm, or ambiguous phrasing
 - One idea per response only — never stack observations or suggestions
@@ -69,8 +79,9 @@ function buildSystemPrompt(
   primary: unknown,
   type: string,
   vocabularyContext: unknown,
+  knownLangs?: string[],
 ): { systemPrompt: string; useToolCalling: boolean } {
-  const userContextBlock = buildUserContextBlock(target, primary);
+  const userContextBlock = buildUserContextBlock(target, primary, knownLangs);
   const tname = targetName(target);
   const isCjk = isChinese(target) || target === "ja";
 
@@ -404,9 +415,9 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") return badRequest("Invalid JSON body", corsHeaders);
-    const { text, type, vocabularyContext, targetLang, lang, primaryLang } = body as {
+    const { text, type, vocabularyContext, targetLang, lang, primaryLang, knownLangs } = body as {
       text?: unknown; type?: unknown; vocabularyContext?: unknown;
-      targetLang?: unknown; lang?: unknown; primaryLang?: unknown;
+      targetLang?: unknown; lang?: unknown; primaryLang?: unknown; knownLangs?: unknown;
     };
     if (!isStringWithin(text, 1, 10000)) return badRequest("text must be 1-10000 chars", corsHeaders);
 
@@ -435,6 +446,7 @@ serve(async (req) => {
       primaryLang,
       typeof type === "string" ? type : "",
       vocabularyContext,
+      Array.isArray(knownLangs) ? knownLangs.filter((x): x is string => typeof x === 'string') : undefined,
     );
 
     const requestBody: Record<string, unknown> = {

@@ -29,7 +29,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { targetLang, primaryLang } = useLanguage();
+  const { targetLang, primaryLang, knownLangs } = useLanguage();
   const isFr = targetLang === 'fr';
   const isEs = targetLang === 'es';
   const isZh = targetLang === 'zh-Hans' || targetLang === 'zh-Hant';
@@ -66,6 +66,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         targetLang,
         lang: targetLang, // legacy field, kept for forward-compat with older deployments
         primaryLang,
+        knownLangs,
       };
       if (isZh) bodyPayload.variant = zhVariant;
 
@@ -171,6 +172,7 @@ export function ChatScreen({ onBack, context }: ChatScreenProps) {
         targetLang,
         lang: targetLang, // legacy field, kept for forward-compat with older deployments
         primaryLang,
+        knownLangs,
       };
       if (isZh) bodyPayload2.variant = zhVariant;
 
