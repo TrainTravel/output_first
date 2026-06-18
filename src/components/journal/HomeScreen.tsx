@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid, Sparkles, Heart } from 'lucide-react';
+import { Feather, CheckCircle2, Zap, Sprout, LogOut, Flame, CalendarDays, Mountain, PenLine, Trophy, Hourglass, Target, ListChecks, ChevronDown, ChevronUp, FlaskConical, Activity, LayoutGrid, Sparkles, Heart, Waves } from 'lucide-react';
 import { useState } from 'react';
 import { BADGES } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -37,9 +37,10 @@ interface HomeScreenProps {
   onOpenLanguageSettings: () => void;
   onOpenVocabulary: () => void;
   onOpenProWaitlist: () => void;
+  onOpenCirculationFeed: () => void;
 }
 
-export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary, onOpenProWaitlist }: HomeScreenProps) {
+export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, earnedBadges, onStartJournal, onStartFreeWrite, onViewProgress, onOpenChat, onOpenBrainDump, onOpenSmallWins, onOpenThoughtGarden, onOpenZenGarden, onOpenSandTimer, onOpenFocusPlan, onOpenTodoList, onOpenTinyExperiment, onOpenBodyScan, onOpenQuadrants, onOpenLanguageSettings, onOpenVocabulary, onOpenProWaitlist, onOpenCirculationFeed }: HomeScreenProps) {
   const { submitted: proWaitlistSubmitted } = useProWaitlist();
   const { bilingual, t, targetLang } = useLanguage();
   const isFr = targetLang === 'fr';
@@ -312,6 +313,25 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
               </p>
               <p className="text-xs text-muted-foreground">
                 {t({ fr: 'Explorer vos mots', en: 'Explore your words', es: 'Explora tus palabras', ja: '言葉を探検する', 'zh-Hans': '探索你的词汇', 'zh-Hant': '探索你的詞彙' }).primary} →
+              </p>
+            </div>
+          </button>
+
+          {/* Circulation of Love — opt-in anonymous sharing in primary language. */}
+          <button
+            data-testid="home-circulation-tile"
+            onClick={onOpenCirculationFeed}
+            className="w-full rounded-xl border border-border bg-card text-card-foreground p-3 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer text-left flex items-center gap-3"
+          >
+            <div className="rounded-full bg-primary/10 p-2">
+              <Waves className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground font-medium">
+                {t({ fr: "Circulation d'amour", en: 'Circulation of Love', es: 'Circulación del Amor', ja: '愛の循環', 'zh-Hans': '爱的流转', 'zh-Hant': '愛的流轉' }).primary}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t({ fr: 'Lettres anonymes dans votre langue', en: 'Anonymous letters in your language', es: 'Cartas anónimas en tu idioma', ja: 'あなたの言語の匿名の手紙', 'zh-Hans': '用你的语言写的匿名信', 'zh-Hant': '用你的語言寫的匿名信' }).primary} →
               </p>
             </div>
           </button>

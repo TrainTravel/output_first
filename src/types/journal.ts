@@ -25,6 +25,7 @@ export type JournalStep = 'home' | 'centerchoice' | 'breathe' | 'bodyscan' | 'pr
   | 'vocabulary' | 'smallwins' | 'sandtimer' | 'focusplan' | 'todolist' | 'tinyexperiment'
   | 'quadrants'
   | 'prowaitlist'
+  | 'circulation-feed' | 'circulation-share' | 'circulation-settings'
   | 'languagesettings';
 
 /**

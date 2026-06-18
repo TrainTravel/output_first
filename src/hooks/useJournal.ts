@@ -354,6 +354,9 @@ export function useJournal() {
       setCurrentStep('bodyscan');
     },
     openLanguageSettings: () => setCurrentStep('languagesettings'),
+    openCirculationFeed: () => setCurrentStep('circulation-feed'),
+    openCirculationShare: () => setCurrentStep('circulation-share'),
+    openCirculationSettings: () => setCurrentStep('circulation-settings'),
     goBackToEmotions: () => setCurrentStep('emotions'),
     openVocabulary: (from?: JournalStep) => { setVocabOrigin(from || 'home'); setCurrentStep('vocabulary'); },
     vocabOrigin,
