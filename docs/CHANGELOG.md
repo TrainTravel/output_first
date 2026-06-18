@@ -1,5 +1,46 @@
 # Changelog
 
+## [Unreleased] - 2026-06-18
+
+### Circulation of Love — anonymous, time-bound letter sharing
+
+**A new opt-in surface where users release a short (≤500 char) anonymous letter in their primary language. The letter rides a 14-day current — visible to other opted-in users in the *same* primary language — then quietly archives. Inspired by the user's grandfather's idea of *the circulation of love*.**
+
+**What it is NOT (lock these in):** not a social network (no follows, no profiles, no replies, no comments), not cross-lingual, not public outside the app, not search-indexed, not viral. The only reaction is *"Hold this for a moment"* — silent, idempotent, private to the author.
+
+What changed:
+- **Spec** (`docs/specs/love-circulation.md`): full design, RLS rationale, moderation matrix, phasing table, and 5 open questions with applied defaults (own-flow only; silent reactions; 14d default TTL; drift teaser for non-opted-in users; primary-language only).
+- **Migration** (`supabase/migrations/20260613113018_…sql`): three tables — `love_letters` (id, author_id, content, language, pseudonym, moderated_status, moderation_note, posted_at, expires_at, archived), `letter_holdings` (PK: letter_id + holder_id → idempotent reactions), `circulation_settings` (per-user receive/share toggles + 7/14/30 TTL). Three partial indexes on the hot query paths. Full RLS: authors always see their own letters; other users only see passed+live+matching-language IF `receive_letters=true`; holds require the same opt-in + non-own letter + live letter; service role used only by edge fns.
+- **Edge functions:**
+  - `moderate-letter` — pre-publish Gemini 2.5 Flash moderation. Wide pass-list (sad, lonely, angry, grieving, religious, mental-health non-acute, ordinary moments). Softfail on ambiguous self-harm + PII + named-person. Block on explicit suicidal intent + harassment + sexually explicit + spam + doxxing. Inserts the row server-side with the verdict baked in, so the client cannot bypass moderation. Fails closed on gateway errors.
+  - `circulate-letters` — cron-style sweep flips `archived=true` on expired letters. Idempotent. Authenticated by a distinct `CIRCULATION_CRON_SECRET`, so a leaked user JWT can't trigger archival.
+- **Data layer:**
+  - `src/lib/pseudonyms.ts` — per-language pools of 16-20 natural-imagery names (no animals, no abstract emotions) + cheap deterministic FNV-1a hash. Examples: en `Soft Wind`, fr `Vent Doux`, es `Viento Suave`, ja `小波`, zh-Hans `雪落松间`, zh-Hant `雪落松間`.
+  - `src/hooks/usePseudonym.ts` — same `(language, seed)` always returns the same name; regenerable ONCE before posting (matches spec).
+  - `src/hooks/useCirculationSettings.ts` — get/upsert opt-in prefs with optimistic update + rollback.
+  - `src/hooks/useLoveLetters.ts` — list current letters (RLS does the filtering), share via `moderate-letter`, idempotent `hold()` (treats `code 23505` as success), `unhold()`.
+- **Screens (3 new):**
+  - `LettersInCirculationScreen` — drift feed with `Join the current` CTA for non-opted-in users; modal opens on tap with single `Hold this for a moment` reaction.
+  - `ShareALetterScreen` — 500-char textarea + pseudonym chip + `Change once` regen button + softfail/block note rendering; releases via `moderate-letter` and only navigates back on `verdict === 'pass'`.
+  - `CirculationSettingsScreen` — receive/share toggles + 7/14/30 TTL chooser.
+- **Wiring:** three new `JournalStep`s (`'circulation-feed' | 'circulation-share' | 'circulation-settings'`), three new `useJournal` openers, new `Waves`-icon tile on HomeScreen.
+- **Animation:** `animate-letter-drift` keyframe (12s sine-like translate3d + small rotation; respects `prefers-reduced-motion: reduce`). Cards stagger via per-index `animationDelay`.
+- **Lovable display prompt** (`docs/launch/lovable-circulation-display.md`): full visual-pass brief for Lovable to elevate the feed from "list of cards" to "current of paper letters drifting past" — preserves every existing testid + the bilingual chrome.
+- **Bilingual chrome:** full coverage in en/fr/es/ja/zh-Hans/zh-Hant. *"Circulation of Love"* is a `bilingual()` anchor (it names the feature); buttons + helper text are `t().primary`.
+
+Tests:
+- 11 new unit tests across `pseudonyms.test.ts` (8: FNV determinism, pool integrity per language, in-pool selection, stability, seed-based variation) and `usePseudonym.test.ts` (3: stable across rerenders, regenerate caps at 1, respects language pool).
+- 5 new E2E specs in `circulation.spec.ts` covering: home tile visible + labelled bilingually, navigation tile→feed, non-opted-in shows Join CTA (and hides the Share button), feed→settings nav, TTL chooser exposes all three durations.
+- `tsc --noEmit` clean. All new vitest tests pass.
+
+**ADHD-Friendly:**
+- **One thing at a time.** Each screen is single-focus (compose; or browse; or toggle settings). No multi-step share form.
+- **Skip is always available.** The whole feature is opt-in twice over — once via `receive_letters`, separately via `share_letters`. Defaults are both OFF.
+- **No dark patterns.** No urgency, no "you have unread letters," no streak attached to participation. Reactions are private to the author and idempotent (no popularity loops).
+- **Visible time horizon, not a clock.** Letters show `days remaining` instead of a precise timer (externalizes time without anxiety per `Neuro-Inclusive Design Standards`).
+- **Object permanence.** Authors retain access to their own letters after archive (RLS keeps `author_id = auth.uid()` permissive across moderation states). Nothing the user wrote ever disappears for them.
+- **Bilingual anchors as scaffolding.** The feature name + pseudonym appear in the user's primary language; the chrome is single-language to reduce visual noise per CLAUDE.md *When to use which*.
+
 ## [Unreleased] - 2026-06-11
 
 ### Pro waitlist — demand signal before payments
