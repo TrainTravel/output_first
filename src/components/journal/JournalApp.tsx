@@ -31,6 +31,9 @@ import { TodoListScreen } from './TodoListScreen';
 import { TinyExperimentScreen } from './TinyExperimentScreen';
 import { QuadrantsScreen } from './QuadrantsScreen';
 import { ProWaitlistScreen } from './ProWaitlistScreen';
+import { LettersInCirculationScreen } from './LettersInCirculationScreen';
+import { ShareALetterScreen } from './ShareALetterScreen';
+import { CirculationSettingsScreen } from './CirculationSettingsScreen';
 import { LanguageSettingsScreen } from './LanguageSettingsScreen';
 import { PhilosopherQuoteDialog } from './PhilosopherQuoteDialog';
 
@@ -119,6 +122,9 @@ export function JournalApp() {
     openProWaitlist,
     openBodyScan,
     openLanguageSettings,
+    openCirculationFeed,
+    openCirculationShare,
+    openCirculationSettings,
     goBackToEmotions,
     openVocabulary,
     vocabOrigin,
@@ -161,6 +167,7 @@ export function JournalApp() {
            onOpenBodyScan={openBodyScan}
            onOpenQuadrants={openQuadrants}
           onOpenProWaitlist={openProWaitlist}
+          onOpenCirculationFeed={openCirculationFeed}
           onOpenLanguageSettings={openLanguageSettings}
           onOpenVocabulary={() => openVocabulary('home')}
         />
@@ -347,6 +354,25 @@ export function JournalApp() {
 
       {currentStep === 'prowaitlist' && (
         <ProWaitlistScreen onBack={goHome} />
+      )}
+
+      {currentStep === 'circulation-feed' && (
+        <LettersInCirculationScreen
+          onBack={goHome}
+          onOpenShare={openCirculationShare}
+          onOpenSettings={openCirculationSettings}
+        />
+      )}
+
+      {currentStep === 'circulation-share' && (
+        <ShareALetterScreen
+          onBack={openCirculationFeed}
+          onReleased={openCirculationFeed}
+        />
+      )}
+
+      {currentStep === 'circulation-settings' && (
+        <CirculationSettingsScreen onBack={openCirculationFeed} />
       )}
 
       {currentStep === 'languagesettings' && (
