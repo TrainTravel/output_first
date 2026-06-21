@@ -70,28 +70,50 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
         </div>
 
         {!optedIn && !settingsLoading && (
-          <div data-testid="circulation-join-cta" className="rounded-3xl border border-primary/20 bg-primary/[0.04] p-8 text-center">
-            <Heart className="w-8 h-8 text-primary mx-auto mb-4" />
-            <p className="font-serif text-xl text-foreground mb-2">
-              {t({ fr: 'Rejoindre le courant', en: 'Join the current', es: 'Únete a la corriente', ja: '流れに加わる', 'zh-Hans': '加入水流', 'zh-Hant': '加入水流' }).primary}
-            </p>
-            <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-              {t({
-                fr: 'Activez la réception pour voir les lettres des autres. Vous restez anonyme.',
-                en: 'Turn on receiving to see letters from others. You stay anonymous.',
-                es: 'Activa la recepción para ver cartas de otros. Sigues siendo anónimo.',
-                ja: '受信をオンにすると、他の人の手紙が見えます。あなたは匿名のまま。',
-                'zh-Hans': '打开接收，就能看到他人的来信。你仍是匿名的。',
-                'zh-Hant': '打開接收，就能看到他人的來信。你仍是匿名的。',
-              }).primary}
-            </p>
-            <Button
-              data-testid="circulation-optin-button"
-              variant="default"
-              onClick={() => update({ receive_letters: true })}
-            >
-              {t({ fr: 'Je rejoins', en: "I'm in", es: 'Me uno', ja: '加わる', 'zh-Hans': '我加入', 'zh-Hant': '我加入' }).primary}
-            </Button>
+          <div
+            data-testid="circulation-join-cta"
+            className="relative overflow-hidden rounded-[32px] bg-primary/[0.03] p-8 text-center"
+          >
+            {/* Ghost letters drifting behind the CTA — pure decoration */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 -left-6 w-24 h-28 bg-card/40 rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '14s' }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute top-8 -right-8 w-28 h-32 bg-card/40 rounded-tl-[22px] rounded-tr-[28px] rounded-bl-[26px] rounded-br-[18px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '12s', animationDelay: '1.2s' }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-6 left-12 w-20 h-24 bg-card/40 rounded-tl-[20px] rounded-tr-[26px] rounded-bl-[28px] rounded-br-[18px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '10s', animationDelay: '0.6s' }}
+            />
+            <div className="relative">
+              <Heart className="w-6 h-6 text-primary/70 mx-auto mb-4" />
+              <p className="font-serif text-xl text-foreground mb-2">
+                {t({ fr: 'Rejoindre le courant', en: 'Join the current', es: 'Únete a la corriente', ja: '流れに加わる', 'zh-Hans': '加入水流', 'zh-Hant': '加入水流' }).primary}
+              </p>
+              <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+                {t({
+                  fr: 'Activez la réception pour voir les lettres des autres. Vous restez anonyme.',
+                  en: 'Turn on receiving to see letters from others. You stay anonymous.',
+                  es: 'Activa la recepción para ver cartas de otros. Sigues siendo anónimo.',
+                  ja: '受信をオンにすると、他の人の手紙が見えます。あなたは匿名のまま。',
+                  'zh-Hans': '打开接收，就能看到他人的来信。你仍是匿名的。',
+                  'zh-Hant': '打開接收，就能看到他人的來信。你仍是匿名的。',
+                }).primary}
+              </p>
+              <Button
+                data-testid="circulation-optin-button"
+                variant="default"
+                onClick={() => update({ receive_letters: true })}
+                className="rounded-full px-8"
+              >
+                {t({ fr: 'Je rejoins', en: "I'm in", es: 'Me uno', ja: '加わる', 'zh-Hans': '我加入', 'zh-Hant': '我加入' }).primary}
+              </Button>
+            </div>
           </div>
         )}
 
