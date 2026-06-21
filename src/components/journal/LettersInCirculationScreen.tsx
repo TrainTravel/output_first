@@ -70,28 +70,50 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
         </div>
 
         {!optedIn && !settingsLoading && (
-          <div data-testid="circulation-join-cta" className="rounded-3xl border border-primary/20 bg-primary/[0.04] p-8 text-center">
-            <Heart className="w-8 h-8 text-primary mx-auto mb-4" />
-            <p className="font-serif text-xl text-foreground mb-2">
-              {t({ fr: 'Rejoindre le courant', en: 'Join the current', es: 'Únete a la corriente', ja: '流れに加わる', 'zh-Hans': '加入水流', 'zh-Hant': '加入水流' }).primary}
-            </p>
-            <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-              {t({
-                fr: 'Activez la réception pour voir les lettres des autres. Vous restez anonyme.',
-                en: 'Turn on receiving to see letters from others. You stay anonymous.',
-                es: 'Activa la recepción para ver cartas de otros. Sigues siendo anónimo.',
-                ja: '受信をオンにすると、他の人の手紙が見えます。あなたは匿名のまま。',
-                'zh-Hans': '打开接收，就能看到他人的来信。你仍是匿名的。',
-                'zh-Hant': '打開接收，就能看到他人的來信。你仍是匿名的。',
-              }).primary}
-            </p>
-            <Button
-              data-testid="circulation-optin-button"
-              variant="default"
-              onClick={() => update({ receive_letters: true })}
-            >
-              {t({ fr: 'Je rejoins', en: "I'm in", es: 'Me uno', ja: '加わる', 'zh-Hans': '我加入', 'zh-Hant': '我加入' }).primary}
-            </Button>
+          <div
+            data-testid="circulation-join-cta"
+            className="relative overflow-hidden rounded-[32px] bg-primary/[0.03] p-8 text-center"
+          >
+            {/* Ghost letters drifting behind the CTA — pure decoration */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 -left-6 w-24 h-28 bg-card/40 rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '14s' }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute top-8 -right-8 w-28 h-32 bg-card/40 rounded-tl-[22px] rounded-tr-[28px] rounded-bl-[26px] rounded-br-[18px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '12s', animationDelay: '1.2s' }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-6 left-12 w-20 h-24 bg-card/40 rounded-tl-[20px] rounded-tr-[26px] rounded-bl-[28px] rounded-br-[18px] opacity-20 animate-letter-drift"
+              style={{ animationDuration: '10s', animationDelay: '0.6s' }}
+            />
+            <div className="relative">
+              <Heart className="w-6 h-6 text-primary/70 mx-auto mb-4" />
+              <p className="font-serif text-xl text-foreground mb-2">
+                {t({ fr: 'Rejoindre le courant', en: 'Join the current', es: 'Únete a la corriente', ja: '流れに加わる', 'zh-Hans': '加入水流', 'zh-Hant': '加入水流' }).primary}
+              </p>
+              <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+                {t({
+                  fr: 'Activez la réception pour voir les lettres des autres. Vous restez anonyme.',
+                  en: 'Turn on receiving to see letters from others. You stay anonymous.',
+                  es: 'Activa la recepción para ver cartas de otros. Sigues siendo anónimo.',
+                  ja: '受信をオンにすると、他の人の手紙が見えます。あなたは匿名のまま。',
+                  'zh-Hans': '打开接收，就能看到他人的来信。你仍是匿名的。',
+                  'zh-Hant': '打開接收，就能看到他人的來信。你仍是匿名的。',
+                }).primary}
+              </p>
+              <Button
+                data-testid="circulation-optin-button"
+                variant="default"
+                onClick={() => update({ receive_letters: true })}
+                className="rounded-full px-8"
+              >
+                {t({ fr: 'Je rejoins', en: "I'm in", es: 'Me uno', ja: '加わる', 'zh-Hans': '我加入', 'zh-Hant': '我加入' }).primary}
+              </Button>
+            </div>
           </div>
         )}
 
@@ -127,7 +149,7 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
               </p>
             )}
 
-            <div data-testid="circulation-letters" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div data-testid="circulation-letters" className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               {current.map((letter, i) => {
                 const held = heldIds.has(letter.id);
                 const days = daysRemaining(letter.expires_at);
@@ -136,13 +158,16 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
                     key={letter.id}
                     onClick={() => setOpened(letter)}
                     data-testid="circulation-letter-card"
-                    className="text-left rounded-3xl border border-primary/15 bg-card/80 backdrop-blur-sm p-5 hover:border-primary/30 transition-all animate-letter-drift"
-                    style={{ animationDelay: `${(i % 6) * 0.4}s` }}
+                    className="text-left rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-5 hover:shadow-[0_8px_28px_-12px_rgba(60,40,20,0.14)] shadow-[0_4px_24px_-12px_rgba(60,40,20,0.08)] transition-shadow animate-letter-drift"
+                    style={{
+                      animationDelay: `${(i % 6) * 0.4}s`,
+                      animationDuration: `${10 + (i % 3) * 2}s`,
+                    }}
                   >
                     <p className="font-serif text-lg text-foreground line-clamp-3 mb-3 leading-relaxed">
                       {letter.content}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-primary/10 pt-3">
                       <span className="font-serif italic">{letter.pseudonym}</span>
                       <span>
                         {t({ fr: `${days}j`, en: `${days}d`, es: `${days}d`, ja: `あと${days}日`, 'zh-Hans': `还有 ${days} 天`, 'zh-Hant': `還有 ${days} 天` }).primary}
@@ -172,13 +197,13 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
           onClick={() => setOpened(null)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-primary/20 bg-card p-6 shadow-xl animate-fade-in-up"
+            className="w-full max-w-md rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-6 shadow-[0_8px_40px_-16px_rgba(60,40,20,0.18)] animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-serif text-xl text-foreground leading-relaxed mb-4 whitespace-pre-wrap">
+            <p className="font-serif text-xl text-foreground leading-relaxed mb-5 whitespace-pre-wrap">
               {opened.content}
             </p>
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-5 border-t border-primary/10 pt-3">
               <span className="font-serif italic">{opened.pseudonym}</span>
               <span>
                 {t({ fr: `${daysRemaining(opened.expires_at)}j`, en: `${daysRemaining(opened.expires_at)}d`, es: `${daysRemaining(opened.expires_at)}d`, ja: `あと${daysRemaining(opened.expires_at)}日`, 'zh-Hans': `还有 ${daysRemaining(opened.expires_at)} 天`, 'zh-Hant': `還有 ${daysRemaining(opened.expires_at)} 天` }).primary}

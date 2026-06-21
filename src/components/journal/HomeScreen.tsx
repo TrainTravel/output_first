@@ -321,12 +321,20 @@ export function HomeScreen({ hasJournaledToday, streak, totalDays, totalWords, e
           <button
             data-testid="home-circulation-tile"
             onClick={onOpenCirculationFeed}
-            className="w-full rounded-xl border border-border bg-card text-card-foreground p-3 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer text-left flex items-center gap-3"
+            className="relative overflow-hidden w-full rounded-xl border border-border bg-card text-card-foreground p-3 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer text-left flex items-center gap-3"
           >
-            <div className="rounded-full bg-primary/10 p-2">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-2 right-12 w-10 h-12 bg-primary/[0.06] rounded-tl-[14px] rounded-tr-[8px] rounded-bl-[10px] rounded-br-[12px]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-3 right-2 w-12 h-14 bg-primary/[0.05] rounded-tl-[10px] rounded-tr-[14px] rounded-bl-[12px] rounded-br-[8px]"
+            />
+            <div className="relative rounded-full bg-primary/10 p-2">
               <Waves className="w-4 h-4 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="relative flex-1 min-w-0">
               <p className="text-sm text-foreground font-medium">
                 {t({ fr: "Circulation d'amour", en: 'Circulation of Love', es: 'Circulación del Amor', ja: '愛の循環', 'zh-Hans': '爱的流转', 'zh-Hant': '愛的流轉' }).primary}
               </p>
