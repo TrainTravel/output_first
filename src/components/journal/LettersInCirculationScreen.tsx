@@ -149,7 +149,7 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
               </p>
             )}
 
-            <div data-testid="circulation-letters" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div data-testid="circulation-letters" className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               {current.map((letter, i) => {
                 const held = heldIds.has(letter.id);
                 const days = daysRemaining(letter.expires_at);
@@ -158,13 +158,16 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
                     key={letter.id}
                     onClick={() => setOpened(letter)}
                     data-testid="circulation-letter-card"
-                    className="text-left rounded-3xl border border-primary/15 bg-card/80 backdrop-blur-sm p-5 hover:border-primary/30 transition-all animate-letter-drift"
-                    style={{ animationDelay: `${(i % 6) * 0.4}s` }}
+                    className="text-left rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-5 hover:shadow-[0_8px_28px_-12px_rgba(60,40,20,0.14)] shadow-[0_4px_24px_-12px_rgba(60,40,20,0.08)] transition-shadow animate-letter-drift"
+                    style={{
+                      animationDelay: `${(i % 6) * 0.4}s`,
+                      animationDuration: `${10 + (i % 3) * 2}s`,
+                    }}
                   >
                     <p className="font-serif text-lg text-foreground line-clamp-3 mb-3 leading-relaxed">
                       {letter.content}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-primary/10 pt-3">
                       <span className="font-serif italic">{letter.pseudonym}</span>
                       <span>
                         {t({ fr: `${days}j`, en: `${days}d`, es: `${days}d`, ja: `あと${days}日`, 'zh-Hans': `还有 ${days} 天`, 'zh-Hant': `還有 ${days} 天` }).primary}
@@ -194,13 +197,13 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
           onClick={() => setOpened(null)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-primary/20 bg-card p-6 shadow-xl animate-fade-in-up"
+            className="w-full max-w-md rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-6 shadow-[0_8px_40px_-16px_rgba(60,40,20,0.18)] animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-serif text-xl text-foreground leading-relaxed mb-4 whitespace-pre-wrap">
+            <p className="font-serif text-xl text-foreground leading-relaxed mb-5 whitespace-pre-wrap">
               {opened.content}
             </p>
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-5 border-t border-primary/10 pt-3">
               <span className="font-serif italic">{opened.pseudonym}</span>
               <span>
                 {t({ fr: `${daysRemaining(opened.expires_at)}j`, en: `${daysRemaining(opened.expires_at)}d`, es: `${daysRemaining(opened.expires_at)}d`, ja: `あと${daysRemaining(opened.expires_at)}日`, 'zh-Hans': `还有 ${daysRemaining(opened.expires_at)} 天`, 'zh-Hant': `還有 ${daysRemaining(opened.expires_at)} 天` }).primary}
