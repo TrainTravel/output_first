@@ -53,11 +53,12 @@ export function useLoveLetters(): UseLoveLetters {
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
-    // RLS already enforces language + opt-in + passed + live. We add the
-    // archived filter as a belt-and-suspenders client safeguard.
+    // RLS enforces opt-in + passed + live. We filter by language and archived
+    // here as client-side guards (defense-in-depth).
     const { data, error: selectError } = await supabase
       .from('love_letters')
       .select('*')
+      .eq('language', primaryLang)
       .eq('archived', false)
       .order('posted_at', { ascending: false })
       .limit(50);
@@ -68,7 +69,7 @@ export function useLoveLetters(): UseLoveLetters {
     }
     setCurrent((data ?? []) as LoveLetter[]);
     setLoading(false);
-  }, []);
+  }, [primaryLang]);
 
   useEffect(() => {
     refresh();

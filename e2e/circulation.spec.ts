@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { setFrenchLanguage } from './helpers/mocks';
+import { injectMockSession, mockAuthRoutes, setFrenchLanguage } from './helpers/mocks';
 
 // Inline mocks so the circulation hooks don't crash against an unmocked
 // Supabase URL on mount. Returning empty arrays / null is enough for the
@@ -23,6 +23,8 @@ async function mockCirculationData(page: Page) {
 
 test.describe('Circulation of Love — navigation', () => {
   test.beforeEach(async ({ page }) => {
+    await injectMockSession(page);
+    await mockAuthRoutes(page);
     await setFrenchLanguage(page);
     await mockCirculationData(page);
     await page.goto('/');

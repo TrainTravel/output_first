@@ -30,8 +30,12 @@ What changed:
 
 Tests:
 - 11 new unit tests across `pseudonyms.test.ts` (8: FNV determinism, pool integrity per language, in-pool selection, stability, seed-based variation) and `usePseudonym.test.ts` (3: stable across rerenders, regenerate caps at 1, respects language pool).
-- 5 new E2E specs in `circulation.spec.ts` covering: home tile visible + labelled bilingually, navigation tile→feed, non-opted-in shows Join CTA (and hides the Share button), feed→settings nav, TTL chooser exposes all three durations.
+- 5 new E2E specs in `circulation.spec.ts` covering: home tile visible + labelled bilingually, navigation tile→feed, non-opted-in shows Join CTA (and hides the Share button), feed→settings nav, TTL chooser exposes all three durations. 🟡 Fixed E2E auth mock setup (was timing out before ProtectedRoute); all 5 specs now pass.
 - `tsc --noEmit` clean. All new vitest tests pass.
+
+**Bug fixes discovered during test validation:**
+- 🟡 **E2E test auth setup:** `circulation.spec.ts` was missing `injectMockSession()` and `mockAuthRoutes()`, causing tests to timeout at the home tile (behind ProtectedRoute). Fixed by adding both to beforeEach.
+- 🟡 **Language filter missing:** `useLoveLetters.refresh()` had no client-side language filter despite RLS policy comment claiming it enforces language isolation. Added `.eq('language', primaryLang)` for defense-in-depth. Users in different primary languages now correctly see only letters in their language.
 
 **ADHD-Friendly:**
 - **One thing at a time.** Each screen is single-focus (compose; or browse; or toggle settings). No multi-step share form.
