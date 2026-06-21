@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      circulation_settings: {
+        Row: {
+          created_at: string
+          receive_letters: boolean
+          share_letters: boolean
+          ttl_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          receive_letters?: boolean
+          share_letters?: boolean
+          ttl_days?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          receive_letters?: boolean
+          share_letters?: boolean
+          ttl_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cluster_thoughts: {
         Row: {
           added_at: string
@@ -220,6 +247,74 @@ export type Database = {
           gratitude?: string | null
           id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      letter_holdings: {
+        Row: {
+          created_at: string
+          holder_id: string
+          letter_id: string
+        }
+        Insert: {
+          created_at?: string
+          holder_id: string
+          letter_id: string
+        }
+        Update: {
+          created_at?: string
+          holder_id?: string
+          letter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letter_holdings_letter_id_fkey"
+            columns: ["letter_id"]
+            isOneToOne: false
+            referencedRelation: "love_letters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      love_letters: {
+        Row: {
+          archived: boolean
+          author_id: string
+          content: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          language: string
+          moderated_status: string
+          moderation_note: string | null
+          posted_at: string | null
+          pseudonym: string
+        }
+        Insert: {
+          archived?: boolean
+          author_id: string
+          content: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          language: string
+          moderated_status?: string
+          moderation_note?: string | null
+          posted_at?: string | null
+          pseudonym: string
+        }
+        Update: {
+          archived?: boolean
+          author_id?: string
+          content?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          language?: string
+          moderated_status?: string
+          moderation_note?: string | null
+          posted_at?: string | null
+          pseudonym?: string
         }
         Relationships: []
       }
