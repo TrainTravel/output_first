@@ -70,28 +70,13 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
         </div>
 
         {!optedIn && !settingsLoading && (
-          <div
-            data-testid="circulation-join-cta"
-            className="relative overflow-hidden rounded-[32px] bg-primary/[0.03] p-8 text-center"
-          >
-            {/* Ghost letters drifting behind the CTA — pure decoration */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-4 -left-6 w-24 h-28 bg-card/40 rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] opacity-20 animate-letter-drift"
-              style={{ animationDuration: '14s' }}
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute top-8 -right-8 w-28 h-32 bg-card/40 rounded-tl-[22px] rounded-tr-[28px] rounded-bl-[26px] rounded-br-[18px] opacity-20 animate-letter-drift"
-              style={{ animationDuration: '12s', animationDelay: '1.2s' }}
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-6 left-12 w-20 h-24 bg-card/40 rounded-tl-[20px] rounded-tr-[26px] rounded-bl-[28px] rounded-br-[18px] opacity-20 animate-letter-drift"
-              style={{ animationDuration: '10s', animationDelay: '0.6s' }}
-            />
-            <div className="relative">
-              <Heart className="w-6 h-6 text-primary/70 mx-auto mb-4" />
+          <div data-testid="circulation-join-cta" className="relative overflow-hidden rounded-[32px] bg-primary/[0.03] p-8 text-center">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-8 left-4 w-12 h-16 rounded-tl-[12px] rounded-tr-[8px] rounded-bl-[10px] rounded-br-[14px] bg-card/40 opacity-20 animate-letter-drift" style={{ animationDelay: '0.2s', animationDuration: '10s' }} />
+              <div className="absolute top-20 right-6 w-10 h-14 rounded-tl-[10px] rounded-tr-[14px] rounded-bl-[12px] rounded-br-[8px] bg-card/40 opacity-20 animate-letter-drift" style={{ animationDelay: '0.8s', animationDuration: '14s' }} />
+            </div>
+            <div className="relative z-10">
+              <Heart className="w-6 h-6 text-primary mx-auto mb-4" />
               <p className="font-serif text-xl text-foreground mb-2">
                 {t({ fr: 'Rejoindre le courant', en: 'Join the current', es: 'Únete a la corriente', ja: '流れに加わる', 'zh-Hans': '加入水流', 'zh-Hant': '加入水流' }).primary}
               </p>
@@ -158,16 +143,13 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
                     key={letter.id}
                     onClick={() => setOpened(letter)}
                     data-testid="circulation-letter-card"
-                    className="text-left rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-5 hover:shadow-[0_8px_28px_-12px_rgba(60,40,20,0.14)] shadow-[0_4px_24px_-12px_rgba(60,40,20,0.08)] transition-shadow animate-letter-drift"
-                    style={{
-                      animationDelay: `${(i % 6) * 0.4}s`,
-                      animationDuration: `${10 + (i % 3) * 2}s`,
-                    }}
+                    className="text-left rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] border border-primary/15 bg-gradient-to-br from-card to-primary/[0.025] backdrop-blur-sm p-5 hover:border-primary/30 transition-all animate-letter-drift shadow-[0_4px_24px_-12px_rgba(60,40,20,0.08)]"
+                    style={{ animationDelay: `${(i % 6) * 0.4}s`, animationDuration: `${10 + (i % 3) * 2}s` }}
                   >
                     <p className="font-serif text-lg text-foreground line-clamp-3 mb-3 leading-relaxed">
                       {letter.content}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-primary/10 pt-3">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="font-serif italic">{letter.pseudonym}</span>
                       <span>
                         {t({ fr: `${days}j`, en: `${days}d`, es: `${days}d`, ja: `あと${days}日`, 'zh-Hans': `还有 ${days} 天`, 'zh-Hant': `還有 ${days} 天` }).primary}
@@ -197,13 +179,13 @@ export function LettersInCirculationScreen({ onBack, onOpenShare, onOpenSettings
           onClick={() => setOpened(null)}
         >
           <div
-            className="w-full max-w-md rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] bg-gradient-to-br from-card to-primary/[0.025] p-6 shadow-[0_8px_40px_-16px_rgba(60,40,20,0.18)] animate-fade-in-up"
+            className="w-full max-w-md rounded-tl-[28px] rounded-tr-[18px] rounded-bl-[20px] rounded-br-[26px] border border-primary/20 bg-gradient-to-br from-card to-primary/[0.025] p-6 shadow-[0_8px_40px_-16px_rgba(60,40,20,0.18)] animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-serif text-xl text-foreground leading-relaxed mb-5 whitespace-pre-wrap">
+            <p className="font-serif text-xl text-foreground leading-relaxed mb-4 whitespace-pre-wrap">
               {opened.content}
             </p>
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-5 border-t border-primary/10 pt-3">
+            <div className="border-t border-primary/10 pt-3 mt-1 flex items-center justify-between text-xs text-muted-foreground mb-5">
               <span className="font-serif italic">{opened.pseudonym}</span>
               <span>
                 {t({ fr: `${daysRemaining(opened.expires_at)}j`, en: `${daysRemaining(opened.expires_at)}d`, es: `${daysRemaining(opened.expires_at)}d`, ja: `あと${daysRemaining(opened.expires_at)}日`, 'zh-Hans': `还有 ${daysRemaining(opened.expires_at)} 天`, 'zh-Hant': `還有 ${daysRemaining(opened.expires_at)} 天` }).primary}

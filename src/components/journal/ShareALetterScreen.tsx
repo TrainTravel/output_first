@@ -82,7 +82,7 @@ export function ShareALetterScreen({ onBack, onReleased }: ShareALetterScreenPro
         </div>
 
         <div className="mb-3 flex items-center justify-between">
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-3 py-1 text-xs text-foreground">
+          <span className="inline-flex items-center gap-2 rounded-tl-[12px] rounded-tr-[8px] rounded-bl-[10px] rounded-br-[14px] bg-gradient-to-br from-card to-primary/[0.025] border border-primary/10 px-3 py-1.5 text-xs text-foreground shadow-[0_2px_8px_-4px_rgba(60,40,20,0.06)]">
             <span className="font-serif italic">{pseudonym}</span>
           </span>
           <button
