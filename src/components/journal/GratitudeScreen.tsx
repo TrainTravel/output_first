@@ -54,7 +54,7 @@ export function GratitudeScreen({ prompt, onSave, onSkip, onBack }: GratitudeScr
 
         {/* Header */}
         <div className="mb-8 space-y-3">
-          <h2 className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed">
+          <h2 className={`font-serif ${promptHeadingClass(promptText.primary)} text-foreground leading-relaxed`}>
             {promptText.primary}
           </h2>
           <p className="text-muted-foreground italic">
