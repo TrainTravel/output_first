@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { InlineAssistBar } from './InlineAssistBar';
 import { useInlineAssist } from '@/hooks/useInlineAssist';
+import { EXPRESSIVE_PROMPTS, promptHeadingClass } from '@/types/journal';
+
 
 interface ExpressiveWriteScreenProps {
   onSave: (content: string) => void;
