@@ -121,6 +121,39 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               { fr: 'Ceci est privé et uniquement pour vous.', en: 'This is private and only for you.', es: 'Esto es privado y solo para ti.', ja: 'これはあなただけのものです。', 'zh-Hans': '这只属于你自己。', 'zh-Hant': '這只屬於你自己。' }
             ).primary}
           </p>
+
+          {promptText && (
+            <div className="space-y-2 rounded-2xl border border-border bg-card/60 p-4 text-left" data-testid="expressive-prompt">
+              <p className={`font-serif ${promptHeadingClass(promptText.primary)} text-foreground leading-relaxed`}>
+                {promptText.primary}
+              </p>
+              {promptText.secondary && (
+                <p className="text-muted-foreground text-sm italic">{promptText.secondary}</p>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center justify-center gap-5 text-sm text-muted-foreground">
+            <button
+              type="button"
+              onClick={cyclePrompt}
+              data-testid="expressive-prompt-cycle"
+              className="hover:text-foreground underline transition-colors"
+            >
+              {t({ fr: 'Une autre invitation', en: 'Another prompt', es: 'Otra invitación', ja: '別の問いかけ', 'zh-Hans': '换一个提示', 'zh-Hant': '換一個提示' }).primary}
+            </button>
+            {promptIdx !== null && (
+              <button
+                type="button"
+                onClick={useBlankPage}
+                data-testid="expressive-prompt-blank"
+                className="hover:text-foreground underline transition-colors"
+              >
+                {t({ fr: 'Page blanche', en: 'Blank page', es: 'Página en blanco', ja: '白紙のまま', 'zh-Hans': '空白页', 'zh-Hant': '空白頁' }).primary}
+              </button>
+            )}
+          </div>
+
           <p className="text-muted-foreground text-sm">
             {t(
               { fr: 'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.', en: 'Don\'t worry about grammar or spelling — just let it flow.', es: 'No te preocupes por la gramática o la ortografía — déjalo fluir.', ja: '文法や綴りは気にせず、流れるままに書きましょう。', 'zh-Hans': '别在意语法或拼写，让文字自然流出。', 'zh-Hant': '別在意文法或拼字，讓文字自然流出。' }
