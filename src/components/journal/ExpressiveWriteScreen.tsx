@@ -29,6 +29,12 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
   const [content, setContent] = useState('');
   const [elapsed, setElapsed] = useState(0);
   const [canContinue, setCanContinue] = useState(false);
+  const [promptIdx, setPromptIdx] = useState<number | null>(
+    () => Math.floor(Math.random() * EXPRESSIVE_PROMPTS.length)
+  );
+  // Touching the prompt means the user is reading, not skimming — stop the
+  // intro from auto-advancing out from under them.
+  const [autoAdvance, setAutoAdvance] = useState(true);
   const startTimeRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -36,12 +42,28 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
 
   const sessionCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
 
+  const activePrompt = promptIdx === null ? null : EXPRESSIVE_PROMPTS[promptIdx];
+  const promptText = activePrompt
+    ? t({ fr: activePrompt.fr, en: activePrompt.en, es: activePrompt.en, 'zh-Hans': activePrompt.zhHans, 'zh-Hant': activePrompt.zhHant })
+    : null;
+
+  const cyclePrompt = () => {
+    setAutoAdvance(false);
+    setPromptIdx(prev => ((prev ?? -1) + 1) % EXPRESSIVE_PROMPTS.length);
+  };
+
+  const useBlankPage = () => {
+    setAutoAdvance(false);
+    setPromptIdx(null);
+  };
+
   // Auto-advance from intro after 5 seconds
   useEffect(() => {
-    if (phase !== 'intro') return;
+    if (phase !== 'intro' || !autoAdvance) return;
     const timer = setTimeout(() => setPhase('writing'), 5000);
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, autoAdvance]);
+
 
   // Timer loop during writing phase
   const tick = useCallback(() => {
