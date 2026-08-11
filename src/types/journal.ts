@@ -132,17 +132,29 @@ export const GRATITUDE_PROMPTS: BilingualPrompt[] = [
   { en: "What moment brought you a bit of peace?", fr: "Quel moment vous a apporté un peu de paix ?", zhHans: "哪个瞬间给了你一点平静？", zhHant: "哪個瞬間給了你一點平靜？" },
   { en: "Who or what made today a little easier?", fr: "Qui ou quoi a rendu votre journée un peu plus facile ?", zhHans: "谁或什么让今天变得轻松一些？", zhHant: "誰或什麼讓今天變得輕鬆一些？" },
   { en: "What simple comfort did you enjoy?", fr: "Quel petit plaisir avez-vous apprécié ?", zhHans: "你享受了什么简单的舒适？", zhHant: "你享受了什麼簡單的舒適？" },
-  // Post-growth reflection — gratitude found on the far side of a hard experience.
-  // Softened from clinical trauma-writing prompts: invitational, never demanding detail.
+  // Gentle post-growth prompts — light enough for the daily rotation.
+  { en: "Is there something you wish you had appreciated more before? Name it gently.", fr: "Y a-t-il quelque chose que vous auriez aimé apprécier davantage avant ? Nommez-le doucement.", zhHans: "有没有什么是你希望当初更加珍惜的？温柔地把它说出来。", zhHant: "有沒有什麼是你希望當初更加珍惜的？溫柔地把它說出來。" },
+  { en: "Where can you let a little gratitude in today, just enough to soften the stress?", fr: "Où pouvez-vous laisser entrer un peu de gratitude aujourd'hui, juste assez pour adoucir le stress ?", zhHans: "今天，你可以在哪里让一点感激进来，足以柔化压力就好？", zhHant: "今天，你可以在哪裡讓一點感激進來，足以柔化壓力就好？" },
+];
+
+/**
+ * Post-growth / stress-processing prompts. These live in Expressive Writing —
+ * never the daily gratitude rotation — because that mode wraps them in a private
+ * timed session and a mandatory self-care pause afterwards.
+ */
+export const EXPRESSIVE_PROMPTS: BilingualPrompt[] = [
   { en: "Is there a way your experience could help someone else? Let ideas come without judging them.", fr: "Votre expérience pourrait-elle aider quelqu'un d'autre ? Laissez venir les idées sans les juger.", zhHans: "你的经历有没有可能帮助到别人？让想法自由浮现，不必评判。", zhHant: "你的經歷有沒有可能幫助到別人？讓想法自由浮現，不必評判。" },
   { en: "What causes you stress these days? Has that changed over time — and do you know why?", fr: "Qu'est-ce qui vous stresse en ce moment ? Cela a-t-il changé avec le temps — et savez-vous pourquoi ?", zhHans: "最近什么让你感到压力？它随时间变了吗——你知道为什么吗？", zhHant: "最近什麼讓你感到壓力？它隨時間變了嗎——你知道為什麼嗎？" },
   { en: "How has what you went through touched the people around you?", fr: "Comment ce que vous avez traversé a-t-il touché les personnes autour de vous ?", zhHans: "你所经历的事，如何影响了你身边的人？", zhHant: "你所經歷的事，如何影響了你身邊的人？" },
-  { en: "Is there something you wish you had appreciated more before? Name it gently.", fr: "Y a-t-il quelque chose que vous auriez aimé apprécier davantage avant ? Nommez-le doucement.", zhHans: "有没有什么是你希望当初更加珍惜的？温柔地把它说出来。", zhHant: "有沒有什麼是你希望當初更加珍惜的？溫柔地把它說出來。" },
   { en: "What would you do differently now, and why does that matter to you?", fr: "Que feriez-vous différemment aujourd'hui, et pourquoi est-ce important pour vous ?", zhHans: "现在的你会怎么做不同的选择？为什么这对你重要？", zhHant: "現在的你會怎麼做不同的選擇？為什麼這對你重要？" },
   { en: "If you're ready, write about a hard experience — what happened, and how it felt in your body and heart. Only as much as feels safe.", fr: "Si vous vous sentez prêt(e), écrivez sur une expérience difficile — ce qui s'est passé, et ce que votre corps et votre cœur ont ressenti. Seulement ce qui vous semble sûr.", zhHans: "如果你准备好了，写下一段艰难的经历——发生了什么，身体和心里有什么感受。只写你觉得安全的部分。", zhHant: "如果你準備好了，寫下一段艱難的經歷——發生了什麼，身體和心裡有什麼感受。只寫你覺得安全的部分。" },
   { en: "What did you learn from it — good or bad? How does it live with you now?", fr: "Qu'en avez-vous appris — en bien ou en mal ? Comment cela vit-il en vous aujourd'hui ?", zhHans: "你从中学到了什么——无论好坏？它现在如何与你共处？", zhHant: "你從中學到了什麼——無論好壞？它現在如何與你共處？" },
-  { en: "Where can you let a little gratitude in today, just enough to soften the stress?", fr: "Où pouvez-vous laisser entrer un peu de gratitude aujourd'hui, juste assez pour adoucir le stress ?", zhHans: "今天，你可以在哪里让一点感激进来，足以柔化压力就好？", zhHant: "今天，你可以在哪裡讓一點感激進來，足以柔化壓力就好？" },
 ];
+
+/** Long prompts step down a size so the input stays above the fold on small phones. */
+export const promptHeadingClass = (text: string): string =>
+  text.length > 70 ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl';
+
 
 
 export const FILL_IN_PROMPTS: FillInPrompt[] = [

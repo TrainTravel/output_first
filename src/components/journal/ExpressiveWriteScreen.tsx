@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { InlineAssistBar } from './InlineAssistBar';
 import { useInlineAssist } from '@/hooks/useInlineAssist';
+import { EXPRESSIVE_PROMPTS, promptHeadingClass } from '@/types/journal';
+
 
 interface ExpressiveWriteScreenProps {
   onSave: (content: string) => void;
@@ -27,6 +29,12 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
   const [content, setContent] = useState('');
   const [elapsed, setElapsed] = useState(0);
   const [canContinue, setCanContinue] = useState(false);
+  const [promptIdx, setPromptIdx] = useState<number | null>(
+    () => Math.floor(Math.random() * EXPRESSIVE_PROMPTS.length)
+  );
+  // Touching the prompt means the user is reading, not skimming — stop the
+  // intro from auto-advancing out from under them.
+  const [autoAdvance, setAutoAdvance] = useState(true);
   const startTimeRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -34,12 +42,28 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
 
   const sessionCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
 
+  const activePrompt = promptIdx === null ? null : EXPRESSIVE_PROMPTS[promptIdx];
+  const promptText = activePrompt
+    ? t({ fr: activePrompt.fr, en: activePrompt.en, es: activePrompt.en, 'zh-Hans': activePrompt.zhHans, 'zh-Hant': activePrompt.zhHant })
+    : null;
+
+  const cyclePrompt = () => {
+    setAutoAdvance(false);
+    setPromptIdx(prev => ((prev ?? -1) + 1) % EXPRESSIVE_PROMPTS.length);
+  };
+
+  const useBlankPage = () => {
+    setAutoAdvance(false);
+    setPromptIdx(null);
+  };
+
   // Auto-advance from intro after 5 seconds
   useEffect(() => {
-    if (phase !== 'intro') return;
+    if (phase !== 'intro' || !autoAdvance) return;
     const timer = setTimeout(() => setPhase('writing'), 5000);
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, autoAdvance]);
+
 
   // Timer loop during writing phase
   const tick = useCallback(() => {
@@ -97,6 +121,39 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
               { fr: 'Ceci est privé et uniquement pour vous.', en: 'This is private and only for you.', es: 'Esto es privado y solo para ti.', ja: 'これはあなただけのものです。', 'zh-Hans': '这只属于你自己。', 'zh-Hant': '這只屬於你自己。' }
             ).primary}
           </p>
+
+          {promptText && (
+            <div className="space-y-2 rounded-2xl border border-border bg-card/60 p-4 text-left" data-testid="expressive-prompt">
+              <p className={`font-serif ${promptHeadingClass(promptText.primary)} text-foreground leading-relaxed`}>
+                {promptText.primary}
+              </p>
+              {promptText.secondary && (
+                <p className="text-muted-foreground text-sm italic">{promptText.secondary}</p>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center justify-center gap-5 text-sm text-muted-foreground">
+            <button
+              type="button"
+              onClick={cyclePrompt}
+              data-testid="expressive-prompt-cycle"
+              className="hover:text-foreground underline transition-colors"
+            >
+              {t({ fr: 'Une autre invitation', en: 'Another prompt', es: 'Otra invitación', ja: '別の問いかけ', 'zh-Hans': '换一个提示', 'zh-Hant': '換一個提示' }).primary}
+            </button>
+            {promptIdx !== null && (
+              <button
+                type="button"
+                onClick={useBlankPage}
+                data-testid="expressive-prompt-blank"
+                className="hover:text-foreground underline transition-colors"
+              >
+                {t({ fr: 'Page blanche', en: 'Blank page', es: 'Página en blanco', ja: '白紙のまま', 'zh-Hans': '空白页', 'zh-Hant': '空白頁' }).primary}
+              </button>
+            )}
+          </div>
+
           <p className="text-muted-foreground text-sm">
             {t(
               { fr: 'Ne vous souciez ni de la grammaire ni de l\'orthographe — laissez couler.', en: 'Don\'t worry about grammar or spelling — just let it flow.', es: 'No te preocupes por la gramática o la ortografía — déjalo fluir.', ja: '文法や綴りは気にせず、流れるままに書きましょう。', 'zh-Hans': '别在意语法或拼写，让文字自然流出。', 'zh-Hant': '別在意文法或拼字，讓文字自然流出。' }
@@ -171,7 +228,14 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
           <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}</span>
         </button>
 
+        {promptText && (
+          <p className="text-sm text-muted-foreground italic mb-3" data-testid="expressive-prompt-reminder">
+            {promptText.primary}
+          </p>
+        )}
+
         <div className="flex-1 flex flex-col space-y-3">
+
           <Textarea
             ref={textareaRef}
             value={content}
