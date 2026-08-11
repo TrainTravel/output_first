@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Check, Plus } from 'lucide-react';
-import { BilingualPrompt } from '@/types/journal';
+import { BilingualPrompt, promptHeadingClass } from '@/types/journal';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GratitudeScreenProps {
