@@ -228,7 +228,14 @@ export function ExpressiveWriteScreen({ onSave, onBack }: ExpressiveWriteScreenP
           <span className="text-sm">{t({ fr: 'Retour', en: 'Back', es: 'Volver', ja: '戻る', 'zh-Hans': '返回', 'zh-Hant': '返回' }).primary}</span>
         </button>
 
+        {promptText && (
+          <p className="text-sm text-muted-foreground italic mb-3" data-testid="expressive-prompt-reminder">
+            {promptText.primary}
+          </p>
+        )}
+
         <div className="flex-1 flex flex-col space-y-3">
+
           <Textarea
             ref={textareaRef}
             value={content}
