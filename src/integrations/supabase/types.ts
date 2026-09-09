@@ -425,6 +425,45 @@ export type Database = {
         }
         Relationships: []
       }
+      tiny_steps: {
+        Row: {
+          archived: boolean
+          created_at: string
+          final_confidence: number
+          final_step: string
+          id: string
+          initial_confidence: number
+          original_step: string
+          source: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          final_confidence: number
+          final_step: string
+          id?: string
+          initial_confidence: number
+          original_step: string
+          source?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          final_confidence?: number
+          final_step?: string
+          id?: string
+          initial_confidence?: number
+          original_step?: string
+          source?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
