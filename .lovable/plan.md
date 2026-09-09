@@ -1,54 +1,38 @@
-# Adapted CBT: Thought Reframe + Tiny-Step Contract
+# Phase 1: Tiny-Step Contract
 
-Two neurodiversity-affirming CBT tools, built on the app's existing calm/no-pressure language. Framing follows the source material: difference, not deficit. No diagnosis, no "you're wrong", no streaks or scores attached to either tool.
+A standalone tool for shrinking a task until it feels genuinely doable. Neurodiversity-affirming framing: difference, not deficit. Nothing here judges the user.
 
-## 1. Reframe a thought
+## The flow
 
-A short, one-question-per-screen card flow:
+1. **Name the step** — one line, free text, Enter submits.
+2. **Confidence** — a slider: *Honestly, how likely is this? 1–10.*
+3. **8 or higher** — warm confirmation, saved as a commitment. Done.
+4. **Under 8** — *What would make it smaller?* The AI offers 2–3 smaller versions. The user picks one, writes their own, or skips. Then re-rates. The loop repeats until it clears 8 or the user taps *This is small enough*.
+5. **Saved** with both the original wording/rating and the final wording/rating.
 
-1. **What happened?** (optional one line — skippable)
-2. **The thought** — what your mind said, in its own words
-3. **Pattern** — the app gently names which of the ten common thinking patterns it might be (all-or-nothing, mind reading, fortune telling, should statements, mental filter, magnifying/minimising, overgeneralising, personalising, emotional reasoning, comparing). Tap to see a plain-language description; the user can change or clear the pick.
-4. **A kinder, honest version** — the AI drafts one candidate reframe (short, in the user's language pair, never an affirmation, never disputing the feeling). Buttons: *Use this* / *Another one* / *Write my own*. The text lands in an editable box — the saved version is always whatever the user leaves there.
-5. **Done** — a soft close, plus one optional strength metaphor card from the articles (paperweight, race-car brain and bicycle brakes, the switch), shown as reassurance rather than advice.
+Deliberately absent in v1: no reminders, no done/not-done tracking, no streaks, no points, no failure state. Skip is available at every step.
 
-Skip is available on every step. Escape hatch back home at all times.
+**Past steps** — a read-only list reachable from the tool's header, newest first, with an archive action (never delete-only).
 
-**Entry points**
-- New Home tile: *Reframe a thought / Recadrer une pensée*.
-- On Brain Dump items and in the Thought Garden: a "Reframe this" action that opens the flow with the thought text pre-filled at step 2.
+**Entry points** — a small entry inside Focus Plan, plus a secondary Home tile.
 
-## 2. Tiny-step contract
+## Two things I'd flag
 
-Reached from a task (Focus Plan / To-do / Quadrants A item) or standalone:
-
-1. Name the step you intend to take.
-2. Slider: *How likely is this, honestly? 1–10.*
-3. If the answer is 8 or more — done, it's a commitment, warm confirmation.
-4. If under 8 — the app asks "what would make it smaller?" and the AI offers 2–3 smaller versions of the step; the user picks or writes one, then re-rates. Repeat until it clears 8 or the user stops.
-5. Saved with the confidence rating so the tool can later show "your steps get done when they start at 8+".
-
-No nagging, no reminders, no failure state if the step doesn't happen.
-
-## Where it lives
-
-- New Home tile for Reframe; Tiny-step attaches to existing task screens plus a small entry inside Focus Plan.
-- Both flows added as new steps in the app's screen router.
-- Past reframes viewable in a simple list (newest first) from the Reframe screen's header — read-only, with an archive action, never a delete-only action.
+- **The slider itself.** A 1–10 slider is a fair bit of fine motor targeting on a phone. I'd render it as ten tappable dots (still 1–10, same data) so it works with one thumb and no dragging. Same semantics, lower friction. Say the word if you'd rather keep a true slider.
+- **Loop guard.** If the AI's suggestions keep failing to clear 8, after the third round the app stops offering more and just says the step may not be the real blocker — offering *Save it as-is* or *Leave it for now*, with no implication the user failed. Prevents an infinite shrink spiral for someone already stuck.
 
 ## Technical notes
 
-**Database** — two new tables, RLS-scoped to `auth.uid()` like existing tables, with grants for `authenticated` and `service_role`:
+**Database** — one new table `tiny_steps`: `user_id`, `original_step`, `final_step`, `initial_confidence` (int), `final_confidence` (int), `source` (text), `archived` (bool), `created_at`, `updated_at`. RLS scoped to `auth.uid()` exactly like existing tables, grants for `authenticated` and `service_role`. No `status` field in v1.
 
-- `thought_records` — `user_id`, `situation`, `automatic_thought`, `distortion` (nullable text key), `reframe`, `source_thought_id` (nullable FK to `thoughts`), `archived`, timestamps.
-- `tiny_steps` — `user_id`, `original_step`, `final_step`, `initial_confidence` (int), `final_confidence` (int), `status` (`open` / `done` / `let-go`), `source` text, timestamps.
+**Edge function** — new `cbt-assist`, switching on a `mode` field. Only `shrink-step` is implemented; the switch and the shared prompt-context builder are structured so `mode: "reframe"` slots in later with no refactor, and a comment in the file records the Phase 2 intent (reframe as a native-speaker rendering that doubles as a vocabulary lesson, feeding the spaced-repetition vocabulary system; explicitly no distortion picker, no metaphor cards, no "your thought was distorted" framing). Uses the existing `_shared/auth.ts` guard, threads `targetLang` / `primaryLang` / `knownLangs` into the system prompt the way `reflection` does, and handles gateway 402/429/5xx with the app's standard friendly error copy.
 
-**Edge function** — one new function `cbt-assist` with a `mode` field (`reframe` | `shrink-step`), mirroring how `todo-triage` already switches on mode, rather than two functions. It threads `targetLang`, `primaryLang`, `knownLangs` into the system prompt the same way `reflection` does, uses the existing auth guard from `_shared/auth.ts`, and returns structured JSON. Gateway 402/429/5xx handled with the same friendly, non-technical error copy used elsewhere.
+**Client** — `src/hooks/useTinySteps.ts` for data, `src/components/journal/TinyStepScreen.tsx` for UI, a new `tinystep` step in the journal router, wired from `HomeScreen` and `FocusPlanScreen`. The confidence-threshold logic lives in a pure helper so it is testable without rendering.
 
-Rule-of-three check: this is not a clone of `language-feedback`/`language-chat` (those are parameterised by target language for writing practice); `cbt-assist` is a distinct task family, and its two modes are parameterised inside one function.
+**Language** — all text through `t()` / `bilingual()`, gentle phrasing throughout ("What would make it smaller?" — never "try again with a smaller step").
 
-**Content** — the ten patterns and the three metaphors live in a config array `src/data/cbt-distortions.ts` with EN/FR/ES/zh-Hans/zh-Hant strings, not in component code.
+**Tests** — unit tests for the confidence-threshold state machine (clears at 8, loops under 8, honours the round-3 guard, records original vs final). Playwright spec: a step entered at confidence 4, shrunk via a suggestion, re-rated to 8, saved and visible in the past-steps list.
 
-**Language** — all UI text through `t()` / `bilingual()`. Non-pathologising wording throughout: "patterns" and "experiences", never "symptoms", "risk", or "distorted thinking" as an accusation.
+## Phase 2 (not built now)
 
-**Tests** — unit tests for the reframe step machine, the confidence-threshold logic, and the config data; a Playwright spec covering: Brain Dump → Reframe prefill → save, and a tiny-step that starts at 4 and gets shrunk to 8.
+Vocabulary-integrated reframe. Recorded only as a comment in `cbt-assist` so the architecture supports it; revisited after we see whether people complete the shrink loop and come back.
